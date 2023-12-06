@@ -144,7 +144,7 @@
                                     </tr>
                                 </thead>
                                 <tr each={sc in subcorpora}>
-                                    <td>{sc.n}</td>
+                                    <td>{sc.name}</td>
                                     <td class="right-align">{window.Formatter.num(sc.tokens)}</td>
                                     <td class="right-align">{window.Formatter.num(sc.relsize,  {minimumFractionDigits: 2})}</td>
                                 </tr>

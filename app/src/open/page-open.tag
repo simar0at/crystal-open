@@ -9,7 +9,7 @@
                 <table if={!isLoading} class="corpusTable material-table z-depth-1">
                     <tbody>
                         <tr each={corpus in corpusList}>
-                            <td>{getLanguage(corpus)}</td>
+                            <td>{corpus.language}</td>
                             <td>{corpus.name}</td>
                             <td class="num grey-text">{window.Formatter.num(corpus.sizes.wordcount)}&nbsp;{_("wordP")}</td>
                             <td class="buttons">
@@ -44,13 +44,21 @@
 
         updateAttributes(){
             this.isLoading = !AppStore.data.corpusListLoaded || !AppStore.data.languageListLoaded
-            this.corpusList = AppStore.get("corpusList").filter(c => c.user_can_read)
+            this.corpusList = []
+            if(AppStore.data.languageListLoaded){
+                this.corpusList = AppStore.get("corpusList").filter(c => c.user_can_read)
+                this.corpusList.forEach(c => {
+                    c.language = AppStore.getLanguage(c.language_id).name
+                })
+                this.corpusList.sort((a, b) => {
+                    if(a.language == b.language){
+                        return a.name.localeCompare(b.name)
+                    }
+                    return a.language.localeCompare(b.language)
+                })
+            }
         }
         this.updateAttributes()
-
-        getLanguage(corpus){
-            return AppStore.getLanguage(corpus.language_id).name
-        }
 
         onCorpusClick(evt){
             let corpname =evt.item.corpus.corpname

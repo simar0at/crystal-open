@@ -281,6 +281,7 @@
                     if(this.showLimit < this.opts.options.length){
                         this.showLimit += 40
                         this.update()
+                        isFun(this.opts.onShowMore) && this.opts.onShowMore()
                     }
                 }
             }

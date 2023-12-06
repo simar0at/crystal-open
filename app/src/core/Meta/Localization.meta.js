@@ -42,6 +42,10 @@ const LocalizationMeta = {
         label: 'ߒߞߏ',
         labelEn: 'Nko',
         dir: 'rtl'
+    }, {
+        id: 'uk',
+        label: 'украї́нська мо́ва',
+        labelEn: 'Ukrainian'
     }]
 }
 

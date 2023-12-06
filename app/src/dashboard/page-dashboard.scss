@@ -79,6 +79,12 @@ $small: 58px;
                     line-height: $small;
                 }
             }
+            .inactiveFeaturesBar{
+                i {
+                    font-size: 2.2em;
+                    color: $blue-800;;
+                }
+            }
         }
         &.recentCorpora {
             height: 380px;

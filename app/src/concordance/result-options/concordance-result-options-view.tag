@@ -43,11 +43,12 @@
         </span>
         <span class="inline-block" style="vertical-align: top;">
             <ui-switch
-                riot-value={data.fullcontext}
+                riot-value={data.viewmode == 'kwic' ? data.fullcontext : false }
                 label-id="fullcontext"
                 name="fullcontext"
                 tooltip="t_id:conc_r_view_full_context"
                 on-change={onChangeValue}
+                disabled={data.viewmode == 'sen'}
                 class="lever-right"></ui-switch>
             <ui-switch
                 riot-value={data.checkboxes}

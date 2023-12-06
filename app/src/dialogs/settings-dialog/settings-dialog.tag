@@ -108,10 +108,12 @@
             }
         })
 
-        this.languageOptions = LocalizationMeta.langs.map((lang) => {
+        this.languageOptions = LocalizationMeta.langs.sort((a, b) => {
+            return a.labelEn.localeCompare(b.labelEn)
+        }).map((lang) => {
             return {
                 value: lang.id,
-                label: lang.label
+                label: lang.labelEn + " (" + lang.label + ")"
             }
         })
 

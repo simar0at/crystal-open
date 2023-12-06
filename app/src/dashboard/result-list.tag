@@ -19,6 +19,7 @@
             ref="resultList"
             size=20
             disable-tooltips=true
+            on-show-more={listOnShowMore}
             options={options}>
         </ui-filtering-list>
         <div class="right hide-on-small-only">
@@ -219,11 +220,31 @@
         }
 
         bindFavouriteToggle(){
-            $(".favourite", this.root).click(function(evt){
+            $(".favourite", this.root).off().click(function(evt){
                 evt.stopPropagation()
                 let idx = $(evt.target).closest("li").data("value")
                 let page = this.list[idx]
-                page && UserDataStore.togglePageFavourites(!page.favourite, page)
+                if(page){
+                    if(page.favourite){
+                        UserDataStore.togglePageFavourites(false, page)
+                    } else {
+                        if(UserDataStore.data.pages_favourites.length < UserDataStore.PAGES_SIZE.pages_favourites){
+                            UserDataStore.togglePageFavourites(true, page)
+                        } else {
+                             Dispatcher.trigger("openDialog", {
+                                content: _("favouritesLimitReach", [UserDataStore.PAGES_SIZE.pages_favourites]),
+                                small: true,
+                                buttons: [{
+                                    label: _("save"),
+                                    onClick: (dialog, modal) => {
+                                        modal.close()
+                                        UserDataStore.togglePageFavourites(true, page)
+                                    }
+                                }]
+                            })
+                        }
+                    }
+                }
             }.bind(this))
         }
 
@@ -323,6 +344,10 @@
             this.bindFavouriteToggle()
             this.initDropdown()
             this.bindLabelActions()
+        }
+
+        listOnShowMore(){
+            this.initBindings()
         }
 
         this.on("update", this.refreshAttributes)

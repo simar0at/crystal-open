@@ -1,6 +1,6 @@
 window.config = {
     URL_BONITO: "http://localhost/bonito/run.cgi/",
-    // Used only if URL_RASPI="" to register new users (endpoint /register_user_new). Leave empty to disable registration.
+    // URL of endpoint for registering new users (e.g bonito/registration.cgi). Leave empty to disable registration.
     URL_REGISTER_NEW_USER: "",
     // Default language of the interface.
     DEFAULT_LOCALE: "en",

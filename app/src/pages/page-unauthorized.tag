@@ -46,7 +46,7 @@
                         </div>
                         <div class="columnForm">
                             <div class="row">
-                                <label class="col m5 s12 required">{_("fullName")}</label>
+                                <label class="col m5 s12 required">{_("fullName")}*</label>
                                 <span class="col m7 s12">
                                     <ui-input ref="fullname"
                                             size=15
@@ -58,7 +58,7 @@
                                 </span>
                             </div>
                             <div class="row">
-                                <label class="col m5 s12 required">{_("username")}</label>
+                                <label class="col m5 s12 required">{_("username")}*</label>
                                 <span class="col m7 s12">
                                     <ui-input ref="username"
                                             size=15
@@ -72,7 +72,7 @@
                                 </span>
                             </div>
                             <div class="row">
-                                <label class="col m5 s12 required">{_("password")}</label>
+                                <label class="col m5 s12 required">{_("password")}*</label>
                                 <span class="col m7 s12">
                                     <ui-input ref="password"
                                             type="password"
@@ -85,7 +85,7 @@
                                 </span>
                             </div>
                             <div class="row">
-                                <label class="col m5 s12 required">{_("confirmPassword")}</label>
+                                <label class="col m5 s12 required">{_("confirmPassword")}*</label>
                                 <span class="col m7 s12">
                                     <ui-input ref="password2"
                                             type="password"
@@ -103,7 +103,7 @@
                                 </span>
                             </div>
                             <div class="row">
-                                <label class="col m5 s12 required">{_("email")}</label>
+                                <label class="col m5 s12 required">{_("email")}*</label>
                                 <span class="col m7 s12">
                                     <ui-input ref="mail"
                                             size=15
@@ -124,8 +124,6 @@
                                 <span class="col m7 s12">
                                     <ui-input ref="address"
                                             size=15
-                                            validate=1
-                                            required=1
                                             maxlength=100
                                             on-input={onInput}
                                             name="address"></ui-input>
@@ -136,8 +134,6 @@
                                 <span class="col m7 s12">
                                     <ui-input ref="phone"
                                             size=15
-                                            validate=1
-                                            required=1
                                             maxlength=30
                                             on-input={onInput}
                                             name="phone"></ui-input>
@@ -162,7 +158,14 @@
                         <h4>
                             {_("done")}
                         </h4>
-                        {_("requestSent")}
+                        {sentMessage || _("requestSent")}
+                        <div if={showLoginAfterRegistration}
+                                class="center-align mt-8">
+                            <button class="btnLogIn btn btn-primary"
+                                    onclick={onLoginAfterRegistrationClick}>
+                                {_("logIn")}
+                            </button>
+                        </div>
                     </virtual>
                 </div>
             </div>
@@ -178,10 +181,11 @@
         const {Localization} = require('core/Localization.js')
         const {LocalizationMeta, GetLangMeta} = require('core/Meta/Localization.meta.js')
 
-        this.showRegistration = false
-
+        this.showRegistration = !!Url.getQuery().registration
+        this.showLoginAfterRegistration = false
         this.language = GetLangMeta(Localization.getLocale())
         this.languageList = LocalizationMeta.langs
+
 
         onLanguageChange(evt){
             SettingsStore.changeSettings({
@@ -192,6 +196,7 @@
 
         onShowRegistrationClick(){
             this.showRegistration = true
+            Url.setQuery({registration: 1})
             delay(() => {
                 $(".columnForm input").first().focus()
             }, 0)
@@ -199,6 +204,7 @@
 
         onHideRegistrationClick(){
             this.showRegistration = false
+            Url.setQuery({})
         }
 
         onLoginClick(){
@@ -209,6 +215,12 @@
             } else {
                 Dispatcher.trigger("ROUTER_GO_TO", "dashboard")
             }
+            window.location.reload()
+        }
+
+        onLoginAfterRegistrationClick(){
+            jQuery("#htmlLoading").show()
+            Dispatcher.trigger("ROUTER_GO_TO", "dashboard")
             window.location.reload()
         }
 
@@ -232,40 +244,49 @@
         }
 
         onRegisterClick(){
-            let strQuery = Url.stringifyQuery({
-                username: this.refs.username.getValue(),
-                fullname: this.refs.fullname.getValue(),
-                password: this.refs.password.getValue(),
-                mail: this.refs.mail.getValue(),
-                address: this.refs.address.getValue(),
-                phone: this.refs.phone.getValue()
-            })
-            Connection.get({
-                url: window.config.URL_REGISTER_NEW_USER + strQuery,
-                loadingId: "user_registration",
-                done: (payload) => {
-                    if(payload.error){
-                        SkE.showError(payload.error)
-                    } else if (payload.status == "fail"){
-                        SkE.showError(payload.message)
-                    } else {
-                        this.requestSent = true
-                        this.update()
+            if(this.refs.password.getValue().indexOf('\t') != -1){
+                 Dispatcher.trigger("openDialog", {
+                    small: true,
+                    content: _("tabInPassWarn")
+                 })
+            } else {
+                let queryString = ["username", "fullname", "mail", "address", "phone"].map(key => {
+                    return `${key}=${encodeURIComponent(this.refs[key].getValue())}`
+                }).join("&")
+                let url = window.config.URL_REGISTER_NEW_USER + "?" + queryString
+                Connection.get({
+                    url: url,
+                    data: {
+                        password: this.refs.password.getValue()
+                    },
+                    postKeys: ["password"],
+                    loadingId: "user_registration",
+                    done: (payload) => {
+                        if(payload.error){
+                            SkE.showError(payload.error)
+                        } else if (payload.status == "fail"){
+                            SkE.showError(payload.message)
+                        } else {
+                            this.showLoginAfterRegistration = payload.canLogin
+                            this.requestSent = true
+                            this.sentMessage = payload.message
+                            this.update()
+                        }
+                    },
+                    fail: (payload) => {
+                        if(payload.error){
+                            SkE.showError(payload.error)
+                        } else {
+                            SkE.showError(_("registrationFailed"))
+                        }
                     }
-                },
-                fail: (payload) => {
-                    if(payload.error){
-                        SkE.showError(payload.error)
-                    } else {
-                        SkE.showError(_("registrationFailed"))
-                    }
-                }
-            })
+                })
+            }
         }
 
         refreshRegisterBtnDisabled(){
             let disabled = ["fullname", "username", "password" ,"password2",
-                    "mail", "address", "phone"].reduce((disabled, item) => {
+                    "mail"].reduce((disabled, item) => {
                             return disabled || !this.refs[item].isValid
                         }, false)
                     || !this.isMailValid

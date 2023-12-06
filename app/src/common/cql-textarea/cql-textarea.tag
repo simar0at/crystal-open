@@ -5,7 +5,7 @@
             inline=1
             ref="cql"
             label-id="cql"
-            riot-value={opts.riotValue}
+            riot-value={value}
             name="cql"
             rows=1
             on-input={onInput}
@@ -84,6 +84,7 @@
 
         onCharacterInsert(character, value){
             this.value = value
+            this.update()
             this._callOnChange(value)
         }
 
@@ -110,7 +111,7 @@
                     onTagClick: function(tag){
                         this.refs.characters.insert(tag)
                         Dispatcher.trigger("closeDialog")
-                        this.update()
+
                     }.bind(this)
                 },
                 small: true,

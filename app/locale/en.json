@@ -141,8 +141,9 @@
     "bj.bgJob": "This may take some time…",
     "bj.bgJobStarted": "You may leave this screen: you will find the result later in Computations, look for the icon",
     "bj.bgJobStartedOpen": "Please, try it later. Your data are being computed right now.",
-    "bj.bgJobFailed": "The processing of your query failed, please, contact the support",
-    "bj.bgJobFailedToRun": "The server failed to run your request, please, contact the support",
+    "bj.bgJobFailed": "The processing of your query failed, please, %{0}",
+    "bj.bgJobFailedToRun": "The server failed to run your request, please, %{0}",
+    "bj.contactTheSupport": "contact the support",
     "bj.cont": "Resume job",
     "bj.estimation": "Time left",
     "bj.kill": "Permanently kill the job",
@@ -1599,7 +1600,6 @@
     "searchError": "An error occurred while loading the data.",
     "tta": "Text type analysis",
     "ttaDesc": "Statistics of the whole corpus",
-    "lcmSubcorpWarning": "The results are shown for subcorpus, but the collocation examples may come from the whole corpus and therefore may not be representative.",
     "editLabel": "Edit label",
     "removeLabel": "Remove label",
     "addLabel": "Add label",
@@ -1779,5 +1779,11 @@
     "breadcrumbsFilterFirst10M": "of 10M",
     "breadcrumbsFilterRandom10M": "of random 10M",
     "breadcrumbsFilterFirst10MTip": "Only the first 10 million concordance lines are filtered.",
-    "breadcrumbsFilterRandom10MTip": "Only a random 10 million concordance lines are filtered."
+    "breadcrumbsFilterRandom10MTip": "Only a random 10 million concordance lines are filtered.",
+    "favouritesLimitReach": "You have reached the limit of %{0} items in favourites list. If you save more, the oldest entry in the list will be overwritten. Do you want to save new item anyway?",
+    "NAInNoSke": "You are using NoSketch Engine. This tool is only available in %{0}",
+    "NAInNoSkeP": "You are using NoSketch Engine. These tools are only available in %{0}",
+    "suborpusRenamed": "Subcorpus was renamed.",
+    "suborpusRenameFail": "Subcorpus could not be renamed.",
+    "tabInPassWarn": "The password must not contain a TAB. Please, choose a different password."
 }

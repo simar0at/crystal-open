@@ -32,6 +32,8 @@ class PermissionsClass{
             'ngrams':            hasSkE,
             'keywords':          true,
             'trends':            true,
+            'tta':               true,
+            'octerms':           hasSkE,
             'ocd':               !isA && !RO && hasSkE,
 
             'ca':                !RO && !isA,

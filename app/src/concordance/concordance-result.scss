@@ -21,6 +21,12 @@
             }
         }
     }
+    &.hasAttributes .kwicWrapper .itm{
+        padding: 0 2px;
+        &:first-child{
+            white-space: nowrap;
+        }
+    }
     &.hasAttributes{
         .tr:hover{
             .itm::after{
@@ -57,6 +63,11 @@
     }
     &.fullContext.viewKwic concordance-result-items{
         position: relative;
+    }
+    &:not(.fullContext).viewSen{
+        .itm{
+            white-space: pre-wrap;
+        }
     }
     concordance-result-items{
         display: inline;
@@ -197,7 +208,7 @@
         }
     }
     .itm{
-        padding: 0 2px;
+        white-space: pre;
         text-align: center;
         position: relative;
         &.coll,

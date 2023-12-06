@@ -183,7 +183,7 @@ class FeatureStoreMixin extends StoreMixin{
             message: function(payload){
                 if (payload.error) {
                     this._stopBgJobInterval()
-                    SkE.showError(_("bj.bgJobFailedToRun", [payload.error]))
+                    SkE.showError(_("bj.bgJobFailedToRun", [`<a href="mailto:${window.config.links.supportMail}">${_("bj.contactTheSupport")}</a>`]) + "<br><br>" + payload.error)
                 } else if (payload.signal) {
                     let signal = JSON.parse(payload.signal)[0]
                     if(payload.signal == "[]" || (signal.progress == 100 && signal.status[0] != "err")){
@@ -193,7 +193,7 @@ class FeatureStoreMixin extends StoreMixin{
                         delete this.data.jobid
                         this._stopBgJobInterval()
                         let superUserError = signal.stderr ? ("\n\n" + signal.stderr) : ""
-                        SkE.showError(_("bj.bgJobFailed"), signal.status[1] + superUserError)
+                        SkE.showError(_("bj.bgJobFailed", [`<a href="mailto:${window.config.links.supportMail}">${_("bj.contactTheSupport")}</a>`]) + "<br><br>" + signal.status[1] + superUserError)
                         this.updatePageTag()
                     } else {
                         if(this.data.raw){
@@ -534,6 +534,9 @@ class FeatureStoreMixin extends StoreMixin{
             return Object.keys(value).map(key => {
                 return `${key}: ${this.stringifyValue(value[key])}`
             }).join(", ")
+        }
+        if(name == "usesubcorp"){
+            return AppStore.getSubcorpusName(value)
         }
         return value + ""
     }

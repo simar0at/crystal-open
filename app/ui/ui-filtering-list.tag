@@ -61,6 +61,7 @@
                     show-all={opts.showAll}
                     loading={opts.loading}
                     on-scroll-to-bottom={opts.onScrollToBottom}
+                    on-show-more={opts.onShowMore}
                     deselect-on-click={opts.deselectOnClick}
                     options={filtered}
                     filter={opts.filter}

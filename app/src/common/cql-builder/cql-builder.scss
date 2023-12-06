@@ -404,6 +404,9 @@
         margin: 0 -24px -24px;
         opacity: .8;
         background-color: $gray-100;
+        .itm{
+            margin: 0 2px;
+        }
     }
     .concordance-result > div{
         min-height: 250px;

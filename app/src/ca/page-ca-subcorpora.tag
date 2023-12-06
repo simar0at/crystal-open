@@ -1,5 +1,10 @@
 <subcorpus-def>
-    <p>{_("subcorpus")}: <b>{opts.n}</b></p>
+    <p>{_("subcorpus")}:
+        <b>{opts.name}</b>
+        <span if={opts.name != opts.n} class="grey-text">
+            (ID: {opts.n})
+        </span>
+    </p>
     <div if={opts.struct || opts.query}>
         <p>{_("tr.structattr")}: <tt>&lt;{opts.struct}&gt;</tt></p>
         <span each={q, idx in queries} if={!fromc}>
@@ -104,19 +109,34 @@
                             <th></th>
                         </tr>
                     </thead>
-                    <tr each={subcorpus in subcorpora}>
+                    <tr each={subcorpus in subcorpora} class={saving: subcorpus.isSaving}>
                         <td class="t_name">
-                            <span if={subcorpus.user == 2}
-                                    class="tooltipped" data-tooltip="t_id:ca_subc_old">
-                                {subcorpus.n}
-                                <sup>?</sup>
-                            </span>
-                            <span if={subcorpus.user != 2}>{subcorpus.n}</span>
+                            <virtual if={editId != subcorpus.n}>
+                                <span if={subcorpus.user == 2}
+                                        class="tooltipped" data-tooltip="t_id:ca_subc_old">
+                                    {subcorpus.name}
+                                    <sup>?</sup>
+                                </span>
+                                <span if={subcorpus.user != 2}>{subcorpus.name}</span>
+                            </virtual>
+                            <virtual if={editId == subcorpus.n}>
+                                <ui-input inline=1
+                                        class="nameInput"
+                                        riot-value={subcorpus.name}
+                                        on-submit={onSubcorpusRename.bind(this, subcorpus)}></ui-input>
+                                <i class="material-icons material-clickable vertical-middle"
+                                        onclick={onSubcorpusRename.bind(this, subcorpus)}>check</i>
+                                <i class="material-icons material-clickable vertical-middle"
+                                        onclick={onSubcorpusEdit.bind(this, subcorpus.n)}>close</i>
+                            </virtual>
                         </td>
                         <td class="t_tokens">{subcorpus.user == 2 ? "" : window.Formatter.num(subcorpus.tokens)}</td>
                         <td class="t_words">{subcorpus.user == 2 ? "" : ("~" + window.Formatter.num(subcorpus.words))}</td>
                         <td class="t_relsize">{subcorpus.user == 2 ? "" : window.Formatter.num(subcorpus.relsize, {maximumFractionDigits: 1})}</td>
                         <td>
+                            <i if={subcorpus.user}
+                                    class="material-icons material-clickable grey-text"
+                                    onclick={onSubcorpusEdit.bind(this, subcorpus.n)}>edit</i>
                             <i class="material-icons material-clickable grey-text"
                                     if={subcorpus.user}
                                     onclick={onSubcorpusInfoClick}>
@@ -153,6 +173,7 @@
         this.mixin("tooltip-mixin")
         this.corpus = AppStore.getActualCorpus()
         this.showPreloaded = false
+        this.editId = null
         TextTypesStore.loadTextTypes()
 
         updateAttributes(){
@@ -163,6 +184,22 @@
             }, this)
         }
         this.updateAttributes()
+
+        onSubcorpusEdit(subcorpus_id){
+            if(this.editId == subcorpus_id){
+                this.editId = null
+            } else {
+                this.editId = subcorpus_id
+            }
+            this.update()
+            $(".nameInput input").focus()
+        }
+
+        onSubcorpusRename(subcorpus){
+            AppStore.renameSubcorpus(this.corpus.corpname, subcorpus.n, $(".nameInput input").val())
+            this.editId = null
+            this.update()
+        }
 
         onSubcorpusInfoClick(e) {
             Dispatcher.trigger("openDialog", {
@@ -208,11 +245,13 @@
 
         this.on("mount", () => {
             AppStore.on("subcorporaChanged", this.update)
+            AppStore.on("subcorpusRenameDone", this.update)
             TextTypesStore.on("textTypesLoaded", this.update)
         })
 
         this.on("unmount", () => {
             AppStore.off("subcorporaChanged", this.update)
+            AppStore.off("subcorpusRenameDone", this.update)
             TextTypesStore.off("textTypesLoaded", this.update)
         })
 

@@ -1,0 +1,94 @@
+<div class="row">
+   <div class="col m12 l7">
+       <div>Конкорданс — це інструмент із різноманітними параметрами пошуку. Він шукає слова, фрази, %[tag|теги]%, документи,%[textType|типи текстів]% або %[structure|структури]% корпусу та виводить результати у контексті у формі конкордансу. Конкорданс можна сортувати, фільтрувати та опрацьовувати далі, щоб одержати бажаний результат.
+</div>
+<br>
+<div>Параметри перегляду дозволяють виводити додаткові дані, такі як %[lemma|леми]%, теги й інші %[attribute|атрибути]%, типи тексту (метадані) або структури корпусу.</div>
+<br>
+<div><a href="https://www.sketchengine.eu/my_keywords/cql/" target="_blank" rel="noopener">CQL</a>-пошук на вкладці «Додатково» застосовується під час складних пошукових запитів, включаючи ті, що мають неуточнені або необов’язкові критерії.
+</div>
+
+   </div>
+   <div class="col m12 l5">
+       <iframe width="400" height="225" src="https://www.youtube.com/embed/videoseries?list=PLPVgp0Xm6hWBnF_6tIKVNQZroCsVWGxoJ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+   </div>
+</div>
+<br>
+<ul class="collapsible">
+    <li>
+        <div class="collapsible-header">Як працює конкорданс?</div>
+        <div class="collapsible-body">
+            <div>Пошук завжди починається від початку корпусу, а рядки конкордансу виводяться у порядку, у якому їх було знайдено у корпусі. Скористайтеся піктограмами <i>Перемішати</i> або <i>Випадкова вибірка</i>, щоб це змінити.
+            </div>
+            <br>
+            <div>За промовчанням та незалежно від того, який саме атрибут використовується для пошуку, результат виводиться як %[wordForm|форма слова]%, тобто, як вихідний текст корпусу. Спосіб виведення %[lemma|лем]%, %[tag|тегів]% та інших %[attribute|атрибутів]% можна налаштувати у розділі <i class="material-icons">Видимість</i> у параметрах перегляду.
+            </div>
+            <br>
+            <div>Піктограма <i class="material-icons">info_outline</i> зліва від кожного рядка конкордансу веде до типів тексту (метаданих) щодо рядків конкордансу. Користувачі можуть встановити, щоб один або кілька із них, виводилися на постійній основі.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Конкорданс та інші інструменти</div>
+        <div class="collapsible-body">
+            <div>Усі інструменти у Sketch Engine пов’язані із конкордансом, щоб дозволити користувачам бачити, як результати інших інструментів використовуються у контексті. Крім того, конкорданс — це відправна точка для побудови %[subcorpus|підкорпусу]%, інструменту <a href="https://www.sketchengine.eu/my_keywords/gdex/" target="_blank" rel="noopener">GDEX</a> або складних частотних списків, які не можливо отримати за допомогою інструменту «Список слів».
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Як користуватися конкордансом</div>
+        <div class="collapsible-body">
+            <div>
+                <b>Пошук</b> <br />Наведіть курсор на різні елементи форми введення, щоб дізнатися про різні параметри пошуку.
+            </div>
+            <br>
+            <div>
+                <b>Робота із результатами</b> <br />Щоб навчитися фільтрувати, сортувати, рахувати, реорганізовувати або опрацьовувати результати, наведіть курсор на піктограму або знак питання (?), щоб з’явилася спливна підказка, у якій пояснюється та чи та функція, або перегляньте відеосюжети про конкорданси на нашому <a href="https://www.youtube.com/watch?v=FzI6tbO5EvQ&list=PLPVgp0Xm6hWBnF_6tIKVNQZroCsVWGxoJ" target="_blank" rel="noopener">YouTube-каналі</a>.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Швидкість та розмір корпусу</div>
+        <div class="collapsible-body">
+            <div>Sketch Engine спеціально спроектовано так, щоб опрацьовувати великі корпуси оперативно. Будь-який пошук забере лише кілька секунд, якщо розмір корпусу менший за мільярд слів. Для корпусів, що містять понад 1 млрд слів, він може забрати трохи додаткового часу. Для великих корпусів виконання складних пошукових запитів CQL, що містять <a href="https://www.sketchengine.eu/user-guide/user-manual/concordance-introduction/regular-expressions/">регулярні вирази</a> або обчислення частотності, може забирати кілька хвилин.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Вимоги для справної роботи конкордансу</div>
+        <div class="collapsible-body">
+            <div>Конкорданс працюватиме із будь-яким корпусом, навіть із не токенізованим, лематизованим чи затегованим, однак, додавання цих трьох особливостей значно підвищує ефективність. За умови, що мова, <a href="https://www.sketchengine.eu/user-guide/user-manual/corpora/by-language/" target="_blank" rel="noopener">підтримується</a>, <a href="https://www.sketchengine.eu/my_keywords/tokenization/" target="_blank" rel="noopener">токенізація</a>, лематизація та тегування відбуваються автоматично, тільки-но файли завантажено до Sketch Engine.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Приклади результатів</div>
+        <div class="collapsible-body">
+            <div>Конкорданс слова <i>легкий</i>, відсортований за словом, що стоїть після слова <i>легкий</i> із переходом до першого екрану, де слова починаються з букви O. Інші дані, що виводяться, включають вихідні сайти, межі речень та теги частин мови.
+            </div>
+            <br>
+            <div>
+                <a href="https://www.sketchengine.eu/wp-content/uploads/concordance1.png" target="_blank" rel="noopener">
+                    <img src="https://www.sketchengine.eu/wp-content/uploads/concordance1.png" alt="" width="1259" height="567" loading="lazy">
+                </a>
+                <br><br>
+            </div>
+            <div>Статистика вебсайтів (частотність типів тексту) генерується з попереднього конкордансу.</div>
+            <br>
+            <div>
+                <a href="https://www.sketchengine.eu/wp-content/uploads/concordance3.png" target="_blank" rel="noopener">
+                    <img src="https://www.sketchengine.eu/wp-content/uploads/concordance3.png" alt="" width="1280" height="699" loading="lazy">
+                </a>
+                <br><br>
+            </div>
+            <div>Статистика різних форм слова та варіанти написання KWIC (частота за атрибутом форми слова).</div>
+            <div>
+                <br>
+                <a href="https://www.sketchengine.eu/wp-content/uploads/concordance2.png" target="_blank" rel="noopener">
+                    <img src="https://www.sketchengine.eu/wp-content/uploads/concordance2.png" alt="" width="1263" height="699" loading="lazy">
+                </a>
+                <br><br>
+            </div>
+        </div>
+    </li>
+</ul>

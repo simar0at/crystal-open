@@ -21,10 +21,29 @@
         onFavouriteToggleClick(evt){
             let page = this.store.getResultPageObject()
             if (this.isFavourite){
-                this.isFavourite = !this.isFavourite
                 UserDataStore.togglePageFavourites(false, page)
             } else{
-              Dispatcher.trigger("openDialog", {
+                if(UserDataStore.data.pages_favourites.length < UserDataStore.PAGES_SIZE.pages_favourites){
+                    this.openLabelDialog()
+                } else {
+                     Dispatcher.trigger("openDialog", {
+                        content: _("favouritesLimitReach", [UserDataStore.PAGES_SIZE.pages_favourites]),
+                        small: true,
+                        buttons: [{
+                            label: _("save"),
+                            onClick: (dialog, modal) => {
+                                modal.close()
+                                this.openLabelDialog()
+                            }
+                        }]
+                    })
+                }
+            }
+        }
+
+        openLabelDialog(){
+            let page = this.store.getResultPageObject()
+            Dispatcher.trigger("openDialog", {
                 title: _("addToFavourite"),
                 tag: "ui-input",
                 small: true,
@@ -48,8 +67,7 @@
                     maxlength: this.LABEL_SIZE,
                     placeholder: _("addFavouriteLabel")
                 }
-              })
-            }
+            })
         }
 
         this.on("update", this.updateAttributes)

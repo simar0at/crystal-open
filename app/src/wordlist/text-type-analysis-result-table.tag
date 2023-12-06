@@ -336,7 +336,7 @@
                 label: countLabel,
                 num: true,
                 formatter: window.Formatter.num.bind(Formatter),
-                tooltip: "t_id:wl_r_" + this.data.wlsort
+                tooltip: "t_id:wl_r_" + this.data.wlsort.split(":")[0]
             })
 
             this.colMeta.push({

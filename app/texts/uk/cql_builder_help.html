@@ -1,0 +1,80 @@
+Дізнайтесь про CQL на <a href="https://www.sketchengine.eu/documentation/corpus-querying/" target="_blank">нашому сайті</a> або на нашому <a href="https://www.youtube.com/playlist?list=PLPVgp0Xm6hWBLZzD7haCVbhC9pSfWZk1S" target="_blank">каналі на YouTube</a>.
+<br><br>
+
+<h5>Приклади</h5>
+<table class="material-table">
+    <tr>
+        <td>
+            іменник на певній відстані від дієслова
+        </td>
+        <td class="monospace">
+            [tag="N.*"] [ ]{0,3} [tag="V.*"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            іменник та дієслово з лише одним токеном між ними
+        </td>
+        <td class="monospace">
+            [tag="N.*"] [ ] [tag="V.*"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            іменник на певній відстані від дієслова всередині одного й того ж речення
+        </td>
+        <td class="monospace">
+            [tag="N.*"] [ ]{0,3} [tag="V.*"] всередині <s/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            великий собака або вовк
+        </td>
+        <td class="monospace">
+            ([lc="великий"] [lc="собака])|[lc="вовк"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            великий собака або великий вовк
+        </td>
+        <td class="monospace">
+            [lc="великий"] [lc="собака|вовк"]
+        </td>
+    </tr>
+</table>
+<br><br>
+
+
+<h5>Поширені помилки</h5>
+<table class="material-table">
+    <thead>
+        <tr>
+            <th>помилка</th>
+            <th>виправлення</th>
+            <th>пояснення</th>
+        </tr>
+    </thead>
+
+    <tr>
+        <td class="monospace">[lemma="діти"]</td>
+        <td class="monospace">[lemma="дитина"]</td>
+        <td>діти — це не лема</td>
+    </tr>
+    <tr>
+        <td class="monospace">[word="Привіт!"]</td>
+        <td class="monospace">[word="Привіт"] [word="\!"]</td>
+        <td>пунктуація є окремим токеном, і її треба уникати</td>
+    </tr>
+    <tr>
+        <td class="monospace">[word="Привіт "]</td>
+        <td class="monospace">[word="Привіт"]</td>
+        <td>токени не можуть містити пробіли</td>
+    </tr>
+    <tr>
+        <td class="monospace">[tag="V.*"] [] [lc="вештатися"] всередині &lt;s&gt;</td>
+        <td class="monospace">[tag="V.*"] [] [lc="вештатися"] всередині &lt;s/&gt;</td>
+        <td>структурі потрібен параметр «Цілий», що дозволяє працювати з параметрами «всередині» та «містить»</td>
+    </tr>
+</table>

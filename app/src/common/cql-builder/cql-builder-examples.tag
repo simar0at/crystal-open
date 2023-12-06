@@ -101,6 +101,8 @@
                         fromp: 1,
                         pagesize: 10,
                         structs: "",
+                        attrs: "word",
+                        viewmode: "kwic",
                         concordance_query: [{
                             queryselector: "cqlrow",
                             cql: cql

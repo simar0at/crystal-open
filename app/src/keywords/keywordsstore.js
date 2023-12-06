@@ -554,7 +554,7 @@ class KeywordsStoreClass extends FeatureStoreMixin {
             message: function(prefix, payload){
                 if (payload.error) {
                     this._stopBgJobInterval(prefix)
-                    SkE.showError(_("bj.bgJobFailedToRun", [payload.error]))
+                    SkE.showError(_("bj.bgJobFailedToRun", [`<a href="mailto:${window.config.links.supportMail}">${_("bj.contactTheSupport")}</a>`]) + "<br><br>" + payload.error)
                 } else if (payload.signal) {
                     let signal = JSON.parse(payload.signal)[0]
                     if(payload.signal == "[]" || (signal.progress == 100 && signal.status[0] != "err")){
@@ -564,7 +564,7 @@ class KeywordsStoreClass extends FeatureStoreMixin {
                         delete this.data[prefix + "_jobid"]
                         this._stopBgJobInterval(prefix)
                         let superUserError = signal.stderr ? ("\n\n" + signal.stderr) : ""
-                        SkE.showError(_("bj.bgJobFailed"), signal.status[1] + superUserError)
+                        SkE.showError(_("bj.bgJobFailed", [`<a href="mailto:${window.config.links.supportMail}">${_("bj.contactTheSupport")}</a>`]) + "<br><br>" + signal.status[1] + superUserError)
                         this.updateResultTag(prefix)
                     } else {
                         if(this.data[prefix + "_raw"]){

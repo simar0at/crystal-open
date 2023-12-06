@@ -292,7 +292,7 @@
             }
             filter[queryselector] = this.formValue[valueField]
             if(filfposIsSentence){
-                if(filfpos == "kwic"){
+                if(filfpos == "kwic" || filfpos == 0){
                     filter.filfpos = -1 * direction
                 } else {
                     filter.filfpos = filfpos - 1 * direction * -Math.sign(filfpos)
@@ -301,7 +301,7 @@
                 filter.filfpos += ":s"
             }
             if(filtposIsSentence){
-                if(filtpos == "kwic"){
+                if(filtpos == "kwic" || filtpos == 0){
                     filter.filtpos = 1 * direction
                 } else {
                     filter.filtpos = filtpos + 1 * direction * Math.sign(filtpos)

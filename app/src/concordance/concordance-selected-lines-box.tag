@@ -16,12 +16,12 @@
                     {_("showOnly")}
                 </label>
                 <div>
-                    <button class="btn" onclick={onShowSelectedClick}>
+                    <a class="btn" href={urlSelectedLines}>
                         {_("selected")} ({store.selectedLines.length})
-                    </button>
-                    <button class="btn" onclick={onShowNotSelectedClick}>
+                    </a>
+                    <a class="btn" href={urlNotSelectedLines}>
                         {_("notSelected")}
-                    </button>
+                    </a>
                 </div>
             </div>
             <div>
@@ -40,31 +40,6 @@
         require("./concordance-selected-lines-box.scss")
 
         this.mixin("feature-child")
-
-
-        onShowSelectedClick(evt){
-            evt.preventUpdate = true
-            this.filter("p")
-        }
-
-        onShowNotSelectedClick(evt){
-            evt.preventUpdate = true
-            this.filter("n")
-        }
-
-        filter(pn){
-            let cql = "[" + this.store.selectedLines.map(line => { return "#" + line.toknum}).join("|") + "]"
-            this.store.filter({
-                pnfilter: pn,
-                queryselector: "cqlrow",
-                desc: cql,
-                cql: cql,
-                filfpos: 0,
-                filtpos: 0,
-                inclkwic:true
-            })
-            this.onDeselectAllClick()
-        }
 
         onCopyClick(){
             let text = this.store.selectedLines.reduce((str, line) => {
@@ -93,6 +68,30 @@
             $(".tr .td_chb input[type='checkbox']").prop("checked", selected)
             $(".result-table .tbody > .tr").toggleClass("selected", selected)
         }
+
+        getUrl(pn){
+            let cql = "[" + this.store.selectedLines.map(line => { return "#" + line.toknum}).join("|") + "]"
+            let filterOperation = this.store._createOperationsFromFilters([{
+                pnfilter: pn,
+                queryselector: "cqlrow",
+                desc: cql,
+                cql: cql,
+                filfpos: 0,
+                filtpos: 0,
+                inclkwic:true
+            }])
+            let operations = [].concat(this.store.data.operations, filterOperation)
+            let data = Object.assign({}, this.data, {
+                page: 1,
+                operations: operations
+            })
+            return this.store.getUrlToResultPage(data)
+        }
+
+        this.on("update", () => {
+            this.urlSelectedLines = this.getUrl("p")
+            this.urlNotSelectedLines = this.getUrl("n")
+        })
 
         this.on("updated", () => {
             if(this.store.selectedLines.length){

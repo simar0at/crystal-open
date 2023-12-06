@@ -391,6 +391,9 @@
                     if(!token.strc && !lastToken.strc && token.coll === lastToken.coll && token.color === lastToken.color){
                         arr[arr.length-1].str += " " + token.str
                     } else {
+                        if(token.str && lastToken.str){
+                            token.str = " " + token.str
+                        }
                         arr.push(token)
                     }
                 }
@@ -402,7 +405,7 @@
             this.isRTL = Localization.getDirection() == "rtl" && this.corpus.righttoleft
             this.showResultsFrom = (this.data.page - 1) * this.data.itemsPerPage
             this.hasAttributes = this.data.attrs.split(",").length > 1
-            this.hasContextAttributes =  this.hasAttributes && this.data.attr_allpos == "all"
+            this.hasContextAttributes = this.hasAttributes && this.data.attr_allpos == "all"
             this.lngroup2label = AnnotationStore.lngroup2label
             if(this.hasContextAttributes){
                 this.items = this.data.items
@@ -411,6 +414,9 @@
                 this.items.forEach(item => {
                     item.Left = this.getContextReducedItems(item.Left)
                     item.Right = this.getContextReducedItems(item.Right)
+                    if(!this.hasAttributes || this.data.attr_allpos != "kw"){
+                        item.Kwic = this.getContextReducedItems(item.Kwic)
+                    }
                 }, this)
             }
             let showRefsLeft            = !this.data.refs_up || this.data.refs === ""

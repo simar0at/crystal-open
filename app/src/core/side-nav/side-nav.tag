@@ -1,7 +1,7 @@
 <side-nav onmouseenter={onmouseenter} onmouseleave={onmouseleave}>
     <ul id="side-nav" class="sidenav fixed no-autoinit {right-aligned: isRTL}">
         <li id="navMain">
-            <a href={isAnonymous && !corpus ? "#open" : "#dashboard"} class="{noSkeLogo: window.config.NO_SKE}">
+            <a href={logoLink} class="{noSkeLogo: window.config.NO_SKE}">
                 <span class="logo"></span>
             </a>
         </li>
@@ -19,7 +19,7 @@
         <li each="{link in menuLinks}"
                 class="feature {'disabled tooltipped': link.disabled}"
                 data-page="{link.page}"
-                data-tooltip={link.disabled ? (link.tooltip ? link.tooltip : _("db.featureNotAvailable")) : null}>
+                data-tooltip={getLinkTooltip(link)}>
             <a href="#{link.href}" id="side_nav_btn{link.page}" class="sidenav-close" onclick={parent.onLinkClick}>
                 <i class="small {link.class}">{link.icon}</i>
                 <span class="linkText">{getLabel(link)}</span>
@@ -60,64 +60,74 @@
                     page: "wordsketch",
                     label: "Word Sketch",
                     class: "ske-icons skeico_word_sketch",
-                    disabled: !this.features.wordsketch || !p.wordsketch
+                    disabled: !this.features.wordsketch
                 },
                 {
                     page: "sketchdiff",
                     labelId: "sketchdiff",
                     class: "ske-icons skeico_word_sketch_difference",
-                    disabled: !this.features.sketchdiff || !p.sketchdiff
+                    disabled: !this.features.sketchdiff
                 },
                 {
                     page: "thesaurus",
                     labelId: "thesaurus",
                     class: "ske-icons skeico_thesaurus",
-                    disabled: !this.features.thesaurus || !p.thesaurus
+                    disabled: !this.features.thesaurus
                 },
                 {
                     page: "concordance",
                     labelId: "concordance",
                     class: "ske-icons skeico_concordance",
-                    disabled: !this.features.concordance || !p.concordance
+                    disabled: !this.features.concordance
                 },
                 {
                     page: "parconcordance",
                     labelId: "parconcordance",
                     class: "ske-icons skeico_parallel_concordance",
                     tooltip: "t_id:d_parconc_inactive",
-                    disabled: !this.features.parconcordance || !p.parconcordance
+                    disabled: !this.features.parconcordance
                 },
                 {
                     page: "wordlist",
                     labelId: "wordlist",
                     class: "ske-icons skeico_word_list",
-                    disabled: !this.features.wordlist || !p.wordlist
+                    disabled: !this.features.wordlist
                 },
                 {
                     page: "ngrams",
                     labelId: "ngrams",
                     class: "ske-icons skeico_n_grams",
-                    disabled: !this.features.ngrams || !p.ngrams
+                    disabled: !this.features.ngrams
                 },
                 {
                     page: "keywords",
                     labelId: "keywords",
                     class: "ske-icons skeico_keywords",
-                    disabled: !this.features.keywords || !p.keywords
+                    disabled: !this.features.keywords
                 },
                 {
                     page: "trends",
                     labelId: "trends",
                     class: "ske-icons skeico_trends",
-                    disabled: !this.features.trends || !p.trends
+                    disabled: !this.features.trends
                 }
             ].map(obj => {
                 obj.href = obj.page
                 if(this.corpus && (obj.page == "dashboard" || this.features[obj.page])){
                     obj.href +=  "?corpname=" + this.corpus.corpname
                 }
+                obj.available = !isDef(p[obj.page]) || p[obj.page]
+                obj.disabled = obj.disabled || !obj.available
                 return obj
-            }, this)
+            }, this).sort((a, b) => {
+                if(a.available && !b.available){
+                    return -1
+                } else if(!a.available && b.available){
+                    return 1
+                } else {
+                    return 0
+                }
+            })
         }
 
         updateAttributes(){
@@ -127,6 +137,7 @@
             this.actualFeature = Router.getActualFeature()
             this.corpus = AppStore.get('corpus')
             this.features = AppStore.get('features')
+            this.logoLink = window.config.LOGO_LINK_URL || (this.isAnonymous && !this.corpus ? "#open" : "#dashboard")
             this.updateMenuLinks()
         }
         this.updateAttributes()
@@ -195,6 +206,19 @@
                 onOpenStart: () => {$("#side-nav").addClass("open")},
                 onCloseEnd: () => {$("#side-nav").removeClass("open")}
             })
+        }
+
+        getLinkTooltip(link){
+            if(!link.available){
+                return _("NAInNoSke", ['<a target="_blank" href="https://sketchengine.eu">Sketch Engine</a>'])
+            }
+            if(link.disabled){
+                if(link.tooltip){
+                    return link.tooltip
+                }
+                return _("db.featureNotAvailable")
+            }
+            return null
         }
 
         this.on('update', this.updateAttributes)

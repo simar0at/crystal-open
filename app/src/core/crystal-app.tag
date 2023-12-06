@@ -6,6 +6,9 @@
     <header-navbar></header-navbar>
     <side-nav></side-nav>
     <page-router></page-router>
+    <div if={config.CUSTOM_FOOTER} class="footer">
+        <raw-html content={config.CUSTOM_FOOTER}></raw-html>
+    </div>
 
     <script>
         require('./crystal-app.scss')

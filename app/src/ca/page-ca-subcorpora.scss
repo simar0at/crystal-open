@@ -13,6 +13,33 @@
         }
     }
     table{
+        tr{
+            &.saving{
+                position: relative;
+                td:first-child::before{
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    top: 0;
+                    bottom: 0;
+                    background-color: #ffffffe8;
+                    line-height: 100%;
+                    z-index: 500;
+                }
+                td:first-child::after{
+                    content: 'saving...';
+                    position: absolute;
+                    transform: translateX(-50%) translateY(-50%);
+                    left: 50%;
+                    top: 50%;
+                    color: #6e6e6e;
+                    z-index: 501;
+                    font-size: 1.3rem;
+                    text-transform: uppercase;
+                }
+            }
+        }
         th{
             text-transform: capitalize;
             &:not(:first-child){
@@ -20,6 +47,10 @@
             }
         }
         td{
+            .ui-input,
+            .input-field{
+                margin: 0;
+            }
             &:last-child{
                 white-space: nowrap;
             }

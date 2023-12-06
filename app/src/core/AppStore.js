@@ -468,6 +468,31 @@ class AppStoreClass extends StoreMixin {
         }.bind(this, request), 1500)
     }
 
+    renameSubcorpus(corpname, subcorp_id, name){
+        let subcorpus = this.data.corpus.subcorpora.find(s => s.n == subcorp_id)
+        subcorpus.isSaving = true
+        Connection.get({
+            url: window.config.URL_BONITO + "subcorp_rename",
+            data: {
+                corpname: corpname,
+                subcorp_id: subcorp_id,
+                new_subcorp_name: name
+            },
+            done: function(subcorpus, name, payload){
+                subcorpus.name = name
+                this.data.subcorpora.find(s => s.value == subcorpus.n).label = name
+                SkE.showToast(_("suborpusRenamed"))
+            }.bind(this, subcorpus, name),
+            fail: function(){
+                SkE.showToast(_("suborpusRenameFail"))
+            },
+            always: function(subcorpus){
+                delete subcorpus.isSaving
+                this.trigger("subcorpusRenameDone", subcorpus)
+            }.bind(this, subcorpus)
+        })
+    }
+
     deleteSubcorpus(subcname){
         Connection.get({
             url: window.config.URL_BONITO + "subcorp",
@@ -484,6 +509,11 @@ class AppStoreClass extends StoreMixin {
                 SkE.showToast(_("subcorpusDeleteFail", [payload.error]), {duration: 10000})
             }
         })
+    }
+
+    getSubcorpusName(subcorp_id){
+        let subcorp = this.data.corpus.subcorpora.find(s => s.n == subcorp_id)
+        return subcorp ? subcorp.name : subcorp_id
     }
 
     changeActualFeatureStore(store){
@@ -867,7 +897,7 @@ class AppStoreClass extends StoreMixin {
             let sl = payload.subcorpora || []
             for (let i = 0; i < sl.length; i++) {
                 this.data.subcorpora.push({
-                    label: sl[i].n,
+                    label: sl[i].name,
                     value: sl[i].n,
                     struct: sl[i].struct,
                     query: sl[i].query
