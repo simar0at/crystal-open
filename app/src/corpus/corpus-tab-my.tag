@@ -1,26 +1,30 @@
 <corpus-tab-my class="corpus-tab-my">
-    <preloader-spinner if={!corpusListLoaded}></preloader-spinner>
+    <preloader-spinner if={!corpusListLoaded} center=1></preloader-spinner>
     <div class="tab-content card-content">
-        <div class="controlBar">
-            <div class="col s12">
-                <ui-input riot-value={searchQuery}
-                        class="fuzzy-input"
-                        placeholder={_("cp.filterByName")}
-                        inline={true}
-                        white=1
-                        size=15
-                        ref="filter"
-                        floating-dropdown={true}
-                        on-input={onQueryChangeDebounced}
-                        suffix-icon={searchQuery !== "" ? "close" : ""}
-                        on-suffix-icon-click={onSuffixIconClick}>
-                </ui-input>
-                <a href="#ca-create" if={window.permissions["ca-create"]}
-                        class="btn btn-primary tooltipped right"
-                        data-tooltip={_("ca.newCorpusDesc")}>
-                    {_("newCorpus")}
-                </a>
-            </div>
+        <div class="controlBar mb-4">
+            <ui-input riot-value={searchQuery}
+                    class="fuzzy-input"
+                    placeholder={_("cp.filterByName")}
+                    inline={true}
+                    white=1
+                    size=15
+                    ref="filter"
+                    floating-dropdown={true}
+                    on-input={onQueryChangeDebounced}
+                    suffix-icon={searchQuery !== "" ? "close" : ""}
+                    on-suffix-icon-click={onSuffixIconClick}>
+            </ui-input>
+            <span class="spaceLimit">
+                Your total storage: {window.Formatter.num(space.total / 1000000)} million words ({space.percent}% used
+                <i class="material-icons material-clickable tooltipped sizeTooltipIcon"
+                        data-tooltip="t_id:corp_sizes">help_outline</i>).
+                <a href="{window.config.URL_RASPI}#account/overview">{_("getMoreSpace")}</a>
+            </span>
+            <a href="#ca-create" if={window.permissions["ca-create"]}
+                    class="btn btn-primary tooltipped btnNewCorpus"
+                    data-tooltip={_("ca.newCorpusDesc")}>
+                {_("newCorpus")}
+            </a>
         </div>
         <table if={corpusListLoaded} class="table material-table highlight myseltab">
             <thead>
@@ -128,6 +132,7 @@
         }
         this.showLimit = 60
         this.searchQuery = ""
+        this.space = Auth.getSpace()
 
         this.mixin("tooltip-mixin")
 

@@ -1593,7 +1593,7 @@
     "showLess": "mostra meno",
     "showMore": "mostra più (%{0})",
     "showTT": "Mostra tipi di testo",
-    "numOfTT": "Numero dei tipi di testo",
+    "numOfTT": "Massimo tipi di testo",
     "concordanceBasicsYT": "Nozioni di base su Concordanze su YouTube",
     "addFavouriteLabel": "#tag o descrizione",
     "labelActions": "Aggiungi/Modifica/Rimuovi etichetta",
@@ -1693,7 +1693,6 @@
     "an.senseDesc": "Definizione del significato",
     "an.fin": "modo finito",
     "an.inf": "modo indefinito",
-    "an.skemaConfig": "Configurazione di Skema",
     "small": "Piccolo",
     "large": "Grande",
     "mr": "Conteggio recensioni",
@@ -1781,5 +1780,10 @@
     "NAInNoSkeP": "Stai usando NoSketch Engine. Questi strumenti sono disponibili solamente in %{0}",
     "suborpusRenamed": "Il subcorpus è stato rinominato.",
     "suborpusRenameFail": "Non è possibile rinominare il subcorpus.",
-    "tabInPassWarn": "La password non deve contenere un TAB. Per favore, scegli una password differente."
+    "tabInPassWarn": "La password non deve contenere un TAB. Per favore, scegli una password differente.",
+    "hp.bibliographyTitle": "Bibliografia",
+    "hp.bibliographyDesc": "Bibliografia su Sketch Engine",
+    "outdatedTagset": "Il tagset del tuo corpus è obsoleto. Per favore, valuta un aggiornamento alla versione più recente.",
+    "outdatedTerms": "I dati delle parole chiave nel tuo corpus sono obsoleti. Per utilizzare parole chiave, per favore, prima ricompila il tuo corpus.",
+    "showAllLanguages": "Mostra tutte le lingue"
 }

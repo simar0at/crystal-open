@@ -372,12 +372,12 @@ class FeatureStoreMixin extends StoreMixin{
         }
     }
 
-    showEmptyResultMessage(){
+    showEmptyResultMessage(message, title){
         Dispatcher.trigger("openDialog", {
             id: "searchEmptyDialog",
-            title: _("nothingFound"),
+            title: title || _("nothingFound"),
             small: true,
-            content: _("nothingFoundDesc"),
+            content: message || _("nothingFoundDesc"),
             onClose: () => {
                 $(".mainFormField:visible")
                     .find("input[type=text], input[type=file], textarea, select, .ui-list-list")

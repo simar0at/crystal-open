@@ -537,6 +537,7 @@
                     onClick: function(dialog, modal){
                         this.seedWords = this.seedWords.concat(dialog.contentTag.selection)
                         this.seedWords = [...new Set(this.seedWords)] // remove duplicities
+                        this.seedChips = [].concat(this.seedWords) // copy array
                         this.refs.seeds.update()
                         this.refreshGoDisabled()
                         modal.close()

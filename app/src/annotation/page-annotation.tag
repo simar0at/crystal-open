@@ -907,7 +907,7 @@
 
         query_annot_url(conc) {
             return location.origin + "#concordance?corpname="
-                    + this.corpname + "&annotconc=" + (conc ? encodeURI(conc) : this.query.conc)
+                    + this.corpname + "&annotconc=" + (conc ? encodeURIComponent(conc) : this.query.conc)
                     + "&showresults=1"
                     + "&gdex_enabled=" + ConcordanceStore.data.gdex_enabled
                     + "&gdexconf=" + ConcordanceStore.data.gdexconf

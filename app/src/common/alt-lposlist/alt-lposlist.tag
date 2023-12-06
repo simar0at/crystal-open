@@ -8,40 +8,45 @@
         <i if={opts.alt_lposes.length != 0} class="material-icons">arrow_drop_down</i>
     </a>
     <ul id="alt_lposes" class="dropdown-content">
-        <li each={a in opts.alt_lposes} onclick={onClick}>
+        <li each={a in opts.alt_lposes}
+                class="{disabled: a.ws_status == 'not_in_wsposlist'} {tooltipped: a.ws_status == 'not_in_wsposlist'}"
+                data-tooltip={a.ws_status == "not_in_wsposlist" ? "t_id:not_in_wsposlist" : ""}
+                onclick={a.ws_status == "not_in_wsposlist" ? null : onClick}>
             <a>
                 {getLpos(a.pos)} {a.frq != -1 ? (format(a.frq) + "&times;") : ""}
             </a>
         </li>
     </ul>
     <script>
-    require("./alt-lposlist.scss")
+        require("./alt-lposlist.scss")
 
-    getLpos(lpos){
-        let str = this.opts.wspos_dict && this.opts.wspos_dict[lpos] || lpos
-        return _(str, {"_": str})
-    }
+        this.mixin("tooltip-mixin")
 
-    onClick(event) {
-        if (isFun(this.opts.onClick)){
-            this.opts.onClick(event.item.a.pos);
+        getLpos(lpos){
+            let str = this.opts.wspos_dict && this.opts.wspos_dict[lpos] || lpos
+            return _(str, {"_": str})
         }
-    }
 
-    format(x) {
-        return window.Formatter.num(x)
-    }
+        onClick(event) {
+            if (isFun(this.opts.onClick)){
+                this.opts.onClick(event.item.a.pos);
+            }
+        }
 
-    initDropdown(){
-        initDropdown('.al-dropdown', this.root, {
-            constrainWidth: false,
-            coverTrigger: false,
-            alignment: "right"
-        })
-    }
+        format(x) {
+            return window.Formatter.num(x)
+        }
 
-    this.on("updated",  this.initDropdown)
+        initDropdown(){
+            initDropdown('.al-dropdown', this.root, {
+                constrainWidth: false,
+                coverTrigger: false,
+                alignment: "right"
+            })
+        }
 
-    this.on("mount", this.initDropdown)
+        this.on("updated",  this.initDropdown)
+
+        this.on("mount", this.initDropdown)
     </script>
 </alt-lposlist>

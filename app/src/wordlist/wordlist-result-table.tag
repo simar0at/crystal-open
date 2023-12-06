@@ -66,37 +66,49 @@
 
         getFeatureLinkParams(feature, item, evt, linkObj){
             let options = this.data
-            let attr = options.viewAs == 1 ? options.find : options.wlstruct_attr1
-            let lpos = this.data.lpos ? this.data.lpos : ""
-            let lemma = isDef(item.str) ? item.str : item.Word[0].n
-            if(attr == "lempos"){
-                let idx = lemma.lastIndexOf("-")
-                if(idx != -1){
-                    lpos = lemma.substr(idx)
-                    lemma = lemma.substr(0, idx)
+            let attr, lemma, lpos
+            if(this.data.histid){
+                let idx = item.word.lastIndexOf("-")
+                lemma = item.word.substr(0, idx)
+                lpos = item.word.substr(idx)
+                attr = "lempos"
+            } else {
+                attr = options.viewAs == 1 ? options.find : options.wlstruct_attr1
+                lpos = this.data.lpos ? this.data.lpos : ""
+                lemma = isDef(item.str) ? item.str : item.Word[0].n
+                if(attr == "lempos"){
+                    let idx = lemma.lastIndexOf("-")
+                    if(idx != -1){
+                        lpos = lemma.substr(idx)
+                        lemma = lemma.substr(0, idx)
+                    }
                 }
             }
-
             if(feature == "concordance"){
-                let cql = ""
-                let attrs = ""
-                let esc = window.escapeCharacters
-                let specChars = '"\\'
-                if(item.Word){
-                    if(options.wlstruct_attr1 != options.wlattr
-                                && options.wlstruct_attr2 != options.wlattr
-                                && options.wlstruct_attr3 != options.wlattr){
-                        // add wlattr if its not in showed columns
-                        attrs = `${options.wlattr}="${this.store.getWlpat()}"`
+                let cql
+                if(this.data.histid){
+                    cql = `[lempos=="${item.word}"]`
+                } else {
+                    cql = ""
+                    let attrs = ""
+                    let esc = window.escapeCharacters
+                    let specChars = '"\\'
+                    if(item.Word){
+                        if(options.wlstruct_attr1 != options.wlattr
+                                    && options.wlstruct_attr2 != options.wlattr
+                                    && options.wlstruct_attr3 != options.wlattr){
+                            // add wlattr if its not in showed columns
+                            attrs = `${options.wlattr}="${this.store.getWlpat()}"`
+                        }
+                        item.Word.forEach((w, i) => {
+                            attrs += attrs ? " & " : ""
+                            attrs += `${options["wlstruct_attr" + (i + 1)]}=="${esc(w.n,specChars)}"`
+                        })
+                    } else{
+                        attrs = `${options.wlattr}=="${esc(item.str,specChars)}${esc(options.lpos,specChars)}"`
                     }
-                    item.Word.forEach((w, i) => {
-                        attrs += attrs ? " & " : ""
-                        attrs += `${options["wlstruct_attr" + (i + 1)]}=="${esc(w.n,specChars)}"`
-                    })
-                } else{
-                    attrs = `${options.wlattr}=="${esc(item.str,specChars)}${esc(options.lpos,specChars)}"`
+                    cql = `[${attrs}]`
                 }
-                cql = `[${attrs}]`
 
                 return {
                     tab: 'advanced',
@@ -197,7 +209,8 @@
                 class: "frq",
                 label: _("frequency"),
                 num: true,
-                formatter: window.Formatter.num.bind(Formatter)
+                formatter: window.Formatter.num.bind(Formatter),
+                tooltip: "t_id:frequency"
             })
             if(this.data.showratio){
                 this.colMeta.push({
@@ -205,18 +218,21 @@
                     class: "ratio",
                     label: _("ratio"),
                     num: true,
-                    formatter: formatter.bind(this, 4)
+                    formatter: formatter.bind(this, 4),
+                    tooltip: "t_id:wl_r_ratio"
                 })
             }
             if(this.data.showrank){
                 this.colMeta.push({
                     id: "rank",
-                    class: "rank",
+                    class: "rank addPercSuffix",
                     label: _("rank"),
                     num: true,
-                    formatter: formatter.bind(this, 5)
+                    formatter: val => {return formatter(5, val * 100)},
+                    tooltip: "t_id:wl_r_percentile"
                 })
             }
+            this.addMenuColumn()
         }
 
         setColMetaStructWordlist(){

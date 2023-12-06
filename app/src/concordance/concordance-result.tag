@@ -170,7 +170,7 @@
     <div class="td td_refs">
         <span class="refsUp">
             <a class="btn btn-flat btn-floating lineDetail t_lineDetail">
-                <i class="material-icons medium" data-tooltip={_("lineDetailsTip")}>info_outline</i>
+                <i class="material-icons color-blue-200" data-tooltip={_("lineDetailsTip")}>info_outline</i>
             </a>
             <span if={parent.data.refs !== ""}
                     class="refsUpValues"
@@ -198,7 +198,7 @@
 </concordance-result-refs-row>
 
 <concordance-result class={concordance-result: true,
-            fullContext: data.fullcontext,
+            fullContext: data.fullcontext && data.viewmode == "kwic",
             directionRTL: corpus.righttoleft,
             directionLTR: !corpus.righttoleft,
             hasAttributes: hasAttributes,
@@ -431,17 +431,20 @@
         }
         this.updateAttributes()
 
-        onKwicClick(item){
+        onKwicClick(item, evt){
             let toknum = item.toknum
             $(".tr.kwicDetailDisplayed", this.root).toggleClass("kwicDetailDisplayed", false) //in case detail was opened and user click another row
             this.toggleRowHighlight(toknum, true)
-            Dispatcher.trigger("concordanceShowDetail",{
-                kwic: true,
-                toknum: toknum,
-                hitlen: item.hitlen,
+            Dispatcher.trigger("concordanceShowDetail", {
+                cols: [{
+                    corpname: this.store.corpus.corpname,
+                    toknum: toknum,
+                    hitlen: item.hitlen
+                }],
+                corpname: this.store.corpus.corpname,
                 structs: this.store.getStructs(),
                 onClose: this.toggleRowHighlight.bind(this, toknum, false)
-            })
+            }, evt)
         }
 
         onRefClick(evt){

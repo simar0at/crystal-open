@@ -1445,7 +1445,6 @@
     "an.annotationActive": "Anotační mód je zapnutý",
     "an.annotSuccess": "Anotace uložena",
     "an.annotations": "Anotace",
-    "an.skemaConfig": "Konfigurace Skema",
     "an.annotSortLabels": "Seřadit podle štítků",
     "an.annotRemoved": "Anotace odstraněna",
     "an.annotconcLabel": "Jméno anotace",
@@ -1582,7 +1581,7 @@
     "showMore": "ukázat více (%{0})",
     "showLess": "ukázat méně",
     "showTT": "Ukázat typy textů",
-    "numOfTT": "Počet typů textů",
+    "numOfTT": "Maximální počet typů textů",
     "concordanceBasicsYT": "Základy konkordance na YouTube",
     "concordanceCQLYT": "Základy CQL na YouTube",
     "addFavouriteLabel": "#značka nebo popisek",
@@ -1780,5 +1779,15 @@
     "NAInNoSke": "Používáte NoSketch Engine. Tento nástroj je k dispozici pouze ve %{0}",
     "opts.cookies": "Nastavení souborů cookie",
     "suborpusRenameFail": "Subkorpus nebylo možné přejmenovat.",
-    "suborpusRenamed": "Subkorpus byl přejmenován."
+    "suborpusRenamed": "Subkorpus byl přejmenován.",
+    "tabInPassWarn": "Heslo nesmí obsahovat znak tabulátoru. Zvolte prosím jiné heslo.",
+    "outdatedTagset": "Tagset vašeho korpusu je zastaralý. Zvažte prosím aktualizaci na nejnovější verzi.",
+    "outdatedTerms": "Extrakce Klíčových slov ve vašem korpusu je zastaralá. Chcete-li extrahovat Klíčová slova, nejprve svůj korpus překompilujte.",
+    "showAllLanguages": "Zobrazit všechny jazyky",
+    "hp.bibliographyTitle": "Bibliografie",
+    "hp.bibliographyDesc": "Publikace o Sketch Engine",
+    "lowFreq": "Frekvence lemposu \"%{0}\" je příliš nízká na to, aby bylo možné identifikovat reprezentativní word sketch.",
+    "hp.showKeyboardShortcuts": "Zobrazit tuto nápovědu (**K**lávesové zkratky)",
+    "noWsketchFor": "Žádné word sketch pro lempos \"%{0}\".",
+    "couldNotLoadTranslations403": "Překlady se nepodařilo načíst. Nemáte přístup k zarovnanému korpusu (%{0})."
 }

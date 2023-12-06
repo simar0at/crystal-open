@@ -243,6 +243,7 @@
                 position: relative;
                 &.ctd{
                     min-width: 30vw;
+                    border-right: 1px solid $blue-100;
                 }
                 &.noKWIC{
                     .subtdc{
@@ -255,7 +256,6 @@
                 }
             }
             .th{
-                white-space: nowrap;
                 font-weight: normal;
             }
             .subtdc, .subtdl, .subtdr {

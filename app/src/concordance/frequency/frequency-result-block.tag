@@ -97,7 +97,7 @@
             })
 
             if(this.store.f_showRelFrqAndPerc()){
-                if(this.data.f_showrelfrq){
+                if(this.data.f_showrelfrq && this.isConcordanceComplete){
                     this.colMeta.push({
                         id: "relfrq",
                         "class": "relColumn",
@@ -119,7 +119,7 @@
                 }
             }
 
-            if(this.store.f_showRelTtAndRelDens()){
+            if(this.store.f_showRelTtAndRelDens() && this.isConcordanceComplete){
                 if(this.data.f_showreltt){
                     this.colMeta.push({
                         id: "reltt",
@@ -152,7 +152,7 @@
                 }
             }
 
-            this.colMeta.push({
+            this.isConcordanceComplete && this.colMeta.push({
                 id: "bar",
                 "class": "barColumn",
                 label: "",
@@ -183,6 +183,7 @@
         updateAttributes(){
             this.blockItems = this.block.Items.slice((this.block.page - 1) * this.block.itemsPerPage, this.block.page * this.block.itemsPerPage)
             this.showCheckboxes = this.opts.block.Head.filter(h => isDef(h.id)).length == 1
+            this.isConcordanceComplete = this.data.total == this.data.fullsize
             this.refreshColMeta()
         }
         this.updateAttributes()

@@ -38,6 +38,7 @@ require('rtl.scss')
 require('highcontrast.scss')
 require('corpus/CorpusStore.js')
 require('core/permissions.js')
+window.stores.userDataStore = require('core/UserDataStore.js').UserDataStore
 window.stores.app = require('core/AppStore.js').AppStore
 window.stores.texttypes = require('common/text-types/TextTypesStore.js').TextTypesStore
 window.stores.wordlist = require('wordlist/WordlistStore.js').WordlistStore

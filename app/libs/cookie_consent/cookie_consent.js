@@ -491,12 +491,9 @@ function SkE_CookieConsent(){
          #SkE_CC .ske_cc_switch_container {
             display: flex;
          }
-         #SkE_CC .ske_cc_switch_container > *{
-            line-height: 50px;
-         }
          #SkE_CC .ske_cc_switch_info{
             color: #868686;
-            padding-left: 20px;
+            padding: 15px 0 15px 20px;
          }
          #SkE_CC .ske_cc_switch{
             min-height: 50px;
@@ -514,7 +511,7 @@ function SkE_CookieConsent(){
             color: #111;
             cursor: pointer;
             display: inline-block;
-            line-height: 50px;
+            padding: 15px 0;
          }
          #SkE_CC .ske_cc_switch input{
             opacity: 0;

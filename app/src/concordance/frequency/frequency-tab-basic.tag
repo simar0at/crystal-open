@@ -22,7 +22,6 @@
 
         this.mixin("feature-child")
 
-        this.hasLemma = !!AppStore.getAttributeByName("lemma")
         this.hasTags = !!AppStore.getAttributeByName("tag")
         this.hasPos = !!AppStore.getAttributeByName("pos")
 
@@ -52,7 +51,7 @@
                     labelId: "lemmaP",
                     tooltip: "t_id:conc_r_freq_lemmas_" + colSuffix,
                     href: this.store.f_getContextLink(ctx, "kwic", "lemma", "basic"),
-                    disabled: !this.hasLemma
+                    disabled: !this.store.corpus.hasLemma
                 }]
             }
         }

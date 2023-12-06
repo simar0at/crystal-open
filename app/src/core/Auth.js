@@ -10,6 +10,7 @@ class AuthClass{
         this.loadSession()
         Dispatcher.on("CHECK_SESSION_AND_REDIRECT", this.checkSessionAndRedirect.bind(this))
         Dispatcher.on("RELOAD_USER_SPACE", this.reloadUserSpace.bind(this))
+        Dispatcher.on("LOGOUT_AS", this.logoutAs.bind(this))
     }
 
     isLogged() {
@@ -168,8 +169,10 @@ class AuthClass{
     }
 
     logoutAs(){
-        this.loginAs(null)
-        Dispatcher.trigger("ROUTER_GO_TO", "dashboard")
+        if(this._session.emulated_user){
+            this.loginAs(null)
+            Dispatcher.trigger("ROUTER_GO_TO", "dashboard")
+        }
     }
 
     reloadUserSpace(){

@@ -131,9 +131,9 @@
 
             <div if={!hideBanner}
                     class="banner center-align">
-                <img src="images/lexicom_2022.png" width="320" loading="lazy" style="padding: 15px 0;">
-                <div class="mb-3">A 5-day workshop in lexicography and lexical computing. Registration open now!</div>
-                <a href="https://lexicom.courses/upcoming-lexicom/"
+                <img src="images/boot_camp.png" width="200" loading="lazy">
+                <div class="mb-3"> An online course in using Sketch Engine. Registration open!</div>
+                <a href="https://www.sketchengine.eu/bootcamp/boot-camp-online/"
                         class="btn"
                         target="_blank">Registration</a>
             </div>

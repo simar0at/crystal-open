@@ -32,16 +32,30 @@
         }
     }
     .controlBar{
-        & > div {
-            margin-bottom: -10px;
+        display: flex;
+        flex-wrap: wrap;
+        .fuzzy-input{
+            order: 1;
+            margin-right: auto;
+            margin-bottom: 0;
+        }
+        .spaceLimit{
+            order: 2;
+            line-height: 32px;
+        }
+        .btnNewCorpus{
+            order: 3;
+            margin-left: 20px;
         }
         .input-field {
             margin-top: 0;
         }
-        >.btn.right{
-            top: 4px;
-            padding-left: 10px;
-            position: relative;
+        @media (max-width: 1150px) {
+            .spaceLimit{
+                order: -1;
+                width: 100%;
+                text-align: right;
+            }
         }
     }
     .corpus-tab-advanced {
@@ -154,7 +168,16 @@
             cursor: pointer;
         }
     }
+    .corpus-tab-my{
+        & > .tab-content{
+            min-height: 40vh
+        }
+    }
     .corpus-tab-my, .corpus-tab-shared {
+        .sizeTooltipIcon{
+            font-size: 18px;
+            vertical-align: text-bottom;
+        }
         @media (max-width: 600px) {
             .tab-content{
                 padding: 5px;

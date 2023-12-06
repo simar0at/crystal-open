@@ -40,9 +40,9 @@
                                     data-tooltip={_("lineDetailsTip")}>
                             info_outline</i>&nbsp;
                             <span if={data.refs !== ""}
-                                    data-tooltip={(data.shorten_refs && data.refs !== "") ? item.ref : null}
+                                    data-tooltip={(data.shorten_refs) ? item.ref : null}
                                     class="ref-label">
-                                {(data.refs !== "" && data.ref_size < item.ref.length) ?
+                                {(data.ref_size < item.ref.length) ?
                                   item.ref.substring(0,data.ref_size)+"..." : item.ref}
                             </span>
                         </span>
@@ -59,7 +59,7 @@
                                     style="{item.Left.length+item.Right.length ? 'white-space: nowrap' : ''}">
                                 <parconcordance-result-items data={item.Kwic}
                                         class="t_kwic kwicWrapper"
-                                        onclick={onKwicClick.bind(this, item)}></parconcordance-result-items>
+                                        onclick={onKwicClick.bind(this, item, idx, 0)}></parconcordance-result-items>
                             </div>
                             <div class="subtdr left-align"
                                     style="{item.Right.length ? 'width: 50%' : ''}">
@@ -83,7 +83,7 @@
                                     style="{al.Left.length+al.Right.length ? 'white-space: nowrap' : ''}">
                                 <parconcordance-result-items data={al.Kwic}
                                         class="t_kwic kwicWrapper"
-                                        onclick={onKwicClick.bind(this, al, idx2)}></parconcordance-result-items>
+                                        onclick={onKwicClick.bind(this, al, idx, idx2 + 1)}></parconcordance-result-items>
                             </div>
                             <div class="subtdr left-align _t"
                                     style="{al.has_no_kwic ? '' : 'width: 50%'}">
@@ -100,7 +100,7 @@
                                     class="t_leftContext"></parconcordance-result-items>
                             <parconcordance-result-items data={item.Kwic}
                                     class="t_kwic kwicWrapper"
-                                    onclick={onKwicClick.bind(this, item)}></parconcordance-result-items>
+                                    onclick={onKwicClick.bind(this, item, idx, 0)}></parconcordance-result-items>
                             <parconcordance-result-items data={item.Right}
                                      class="t_rightContext"></parconcordance-result-items>
                         </div>
@@ -114,7 +114,7 @@
                                      class="t_leftContext"></parconcordance-result-items>
                             <parconcordance-result-items data={al.Kwic}
                                     class="t_kwic kwicWrapper"
-                                    onclick={onKwicClick.bind(this, al, idx2)}></parconcordance-result-items>
+                                    onclick={onKwicClick.bind(this, al, idx, idx2 + 1)}></parconcordance-result-items>
                             <parconcordance-result-items data={al.Right}
                                      class="t_rightContext"></parconcordance-result-items>
                         </div>
@@ -126,7 +126,7 @@
                                     class="t_leftContext"></parconcordance-result-items>
                             <parconcordance-result-items data={item.Kwic}
                                     class="t_kwic kwicWrapper"
-                                    onclick={onKwicClick.bind(this, item)}></parconcordance-result-items>
+                                    onclick={onKwicClick.bind(this, item, idx, 0)}></parconcordance-result-items>
                             <parconcordance-result-items data={item.Right}
                                      class="t_rightContext"></parconcordance-result-items>
                         </div>
@@ -140,7 +140,7 @@
                                      class="t_leftContext"></parconcordance-result-items>
                             <parconcordance-result-items data={al.Kwic}
                                     class="t_kwic {kwicWrapper: !al.has_no_kwic} {latentkwic: al.has_no_kwic}"
-                                    onclick={al.has_no_kwic ? undefined : onKwicClick.bind(this, al, idx2)}></parconcordance-result-items>
+                                    onclick={onKwicClick.bind(this, al, idx, idx2 + 1)}></parconcordance-result-items>
                             <parconcordance-result-items data={al.Right}
                                     class="t_rightContext"></parconcordance-result-items>
                         </div>
@@ -192,8 +192,8 @@
         }
 
         updateAttributes(){
-            this.refsLeft = !this.data.refs_up || this.data.refs === ""
-            this.refsUp = !this.refsLeft
+            this.refsLeft = !this.data.refs_up && this.data.refs !== ""
+            this.refsUp = !this.refsLeft && this.data.refs !== ""
             this.lineNumbersLeft = this.data.linenumbers && !this.refsUp
             this.lineNumbersUp = this.data.linenumbers && this.refsUp
             this.corpusDirClass = this.corpus.righttoleft ? "rtl" : "ltr"
@@ -230,22 +230,29 @@
         }
         this.updateAttributes()
 
-        onKwicClick(item, idx) {
-            let toknum = item.toknum
+        onKwicClick(item, row_idx, lang_idx, evt) {
+            let prefix = this.getCorpusPrefix(this.corpus.corpname)
             $(".tr.highlight", this.root).toggleClass("highlight", false)
-            this.toggleRowHighlight(toknum, true)
-            let corpname = null
-            if(Number.isInteger(idx)){
-                corpname = this.getCorpusPrefix(this.corpus.corpname) + this.data.formparts[idx].corpname
-            }
-            Dispatcher.trigger("concordanceShowDetail", {
-                kwic: true,
-                corpname: corpname,
-                hitlen: item.hitlen,
-                structs: this.store.getStructs(),
-                toknum: toknum,
-                onClose: this.toggleRowHighlight.bind(this, toknum, false)
+            this.toggleRowHighlight(item.toknum, true)
+            let cols = [{
+                corpname: this.store.corpus.corpname,
+                toknum: this.data.items[row_idx].toknum,
+                hitlen: this.data.items[row_idx].hitlen
+            }]
+            this.data.items[row_idx].Align.forEach((row, i) => {
+                cols.push({
+                    corpname: prefix + this.data.formparts[i].corpname,
+                    toknum: row.toknum,
+                    hitlen: row.hitlen
+                })
             })
+
+            Dispatcher.trigger("concordanceShowDetail", {
+                cols: cols,
+                corpname: lang_idx == 0 ? this.store.corpus.corpname : (prefix + this.data.formparts[lang_idx - 1].corpname),
+                structs: this.store.getStructs(),
+                onClose: this.toggleRowHighlight.bind(this, item.toknum, false)
+            }, evt)
         }
 
         onRefClick(evt) {

@@ -746,10 +746,11 @@ class AppStoreClass extends StoreMixin {
             })
         })
         this._translateStructuresAndAttributes(data.structures)
+        let attributes = this._attributesComputeValues(data)
         return Object.assign(data, {
             corpname: data.request.corpname,
             language_name: data.lang, // temporary, reading lang from bonito instead language_name form CA
-            attributes: this._attributesComputeValues(data),
+            attributes: attributes,
             wposlist: this._formatPoslist(data.wposlist, "wpl_"),
             lposlist: this._formatPoslist(data.lposlist, "lpl_"),
             diachronic: this._formatPeriods(data),
@@ -757,12 +758,10 @@ class AppStoreClass extends StoreMixin {
             wsattr: data.wsattr || "word",
             preloaded: data.request.corpname.indexOf('preloaded') == 0,
             wsposlist: this._formatWsposlist(data),
+            hasLemma:  attributes && attributes.findIndex(attr => attr.name == "lemma") != -1,
             hasStarAttr: !!data.starattr,
             hasDocfAttr: !!data.structures.find(s => s.name == data.docstructure)
         })
-        if(window.config.NO_CA){
-            data.language_id = data.lang
-        }
     }
 
     _onCorpusCALoaded(payload){

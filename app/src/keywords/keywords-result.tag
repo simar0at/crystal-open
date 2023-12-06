@@ -372,14 +372,14 @@
                     class: "frq1",
                     num: 1,
                     label: _(this.data.showrefvalues ? "focus" : "frequency"),
-                    formatter: window.Formatter.num.bind(Formatter)
+                    formatter: this.store.frequencyFormatter.bind(this.store, 0)
                 })
                 this.data.showrefvalues && colMeta.push({
                     id: "frq2",
                     class: "frq2",
                     num: 1,
                     label: _("reference"),
-                    formatter: window.Formatter.num.bind(Formatter)
+                    formatter: this.store.frequencyFormatter.bind(this.store, 0)
                 })
             }
             if (this.data.showrelfrq) {
@@ -405,14 +405,14 @@
                     class: "docf1",
                     num: 1,
                     label: _(this.data.showrefvalues ? "focus" : (this.store.corpus.hasStarAttr ? "mr" : "wl.docf")),
-                    formatter: window.Formatter.num.bind(Formatter)
+                    formatter: this.store.frequencyFormatter.bind(this.store, 0)
                 })
                 this.data.showrefvalues && colMeta.push({
                     id: "docf2",
                     class: "docf2",
                     num: 1,
                     label: _("reference"),
-                    formatter: window.Formatter.num.bind(Formatter)
+                    formatter: this.store.frequencyFormatter.bind(this.store, 0)
                 })
             }
 
@@ -439,14 +439,14 @@
                     class: "arf1",
                     num: 1,
                     label: _(this.data.showrefvalues ? "focus" : "arf"),
-                    formatter: window.columnTableValueFormatter.bind(this, 2)
+                    formatter: this.store.frequencyFormatter.bind(this.store, 2)
                 })
                 this.data.showrefvalues && colMeta.push({
                     id: "arf2",
                     class: "arf2",
                     num: 1,
                     label: _("reference"),
-                    formatter: window.columnTableValueFormatter.bind(this, 2)
+                    formatter: this.store.frequencyFormatter.bind(this.store, 2)
                 })
             }
 
@@ -456,14 +456,14 @@
                     class: "aldf1",
                     num: 1,
                     label: _(this.data.showrefvalues ? "focus" : "aldf"),
-                    formatter: window.columnTableValueFormatter.bind(this, 2)
+                    formatter: this.store.frequencyFormatter.bind(this.store, 2)
                 })
                 this.data.showrefvalues && colMeta.push({
                     id: "aldf2",
                     class: "aldf2",
                     num: 1,
                     label: _("reference"),
-                    formatter: window.columnTableValueFormatter.bind(this, 2)
+                    formatter: this.store.frequencyFormatter.bind(this.store, 2)
                 })
             }
 

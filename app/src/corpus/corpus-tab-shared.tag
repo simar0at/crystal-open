@@ -22,7 +22,7 @@
                 </a>
             </div>
         </div>
-        <table if={corpusListLoaded} class="table material-table highlight myseltab">
+        <table if={corpusListLoaded} class="table material-table highlight">
             <thead>
                 <tr>
                     <th class="sc-lang">

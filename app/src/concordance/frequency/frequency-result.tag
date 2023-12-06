@@ -32,9 +32,10 @@
     <div if={!data.f_isEmpty && !data.isLoading && !data.jobid} class="dividerTop center-align">
         <div class="z-depth-1 card-content frequencyOptions">
             <ui-checkbox if={showRelFrqAndPerc}
-                     id="showrelfrq"
+                    id="showrelfrq"
                     name="f_showrelfrq"
-                    checked={data.f_showrelfrq}
+                    checked={isConcordanceComplete && data.f_showrelfrq}
+                    disabled={!isConcordanceComplete}
                     inline=1
                     label-id="showRelFrq"
                     on-change={setCheckboxValue.bind(this, "f_showrelfrq")}></ui-checkbox>
@@ -46,16 +47,18 @@
                     label-id="showPercOfConc"
                     on-change={setCheckboxValue.bind(this, "f_showperc")}></ui-checkbox>
             <ui-checkbox if={showRelTtAndRelDens}
-                     id="showreltt"
+                    id="showreltt"
                     name="f_showreltt"
-                    checked={data.f_showreltt}
+                    checked={isConcordanceComplete && data.f_showreltt}
+                    disabled={!isConcordanceComplete}
                     inline=1
                     label-id="showRelTT"
                     on-change={setCheckboxValue.bind(this, "f_showreltt")}></ui-checkbox>
             <ui-checkbox if={showRelTtAndRelDens}
                     id="showreldens"
                     name="f_showreldens"
-                    checked={data.f_showreldens}
+                    checked={isConcordanceComplete && data.f_showreldens}
+                    disabled={!isConcordanceComplete}
                     inline=1
                     label-id="showReldens"
                     on-change={setCheckboxValue.bind(this, "f_showreldens")}></ui-checkbox>
@@ -121,6 +124,7 @@
         }
 
         updateAttributes(){
+            this.isConcordanceComplete = this.data.total == this.data.fullsize
             this.showRelFrqAndPerc = this.store.f_showRelFrqAndPerc()
             this.showRelTtAndRelDens = this.store.f_showRelTtAndRelDens()
             this.interFeatureMenuLinks = [{

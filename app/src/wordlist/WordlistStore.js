@@ -120,7 +120,7 @@ class WordlistStoreClass extends FeatureStoreMixin {
                 },
                 done: (payload) => {
                     this.data.findxListLoaded = true
-                    this.data.findxList = payload.FindxList
+                    this.data.findxList = payload.FindxList || []
                     this.trigger("findxListLoaded")
                 }
             })
@@ -418,7 +418,10 @@ class WordlistStoreClass extends FeatureStoreMixin {
 
     _onCorpusChange(){ // overrides default
         super._onCorpusChange()
-        this._isActualFeature() && this.loadFindxList()
+        if(this._isActualFeature()){
+            this.findxListLoaded = false
+            this.loadFindxList()
+        }
     }
 
     _getQueryObject(data){ // overrides default

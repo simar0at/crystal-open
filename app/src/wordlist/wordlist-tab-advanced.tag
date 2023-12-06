@@ -18,6 +18,7 @@
                                 ref="find"
                                 value={options.find}
                                 name="find"
+                                classes="findList"
                                 on-change={onFindChange}
                                 style="max-width: 250px;"></ui-list>
                         </div>
@@ -200,7 +201,15 @@
                 }
             })
             this.store.data.findxList.forEach(item => {
-                this.addToList("findx", {value: item.id, label: item.name})
+                this.findList.push({
+                    type: "findx",
+                    label: item.name,
+                    value: item.id,
+                    class: "findx",
+                    generator: (item) => {
+                        return  `<span class="grey-text">highlight: </span>${item.label} <i class="material-icons right grey-text tooltipped" data-tooltip="t_id:wl_a_highlight" style="font-size:21px;">help_outline</i>`
+                    }
+                })
             }, this)
         }
         this.updateFindList()
@@ -225,6 +234,14 @@
                 this.options.wlnums = ""
                 this.options.wlsort = "frq"
                 this.options.relfreq = 0
+            }
+            if(this.options.criteria.length && this.options.filter && this.options.keyword){
+                this.options.criteria.push({
+                    filter: this.options.filter,
+                    value: this.options.keyword
+                })
+                this.options.filter = ""
+                this.options.keyword = ""
             }
             this.data.closeFeatureToolbar = true
             this.store.resetSearchAndAddToHistory(this.options)
@@ -333,10 +350,8 @@
         }
 
         findxListLoaded(){
-            if(this.store.data.findxList.length){
-                this.updateFindList()
-                this.update()
-            }
+            this.updateFindList()
+            this.update()
         }
 
         onTtsChange(tts){

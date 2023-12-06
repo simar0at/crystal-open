@@ -37,6 +37,7 @@ class CAStoreClass extends StoreMixin {
         if(this.data.requests["filesets_" + corpus_id]){
             return
         }
+        this.data.filesWithoutfFolderLoaded = false
         this.data.requests["filesets_" + corpus_id] = Connection.get({
             url: window.config.URL_CA + "corpora/" + corpus_id + "/filesets",
             xhrParams:{method: "GET"},
@@ -432,10 +433,6 @@ class CAStoreClass extends StoreMixin {
                 }, this)
                 this.loadFilesetFiles(this.corpus.id, fileset_id)
             }
-            if(fileset_id == 0){
-                let ar = this.get("asyncResults." + corpus_id + "_0")
-                ar && ar.stop()
-            }
             this.trigger("activeFilesetChanged")
         }
     }
@@ -521,14 +518,15 @@ class CAStoreClass extends StoreMixin {
     upgradeTagset(){
         this.data.upgradeTagsetInProgress = true
         SkE.showToast(_("ca.tagsetUpgradeStarted"), 8000)
-        Connection.get({
+        return Connection.get({
             url: window.config.URL_CA + "corpora/" + this.corpus.id + "/upgrade_tagset",
             xhrParams: this._getEmptyXhrParams(),
             done: () => {
                 SkE.showToast(_("ca.tagsetUpgradeFinished"), 8000)
                 this.data.upgradeTagsetInProgress = false
                 AppStore.loadCorpus(this.corpus.corpname)
-            }
+            },
+            fail: this._defaultOnFail.bind(this)
         })
     }
 
@@ -847,7 +845,11 @@ class CAStoreClass extends StoreMixin {
                 this.trigger("filesetsChanged")
                 Dispatcher.trigger("RELOAD_USER_SPACE")
             } else {
-             changed && this.trigger("filesetsChanged")
+                let fileset = this._getFileset(0)
+                if(fileset){
+                    fileset.verticalInProgress = false
+                }
+                changed && this.trigger("filesetsChanged")
             }
         }.bind(this)
         let asyncResults = new AsyncResults()

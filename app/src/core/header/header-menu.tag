@@ -86,12 +86,12 @@
         }
 
         onLoginAsClick(){
-            Dispatcher.trigger('openDialog', {
-                tag: 'login-as-dialog',
-                title: _('loginAs'),
-                small: true,
-                class: "loginAsDialog"
-            })
+            this.openLoginAsDialog()
+        }
+
+        onLoginAsHotkey(){
+            // admin or already logged as in -> admin
+            (Auth.isSuperUser() || Auth.getSession().emulated_user) && this.openLoginAsDialog()
         }
 
         onLogoutAsClick(){
@@ -212,6 +212,16 @@
         }
         this.refreshMenu()
 
+
+        openLoginAsDialog(){
+            Dispatcher.trigger('openDialog', {
+                tag: 'login-as-dialog',
+                title: _('loginAs'),
+                small: true,
+                class: "loginAsDialog"
+            })
+        }
+
         resize(){
             const vieportWidth = $(window).width()
             if(vieportWidth < 992 && !this.showMobileMenu){
@@ -239,11 +249,13 @@
             })
             Dispatcher.on("AUTH_LOGIN", this.update)
             Dispatcher.on("BGJOBS_UPDATED", this.update)
+            Dispatcher.on("LOGIN_AS", this.onLoginAsHotkey)
         })
 
         this.on("unmount", () => {
             Dispatcher.off("AUTH_LOGIN", this.update)
             Dispatcher.off("BGJOBS_UPDATED", this.update)
+            Dispatcher.off("LOGIN_AS", this.onLoginAsHotkey)
         })
     </script>
 </header-menu>

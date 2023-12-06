@@ -1,5 +1,5 @@
 <expandable-textarea class="expandable-textarea {opts.class}">
-    <span class="block relative">
+    <span class="inline-block relative">
         <ui-textarea ref="textarea"
                 name={opts.name}
                 opts={opts}

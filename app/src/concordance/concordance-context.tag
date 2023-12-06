@@ -21,7 +21,7 @@
                         name="fc_lemword"
                         riot-value={store.data.fc_lemword}
                         on-input={onOptionChange}
-                        placeholder={_(hasLemma ? "cc.contextLemmaPlaceholder" : "cc.contextWordPlaceholder")}
+                        placeholder={_(store.corpus.hasLemma ? "cc.contextLemmaPlaceholder" : "cc.contextWordPlaceholder")}
                         width=300></ui-input>
                     <span class="inline-text">{_("within")}</span>
                     <ui-select inline
@@ -77,20 +77,17 @@
 
 
     <script>
-        const {AppStore} = require("core/AppStore.js")
-
         require("concordance/concordance-context.scss")
 
         this.store = this.opts.store
 
         updateAttributes(){
             this.wposlistList = this.store.corpus.wposlist
-            this.hasLemma = !!AppStore.getAttributeByName("lemma")
             this.contextList = [{
                 label: _("cc.noContext"),
                 value: "none"
             }, {
-                label: _(this.hasLemma ? "lemmaContext" : "cc.wordContext"),
+                label: _(this.store.corpus.hasLemma ? "lemmaContext" : "cc.wordContext"),
                 value: "lemma"
             }]
             if(this.wposlistList.length){

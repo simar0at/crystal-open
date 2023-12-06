@@ -1,5 +1,5 @@
 <wordlist-criteria class="wordlist-criteria">
-    <div class="row mb-0 relative {shadowOverlay:showCriteriaList && options.criteria.length}">
+    <div class="row mb-0 relative">
         <div class="col s12">
             <label>&nbsp;</label>
         </div>
@@ -118,7 +118,7 @@
 
         this.mixin("feature-child")
 
-        this.showCriteriaList = true
+        this.showCriteriaList = false
         this.hasFilterListActiveOption = false
         this.filterList = this.store.getFilterList("advanced")
         this.isEditingCriterion = false // if user clicked criterion to edit it
@@ -171,7 +171,6 @@
             this.refreshFilterList()
         }
         this.updateAttributes()
-        this.showCriteriaList = !this.options.criteria.length // do not show list after load, if there are some chosen criteria
 
         onRemoveCriterionClick(evt){
             evt.stopPropagation()

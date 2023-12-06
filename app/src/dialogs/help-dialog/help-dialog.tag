@@ -42,6 +42,14 @@
             </div>
         </a>
 
+        <a href="{config.links.bibliographyOfSke}" target="_blank">
+            <div class="cardBtn card-panel">
+                <i class="material-icons">library_books</i>
+                <div class="title">{_("hp.bibliographyTitle")}</div>
+                <div class="desc">{_("hp.bibliographyDesc")}</div>
+            </div>
+        </a>
+
         <a if={news.length}
                 href="javascript:void(0);"
                 onclick={onWhatsNewClick}>
@@ -244,7 +252,7 @@
 
 
 <help-dialog class="help-dialog">
-    <ui-tabs active="help" tabs={tabs}></ui-tabs>
+    <ui-tabs active={opts.tab || "help"} tabs={tabs}></ui-tabs>
 
     <div class="socials">
         <span>{_("hp.stayConnected")}</span>

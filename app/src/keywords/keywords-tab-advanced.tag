@@ -148,7 +148,8 @@
                                 label-id="ng.fromList"
                                 name="fromList"
                                 checked={options.fromList}
-                                on-change={onFromListClicked}>
+                                on-change={onFromListClicked}
+                                tooltip="t_id:kw_a_from_list">
                         </ui-checkbox>
                         <div class="pl-5">
                             <expandable-textarea

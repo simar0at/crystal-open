@@ -22,17 +22,17 @@ alt-lposlist {
         }
     }
     .dropdown-content {
-        box-shadow: none;
-        background-color: transparent;
         li {
             a {
                 white-space: nowrap;
-                padding: .65ex .75em
             }
-            border: 2px solid $blue-100;
-            border-radius: 20px;
-            background-color: white;
-            min-height: initial;
+            &.disabled{
+                background-color: $gray-100!important;
+                a{
+                    color: $gray-400;
+                    cursor: help
+                }
+            }
         }
     }
 }

@@ -85,4 +85,9 @@
     .strc{
         color: blue;
     }
+    &.wide{
+        >div{
+            max-width: unquote("min(1500px, 95vw)"); // scss compiler bug workaround
+        }
+    }
 }

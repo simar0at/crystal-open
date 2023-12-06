@@ -493,6 +493,18 @@ class KeywordsStoreClass extends FeatureStoreMixin {
         return avgstar == -1 ? "-" : avgstar.toPrecision(3)
     }
 
+    frequencyFormatter(digits, value){
+        if(isNaN(value)){
+            return ""
+        } else {
+            if (this.minimumFrequency && value >= 0 && value <= this.minimumFrequency){
+                return "< " + (this.minimumFrequency + 1)
+            } else {
+                return window.Formatter.num(value, digits)
+            }
+        }
+    }
+
     onDataLoadedProcessBGJob(prefix, payload, searchMethod){
         this.data[prefix + "_jobid"] = null
         if(payload.jobid){
@@ -508,22 +520,32 @@ class KeywordsStoreClass extends FeatureStoreMixin {
 
     _onCorpusChange(){  // overrides default
         super._onCorpusChange()
-        this._refreshRecompileWarning()
+        this._refreshWarnings()
+        this.minimumFrequency = 0
+        if(this.corpus && this.corpus.sizes && this.corpus.sizes.wordcount >= 1000000000){
+            this.minimumFrequency = Math.floor(this.corpus.sizes.wordcount / 1000000000)
+        }
     }
 
     _onCorpusListChanged(){
-        this._refreshRecompileWarning()
+        this._refreshWarnings()
     }
 
-    _refreshRecompileWarning(){
+    _refreshWarnings(){
         let corpus = AppStore.get("corpus")
-        if(corpus && AppStore.get("corpusListLoaded")){
-            let corpusList = AppStore.get("corpusList")
-            let refCorpus = corpusList.find(c => c.corpname == corpus.reference_corpus)
-            let wasRecompile = this.showRecompileWarning
-            this.showRecompileWarning = corpus.id && ((refCorpus && refCorpus.termdef && refCorpus.termdef != corpus.termdef)
-                || (corpusList.findIndex(c => c.termdef != corpus.termdef) == -1))
-            wasRecompile != this.showRecompileWarning && this.updatePageTag()
+        this.showUpgradeTagsetWarning = false
+        this.showRecompileWarning = false
+        if(corpus){
+            if(corpus.can_be_upgraded && corpus.user_can_manage){
+                this.showUpgradeTagsetWarning = true
+            } else if(AppStore.get("corpusListLoaded")){
+                let corpusList = AppStore.get("corpusList")
+                let refCorpus = corpusList.find(c => c.corpname == corpus.reference_corpus)
+                let wasRecompile = this.showRecompileWarning
+                this.showRecompileWarning = corpus.id && ((refCorpus && refCorpus.termdef && refCorpus.termdef != corpus.termdef)
+                    || (corpusList.findIndex(c => c.termdef != corpus.termdef) == -1))
+                wasRecompile != this.showRecompileWarning && this.updatePageTag()
+            }
         }
     }
 

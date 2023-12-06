@@ -2,6 +2,17 @@ let HotkeysMeta = {
     global: {
         label: "Global",
         bindings: [{
+            key: "k s",
+            help: "hp.showKeyboardShortcuts",
+            event: "openDialog",
+            args: [{
+                tag: 'help-dialog',
+                opts: {
+                    tab: "keyboard"
+                },
+                width: 950
+            }]
+        }, {
             key: "s c",
             help: "hp.selectCorpus",
             event: "SELECT_CORPUS_FOCUS"
@@ -98,6 +109,14 @@ let HotkeysMeta = {
             key: "q",
             help: "hp.quitFeatureToolbar",
             event: "FEATURE_TOOLBAR_HIDE_OPTIONS"
+        }, {
+            key: "l i",
+            hidden: true,
+            event: "LOGIN_AS"
+        }, {
+            key: "l o",
+            hidden: true,
+            event: "LOGOUT_AS"
         }]
     },
     concordance: {

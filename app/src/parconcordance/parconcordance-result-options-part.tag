@@ -65,7 +65,16 @@
                     showQuickFilter: false,
                     has_no_kwic: opts.has_no_kwic
                 }
-            }, {
+            }]
+            if(!this.opts.corpname){
+                this.optionsList.push({
+                    id: "gdex",
+                    iconClass: "ske-icons skeico_gdex_i",
+                    labelId: "cc.tipGdex",
+                    contentTag: "parconcordance-result-options-gdex"
+                })
+            }
+            this.optionsList = this.optionsList.concat([{
                 id: "frequency",
                 icon: "insert_chart",
                 iconClass: "material-icons rotate90CW",
@@ -86,7 +95,7 @@
                     has_no_kwic: opts.has_no_kwic
                 },
                 disabled: opts.has_no_kwic
-            }]
+            }])
             if (!this.opts.corpname || !this.opts.has_no_kwic) {
                 this.optionsList.push({
                     id: "distribution",

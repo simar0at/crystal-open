@@ -781,6 +781,9 @@ input[type="radio"].with-gap:checked+span:after{
             }
         }
     }
+    .btn-flat i.right{
+        margin-left: 5px;
+    }
     .hover{
         position: relative;
         &:after{

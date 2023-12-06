@@ -94,6 +94,7 @@
 
         onSaveClick(){
             let attrs = this.options.attrs.join(",")
+            this.data.closeFeatureToolbar = true
             this.store.searchAndAddToHistory({
                 attrs: attrs,
                 glue: this.options.glue,

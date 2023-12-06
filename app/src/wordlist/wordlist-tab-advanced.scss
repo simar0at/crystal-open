@@ -2,9 +2,6 @@
 
 .wordlist-tab-advanced{
     @include wordlistTabCommon();
-    .mainForm{
-        max-width: 1122px;
-    }
     >div.card-content{
         .ui-radio label{
             white-space: nowrap;
@@ -26,6 +23,15 @@
         margin-top: 20px;
         @media only screen and (min-width: 1200px){
             border-left: 1px solid rgb(206, 206, 206);
+        }
+    }
+    .findList{
+        // top border above first "findx" item
+        li.findx{
+            border-top: 1px solid #cecece;
+        }
+        li.findx~li.findx{
+            border-top: none
         }
     }
 }

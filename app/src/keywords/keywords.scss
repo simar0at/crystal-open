@@ -141,7 +141,10 @@
     .totalItems {
         font-size: 0.9rem;
     }
-    .termdefWarning{
-        background-color: $blue-100;
+
+    .outdatedTermsWarning{
+        max-width: Max(50vw, 700px);
+        margin: auto;
+        margin-top: 10vh;
     }
 }

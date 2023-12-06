@@ -51,11 +51,6 @@
                     labelId: "cc.tipShuffle",
                     contentTag: "parconcordance-result-options-shuffle"
                 }, {
-                    id: "gdex",
-                    iconClass: "ske-icons skeico_gdex_i",
-                    labelId: "cc.tipGdex",
-                    contentTag: "parconcordance-result-options-gdex"
-                }, {
                     id: "kwicSen",
                     itemTag: "kwicsen",
                     tagOpts: {

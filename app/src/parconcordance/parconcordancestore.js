@@ -66,6 +66,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
             filterTo: 5,
             filterInclKwic: true,
             pnfilter: "p",
+            detailShowAll: false,
             // frequency
             f_tab: "basic",
             f_items: [],
@@ -141,7 +142,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
 
         this.userOptionsToSave = ["tab", "attrs", "attr_allpos",
                 "structs", "glue", "itemsPerPage", "refs", "refs_up",
-                "formparts.0.corpname"]
+                "formparts.0.corpname", "detailShowAll"]
     }
 
     initResetAndSearch(options){
@@ -245,6 +246,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
                 data: tokdata.join('\t')
             },
             postKeys: ["data"],
+            skipDefaultCallbacks: true,
             done: function(payload){
                 if (payload.toknum2words && payload.dict) {
                     this.translations.found = true
@@ -272,6 +274,14 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
                     })
                 }
                 this.translations.loaded = true
+            }.bind(this),
+            fail: function(payload, request){
+                if(payload.status == 403){
+                    let corpus = AppStore.getCorpusByCorpname(request.data.bim_corpname)
+                    SkE.showToast(_("couldNotLoadTranslations403", [corpus ? corpus.name : request.data.bim_corpname]))
+                }
+            },
+            always: function(){
                 delete this.translations.requests[alcorp]
                 this.translations.isLoading = !jQuery.isEmptyObject(this.translations.requests)
                 if(!this.translations.isLoading){

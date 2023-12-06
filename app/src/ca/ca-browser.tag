@@ -314,22 +314,6 @@
                                 {_("bulkActions", [selectedCountAll ? (' (' + selectedCountAll + ')') : ''])}
                                 <i class="material-icons right">arrow_drop_down</i>
                             </button>
-                            <ul id="bulkMenu" class="dropdown-content">
-                                <li class="t_bulk_metadata">
-                                    <a href="javascript:void(0);" onclick={onBulkEditMetadataClick}>
-                                        <i class="material-icons">edit</i>
-                                        {_("editMetadata")}
-                                    </a>
-                                </li>
-                                <li class="t_bulk_delete">
-                                    <a href="javascript:void(0);" onclick={onBulkDeleteClick}>
-                                        <i class="material-icons">delete</i>
-                                        {_("delete")}
-                                    </a>
-                                </li>
-                                <li class="divider" tabindex="-1"></li>
-                                <li class="docCountItem">{_("selectedDocuments", [selectedCountAll])}</span></li>
-                            </ul>
                         </div>
                         <div class="inline-block right">
                             <ui-pagination
@@ -365,6 +349,23 @@
             </div>
         </div>
     </div>
+    <div id="bulkMenuContainer"></div>
+    <ul id="bulkMenu" class="dropdown-content">
+        <li class="t_bulk_metadata">
+            <a href="javascript:void(0);" onclick={onBulkEditMetadataClick}>
+                <i class="material-icons">edit</i>
+                {_("editMetadata")}
+            </a>
+        </li>
+        <li class="t_bulk_delete">
+            <a href="javascript:void(0);" onclick={onBulkDeleteClick}>
+                <i class="material-icons">delete</i>
+                {_("delete")}
+            </a>
+        </li>
+        <li class="divider" tabindex="-1"></li>
+        <li class="docCountItem">{_("selectedDocuments", [selectedCountAll])}</span></li>
+    </ul>
 
 
     <ul id="caBrowserMenuDropdownList" class="dropdown-content">
@@ -939,13 +940,18 @@
         }
 
         initDropdown(){
-            $("#bulkActionBtn").dropdown({
-                constrainWidth: false
-            })
-            $("#selectionBtn").dropdown({
-                constrainWidth: false,
-                coverTrigger: false
-            })
+            if($("#bulkActionBtn").length && !M.Dropdown.getInstance($("#bulkActionBtn"))){
+                $("#bulkActionBtn").dropdown({
+                    constrainWidth: false,
+                    container: document.getElementById("bulkMenuContainer")
+                })
+            }
+            if($("#selectionBtn").length && !M.Dropdown.getInstance($("#selectionBtn"))){
+                $("#selectionBtn").dropdown({
+                    constrainWidth: false,
+                    coverTrigger: false
+                })
+            }
         }
 
         this.on("update", this.updateAttributes)
