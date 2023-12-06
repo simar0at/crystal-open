@@ -20,10 +20,23 @@
             {_("cancel")}
             <i class="material-icons">close</i>
         </div>
+        <div if={showAcademicWarning} class="academicWarning text-center mt-6">
+            <a href={externalLink("academicSubscription")}
+                    target="_blank"
+                    class="inlineBlock">
+                <span class="">
+                    {_("academicUseOnly")}
+                    <i class="material-icons material-clickable pl-2 vertical-middle">open_in_new</i>
+                </span>
+            </a>
+        </div>
     </div>
 
     <script>
+        const {Auth} = require("core/Auth.js")
         require('./preloader-spinner.scss')
+
+        this.showAcademicWarning = this.opts.showAcademicWarning && Auth.isAcademic()
 
         this.opts.onCancel && this.on("mount", delay(function(){
             this.refs.cancel && this.refs.cancel.classList.remove("hideCancel")

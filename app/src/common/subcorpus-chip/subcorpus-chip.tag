@@ -3,19 +3,19 @@
             ref="dropdownTrigger"
             class="link chip tooltipped"
             data-target="subcorpChipList"
-            data-tooltip={_("subcorpus") + "<br>" + subcorpus.label}>
-            <span class="truncate">
+            data-tooltip={_("subcorpus") + "<br>" + subcorpus.label}
+            data-position="top">
+            <span class="truncate chipLabel">
                 {subcorpus.label}
             </span>
         <i class="dd_arrow material-icons">arrow_drop_down</i>
         <i class="close material-icons" onclick={onCloseClick}>close</i>
-
-        <ul id="subcorpChipList" class="dropdown-content">
-            <li each={subcorp in subcorpora} onclick={onSubcorpChange} class={selected: subcorp.value == usesubcorp} data-value={subcorp.value}>
-                <a>{subcorp.label}</a>
-            </li>
-        </ul>
     </span>
+    <ul id="subcorpChipList" class="dropdown-content">
+        <li each={subcorp in subcorpora} onclick={onSubcorpChange} class={selected: subcorp.value == usesubcorp} data-value={subcorp.value}>
+            <a>{subcorp.label}</a>
+        </li>
+    </ul>
 
     <script>
         const {AppStore} = require("core/AppStore.js")

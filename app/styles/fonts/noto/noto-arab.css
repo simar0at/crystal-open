@@ -9,6 +9,9 @@
     font-style: normal;
 }
 
-.script-arab ._t{
-    font-family: 'Noto Arabic'
+.interface-script-arab,
+.script-arab ._t,
+body .script-arab ._t,
+body .script-arab._t{
+    font-family: 'Noto Arabic', 'Noto Sans', sans-serif;
 }

@@ -1,12 +1,10 @@
-<div class="row">
-<div class="col m12 l7">
-<p>A word sketch processes the word&rsquo;s %[collocate|collocates]% and other words in its surroundings. It can be used as a one-page summary of the word&rsquo;s grammatical and <a href="https://www.sketchengine.eu/my_keywords/collocation/" target="_blank" rel="noopener">collocational</a> behaviour. The results are organized into categories, called <a href="https://www.sketchengine.eu/my_keywords/grammatical-relation/" target="_blank" rel="noopener">grammatical relations</a>, such as words that serve as an object of the verb, words that serve as a subject of the verb, words that modify the word etc. Some grammatical relations may display usage statistics instead of collocates. Only nouns, adjectives, verbs and adverbs are supported in most corpora. The collocations which will be included in the analysis are defined by rules specified in the <a href="https://www.sketchengine.eu/my_keywords/word-sketch-grammar/" target="_blank" rel="noopener">sketch grammar</a>.</p>
+<div class="aboutLeftCol">
+<p>A word sketch processes the word’s %[collocate|collocates]% and other words in its surroundings. It can be used as a one-page summary of the word’s grammatical and <a href="https://www.sketchengine.eu/my_keywords/collocation/" target="_blank" rel="noopener">collocational</a> behaviour. The results are organized into categories, called <a href="https://www.sketchengine.eu/my_keywords/grammatical-relation/" target="_blank" rel="noopener">grammatical relations</a>, such as words that serve as an object of the verb, words that serve as a subject of the verb, words that modify the word etc. Some grammatical relations may display usage statistics instead of collocates. Only nouns, adjectives, verbs and adverbs are supported in most corpora. The collocations which will be included in the analysis are defined by rules specified in the <a href="https://www.sketchengine.eu/my_keywords/word-sketch-grammar/" target="_blank" rel="noopener">sketch grammar</a>.</p>
 </div>
-<div class="col m12 l5"><iframe src="https://www.youtube.com/embed/tKdEa1E-p2Y" width="400" height="225" frameborder="0" allowfullscreen="allowfullscreen"></iframe></div>
-</div>
+<div class="aboutRightCol"><iframe src="https://www.youtube.com/embed/tKdEa1E-p2Y" width="400" height="225" frameborder="0" allowfullscreen="allowfullscreen" loading="lazy"></iframe></div>
 <div><a href="https://www.sketchengine.eu/wp-content/uploads/2019-04-29_15-22-11.png" target="_blank" rel="noopener"> <img src="https://www.sketchengine.eu/wp-content/uploads/2019-04-29_15-22-11.png" alt="Word Sketch" width="1346" height="604" /> </a></div>
-<div><br />Display <a href="https://ske.li/f08" target="_blank" rel="noopener">this word sketch in Sketch Engine</a> (login required) <br />Display a <a href="https://app.sketchengine.eu/#wordsketch?corpname=preloaded%2Faclarc_2&amp;tab=basic&amp;lemma=team&amp;showresults=1" target="_blank" rel="noopener">similar word sketch</a> in an open corpus (login not required)</div>
-<p>&nbsp;</p>
+<div><br />Display <a href="https://ske.li/f08" target="_blank" rel="noopener">this word sketch in Sketch Engine</a> (login required) <br />Display a <a href="https://app.sketchengine.eu/#wordsketch?corpname=preloaded%2Faclarc_2&tab=basic&lemma=team&showresults=1" target="_blank" rel="noopener">similar word sketch</a> in an open corpus (login not required)</div>
+<p> </p>
 <div><b>Multiword Sketch</b> — collocations with phrases
 </div>
 <div>The multiword sketch is an extension of the word sketch. It processes the left and right context of a phrase and identifies the collocates of each word in the phrase. The collocations are only extracted from sentences which contain the collocation (phrase) in question. In other words, the collocates only come from contexts where the collocation (phrase) is used. Contexts where the members of the phrase are used on their own are excluded. This makes it possible to only display collocates related to a particular word sense or subject.</div>
@@ -34,7 +32,7 @@
 </tbody>
 </table>
 <div><i>Multiword sketch of sugary drink</i></div>
-<div><a href="https://www.sketchengine.eu/wp-content/uploads/2019-10-09_13-40-56.png" target="_blank" rel="noopener"> <img src="https://www.sketchengine.eu/wp-content/uploads/2019-10-09_13-40-56.png" alt="MultiWord Sketch" width="694" height="401" /> </a></div>
+<div><a href="https://www.sketchengine.eu/wp-content/uploads/2019-10-09_13-40-56.png" target="_blank" rel="noopener"> <img src="https://www.sketchengine.eu/wp-content/uploads/2019-10-09_13-40-56.png" alt="MultiWord Sketch" width="694" height="401" loading="lazy"> </a></div>
 
 
 <ul class="collapsible">
@@ -63,7 +61,7 @@
 <li>
 <div class="collapsible-header">How is the score computed</div>
 <div class="collapsible-body">
-<div>Please refer to <a href="https://www.sketchengine.co.uk/statistics-used-in-sketch-engine#logdice%20and to https://www.sketchengine.eu/wp-content/uploads/2015/03/Lexicographer-Friendly_2008.pdf" target="_blank" rel="noopener">this paper</a> for the formula and details.</div>
+<div>Please refer to <a href="https://www.sketchengine.co.uk/statistics-used-in-sketch-engine/" target="_blank" rel="noopener">this paper</a> for the formula and details.</div>
 <div>Here is a simplified but sufficiently informative explanation. Referring to the screenshot above, to determine the strength of the collocation <em>management team</em> compared to other collocations of <em>team</em>, all nouns modified by management are found first. The sketch grammar for English determines which nouns surrounding <em>management</em> should be regarded as the modified nouns.</div>
 <div>Then, each time <em>management</em> modifying <em>team</em> is found, <em>management</em> gets a plus point. Each time <em>management</em> is found modifying another noun, <em>management</em> is given a minus point. The logDice score is calculated to indicate whether there were many plus points or many minus points.</div>
 </div>
@@ -95,7 +93,7 @@
 <li>
 <div class="collapsible-header">POS Tags and lemmas</div>
 <div class="collapsible-body">
-<div>The word sketch works with a <a href="https://www.sketchengine.eu/my_keywords/tag/" target="_blank" rel="noopener">POS-tagged</a> and %[lemma|lemmatized]% corpus. A parsed corpus is not needed. Universal word sketches are available for corpora without tagging and/or lemmatization, see below.</div>
+<div>The word sketch works with a %[tag|POS-tagged]% and %[lemma|lemmatized]% corpus. A parsed corpus is not needed. Universal word sketches are available for corpora without tagging and/or lemmatization, see below.</div>
 <div>The corpus has to be tagged in Sketch Engine or with the same tagset as the one used by Sketch Engine so that the tags are the same as the ones used in the word sketch grammar. A custom word sketch grammar has to be developed if the corpus is tagged with a different tagset.</div>
 <div>A word sketch can also be generated from a non-lemmatized corpus in which case each word form will be treated independently. Thus, using English as an example, a different word sketch would be produced for <em>goes</em> and a different one for <em>went</em>. Such word sketches exist only for languages where lemmatization is not supported by Sketch Engine.</div>
 </div>
@@ -109,7 +107,7 @@
 <li>
 <div class="collapsible-header">Universal sketch grammar</div>
 <div class="collapsible-body">
-<div>A so-called universal sketch grammar is used for corpora in languages where tagging and/or lemmatization is not available. The grammatical relations will be simplified to something like <em>noun to the right</em>, <em>noun to the left</em>, <em>verb to the right</em>, <em>verb to the left</em>, or if <a href="https://www.sketchengine.eu/my_keywords/tag/" target="_blank" rel="noopener">POS-tags</a> are unavailable <em>word&nbsp;to the right</em>, <em>word to the left</em>. Although simplistic, they are a great help when working with large corpora and high-frequency words because data from thousands of occurrences can be reviewed quickly and easily.</div>
+<div>A so-called universal sketch grammar is used for corpora in languages where tagging and/or lemmatization is not available. The grammatical relations will be simplified to something like <em>noun to the right</em>, <em>noun to the left</em>, <em>verb to the right</em>, <em>verb to the left</em>, or if %[tag|POS-tags]% are unavailable <em>word to the right</em>, <em>word to the left</em>. Although simplistic, they are a great help when working with large corpora and high-frequency words because data from thousands of occurrences can be reviewed quickly and easily.</div>
 </div>
 </li>
 </ul>

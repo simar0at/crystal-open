@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-tfng ._t{
-    font-family: 'Noto Tifinagh'
+.script-tfng ._t,
+body .script-tfng ._t,
+body .script-tfng._t{
+    font-family: 'Noto Tifinagh', 'Noto Sans', sans-serif;
 }

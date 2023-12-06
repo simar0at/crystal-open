@@ -40,7 +40,7 @@ const BROWSER_UPDATE_SETTINGS = {
     text: "<b>" + _("browserTooOld") + "</b>&nbsp;"
             + _("browserTooOldDesc") + "&nbsp;"
             + '<div class="hide-on-med-and-up"></div>'
-            + '<a id="buorgul" href="' + config.links.updateBrowser + '" target="_blank" class="btn contrast buorg_tt" data-tooltip="'
+            + '<a id="buorgul" href="' + config.links.updateBrowser + '" target="_blank" class="btn btn-primary buorg_tt" data-tooltip="'
                     + _("updateBrowserTip") + '">' + _("updateBrowser") + '</a> '
             + _("or")
             + " <a{ignore_but}>" + _("ignore") + "</a>",

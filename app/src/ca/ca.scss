@@ -1,7 +1,7 @@
-@import 'app/styles/base';
+@import 'app/styles/constants';
 
 .ca{
     .card-panel{
-        background-color: #f4f4f4;
+        background-color: $gray-100;
     }
 }

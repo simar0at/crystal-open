@@ -30,6 +30,7 @@
             margin-left: 0;
             padding-left: 0;
         }
+        .cqlYoutubeLink,
         .cqlManual{
             margin-top: 10px;
             text-align: right;
@@ -37,10 +38,9 @@
                 font-size: 19px;
                 vertical-align: middle;
             }
+            @media only screen and (max-width: 916px){
+                text-align: left;
+            }
         }
-    }
-    .cbButton{
-        position: relative;
-        top: -9px;
     }
 }

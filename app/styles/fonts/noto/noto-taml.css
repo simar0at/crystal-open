@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-taml ._t{
-    font-family: 'Noto Tamil'
+.script-taml ._t,
+body .script-taml ._t,
+body .script-taml._t{
+    font-family: 'Noto Tamil', 'Noto Sans', sans-serif;
 }

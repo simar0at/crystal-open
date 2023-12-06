@@ -29,3 +29,36 @@
         }
     }
 }
+
+.density-medium{
+  .settings-dialog{
+    .switch{
+      margin: .8rem 0 8px 0;
+    }
+    .input-field{
+      margin-top: .8rem;
+    }
+  }
+}
+
+.density-low{
+  .settings-dialog{
+    .switch{
+      margin-top: 1.3rem;
+    }
+    .input-field{
+      margin-top: 1rem;
+    }
+  }
+}
+
+.density-high{
+  .settings-dialog{
+    .switch{
+      margin-top: .2rem;
+    }
+    .input-field{
+      margin-top: .5rem;
+    }
+  }
+}

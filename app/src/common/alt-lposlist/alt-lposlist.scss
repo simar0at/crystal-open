@@ -8,10 +8,10 @@ alt-lposlist {
         vertical-align: middle;
         align-items: center;
         margin-bottom: 0px;
-        color: $new_darkBlue;
+        color: $blue-800;
         box-sizing: content-box;
         &:focus {
-            background-color: $new_mediumBlue;
+            background-color: $blue-200;
         }
     }
 
@@ -19,9 +19,6 @@ alt-lposlist {
         font-size: 16px;
         i {
             width: 18px;
-        }
-        >span>span {
-            color: $new_contrastColor;
         }
     }
     .dropdown-content {
@@ -32,7 +29,7 @@ alt-lposlist {
                 white-space: nowrap;
                 padding: .65ex .75em
             }
-            border: 2px solid $new_lightBlue;
+            border: 2px solid $blue-100;
             border-radius: 20px;
             background-color: white;
             min-height: initial;

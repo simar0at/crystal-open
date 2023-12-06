@@ -1,0 +1,23 @@
+@import 'app/styles/constants';
+
+.subcorpus-select{
+    >div{
+        white-space: nowrap;
+    }
+    .ui-select{
+        max-width:calc(100% - 45px);
+    }
+    i{
+        color: $blue-800;
+        line-height: 100%;
+        vertical-align: middle;
+        &.disabled{
+            color: grey;
+            opacity: 0.5;
+            cursor: default;
+        }
+        &.locked{
+            opacity: 1!important;
+        }
+    }
+}

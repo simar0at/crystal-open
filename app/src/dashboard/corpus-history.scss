@@ -1,6 +1,6 @@
 .corpus-history{
     .content{
-        max-height: calc(100% - 40px);
+        max-height: 100%;
         overflow: auto;
     }
     table{
@@ -16,6 +16,20 @@
             }
             &:first-child{
                 word-break: break-word;
+            }
+        }
+    }
+}
+
+.density-low{
+    .corpus-history{
+        td{
+            padding: 5px 10px;
+            &:not(:first-child){
+                padding-left: 5px
+            }
+            &:not(:last-child){
+                padding-right: 5px
             }
         }
     }

@@ -1,6 +1,6 @@
 <ui-checkbox class="ui ui-checkbox {opts.class}">
     <label for="{id}_i">
-        <input type="checkbox"
+         <input type="checkbox"
             id="{id}_i"
             name={opts.name}
             ref="checkbox"
@@ -21,7 +21,7 @@
         onChange(evt){
             if(!this.refs.checkbox.disabled){
                 if(typeof this.opts.onChange == "function"){
-                    this.opts.onChange(!!this.refs.checkbox.checked, this.opts.name, evt)
+                    this.opts.onChange(!!this.refs.checkbox.checked, this.opts.name, evt, this)
                 }
             }
             evt.stopPropagation()

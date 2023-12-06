@@ -1,3 +1,5 @@
+@import 'app/styles/constants';
+
 .notification-bar{
     position: fixed;
     display: block;
@@ -7,7 +9,7 @@
     z-index: 1050;
     .nb-container{
         .nb-item{
-            background-color: #CFECF4;
+            background-color: $blue-100;
             padding: 14px 24px;
             margin-bottom: 10px;
             .nb-info-icon{

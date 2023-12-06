@@ -3,7 +3,9 @@
    min-width: 100%;
    display: block;
    position: relative;
-   max-height: 100vh;
+   .screen-overlay .overlay{
+        position: fixed;
+   }
 }
 
 .page-router{

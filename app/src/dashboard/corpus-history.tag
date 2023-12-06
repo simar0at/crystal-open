@@ -1,5 +1,5 @@
 <corpus-history class="corpus-history">
-    <div class="content z-depth-1">
+    <div class="content">
         <table if={list.length} class="table material-table highlight">
             <tbody class="noBorder">
                 <tr each={corpus in list} onclick={onCorpusChange}>
@@ -29,7 +29,7 @@
         this.mixin("tooltip-mixin")
 
         getCorpSize(corpus){
-            return window.Formatter.num(corpus.size)
+            return corpus.size > 0  ? window.Formatter.num(corpus.size) : "-"
         }
 
         refreshAttributes(){

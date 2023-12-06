@@ -2,7 +2,7 @@
     <div if={selection.length}>
         <div class="chip {tooltipped: textType.length > 17 }" each={textType, idx in selection} if={idx <= 3} data-tooltip={textType}>
             <i class="close material-icons" onclick={onTextTypeClick}>close</i>
-            {textType.startsWith("%RE%") ? ("RegEx: " + textType.substr(4)) : truncate(textType, 17)}
+            {textType.startsWith("%RE%") ? (_("valuesMatching", [textType.substr(4)])) : truncate(textType, 17)}
         </div>
         <div class="chip btnMore btn-floating" if={selection.length > 4} onclick={onMoreClick}>
             + {selection.length - 4} {_("more")}
@@ -19,28 +19,27 @@
     <script>
         this.mixin("tooltip-mixin")
         require("./text-type-selection.scss")
-        const {TextTypesStore} = require("./TextTypesStore.js")
-
+        this.textTypesTag = this.parent.textTypesTag
         this.textTypeName = opts.textType.name
 
         onTextTypeClick(evt){
-            TextTypesStore.removeTextType(this.textTypeName, evt.item.textType)
+            this.textTypesTag.removeTextType(this.textTypeName, evt.item.textType)
             // we remove chip manualy -> prevent material to remove it.
             // Otherwise it colides with riot engine
             evt.stopPropagation()
         }
 
         onRemoveClick(){
-            TextTypesStore.removeTextType(this.textTypeName, this.selection)
+            this.textTypesTag.removeTextType(this.textTypeName, this.selection)
         }
 
         updateAttributes(){
-            this.selection = TextTypesStore.getSelection(this.textTypeName) || []
+            this.selection = this.textTypesTag.getSelection(this.textTypeName) || []
         }
         this.updateAttributes()
 
         onMoreClick(){
-            TextTypesStore.toggleDetail(this.opts.textType)
+            this.textTypesTag.toggleDetail(this.opts.textType)
         }
 
         refreshCompressed(){
@@ -67,12 +66,12 @@
         }
 
         this.on("mount", () => {
-            TextTypesStore.on("textTypeChange", this.onTextTypeChange)
+            this.textTypesTag.on("textTypeChange", this.onTextTypeChange)
             this.refreshCompressed()
         })
 
         this.on("unmount", () => {
-            TextTypesStore.off("textTypeChange", this.onTextTypeChange)
+            this.textTypesTag.off("textTypeChange", this.onTextTypeChange)
         })
 
     </script>

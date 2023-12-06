@@ -1,26 +1,21 @@
-<div>The n-gram tool produces %[frequency]% lists of sequences of %[token|tokens]%. N-grams are also called multi-word expressions or MWEs. The user has a choice of filtering options including
-    <a href="https://www.sketchengine.eu/user-guide/user-manual/concordance-introduction/regular-expressions/" target="_blank" rel="noopener">regular expressions</a> to specify in detail which n-grams should have their frequency generated. N-grams can be generated on any %[attribute]% with %[wordForm|word]% and %[lemma]% being the most frequently used ones.
+<div>The n-gram tool produces %[frequency]% lists of sequences of %[token|tokens]%. N-grams are also called multi-word expressions or MWEs. The user has a choice of filtering options including %[regex|regular expressions]% to specify in detail which n-grams should have their frequency generated. N-grams can be generated on any %[attribute]% with %[wordForm|word]% and %[lemma]% being the most frequently used ones.
 </div>
 <div class="center">
     <br>
-    <img src="https://www.sketchengine.eu/wp-content/uploads/Ngrams1.png" />
+    <img src="https://www.sketchengine.eu/wp-content/uploads/Ngrams1.png" loading="lazy">
     <br><br>
 </div>
 <ul class="collapsible">
     <li>
         <div class="collapsible-header">How do n-grams work?</div>
         <div class="collapsible-body">
-            <div>N-grams are composed of
-                <a href="https://www.sketchengine.eu/my_keywords/tokenization/" target="_blank">tokens</a>, this is why
-                <em>don't like</em> is a trigram and will be displayed as
-                <em>do n't like</em>. (In a concordance,
-                <em>don't</em> will be displayed without a space but also treated as two tokens.)
+            <div>N-grams are composed of %[token|tokens]%, this is why <em>don't like</em> is a trigram and will be displayed as <em>do n't like</em>. (In a concordance, <em>don't</em> will be displayed without a space but also treated as two tokens.)
             </div>
             <br>
             <div>The result can be limited by minimum and maximum frequency. By default, low-frequency n-grams are excluded. Use the advanced tab to change this.</div>
             <br>
             <div>
-                <a href="https://www.sketchengine.eu/user-guide/user-manual/concordance-introduction/regular-expressions/" target="_blank" rel="noopener">Regular expressions</a> can be used to define complex criteria for the n-grams that should be included in the frequency list. When using regular expressions, the whole n-gram is treated as one continuous sequence of characters including spaces.
+                %[regex|Regular expressions]% can be used to define complex criteria for the n-grams that should be included in the frequency list. When using regular expressions, the whole n-gram is treated as one continuous sequence of characters including spaces.
             </div>
             <br>
             <div>There are two versions of the starting, ending and containing filters. One for filtering by characters (letters) appearing anywhere inside an n-gram and one for filtering by complete words, i.e. what is found between two spaces.</div>
@@ -29,16 +24,14 @@
     <li>
         <div class="collapsible-header">Limitation</div>
         <div class="collapsible-body">
-            <div>Only the first 1 billion tokens from the corpus are used for generating the n-gram list. If the corpus is larger, the rest of the corpus will not be reflected in the results. This is a technical limitation which cannot be overcome. An n-gram list generated from the whole corpus can be produced at a fee. Contact
-                <a href="https://www.sketchengine.eu/contact-us/" target="_blank" rel="noopener">Sketch Engine</a>.
+            <div>Only the first 1 billion tokens from the corpus are used for generating the n-gram list. If the corpus is larger, the rest of the corpus will not be reflected in the results. This is a technical limitation which cannot be overcome. An n-gram list generated from the whole corpus can be produced at a fee. Contact <a href="https://www.sketchengine.eu/contact-us/" target="_blank" rel="noopener">Sketch Engine</a>.
             </div>
         </div>
     </li>
     <li>
         <div class="collapsible-header">Requirements for n-grams to work well</div>
         <div class="collapsible-body">
-            <div>N-grams will work with any corpus as long as it is
-                <a href="https://www.sketchengine.eu/my_keywords/tokenization/" target="_blank" rel="noopener">tokenized</a>. Lemma or tag n-grams will only be available for lemmatized and tagged corpora. Tokenization, lemmatization and tagging are carried out automatically upon uploading files to Sketch Engine provided the language is <a href="https://www.sketchengine.eu/user-guide/user-manual/corpora/by-language/" target="_blank" rel="noopener">supported</a>.
+            <div>N-grams will work with any corpus as long as it is %[token|tokenized]%. Lemma or tag n-grams will only be available for lemmatized and tagged corpora. Tokenization, lemmatization and tagging are carried out automatically upon uploading files to Sketch Engine provided the language is <a href="https://www.sketchengine.eu/user-guide/user-manual/corpora/by-language/" target="_blank" rel="noopener">supported</a>.
             </div>
         </div>
     </li>

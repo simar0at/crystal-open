@@ -1,19 +1,19 @@
 <wordlist-tab-advanced class="wordlist-tab-advanced">
     <a onclick={onResetClick} data-tooltip={_("resetOptionsTip")} class="tooltipped tabFormResetBtn btn btn-floating btn-flat">
-        <i class="material-icons dark">settings_backup_restore</i>
+        <i class="material-icons color-blue-800">settings_backup_restore</i>
     </a>
     <div class="card-content">
         <div class="mainForm">
             <div class="row">
-                <div class="col xl8 l12 m12">
-                    <div class="row noMarginBottom">
-                        <div class="col xl1 l1 m2 s12">
+                <div class="col">
+                    <div class="row mb-0">
+                        <div class="col">
                             <span class="tooltipped columnShow" data-tooltip="t_id:wl_b_find">
                                 {_("find")}
                                 <sup>?</sup>
                             </span>
                         </div>
-                        <div class="col xl4 l4 m3 s12">
+                        <div class="col">
                             <ui-list options={findList}
                                 ref="find"
                                 value={options.find}
@@ -21,7 +21,7 @@
                                 on-change={onFindChange}
                                 style="max-width: 250px;"></ui-list>
                         </div>
-                        <div class="col xl7 l7 m7 s12">
+                        <div class="col">
                             <wordlist-criteria ref="criteria" disabled={options.histid}></wordlist-criteria>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                             ></ui-checkbox>
                         </div>
                         <div class="col s12 {collapsedBlacklist: !options.exclude}" style="margin-left: 35px;">
-                            <ui-textarea
+                            <expandable-textarea
                                 disabled={options.histid || !options.exclude}
                                 required="required"
                                 validate="1"
@@ -45,8 +45,9 @@
                                 value={options.wlblacklist}
                                 rows="1"
                                 label-id={options.exclude ? "wl.pasteListHere" : ""}
-                                on-change={changeValue}
-                                style="max-width: 250px;"></ui-textarea>
+                                on-change={onWlblacklistChange}
+                                dialog-title={_("wl.excludeWords")}
+                                style="max-width: 250px;"></expandable-textarea>
                         </div>
                     </div>
 
@@ -57,7 +58,7 @@
                                 name="include_nonwords"
                                 checked={options.include_nonwords}
                                 on-change={onIncludeNonwordsChange}
-                                tooltip="t_id:wl_a_include_nonwords"
+                                tooltip="t_id:include_nonwords"
                             ></ui-checkbox>
                         </div>
                     </div>
@@ -67,7 +68,7 @@
                             <ui-checkbox
                                 label={_("ignoreCase")}
                                 name="wlicase"
-                                disabled={options.histid || isIgnoreCaseDisabled()}
+                                disabled={options.histid}
                                 checked={options.wlicase}
                                 on-change={onWlicaseChange}
                                 tooltip="t_id:wlicase"></ui-checkbox>
@@ -139,13 +140,23 @@
                 </div>
             </div>
         </div>
-        <text-types-collapsible disabled={options.histid} opts={options.usesubcorp ? {note: _("subcorpusAndTTWarning")} : null}></text-types-collapsible>
 
-        <div class="searchBtn center-align">
-            <a id="btnGoAdv" class="waves-effect waves-light btn contrast" onclick={onSearch}>{_("go")}</a>
+        <text-types if={!isAnonymous}
+                ref="texttypes"
+                disabled={options.usesubcorp != "" || options.histid}
+                collapsible=1
+                disable-structure-mixing=1
+                selection={options.tts}
+                on-change={onTtsChange}
+                note={options.usesubcorp ?_("subcorpusAndTTWarning") : ""}></text-types>
+
+        <div class="primaryButtons searchBtn">
+            <a id="btnGoAdv" class="btn btn-primary" onclick={onSearch}>{_("go")}</a>
         </div>
 
-        <floating-button id="btnGoFloat" onclick={onSearch} refnodeid="btnGoAdv"></floating-button>
+        <floating-button id="btnGoFloat"
+                on-click={onSearch}
+                refnodeid="btnGoAdv"></floating-button>
     </div>
 
     <script>
@@ -154,11 +165,13 @@
         require("./wordlist-option-display-item.tag")
         require("./wordlist-criteria.tag")
         const {AppStore} = require("core/AppStore.js")
-        const {TextTypesStore} = require("common/text-types/TextTypesStore.js")
+        const {Auth} = require("core/Auth.js")
         const Meta = require("./Wordlist.meta.js")
 
         this.mixin("feature-child")
         this.mixin("tooltip-mixin")
+
+        this.isAnonymous = Auth.isAnonymous()
 
         addToList(type, obj){
             this.findList.push({
@@ -174,15 +187,15 @@
             const attributes = AppStore.get("corpus.attributes") || []
             const showFirst = ["word", "lemma"]
             attributes.forEach((attr) => {
-                if(!attr.isLc && showFirst.indexOf(attr.label) != -1){
+                if(!attr.isLc && showFirst.indexOf(attr.value) != -1){
                     this.addToList("attr", attr)
                 }
             })
-            lposList.forEach((lpos) => {
+            this.store.getDefaultPosAttribute() && lposList.forEach((lpos) => {
                 this.addToList("lpos", lpos)
             })
             attributes.forEach((attr) => {
-                if(!attr.isLc && showFirst.indexOf(attr.label) == -1){
+                if(!attr.isLc && showFirst.indexOf(attr.value) == -1){
                     this.addToList("attr", attr)
                 }
             })
@@ -207,13 +220,18 @@
         this.updateAttributes()
 
         onSearch(){
-            this.store.resetSearchAndAddToHistory(Object.assign(this.options, {
-                page: 1
-            }))
+            this.options.page = 1
+            if(this.options.viewAs == 2){
+                this.options.wlnums = ""
+                this.options.wlsort = "frq"
+                this.options.relfreq = 0
+            }
+            this.data.closeFeatureToolbar = true
+            this.store.resetSearchAndAddToHistory(this.options)
         }
 
         onResetClick(){
-            TextTypesStore.reset()
+            this.refs.texttypes && this.refs.texttypes.reset()
             this.store.resetGivenOptions(this.options)
         }
 
@@ -224,11 +242,8 @@
             if(this.options.filter == "all"){
                 this.options.keyword = ""
             }
-            if(!attr || !attr.ignoreCaseAllowed){
-                this.options.wlicase = 0
-            }
             if (AppStore.data.wattrs.indexOf(value) == -1) {
-                this.options.include_nonwords = 0
+                this.options.include_nonwords = false
             }
             if(this.options.histid != (option.type == "findx")){
                 if(option.type == "findx"){
@@ -254,7 +269,7 @@
         }
 
         onIncludeNonwordsChange(checked){
-            this.options.include_nonwords = checked ? 1 : 0
+            this.options.include_nonwords = checked
         }
 
         onExlcudeWordsChange(checked){
@@ -269,7 +284,7 @@
         }
 
         onWlicaseChange(checked){
-            this.options.wlicase = checked ? 1 : 0
+            this.options.wlicase = checked
         }
 
         onViewAsChange(value){
@@ -284,13 +299,15 @@
             this.update()
         }
 
-        changeValue(value, name){
-            this.options[name] = value
+        onWlblacklistChange(value){
+            this.options.wlblacklist = value
+            this.update()
         }
 
         onSubcorpusChange(value){
             this.options.usesubcorp = value
             this.refreshTextTypesDisabled()
+            this.update()
         }
 
         turnOnIncludeNonwords(kw) {
@@ -299,7 +316,7 @@
         }
 
         refreshTextTypesDisabled(){
-            TextTypesStore.setDisabled(!!this.options.usesubcorp || this.options.histid)
+            this.refs.texttypes && this.refs.texttypes.setDisabled(!!this.options.usesubcorp || this.options.histid)
         }
 
         refreshSearchButtonDisable(){
@@ -308,11 +325,6 @@
                 ))
                 || (this.options.viewAs == 2 && this.options.wlstruct_attr1 == "")
             $("#btnGoAdv, #btnGoFloat a").toggleClass("disabled", disabled)
-        }
-
-        isIgnoreCaseDisabled(){
-            let attr = AppStore.getAttributeByName(this.options.find)
-            return attr && !attr.ignoreCaseAllowed
         }
 
         dataChanged(){
@@ -327,8 +339,13 @@
             }
         }
 
-        onTextTypesSelectionChange(selection){
-            this.options.tts = selection
+        onTtsChange(tts){
+            this.options.tts = tts
+            this.update()
+        }
+
+        localizationChange(){
+            this.updateFindList()
             this.update()
         }
 
@@ -339,13 +356,13 @@
             // stejne jako basic
             this.store.on("change", this.dataChanged)
             this.store.on("findxListLoaded", this.findxListLoaded)
-            TextTypesStore.on("selectionChange", this.onTextTypesSelectionChange)
+            Dispatcher.on("LOCALIZATION_CHANGE", this.localizationChange)
         })
 
         this.on("unmount", () => {
             this.store.off("change", this.dataChanged)
             this.store.off("findxListLoaded", this.findxListLoaded)
-            TextTypesStore.off("selectionChange", this.onTextTypesSelectionChange)
+            Dispatcher.off("LOCALIZATION_CHANGE", this.localizationChange)
         })
     </script>
 </wordlist-tab-advanced>

@@ -1,59 +1,53 @@
 <wordlist-result-options-view class="wordlist-result-options-view">
-    <div>
-        <ui-checkbox label-id="singleColumn"
+    <div class="row">
+      <div class="col l4 m6 s12 dividerRight">
+        <ui-switch label-id="singleColumn"
                 name="onecolumn"
-                disabled={data.isEmpty || data.isLoading}
-                checked={data.onecolumn}
+                disabled={!store.hasBeenLoaded || data.isLoading}
+                riot-value={data.onecolumn}
                 tooltip="t_id:wl_r_view_onecolumn"
-                on-change={onOptionChange}></ui-checkbox>
-        <ui-checkbox name="showLineNumbers"
+                on-change={onOptionChange}
+                class="lever-right"></ui-switch>
+        <ui-switch name="showLineNumbers"
                 label-id="showLineNumbers"
-                disabled={data.isEmpty || data.isLoading}
-                checked={data.showLineNumbers}
+                disabled={!store.hasBeenLoaded || data.isLoading}
+                riot-value={data.showLineNumbers}
                 tooltip="t_id:wl_r_show_view_line_numbers"
-                on-change={onOptionChange}></ui-checkbox>
-    </div>
-    <div>
-        <ui-checkbox
-                name="values"
-                label-id="wl.absfreq"
-                disabled={data.isEmpty || data.isLoading}
-                checked={data.values}
-                tooltip="t_id:wl_r_view_absfreq"
-                on-change={onOptionChange}></ui-checkbox>
-        <ui-checkbox if={!data.histid && data.raw.concsize == data.raw.fullsize}
-                name="relfreq"
-                label-id="relFreq"
-                disabled={data.isEmpty || data.isLoading || data.wlnums == "arf"}
-                checked={data.relfreq}
-                tooltip="t_id:wl_r_view_relfreq"
-                on-change={onOptionChange}></ui-checkbox>
-        <ui-checkbox if={!data.histid}
+                on-change={onOptionChange}
+                class="lever-right"></ui-switch>
+        <ui-switch if={!data.histid}
                 name="bars"
                 label-id="wl.bars"
-                disabled={data.isEmpty || data.isLoading || data.wlstruct_attr1 === ""}
-                checked={data.bars}
+                disabled={!store.hasBeenLoaded || data.isLoading || data.wlstruct_attr1 === ""}
+                riot-value={data.bars}
                 tooltip="t_id:wl_r_view_bars"
-                on-change={onBarsChange}></ui-checkbox>
-        <ui-checkbox if={data.histid}
+                on-change={onBarsChange}
+                class="lever-right"></ui-switch>
+        <ui-switch if={data.histid}
                 name="showratio"
                 label-id="showRatio"
-                checked={data.showratio}
-                on-change={onOptionChange}></ui-checkbox>
-        <ui-checkbox if={data.histid}
+                riot-value={data.showratio}
+                on-change={onOptionChange}
+                class="lever-right"></ui-switch>
+        <ui-switch if={data.histid}
                 name="showrank"
                 label-id="showRank"
-                checked={data.showrank}
-                on-change={onOptionChange}></ui-checkbox>
+                riot-value={data.showrank}
+                on-change={onOptionChange}
+                class="lever-right"></ui-switch>
     </div>
-    <div if={!data.histid}>
-        <ui-radio options={wlnumsList}
-            name="wlnums"
-            disabled={data.isEmpty || data.isLoading || (data.tab == "advanced" && data.viewAs == 2)}
-            value={data.wlnums}
-            tooltip="t_id:wl_r_view_wlnums"
-            on-change={onWlnumsChange}></ui-radio>
+    <div if={!data.histid} class="col l4 m6 s12">
+        <ui-switch each={attr in attrsList}
+                name={attr.value}
+                label={attr.label}
+                label-id={attr.labelId}
+                tooltip={attr.tooltip}
+                disabled={isAttrDisabled(attr)}
+                riot-value={data.cols.includes(attr.value)}
+                on-change={onAttrChange}
+                class="lever-right"></ui-switch>
     </div>
+  </div>
 
     <script>
         require("./wordlist-result-options.scss")
@@ -61,14 +55,26 @@
 
         this.mixin("feature-child")
 
-        this.wlnumsList = Meta.wlnumsList
-        this.optionsList = [{
-            id: "view",
-            icon: "visibility",
-            iconClass: "material-icons",
-            tag: "wordlist-result-options-view",
-            label: "changeDisplayOptions"
-        }]
+        this.attrsList = copy(Meta.wlnumsList)
+        this.corpus.hasStarAttr && this.attrsList.push({
+            labelId: "star",
+            value: "star:f",
+            tooltip: "t_id:asr"
+        })
+        this.attrsList = this.attrsList.map(attr => {
+            if(attr.value == "docf" && this.corpus.hasStarAttr){
+                attr.labelId = "mr"
+                attr.tooltip = "t_id:mr"
+            }
+            if(attr.value == "reldocf" && this.corpus.hasStarAttr){
+                attr.labelId = "relmr"
+                attr.tooltip = "t_id:relmr"
+            }
+            return attr
+        })
+        if(!this.corpus.hasDocfAttr){
+            this.attrsList = this.attrsList.filter(attr => attr.value != "docf" && attr.value != "reldocf")
+        }
 
         onOptionChange(value, name){
             this.store.changeValue(value, name)
@@ -76,19 +82,40 @@
             this.store.updateUrl(true)
         }
 
-        onWlnumsChange(wlnums){
-            this.store.searchAndAddToHistory({
-                wlnums: wlnums,
-                relfreq: false,
-                page: 1
-            })
-            this.store.saveUserOptions(["wlnums"])
+        onAttrChange(checked, name, evt, tag){
+            let isInCols = this.data.cols.includes(name)
+            if(checked && !isInCols){
+                this.data.cols.push(name)
+            } else if(!checked && isInCols){
+                this.data.cols = this.data.cols.filter(a => a != name)
+            }
+            this.store.sortCols()
+            let needReload = (name != "reldocf" || !this.data.cols.includes("docf"))
+                    && checked
+                    && !this.store.isStructuredWordlist()
+                    && (!this.data.items.length || this.data.cols.some(a => !isDef(this.data.items[0][a])))
+            if(needReload){
+                this.store.searchAndAddToHistory({
+                    page: 1
+                })
+            } else {
+                this.store.updatePageTag()
+            }
+            this.store.saveUserOptions()
+            this.store.updateUrl(true)
         }
 
         onBarsChange(bars){
-            this.store.searchAndAddToHistory({bars: bars})
+            this.store.changeValue(bars, "bars")
             this.store.saveUserOptions(["bars"])
         }
-    </script>
 
+        isAttrDisabled(attr){
+            let isStruct = this.store.isStructuredWordlist()
+            return !this.store.hasBeenLoaded
+                    || this.data.isLoading
+                    || (isStruct && !["frq", "relfreq"].includes(attr.value))
+                    || (isStruct && attr == "relfreq" && this.data.raw.concsize == this.data.raw.fullsize)
+        }
+    </script>
 </wordlist-result-options-view>

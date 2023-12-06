@@ -1,4 +1,3 @@
-@import 'app/styles/base';
 @import 'app/styles/constants';
 
 @mixin floatingDropdown{
@@ -10,11 +9,11 @@
 
 @mixin labelColor{
     label{
-        color: $new_darkBlue;
+        color: $blue-800;
     }
     &[disabled]{
         label{
-            color: $new_darkBlue_disabled;
+            color: $blue-800_disabled;
         }
     }
 }
@@ -82,7 +81,6 @@ label.tooltipped{
     .suffix{
         position: absolute;
         top: 0.25em;
-        opacity: 0.54;
         cursor: pointer;
         line-height: 1em;
         height: 1em;
@@ -100,7 +98,7 @@ label.tooltipped{
             padding: 4px 7px 4px 7px;
             border-bottom: 1px solid rgba(255, 255, 255, 0);
             border-radius: 3px;
-            background-color: #FFF;
+            background-color: $white;
         }
         .hasSuffixIcon input{
             padding-right: 34px!important;
@@ -121,23 +119,23 @@ label.tooltipped{
         }
     }
     input::placeholder, .material-icons, .ske-icons {
-        color: $new_mediumBlue;
+        color: $blue-200;
     }
     input {
-        color: #000;
-        border-bottom-color: $new_darkBlue;
+        color: $black;
+        border-bottom-color: $blue-800;
     }
     input:focus {
-        border-bottom-color: $new_darkBlue;
+        border-bottom-color: $blue-800;
     }
     .result-error .material-icons {
-        color: #FFF;
+        color: $white;
     }
 }
 
 .ui-textarea{
     textarea{
-        border-bottom-color: $new_darkBlue;
+        border-bottom-color: $blue-800;
     }
 }
 
@@ -174,17 +172,20 @@ label.tooltipped{
     > div > ul.tabs {
         background-color: white;
         height: 4.4ex;
+        &.hasScrollbar{
+            height: 6ex;
+        }
         li {
             height: 100%;
         }
         .tab {
             a {
-                color: $new_darkBlue;
+                color: $blue-800;
                 font-size: 1.1em;
                 line-height: 2.2em;
                 &.active{
-                    border-bottom: 1.5px solid $new_darkBlue;
-                    background-color: $new_lightBlue;
+                    border-bottom: 1.5px solid $blue-800;
+                    background-color: $blue-100;
                 }
             }
         }
@@ -198,7 +199,9 @@ label.tooltipped{
 }
 
 .ui-slider {
+    text-align: left;
     p.range-field {
+        margin-top: 0;
         margin-bottom: 1em !important;
         max-width: 400px;
 
@@ -220,8 +223,17 @@ label.tooltipped{
         input[type=range]:disabled {
             opacity: 0.3;
         }
-        ll {
-            font-size: 75%;
+        input[type=range]::-webkit-slider-runnable-track {
+            background-color: #a0cfdc;
+            box-shadow: 1px 1px 1px #84bece, 0px 0px 1px #84bece;
+        }
+        input[type=range]::-webkit-slider-thumb{
+            background-color: $blue-800;
+            box-shadow: 1px 1px 1px #440c0d, 0px 0px 1px #440c0d;
+        }
+        body input[type=range]::-moz-range-thumb{
+            background-color: $blue-800;
+            box-shadow: 1px 1px 1px #440c0d, 0px 0px 1px #440c0d;
         }
         label.llabel {
             float: left;
@@ -229,10 +241,33 @@ label.tooltipped{
         label.rlabel {
             float: right;
         }
+        .customLabel{
+            position: absolute;
+            bottom: -14px;
+            transform: translateX(-50%);
+        }
     }
     &.reversed{
         input[type="range"]{
             direction: rtl;
+        }
+    }
+    &:not([disabled]){
+        .valLabel {
+            cursor: pointer;
+        }
+    }
+    &[disabled]{
+        .valLabel {
+            color: $gray-400;
+        }
+    }
+    .labelContainer{
+        position: absolute;
+        left: 7px;
+        right: 7px;
+        & >span{
+            position: relative;
         }
     }
 }
@@ -246,14 +281,14 @@ label.tooltipped{
         padding-left: 1.75em;
     }
     label [type="checkbox"] + span::before{
-        border-color: $new_darkBlue;
+        border-color: $blue-800;
     }
     label [type="checkbox"]:checked + span::before{
-        border-right-color: $new_darkBlue;
-        border-bottom-color: $new_darkBlue;
+        border-right-color: $blue-800;
+        border-bottom-color: $blue-800;
     }
     label [type="checkbox"]:indeterminate+span:before{
-        border-right-color: $new_darkBlue;
+        border-right-color: $blue-800;
     }
     display: block;
     @include labelColor;
@@ -277,6 +312,12 @@ label.tooltipped{
         font-size: small;
     }
     @include labelColor;
+    &[disabled=disabled] {
+        cursor: not-allowed;
+        span {
+            cursor: not-allowed;
+        }
+    }
 }
 
 
@@ -288,7 +329,7 @@ label.tooltipped{
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        border-bottom-color: $new_darkBlue;
+        border-bottom-color: $blue-800;
     }
     &.single {
         .select-wrapper {
@@ -303,12 +344,18 @@ label.tooltipped{
     label::first-letter{
         text-transform: capitalize;
     }
+    &[disabled=disabled] {
+        cursor: not-allowed;
+        input {
+            cursor: not-allowed !important;
+        }
+    }
 }
 
 .ui-list{
     display: block;
     .label{
-        color: $new_darkBlue;
+        color: $blue-800;
         >sup{
             cursor: help;
         }
@@ -321,14 +368,13 @@ label.tooltipped{
     }
     .ui-list-list{
         color: rgba(0,0,0,.84);
-        background-color: #fff;
+        background-color: $white;
         position: relative; //important for calcluating topoffset of items
         box-shadow: none;
         margin: 0;
-        padding: 5px 0;
         overflow: hidden;
         overflow-y: auto;
-        min-height: 47px;
+        min-height: 37px;
         transition: box-shadow .2s;
         &:active, &:focus{
             outline: none;
@@ -354,27 +400,29 @@ label.tooltipped{
                     width: 18px;
                     height: 18px;
                     z-index: 0;
-                    border: 2px solid $new_darkBlue;
+                    border: 2px solid $blue-800;
                     border-radius: 1px;
                     margin-top: 2px;
                     transition: .2s;
                 }
             }
             &:hover{
-                background-color: $new_lightBlue;
+                background-color: $blue-100;
             }
             &:focus,
             &:active{
-                outline: 1px solid $new_darkBlue;
-                background-color: $new_mediumBlue;
+                outline: 1px solid $blue-800;
+                background-color: $blue-200;
             }
             &.focused{
                 outline: 1px solid #d4d4d4;
                 background-color: #dadada;
             }
             &.selected{
-                background-color: $new_mediumBlue;
-                font-weight: bold;
+                &:not(.addNotFound){
+                    background-color: $blue-200;
+                    font-weight: bold;
+                }
                 &.checkbox{
                     &::before{
                         top: 7px;
@@ -403,8 +451,13 @@ label.tooltipped{
             &.addNotFound{
                 font-style: italic;
                 &:not(:first-child){
-                    border-top: 1px solid #bdbdbd;
+                    border-top: 1px solid $gray-400;
                 }
+            }
+            .prefixIcon{
+                width: 40px;
+                vertical-align: middle;
+                opacity: 0.5;
             }
         }
     }
@@ -446,7 +499,7 @@ label.tooltipped{
     .footerContent{
         position: relative;
         width: 100%;
-        background-color: #f2f2f2;
+        background-color: $gray-100;
         padding: 5px;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
         white-space: nowrap;
@@ -471,14 +524,14 @@ label.tooltipped{
         a{
             margin-left: 15px;
             i{
-                color: #757575;
+                color: $gray-600;
             }
         }
         &.active{
             a{
                 background-color: #2196F3;
                 i{
-                    color: #fff;
+                    color: $white;
                 }
             }
         }
@@ -495,11 +548,17 @@ label.tooltipped{
             }
         }
     }
+    &[disabled=disabled] {
+        cursor: not-allowed;
+        input {
+            cursor: not-allowed;
+        }
+    }
 }
 .ui-pagination{
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: center;
     margin-top: 10px;
     &.narrow {
         display: block;
@@ -521,6 +580,20 @@ label.tooltipped{
         display: inline-block;
         margin: 0 20px;
     }
+    .totalPages{
+        display: none;
+        font-size: 12px;
+        color: #afafaf;
+        margin-right: 20px;
+    }
+    .showTotalPages {
+        .ui-input{
+            margin-right: 0;
+        }
+        .totalPages{
+            display: inline;
+        }
+    }
     .pagination-range{
         display: flex;
     }
@@ -537,6 +610,7 @@ label.tooltipped{
     }
     input{
         height: 1.5rem!important;
+        line-height: 1.5rem!important;
     }
     .disabled{
         a{
@@ -598,7 +672,7 @@ body.SkE .ui-pagination > *{
             border-bottom: 0;
         }
         &[disabled=disabled]{
-            color: $lightGray;
+            color: $gray-500;
             cursor: not-allowed;
         }
     }
@@ -615,7 +689,7 @@ body.SkE .ui-pagination > *{
         padding: 50px 20px 70px 20px;
         outline: 2px dashed #92b0b3;
         outline-offset: -10px;
-        background-color: $whiteGray;
+        background-color: $gray-100;
         -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
         transition: outline-offset .15s ease-in-out, background-color .15s linear;
         &.is-uploading .input{
@@ -625,7 +699,7 @@ body.SkE .ui-pagination > *{
     .is-dragover {
         outline-offset: -20px;
         outline-color: #c8dadf;
-        background-color: #fff;
+        background-color: $white;
     }
     .icon {
         width: 100%;
@@ -636,7 +710,7 @@ body.SkE .ui-pagination > *{
     }
     .uploading{
         font-size: 30px;
-        color: $lightGray;
+        color: $gray-500;
         text-align: center;
         display: none;
         font-style: italic;
@@ -718,11 +792,11 @@ body.SkE .ui-pagination > *{
     .text:hover,
     .text:focus,
     .text.has-focus {
-        color: #009688;
+        color: $persianGreen;
     }
     .file:focus + label,
     .file.has-focus + label{
-        outline: 1px dotted #000;
+        outline: 1px dotted $black;
         outline: -webkit-focus-ring-color auto 5px;
     }
     .button {
@@ -730,7 +804,7 @@ body.SkE .ui-pagination > *{
     }
     .maxFiles{
         font-size: 0.7em;
-        color: $lightGray;
+        color: $gray-500;
     }
 }
 
@@ -739,7 +813,8 @@ body.SkE .ui-pagination > *{
     display: inline-block;
     .rangeWrapper{
         margin-top: 0.9rem;
-        background-color: $new_mediumBlue;
+        background-color: $blue-200;
+        display: flex;
         >span{
             padding: 0 1rem;
             font-size: 16px;
@@ -754,12 +829,12 @@ body.SkE .ui-pagination > *{
         background-color: initial;
         border-radius: 0;
         &.rangeSelected{
-            background-color: #004B69;
-            color: #fff;
+            background-color: $blue-800;
+            color: $white;
         }
         &.highlighted{
             background-color: #5b8da4;
-            color: #fff;
+            color: $white;
             box-shadow: none;
         }
     }
@@ -783,9 +858,14 @@ body.SkE .ui-pagination > *{
             line-height: 34px;
         }
     }
+    &[disabled=disabled] {
+        cursor: not-allowed;
+    }
 }
 
 .ui-chips{
+    overflow: hidden;
+    white-space: normal;
     &.empty input{
         width: 100%!important;
     }
@@ -794,6 +874,46 @@ body.SkE .ui-pagination > *{
     }
 }
 
+.ui-switch{
+    &.switch label{
+        input[type=checkbox]:checked:not([disabled])+.lever{
+            background-color: $blue-200;
+            &:after{
+                background-color: $blue-800;
+            }
+        }
+        .lever{
+            margin: 0px;
+            &:after{
+                background-color: $gray-100;
+            }
+        }
+        input[type=checkbox]:disabled+.lever {
+            background-color: rgba(0,0,0,0.12);
+        }
+    }
+    .switch-label{
+        font-size: 1rem;
+        &.tooltipped{
+            margin-right: .5em;
+        }
+    }
+    &.disabled label{
+        cursor: default;
+    }
+    &.lever-right{
+        label{
+            display: inline-flex;
+            width: 100%;
+        }
+        .switch-label{
+            width: 100%;
+        }
+        .lever{
+            flex-shrink: 0;
+        }
+    }
+}
 
 
 
@@ -856,7 +976,7 @@ body.SkE .ui-pagination > *{
             }
             & + .errorLabel:after{
                 content: attr(data-error);
-                color: #F44336;
+                color: $red-200;
                 opacity: 1;
             }
             & + .helper-text{
@@ -866,7 +986,7 @@ body.SkE .ui-pagination > *{
         .valid{
             & + .errorLabel:after{
                 content: attr(data-success);
-                color: #4CAF50;
+                color: $green-500;
                 opacity: 1;
             }
         }
@@ -881,4 +1001,3 @@ body.SkE .ui-pagination > *{
         bottom: -8px;
     }
 }
-

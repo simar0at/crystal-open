@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-telu ._t{
-    font-family: 'Noto Telugu'
+.script-telu ._t,
+body .script-telu ._t,
+body .script-telu._t{
+    font-family: 'Noto Telugu', 'Noto Sans', sans-serif;
 }

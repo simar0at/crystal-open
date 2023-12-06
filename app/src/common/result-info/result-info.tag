@@ -1,51 +1,62 @@
 <result-info class="result-info">
     <div class="ro-chips">
-        <div style="line-height: 40px;">
+        <div>
             <div class="chip" each={option in userOptions} if={userOptions.length}>
                 {getLabel(option)}&nbsp;
-                <span class="ro-value">{formatValue(option.value)}</span>
-                <i class="close material-icons" onclick={onUserValueClick}>close</i>
+                <span class="ro-value">{store.stringifyValue(option.value, option.name)}</span>
+                <i if={showCloseButton(option.name)} class="close material-icons" onclick={onUserValueClick}>close</i>
             </div>
         </div>
-        <div if={defaultOptions.length} style="line-height: 40px;">
+        <div if={defaultOptions.length}>
             <span class="ro-option" each={option in defaultOptions}>
                 {getLabel(option)}&nbsp;
-                <span class="ro-value">{formatValue(option.value)}</span>
+                <span class="ro-value">{store.stringifyValue(option.value, option.name)}</span>
             </span>
+        </div>
+        <div if={opts.customInfoTag} class="dividerTop" style="margin-top: 20px; padding-top: 20px;">
+            <div data-is={opts.customInfoTag} opts={opts.customInfoOpts}></div>
         </div>
     </div>
 
     <script>
         this.store = getPageParent(this).store
 
-        formatValue(value) {
-            return value === "" ? _("none") : ('"' + truncate(value, 20) + '"')
+
+        addValueToList(option, value) {
+            let name = option[0]
+            if(this.opts.skipOptions && this.opts.skipOptions.includes(name)){
+                return
+            }
+            let item = {
+                name: name,
+                label: _(option[1]),
+                value: value
+            }
+            if(this.store.isOptionDefault(name, value)){
+                this.defaultOptions.push(item)
+            } else {
+                this.userOptions.push(item)
+            }
         }
 
-        addValueToList(isDefault, labelId, value, callback) {
-            this[isDefault ? "defaultOptions" : "userOptions"].push({
-                label: _(labelId),
-                removeCallback: callback,
-                value: value
+        showCloseButton(name){
+            return !this.opts.doNotRemove || !this.opts.doNotRemove.includes(name)
+        }
+
+        onUserValueClick(evt) {
+            let name = evt.item.option.name
+            this.store.searchAndAddToHistory({
+                [name]: this.store.defaults[name]
             })
         }
 
-        onUserValueClick(event) {
-            event.item.option.removeCallback()
-        }
-
         updateAttributes() {
-            let options = this.opts.opts && this.opts.opts.options || this.store.searchOptions
+            let options = this.opts && this.opts.options || this.store.searchOptions
             this.defaultOptions = []
             this.userOptions = []
-            options.forEach((o) => {
-                let value = this.store.data[o[0]]
-                this.addValueToList(this.store.isOptionDefault(o[0], value), o[1], value,
-                        function(name){
-                            this.store.searchAndAddToHistory({
-                                [name]: this.store.defaults[name]
-                            })
-                        }.bind (this, [o[0]]))
+            options.forEach(option => {
+                let value = this.store.data[option[0]]
+                this.addValueToList(option, value)
             })
         }
         this.updateAttributes()

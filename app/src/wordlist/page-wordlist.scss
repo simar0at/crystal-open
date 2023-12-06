@@ -1,4 +1,4 @@
-@import 'app/styles/base';
+@import 'app/styles/constants';
 
 .page-wordlist{
     margin: auto;
@@ -12,14 +12,17 @@
             max-width: 100%;
         }
     }
-    .content{
-        box-shadow: none;
-    }
 
     &.tab-attribute{
         .wordlist-result-table{
             .oneColumn{
                 max-width: 1000px;
+                .table{
+                    width: 100%;
+                }
+                ._t{
+                    white-space: normal;
+                }
             }
         }
     }

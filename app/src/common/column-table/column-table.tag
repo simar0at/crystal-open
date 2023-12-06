@@ -1,11 +1,11 @@
-<column-table class="column-table">
+<column-table class="column-table {opts.class}">
     <div if={items.length} ref="container" class="container-fluid">
         <div class="row">
             <div class="col-tab-col" each={x, colNumber in new Array(columnCount)}>
-                <table class="table material-table dense-table" style={style}>
+                <table class="table material-table {dense-table: denseTable}" style={style}>
                     <thead if={opts.theadMeta} class="theadMeta">
                         <tr>
-                            <th each={th in opts.theadMeta} colspan={th.colspan}>
+                            <th each={th in opts.theadMeta} colspan={th.colspan} class={th.class}>
                                 <raw-html if={th.content} content={th.content}></raw-html>
                             </th>
                         </tr>
@@ -15,7 +15,7 @@
                             <th if={showLineNums()}></th>
                             <th each={cm in colMeta} class="{num: cm.num} {cm.class}">
                                 <table-label
-                                    align-right={cm.alignRight || cm.num ? 1 : 0}
+                                    align-right={cm.alignRight}
                                     label={getLabel(cm)}
                                     tooltip={cm.tooltip}
                                     desc-allowed={cm.sort ? cm.sort.descAllowed : null}
@@ -31,7 +31,7 @@
                     <tbody>
                         <tr each={item, i in getColData(colNumber)}
                                 class="{last: item.lastinner, inner: item.inner} itm_{(itemsInColumn * colNumber) + i + 1 + startIndex}">
-                            <td if={showLineNums()} class="col-tab-num" if={showLineNums()}>
+                            <td if={showLineNums()} class="col-tab-num">
                                 {window.Formatter.num((itemsInColumn * colNumber) + i + 1 + startIndex)}
                             </td>
                             <td each={cm in colMeta} class="{num: cm.num, word: cm.word} {cm.class}">
@@ -67,6 +67,7 @@
             this.sort = this.opts.sort
             this.orderBy = this.opts.orderBy
             this.minItemsInColumn = opts.minItemsInColumn || 10 // minimal count of items in column
+            this.denseTable = !JSON.parse(this.opts.standardWidth || false) // JSON parse to convert string to bool
             /*
             [{
                 "id": string,
@@ -109,9 +110,9 @@
                 }
             }
             newColumnCount = newColumnCount == 0 ? 1 : newColumnCount
-            if(newColumnCount != this.columnCount){
+            if(!this.fixingWidth && newColumnCount != this.columnCount){
                 this.columnCount = newColumnCount
-                this.fixingWidth = true
+                this.fixingWidth = true //prevent update() loop
                 this.update()
                 return
             }

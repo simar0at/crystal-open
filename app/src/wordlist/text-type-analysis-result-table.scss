@@ -1,0 +1,105 @@
+@import 'app/styles/constants';
+
+.text-type-analysis-result-table{
+    display: flex;
+    flex-wrap: wrap;
+    .card-panel{
+        background-color: $gray-100;
+    }
+    .formBlock{
+        display: inline-flex;
+        flex-direction: column;
+        flex-grow: 1;
+        margin-right: 2rem;
+        @media screen and (max-width: 1200px){
+            margin-right: 0;
+        }
+        .listWrapper{
+            max-width: 500px;
+            @media screen and (max-width: 1350px){
+                max-width: 450px;
+            }
+            .input-field{
+                margin-top: 0;
+            }
+        }
+        .analyzeMultipleTTBtn{
+            cursor: pointer;
+        }
+    }
+    .downloads{
+        .btn i{
+            vertical-align: middle;
+        }
+    }
+    .chartBlock{
+        padding: 0;
+        flex-grow: 3;
+        position: relative;
+        .chart{
+            margin: auto;
+            width: 60vw;
+            height: 30vw;
+            max-height: 600px;
+            max-width: 900px;
+            g[column-id="Other"] {
+                transform: translateY(20px);
+            }
+            @media screen and (max-width: 1700px){
+                max-height: 500px;
+                max-width: 800px;
+            }
+            @media screen and (max-width: 1500px){
+                max-height: 380px;
+                max-width: 650px;
+            }
+
+            @media screen and (max-width: 1350px){
+                max-height: 350px;
+                max-width: 600px;
+            }
+
+            @media screen and (max-width: 1200px){
+                width: 90vw;
+                height: 60vw;
+                max-width: initial;
+                max-height: initial;
+            }
+        }
+    }
+    .buttons{
+        .btn{
+            color: $blue-800;
+        }
+    }
+    .totalItems{
+        font-size: 0.8em;
+        color: $gray-500;
+    }
+    .resultBlock{
+        flex: 100%
+    }
+
+    .printChart{
+        position: absolute;
+        left: -99999px;
+        top: -99999px;
+        width: 1200px;
+        height: 600px;
+    }
+    .google-visualization-tooltip{
+        pointer-events: none;
+    }
+    .listDivider{
+        pointer-events: none;
+        position: relative;
+        &:after{
+            content: " ";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            border-bottom: 1px solid $gray-300;
+        }
+    }
+}

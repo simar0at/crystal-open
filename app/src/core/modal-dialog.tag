@@ -2,30 +2,32 @@
     <div each={dialog, idx in dialogs}
             ref="dlg_{idx}"
             id={dialog.id}
-            class="modal-dialog {dialog.class} {small:dialog.small} {big:dialog.big} {large:dialog.large} {tall:dialog.tall} {fullScreen: dialog.fullScreen}">
-        <span if={dialog.fullScreen && isDef(dialog.dismissible) ? dialog.dismissible : true} class="fullScreenClose">
+            class="modal-dialog {dialog.class} {small:dialog.small} {big:dialog.big} {large:dialog.large} {tall:dialog.tall} {fullScreen: dialog.fullScreen} type_{dialog.type}">
+        <span if={dialog.fullScreen && (isDef(dialog.dismissible) ? dialog.dismissible : true)} class="fullScreenClose">
             <i class="material-icons material-clickable" onclick={onCloseClick}>close</i>
         </span>
-            <div id="dialog_{idx}"
-                    ref="modal"
-                    class="modal {modal-fixed-footer: dialog.fixedFooter} {bottom-sheet: dialog.bottom} {dialog.type} {autowidth: dialog.autowidth} {onTop: dialog.onTop}">
+        <div id="dialog_{idx}"
+                ref="modal"
+                class="modal {modal-fixed-footer: dialog.fixedFooter} {bottom-sheet: dialog.bottom} {dialog.type} {autowidth: dialog.autowidth} {onTop: dialog.onTop}">
             <div class="{modal-center: dialog.autowidth}">
                 <div class="modal-content">
                     <h4 if={dialog.title}
-                        class={"red-text text-lighten-1": dialog.type=="error", "orange-text text-lighten-1": dialog.type=="warning"}>
+                            class={"red-text text-lighten-1": dialog.type=="error", "orange-text text-lighten-1": dialog.type=="warning"}>
                         <i if={dialog.icon} class="header-icon material-icons left">{dialog.icon}</i>
                         {dialog.title}
                     </h4>
-                    <div ref="content" class="clearfix dialogContent"></div>
+                    <div class="clearfix dialogContent">
+                        <div></div>
+                    </div>
                 </div>
 
-                <div class="modal-footer" if={!dialog.fullScreen && (dialog.showCloseButton || dialog.buttons.length)}>
-                    <a if={dialog.showCloseButton} class="btn modal-action modal-close waves-effect btn-flat">{_("close")}</a>
+                <div class="modal-footer primaryButtons" if={!dialog.fullScreen && (dialog.showCloseButton || dialog.buttons.length)}>
+                    <a if={dialog.showCloseButton} class="btn modal-action modal-close btn-flat">{_("close")}</a>
                     <a each={button in dialog.buttons || []}
-                        id={button.id}
-                        href={button.href}
-                        class="btn modal-action waves-effect btn-flat {button.class}"
-                        onclick={onButtonClick.bind(this, dialog)}>{button.label}</a>
+                            id={button.id}
+                            href={button.href}
+                            class="btn modal-action btn-flat {button.class}"
+                            onclick={onButtonClick.bind(this, dialog)}>{button.label}</a>
                 </div>
             </div>
         </div>
@@ -63,7 +65,7 @@
                 this.update()
 
                 dialog.node = $("#" + "dialog_" + (this.dialogs.length - 1))
-                dialog.contentNode = dialog.node.find(".dialogContent")
+                dialog.contentNode = dialog.node.find(".dialogContent > div")
                 if(dialog.tag){
                     dialog.contentTag = riot.mount(dialog.contentNode, dialog.tag, dialog.opts || {})[0]
                     dialog.contentTag.modalParent = this
@@ -81,6 +83,8 @@
                     outDuration: dialog.fullScreen ? 500 : 250
                 }).modal('open')
                 dialog.width && dialog.node.css("max-width", dialog.width) // after dialog is open -> avoid style override
+
+                dialog.contentNode.find('input:first').focus()
             }
         }
 
@@ -95,7 +99,6 @@
                     })
                 }
                 dialog && dialog.node[0].M_Modal && dialog.node.modal('close')
-                dialog.htmlScroll && $("html").scrollTop(dialog.htmlScroll)
             }
         }
 
@@ -114,6 +117,7 @@
             this.dialogs = this.dialogs.filter(d => {
                 return d != dialog
             })
+            dialog.htmlScroll && $("html").scrollTop(dialog.htmlScroll)
         }
 
         onCloseEnd(dialog){

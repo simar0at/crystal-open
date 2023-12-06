@@ -1,5 +1,6 @@
 const {RoutingMeta} = require('core/Meta/Routing.meta.js')
 const {Auth} = require("core/Auth.js");
+const {Url} = require("core/url.js");
 const {AppStore} = require("core/AppStore.js")
 import route from 'riot-route'
 
@@ -10,10 +11,6 @@ class RouterClass{
         Dispatcher.on("APP_READY_CHANGED", function(ready){
             ready && this._onAppReady()
         }.bind(this))
-    }
-
-    createUrl(page, query){
-        return "#" + page + this._getStringFromQuery(query)
     }
 
     getActualPage(){
@@ -30,29 +27,12 @@ class RouterClass{
         return this._getPageFeature(this._actualPage)
     }
 
-    getUrlQuery(){
-        return this._getQueryFromString(window.location.href)
-    }
-
-    updateUrlQuery(query, addToHistory, forceUpdate){
-        // serialize object queryObject and adds it to url query - ?param=value&param2=...
-        let url = this._getUrlBase() + this.createUrl(this._actualPage, query)
-        if(forceUpdate || window.location.href != url){
-            if(addToHistory){
-                history.pushState(null, null, url)
-                route.base() // need to update route's "current" value in
-                        //order to browser back button works correctly
-            } else{
-                history.replaceState(null, null, url)
-            }
-        }
-    }
-
     _initRouter(){
         route.create()
         route(this._onPageChange.bind(this))
         route.parser(function(path){
-            return [path.split("?")[0], this._getQueryFromString(path)]
+            let tmp = path.split("?")
+            return [tmp[0], Url.parseQuery(tmp[1])]
         }.bind(this))
         route.start(false)
     }
@@ -74,17 +54,24 @@ class RouterClass{
 
     _onSessionLoaded(payload){
         if(!Auth.isLogged()){
-            window.location.href = window.config.URL_RASPI + "?next=" + encodeURIComponent(window.location.href)
+            if(window.config.URL_RASPI){
+                window.location.href = window.config.URL_RASPI + "?next=" + encodeURIComponent(window.location.href)
+            } else {
+                Dispatcher.trigger("ROUTER_CHANGE", "unauthorized", {})
+            }
         } else{
             this._initRouter()
         }
     }
 
     _checkAndSetPage(pageId, queryObj){
-        let page = this._getPageToNaviagateTo(pageId)
+        let page = this._getPageToNaviagateTo(pageId, queryObj)
+        let q = queryObj
+        if(page != pageId){
+            q = {}
+        }
+        let url = Url.create(page, q)
         // keep url and router state synchronized
-        let q = page == pageId ? queryObj : {}
-        let url = this._getUrlBase() + this.createUrl(page, q)
         history.replaceState(null, null, url)
         route.base()
         this._actualPage = page
@@ -92,14 +79,14 @@ class RouterClass{
         Dispatcher.trigger("ROUTER_CHANGE", this._actualPage, q)
     }
 
-    _getPageToNaviagateTo(page){
+    _getPageToNaviagateTo(page, queryObj){
         // check, if navigation to desired page is allowed.
         // Otherwise return page to route to
         let isLogged = Auth.isLogged()
         let isFullAccount = Auth.isFullAccount()
         let isAnonymous = Auth.isAnonymous()
         let corpus = AppStore.getActualCorpus()
-        let urlCorpus = this.getUrlQuery().corpname
+        let urlCorpus = Url.getQuery().corpname
         let pageFeature = this._getPageFeature(page)
         if(!window.config.NO_CA){ // in NO_CA mode user can access everything
             if(!isLogged
@@ -170,56 +157,8 @@ class RouterClass{
 
     _initPage(){
         let corpus = AppStore.getActualCorpus()
-        let page = this._getPageFromUrl() || (corpus ? "dashboard" : "corpus")
-        this._checkAndSetPage(page, this._getActualQuery())
-    }
-
-    _getPageFromUrl(url){
-        // returns ID of page in param url if provided or in address bar
-        return (url || window.location.href).split("?")[0].split("#")[1]
-    }
-
-    _getUrlBase(){
-        return window.location.href.split("?")[0].split("#")[0]
-    }
-
-    _getActualQuery(){
-        // returns object of parameters in url (?param=value&param2=value2 => {param:value, param2:value2})
-        let query = route.query()
-        for(let key in query){
-            query[key] = decodeURIComponent(query[key])
-        }
-        return query
-    }
-
-    _getQueryFromString(str){
-        let queryObject = {}
-        let idx = str.indexOf("?")
-        let queryStr = idx != -1 ? str.substring(idx + 1) : str
-        // queryStr - everything after first "?"
-        if(queryStr && queryStr.indexOf("=") != -1){
-            queryStr.split('&').forEach(part => {
-                let pair = part.split('=')
-                queryObject[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1])
-            })
-        }
-        return queryObject
-    }
-
-    _getStringFromQuery(query){
-        let str = ""
-        let value
-        let urlValue
-
-        for(let key in query){
-            value = query[key]
-            urlValue = (typeof value == "boolean") ? (value * 1) : value
-            if(key){
-                str += (str ? "&" : "") + key + "=" + encodeURIComponent(urlValue)
-            }
-        }
-
-        return str ? ("?" + str) : ""
+        let page = Url.getPage() || (corpus ? "dashboard" : "corpus")
+        this._checkAndSetPage(page, Url.getQuery())
     }
 
     _setDocumentTitle(){

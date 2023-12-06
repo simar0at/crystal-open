@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-armn ._t{
-    font-family: 'Noto Armenian'
+.script-armn ._t,
+body .script-armn ._t,
+body .script-armn._t{
+    font-family: 'Noto Armenian', 'Noto Sans', sans-serif;
 }

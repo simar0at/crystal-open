@@ -1,0 +1,80 @@
+Learn CQL on <a href="https://www.sketchengine.eu/documentation/corpus-querying/" target="_blank">our web</a> or <a href="https://www.youtube.com/playlist?list=PLPVgp0Xm6hWBLZzD7haCVbhC9pSfWZk1S" target="_blank">YouTube channel</a>.
+<br><br>
+
+<h5>Příklady</h5>
+<table class="material-table">
+    <tr>
+        <td>
+            podstatné jméno v určité vzdálenosti od slovesa
+        </td>
+        <td class="monospace">
+            [tag="k1.*"] [ ]{0,3} [tag="k5.*"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            podstatné jméno a sloveso s přesně jedním tokenem mezi nimi
+        </td>
+        <td class="monospace">
+            [tag="k1.*"] [ ] [tag="k5.*"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            podstatné jméno v určité vzdálenosti od slovesa uvnitř téže věty
+        </td>
+        <td class="monospace">
+            [tag="k1.*"] [ ]{0,3} [tag="k5.*"] uvnitř <s />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            velký pes nebo vlk
+        </td>
+        <td class="monospace">
+            ([lc="velký"] [lc="pes"])|[lc="vlk"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            velký pes nebo velký vlk
+        </td>
+        <td class="monospace">
+            [lc="velký"] [lc="pes|vlk"]
+        </td>
+    </tr>
+</table>
+<br><br>
+
+
+<h5>Časté chyby</h5>
+<table class="material-table">
+    <thead>
+        <tr>
+            <th>chyba</th>
+            <th>oprava</th>
+            <th>vysvětlení</th>
+        </tr>
+    </thead>
+
+    <tr>
+        <td class="monospace">[lemma="děti"]</td>
+        <td class="monospace">[lemma="dítě"]</td>
+        <td>děti nejsou lemma</td>
+    </tr>
+    <tr>
+        <td class="monospace">[word="Ahoj!"]</td>
+        <td class="monospace">[word="Ahoj"] [word="\!"]</td>
+        <td>interpunkce je samostatný token a musí být escapován</td>
+    </tr>
+    <tr>
+        <td class="monospace">[word="Ahoj "]</td>
+        <td class="monospace">[word="Ahoj"]</td>
+        <td>tokeny nemohou obsahovat mezery</td>
+    </tr>
+    <tr>
+        <td class="monospace">[tag="V.*"] [] [lc="kočka"] within &lt;s&gt;</td>
+        <td class="monospace">[tag="k5.*"] [] [lc="kočka"] within &lt;s/&gt;</td>
+        <td>struktura potřebuje "celé" nastavení pro fungování s within a containing</td>
+    </tr>
+</table>

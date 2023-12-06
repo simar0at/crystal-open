@@ -1,6 +1,8 @@
+@import 'app/styles/constants';
+
 .ca-seeds-url-dialog{
     .controlBar{
-        background-color: #cfecf4;
+        background-color: $blue-100;
         .ui-input{
             margin-bottom: 0;
         }
@@ -15,7 +17,7 @@
     .header{
         padding-left: 20px;
         cursor: pointer;
-        background-color: #cfecf4;
+        background-color: $blue-100;
          > *{
             vertical-align: middle;
         }

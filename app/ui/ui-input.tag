@@ -55,34 +55,36 @@
 
         onKeyUp(evt){
             evt.preventUpdate = true
-            if(evt.which == 13){
-                isFun(this.opts.onSubmit) && this.opts.onSubmit(evt.target.value, this.opts.name, evt)
+            if(evt.which == "27" && !this.opts.noBlurOnEsc){
+                $(this.refs.input).blur()
+            } else if(evt.which == 13){
+                isFun(this.opts.onSubmit) && this.opts.onSubmit(evt.target.value, this.opts.name, evt, this)
             }
-            isFun(this.opts.onKeyUp) && this.opts.onKeyUp(evt)
+            isFun(this.opts.onKeyUp) && this.opts.onKeyUp(evt, this)
         }
 
         onChange(evt){
             evt.preventUpdate = true
             evt && evt.stopPropagation()
-            isFun(this.opts.onChange) && this.opts.onChange(this.refs.input.value, this.opts.name, evt)
+            isFun(this.opts.onChange) && this.opts.onChange(this.refs.input.value, this.opts.name, evt, this)
         }
 
         onInput(evt){
             evt.preventUpdate = true
             evt && evt.stopPropagation()
             this.opts.validate && this.validate()
-            isFun(this.opts.onInput) && this.opts.onInput(this.refs.input.value, this.opts.name, evt)
+            isFun(this.opts.onInput) && this.opts.onInput(this.refs.input.value, this.opts.name, evt, this)
             this.ui_refreshWidth()
         }
 
         onBlur(evt){
             evt.preventUpdate = true
-            isFun(this.opts.onBlur) && this.opts.onBlur(evt)
+            isFun(this.opts.onBlur) && this.opts.onBlur(this.refs.input.value, this.opts.name, evt, this)
         }
 
         onFocus(evt){
             evt.preventUpdate = true
-            isFun(this.opts.onFocus) && this.opts.onFocus(evt)
+            isFun(this.opts.onFocus) && this.opts.onFocus(evt, this)
         }
 
         validate(){
@@ -92,13 +94,13 @@
         onSuffixIconClick(evt) {
             evt.preventUpdate = true
             $(this.refs.input).focus()
-            isFun(this.opts.onSuffixIconClick) && this.opts.onSuffixIconClick(evt)
+            isFun(this.opts.onSuffixIconClick) && this.opts.onSuffixIconClick(evt, this)
         }
 
         onPrefixIconClick(evt) {
             evt.preventUpdate = true
             $(this.refs.input).focus()
-            isFun(this.opts.onPrefixIconClick) && this.opts.onPrefixIconClick(evt)
+            isFun(this.opts.onPrefixIconClick) && this.opts.onPrefixIconClick(evt, this)
         }
 
         _refreshValue(){

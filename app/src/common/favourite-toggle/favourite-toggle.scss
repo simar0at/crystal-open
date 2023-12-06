@@ -1,8 +1,10 @@
+@import 'app/styles/constants';
+
 .favourite-toggle{
     a{
         vertical-align: top;
         i{
-            color: #757575;
+            color: $gray-600;
         }
         &.disabled{
             opacity: 0.3;
@@ -10,6 +12,6 @@
     }
 
     .favourite i{
-        color: #f8cd13!important;
+        color: $yellow!important;
     }
 }

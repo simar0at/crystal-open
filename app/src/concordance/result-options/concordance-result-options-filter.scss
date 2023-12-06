@@ -1,3 +1,5 @@
+@import 'app/styles/constants';
+
 .concordance-result-options-filter{
     .tabContent{
         padding: 20px;
@@ -19,8 +21,8 @@
     .excludeKwic{
         .filterRangeToken .rangeWrapper span:nth-child(6),
         .filterRangeSentence .rangeWrapper span:nth-child(4){
-            color: #004B69;
-            background-color: #A3CCDD;
+            color: $blue-800;
+            background-color: $blue-200;
         }
     }
 

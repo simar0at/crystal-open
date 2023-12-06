@@ -1,3 +1,5 @@
+@import 'app/styles/constants';
+
 .stdDir{
     direction: ltr;
 }
@@ -352,11 +354,11 @@
         padding-right: 10px;
     }
 
-    .concordance-result .leftCol concordance-result-context{
+    .concordance-result .leftCol concordance-result-items{
         left: 0;
         right: initial;
     }
-    .concordance-result .rightCol concordance-result-context{
+    .concordance-result .rightCol concordance-result-items{
         right: 0;
         left: initial;
     }
@@ -401,7 +403,7 @@
     .page-corpus .corpus-tab-basic .corpusLeftCol{
         @media screen and(min-width: 1405px){
             border-right: 0;
-            border-left: 1px solid #fff;
+            border-left: 1px solid $white;
             margin-left: 2em;
             margin-right: unset;
         }

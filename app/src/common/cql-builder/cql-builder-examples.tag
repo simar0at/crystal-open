@@ -12,8 +12,8 @@
     </div>
     <div if={builder.tokens.length}
             ref="content"
-            class="card-panel cb-examples-content">
-        <div style="position: relative;" class="concordance-result">
+            class="card-panel cb-examples-content relative">
+        <div class="concordance-result">
             <preloader-spinner if={activeRequest}
                     center=1
                     overlay=1
@@ -27,10 +27,11 @@
                 </div>
             </div>
             <div if={loaded && !items.length && !error} class="emptyContent">
-                <i class="material-icons">space_bar</i>
-                <div class="title">{_("emptyConcordance")}</div>
-                <div>{_("emptyConcordanceDesc")}</div>
-
+                <virtual if={!activeRequest}>
+                    <i class="material-icons">space_bar</i>
+                    <div class="title">{_("emptyConcordance")}</div>
+                    <div>{_("emptyConcordanceDesc")}</div>
+                </virtual>
             </div>
             <div if={loaded && error} class="emptyContent">
                 <i class="material-icons">warning</i>
@@ -40,22 +41,16 @@
                 {error}
             </div>
             <div class="table result-table displayKwic" if={items.length}>
-                <div class="tr" each={item in items}>
+                <div class="tr tr-{idx + 1}" each={item, idx in items}>
                     <div class="td leftCol _t right-align">
-                        <concordance-result-context data={isRTL ? item.Right : item.Left} class="leftCtx"></concordance-result-context>
+                        <concordance-result-items data={isRTL ? item.Right : item.Left} class="leftCtx"></concordance-result-items>
                     </div>
 
                     <div class="td center-align middle _t rtlNode">
-                        <span each={kwic in item.Kwic} class="kwicWrapper">
-                            <virtual if={kwic.str}>
-                                <span class="kwic">{kwic.str}</span>
-                                <span if={kwic.attr} class="attr">{kwic.attr.substr(1)}</span>
-                            </virtual>
-                            <span if={kwic.strc} class="strc">{kwic.strc}</span>
-                        </span>
+                        <concordance-result-items data={item.Kwic} class="kwicWrapper"></concordance-result-items>
                     </div>
                     <div class="td rightCol _t left-align">
-                        <concordance-result-context data={isRTL ? item.Left : item.Right} class="rightCtx"></concordance-result-context>
+                        <concordance-result-items data={isRTL ? item.Left : item.Right} class="rightCtx"></concordance-result-items>
                     </div>
                 </div>
             </div>
@@ -95,23 +90,22 @@
             if(!this.showExamples || !this.builder.isCQLValid){
                 return
             }
+            this.debounceHandle && clearTimeout(this.debounceHandle)
             let cql = this.builder.getCQLString()
             if(cql && this.lastCQL != cql){
                 this.lastCQL = cql
                 this.cancelPreviousRequest()
                 this.activeRequest = Connection.get({
                     url: this.store.getRequestUrl(),
-                    xhrParams: {
-                        method: "POST",
-                        data: this.store.getRequestData({
-                            fromp: 1,
-                            pagesize: 10,
-                            concordance_query: [{
-                                queryselector: "cqlrow",
-                                cql: cql
-                            }]
-                        })
-                    },
+                    data: this.store.getRequestData({
+                        fromp: 1,
+                        pagesize: 10,
+                        structs: "",
+                        concordance_query: [{
+                            queryselector: "cqlrow",
+                            cql: cql
+                        }]
+                    }),
                     done: (payload) => {
                         if(payload.error){
                             this.items = []

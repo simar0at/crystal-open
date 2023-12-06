@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-sinh ._t{
-    font-family: 'Noto Sinhala'
+.script-sinh ._t,
+body .script-sinh ._t,
+body .script-sinh._t{
+    font-family: 'Noto Sinhala', 'Noto Sans', sans-serif;
 }

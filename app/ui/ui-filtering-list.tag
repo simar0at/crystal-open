@@ -17,25 +17,37 @@
                 <span ref="count"></span>
             </span>
         </label>
-        <ui-input onkeyup={onKeyUp}
-            ref="input"
-            inline={opts.inline}
-            dynamic-width={opts.dynamicWidth}
-            min-width={opts.minWidth}
-            riot-value={inputValue}
-            white={opts.white}
-            on-focus={onFocus}
-            disabled={opts.disabled}
-            autocomplete={false}
-            on-key-down={onKeyDown}
-            on-input={onInput}
-            on-click={onInputClick}
-            validate={opts.validate}
-            pattern={opts.pattern}
-            pattern-mismatch-message={opts.patternMismatchMessage}
-            suffix-icon="search"
-            placeholder={_(opts.placeholder || "ui.typeToSearch")}
-            size={opts.size}></ui-input>
+        <filter-input if={opts.showFilterOptions}
+                ref="input"
+                inline={opts.inline}
+                disabled={opts.disabled}
+                query={inputValue}
+                mode={mode}
+                match-case={opts.matchCase}
+                on-input={onInput}
+                on-click={onInputClick}
+                on-change={onFilterChange}></filter-input>
+        <ui-input if={!opts.showFilterOptions}
+                ref="input"
+                inline={opts.inline}
+                dynamic-width={opts.dynamicWidth}
+                min-width={opts.minWidth}
+                riot-value={inputValue}
+                white={opts.white}
+                disabled={opts.disabled}
+                autocomplete={false}
+                on-focus={onFocus}
+                on-key-up={onKeyUp}
+                on-key-down={onKeyDown}
+                on-input={onInput}
+                on-click={onInputClick}
+                no-blur-on-esc={true}
+                validate={opts.validate}
+                pattern={opts.pattern}
+                pattern-mismatch-message={opts.patternMismatchMessage}
+                suffix-icon="search"
+                placeholder={_(opts.placeholder || "ui.typeToSearch")}
+                size={opts.size}></ui-input>
         <span ref="listContainer" class={hidden: opts.floatingDropdown}>
             <div class="listWrapper">
                 <ui-list ref="list"
@@ -44,7 +56,7 @@
                     riot-value={opts.riotValue}
                     multiple={opts.multiple}
                     disable-tooltips={opts.disableTooltips}
-                    size={opts.size}
+                    size={opts.listSize}
                     full-height={opts.fullHeight}
                     show-all={opts.showAll}
                     loading={opts.loading}
@@ -64,13 +76,11 @@
         this.mixin('ui-mixin')
         this.mixin('tooltip-mixin')
 
-        this.searchWord = ""
         this.showList = false
         this.isFocused = false
         this.showSelected = false
         this.specialNodeTextId = ""
 
-        this.lastOptsValue = this.opts.riotValue
 
         getValue(){
             return this.refs.list.value
@@ -78,15 +88,15 @@
 
         filter(){
             this.filtered = []
-            if(this.searchWord !== ""){
+            if(this.inputValue !== ""){
                 this.filtered = this.opts.options.filter((option, idx) => {
                     return this.filterItem(option)
                 })
-                if(this.opts.addNotFound && this.getOptionIndexByValue(this.searchWord) == -1){
+                if(this.opts.addNotFound && this.getOptionIndexByValue(this.inputValue) == -1){
                     this.filtered.push({
-                        label: _("addNotFound", [this.searchWord]),
+                        label: _("addNotFound", [this.opts.notFoundLabel.toLowerCase(), this.inputValue]),
                         class: "addNotFound",
-                        value: this.searchWord,
+                        value: this.inputValue,
                         addValueOption: true
                     })
                 }
@@ -108,17 +118,22 @@
 
         filterItem(option){
             if(this.opts.filter){
-                return this.opts.filter(this.searchWord, option)
+                return this.opts.filter(this.inputValue, option)
             }
-            let regex = new RegExp(".*" + this.searchWord.split(" ").join(".*") + ".*")
-            let label = this.getLabel(option).toLowerCase()
-            if(label.indexOf(this.searchWord.toLowerCase()) != -1 || label.match(regex)){ //search substring or regex
+            let icase = !this.opts.showFilterOptions || !this.matchCase
+            let searchWord = icase ? this.inputValue.toLowerCase() : this.inputValue
+            let re = window.getFilterRegEx(searchWord, this.mode)
+            let label = this.getLabel(option)
+            if(icase){
+                label = label.toLowerCase()
+            }
+            if(label.match(re)){ //search substring or regex
                 return true
             }
             if(option.search){
                 // additional strings to search in
                 return option.search.some((item) => {
-                    return item.match(regex)
+                    return item.match(re)
                 })
             }
             return false
@@ -132,6 +147,7 @@
                 this.isFocused = true
                 document.addEventListener('click', this.handleClickOutside)
                 $(this.refs.listContainer).removeClass("hidden")
+                this.trigger("open")
             }
         }
 
@@ -147,6 +163,7 @@
                     "margin-left": 0,
                     "margin-right": 0
                 }).removeClass("wrapLines")
+                this.trigger("close")
             }
         }
 
@@ -163,7 +180,7 @@
         onKeyUp(evt){
             evt.preventUpdate = true
             if(evt.keyCode == 27){ //esc
-                this.close()
+                this.showList ? this.close() : $("input", this.root).blur()
                 return
             }
             let moveKey = [38, 40, 33, 34].includes(evt.keyCode)
@@ -172,28 +189,24 @@
                 if(evt.keyCode == 13 && !this.refs.list.isAnyItemSelected() && isFun(this.opts.onSubmit)){
                     // enter without highlighted item in list -> submit value in input
                     evt.stopPropagation()
-                    this.opts.onSubmit(this.refs.input.value)
+                    this.opts.onSubmit(this.refs.input.value, this.opts.name, this.evt, this)
                 }
                 this.refs.list.onKeyUp(evt)
             }
         }
 
-        onInput(value){
+        onInput(value, name, evt){
             this.isValid = this.refs.input.isValid
-            if(this.searchWord !== value){
-                this.searchWord = value
-                this.open()
-                if(isFun(this.opts.onSearchWordChange)){
-                    this.opts.onSearchWordChange(this.searchWord, this.opts.name)
-                }
-                this.filter()
-                !this.opts.filter && this.update()
-            }
-            isFun(this.opts.onInput) && this.opts.onInput(value)
+            this.inputValue = value
+            this.open()
+            this.filter()
+            !this.opts.filter && this.update()
+            isFun(this.opts.onInput) && this.opts.onInput(value, this.opts.name, evt, this)
         }
 
         onInputClick(evt){
             evt.preventUpdate = true
+            evt.stopPropagation()
             this.open()
         }
 
@@ -203,7 +216,6 @@
                 this.isFocused = true
                 if(!isDef(this.opts.clearOnFocus) || this.opts.clearOnFocus){
                     this.inputValue = ""
-                    this.searchWord = ""
                     this.refs.input.refs.input.value = ""
                 }
             }
@@ -218,20 +230,32 @@
             }
         }
 
-        onChange(value, name, label, option){
+        onChange(value, name, label, option, evt){
+            this.isValid = this.refs.input.isValid
             this.opts.riotValue = value
             !this.opts.multiple && this.onBlur()
             this.refreshCount()
-            this.searchWord = ""
-            this.inputValue = option.addValueOption ? value : label
+            if (option && option.hasOwnProperty('addValueOption')){
+                this.inputValue =  option.addValueOption ? value : label
+            }
             this.setValueInSearchIfNeeded()
-            isFun(opts.onChange) && opts.onChange(value, name, label, option)
+            isFun(opts.onChange) && opts.onChange(value, name, label, option, evt, this)
+        }
+
+        onFilterChange(query, mode, matchCase){
+            this.inputValue = query
+            this.mode = mode
+            this.matchCase = matchCase
+
+            this.filter()
+            isFun(this.opts.onFilterChange) && this.opts.onFilterChange(query, mode, matchCase)
+            this.update()
         }
 
         onSelectedCountClick(evt){
             evt.preventUpdate = true
             this.toggleShowSelected()
-            this.opts.onShowSelectedChange && this.opts.onShowSelectedChange()
+            this.opts.onShowSelectedChange && this.opts.onShowSelectedChange(evt, this)
         }
 
         handleClickOutside(evt){
@@ -285,9 +309,9 @@
         }
 
         getValueLabel(value){
-            return this.getLabel(this.opts.options.find(o => {
-                return o.value == value
-            })) || value || "" // if value is undefined
+            return isDef(value) ? this.getLabel(this.opts.options.find(o => {
+                return o.value === value
+            })) : "" // if value is undefined
         }
 
         refreshCount(){
@@ -308,21 +332,31 @@
             $(this.refs.selectedCount).toggleClass("active", this.showSelected)
         }
 
-        this.inputValue = this.getValueLabel(this.opts.riotValue)
+        this.inputValue = isDef(this.opts.query) ? this.opts.query : this.getValueLabel(this.opts.riotValue)
+        this.mode = this.opts.mode || "containing"
+        this.matchCase = isDef(this.opts.matchCase) ? this.opts.matchCase : false
+        this.lastValueLabel = this.inputValue
+        this.optionsLength = this.opts.options.length
+
 
         this.filter()
 
         this.on("update", () => {
-            if(this.refs.list.value !== "" && this.inputValue !== "" && this.searchWord === ""/* && this.refs.input.refs.input.value !== ""*/){
-                // options could be set after mount
-                let label = this.getValueLabel(this.refs.input.refs.input.value)
-                this.inputValue = label
-                this.refs.input.refs.input.value = label
-            }
-            if(this.lastOptsValue != this.opts.riotValue){
-                // value was changed from parent
-                this.lastOptsValue = this.opts.riotValue
-                this.setValueInSearchIfNeeded()
+            if(!this.opts.showFilterOptions){
+                if(this.opts.options.length != this.optionsLength){
+                    // options could be set after mount
+                    this.optionsLength = this.opts.options.length
+                    let label = this.getValueLabel(this.getValue())
+                    if(label !== ""){
+                        this.inputValue = label
+                        this.refs.input.refs.input.value = this.inputValue
+                    }
+                }
+                let label = this.getValueLabel(this.opts.riotValue)
+                if(this.lastValueLabel !== label && label !== ""){
+                    this.lastValueLabel = label
+                    this.setValueInSearchIfNeeded()
+                }
             }
         })
 

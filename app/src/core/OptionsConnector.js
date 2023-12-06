@@ -16,10 +16,8 @@ const get = (args) => {
     return Connection.get({
         loadingId: args.loadingId || "",
         url: window.config.URL_BONITO + "get_user_options",
-        xhrParams: {
-            method: "POST",
-            data: _getData(args)
-        },
+        data: _getData(args),
+        method: "POST",
         done: function(args, payload){
             if(args.prefix){
                 ["default", "user"].forEach(section => {
@@ -49,10 +47,8 @@ const _get = (args, url) => {
     return Connection.get({
         loadingId: args.loadingId,
         url: url,
-        xhrParams: {
-            method: "POST",
-            data: _getData(args),
-        },
+        data: _getData(args),
+        method: "POST",
         done: args.done,
         fail: args.fail,
         always: args.always
@@ -106,13 +102,13 @@ const _addPrefixToOptionsKeys = (args) => {
 
 const _getData = (args) => {
     _addPrefixToOptionsKeys(args)
-    let query = {
+    let data = {
         options: args.options
     }
     if(args.corpus){
-        query.corpus = args.corpus
+        data.corpus = args.corpus
     }
-    return "json=" + encodeURIComponent(JSON.stringify(query))
+    return data
 }
 
 module.exports = {

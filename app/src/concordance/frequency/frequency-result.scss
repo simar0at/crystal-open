@@ -1,4 +1,4 @@
-@import 'app/styles/base';
+@import 'app/styles/constants';
 
 .frequency-result{
     display: block;
@@ -28,31 +28,31 @@
         background-color: #e4e4e4;
         padding: 10px 15px;
         .ui-checkbox{
-            margin: 0;
+            margin: 0 10px;
         }
     }
     .column-table {
-        .material-table > tbody > tr > td{
+        .container-fluid .col-tab-col .table{
+            width: 100%;
+            min-width: 50vw;
+            max-width: 1500px;
+        }
+        .container-fluid .material-table > tbody > tr > td{
             padding: 0px 15px;
+            white-space: normal;
         }
         .col-tab-num{
             width: 1%;
             min-width: 20px;
         }
-        .freqColumn{
-            width: 9%;
-        }
-        .relColumn{
-            width: 9%;
-        }
         .barColumn{
-            width: 30%;
+            width: 40%;
         }
         .menuColumn{
             width: 40px;
         }
         i{
-            color: $mediumGray;
+            color: $gray-600;
         }
     }
     .progress{
@@ -63,6 +63,6 @@
     }
 
     .ui-pagination{
-        justify-content: center;
+        justify-content: flex-end;
     }
 }

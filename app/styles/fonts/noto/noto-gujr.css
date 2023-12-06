@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-gujr ._t{
-    font-family: 'Noto Gujarati'
+.script-gujr ._t,
+body .script-gujr ._t,
+body .script-gujr._t{
+    font-family: 'Noto Gujarati', 'Noto Sans', sans-serif;
 }

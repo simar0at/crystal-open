@@ -1,11 +1,10 @@
 <feedback-form class="feedback-form">
     <div class="columnForm">
         <div class="row" if={!unknownUser}>
-            <label class="col s12 m3"
-                    style="text-transform: capitalize; padding-top: 4px;">
+            <label class="col s12 m3 sentenceCapitals">
                 {_("from")}
             </label>
-            <span class="col s12 m8 fieldCell">
+            <span class="col s12 m8 fieldCell lh-4">
                 {user.email}
             </span>
         </div>
@@ -40,14 +39,15 @@
             </div>
         </div>
         <div class="row">
-            <label class="col s12 m3">{_("message")}</label>
+            <label class="col s12 m3 lh-6">{_("message")}</label>
             <span class="col s12 m8">
                 <ui-textarea name="feedback"
                         ref="feedback"
                         disabled={isSending}
                         required={true}
                         validate={true}
-                        on-input={refreshIsValid}></ui-textarea>
+                        on-input={refreshIsValid}
+                        rows=4></ui-textarea>
                 <div class="grey-text" style="font-size: 13px;">
                     {_("fb.note")}
                 </div>
@@ -92,13 +92,19 @@
         }
 
         send_feedback(url){
-            url = url || window.location.href
             Connection.get({
-                url: window.config.URL_BONITO + "/feedback",
-                xhrParams: {
-                    method: "POST",
-                    data: this._getPostData(url)
+                url: window.config.URL_BONITO + "feedback",
+                data: {
+                    feedback_url: url || window.location.href,
+                    navigator: navigator.userAgent,
+                    feedback_corpname: AppStore.getActualCorpname(),
+                    feedback_text: this.refs.feedback.getValue(),
+                    feedback_email: this.email || this.refs.email.getValue(),
+                    feedback_fullname: this.unknownUser ? this.refs.name.getValue() : Auth.getUser().full_name
+                    //attachment (možné přiložit soubor)
+                    //feedback_error
                 },
+                postKeys: ["feedback_text", "navigator", "feedback_url"],
                 done: this.onDone,
                 fail: this.onFail
             })
@@ -106,7 +112,7 @@
 
         onDone(payload){
             if(payload.error){
-                this.onFail()
+                this.onFail(payload)
             } else{
                 this.isSending = false
                 this.update()
@@ -114,10 +120,10 @@
             }
         }
 
-        onFail(){
+        onFail(payload){
             this.isSending = false
             this.update()
-            SkE.showError(_("feedbackFail", [window.config.links.supportMail]))
+            SkE.showError(_("feedbackFail", [window.config.links.supportMail]), getPayloadError(payload))
             this.opts.onFail()
         }
 
@@ -137,21 +143,6 @@
                     && (!this.unknownUser || (this.isEmailValid && this.isNameValid))
             this.opts.onValidChange && this.opts.onValidChange(isValid)
         }
-
-        _getPostData(url){
-            let data = {
-                feedback_url: url,
-                navigator: navigator.userAgent,
-                feedback_corpname: AppStore.getActualCorpname(),
-                feedback_text: this.refs.feedback.getValue(),
-                feedback_email: this.email || this.refs.email.getValue(),
-                feedback_fullname: this.unknownUser ? this.refs.name.getValue() : Auth.getUser().full_name
-                //attachment (možné přiložit soubor)
-                //feedback_error
-            }
-            return "json=" + encodeURIComponent(JSON.stringify(data))
-        }
-
 
         this.on("mount", () => {
             delay(() => {

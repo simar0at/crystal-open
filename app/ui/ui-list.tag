@@ -103,7 +103,7 @@
             let target = evt.path && evt.path.find((elem) => {
                 return ["LI", "UL"].includes(elem.tagName.toUpperCase()) // find first UL / LI
             })
-            if(target.tagName == "LI" && target && this.refs.list){
+            if(target && target.tagName == "LI" && this.refs.list){
                 // create node, insert text into and measure width. Invisible element
                 // has width "auto" so jquery width() measure max width. LIs in UL-list
                 // have max width of UL -> we cannot measure their width.
@@ -179,22 +179,29 @@
         callOnChange(evt){
             if(isFun(this.opts.onChange)){
                 let label = this.getLabelByValue(this.value)
-                this.opts.onChange(this.value, this.opts.name, label, this.opts.options[this.cursorPosition])
+                this.opts.onChange(this.value, this.opts.name, label, this.opts.options[this.cursorPosition], evt, this)
             }
         }
 
         processItemSelect(evt){
             // on item click or selected by keyboard
             evt.preventUpdate = true
+            let valueChanged = true
             let option = this.opts.options[this.cursorPosition]
             if(this.opts.disabled || option.disabled){
                 return
             }
-            if((!isDef(this.opts.deselectOnClick) || this.opts.deselectOnClick) && (!this.opts.multiple || !evt.shiftKey) && this.isValueSelected(option.value)){
+            if((this.opts.deselectOnClick || (this.opts.multiple && !evt.shiftKey)) && this.isValueSelected(option.value)){
                 this.deselectItem(option)
             } else{
-                this.selectItem(option)
-                if(this.opts.multiple){
+                if(!this.opts.multiple){
+                    if(!this.isValueSelected(option.value)){
+                        this.selectItem(option)
+                    } else {
+                        valueChanged = false
+                    }
+                } else {
+                    this.selectItem(option)
                     if(evt.shiftKey){
                         this.selectOptionsInRange(evt.item.idx)
                     } else{
@@ -202,8 +209,10 @@
                     }
                 }
             }
-            this.markSelected()
-            this.callOnChange(evt)
+            if(valueChanged){
+                this.markSelected()
+                this.callOnChange(evt)
+            }
         }
 
         selectItem(option){
@@ -267,7 +276,7 @@
         onListScroll(evt){
             if(this.refs.list.scrollHeight - this.refs.list.scrollTop <= this.refs.list.clientHeight + 150){
                 if(isFun(this.opts.onScrollToBottom)){
-                    this.opts.onScrollToBottom(this.opts.name)
+                    this.opts.onScrollToBottom(this.opts.name, evt, this)
                 } else {
                     if(this.showLimit < this.opts.options.length){
                         this.showLimit += 40
@@ -307,7 +316,6 @@
         }
 
         updateAttributes(){
-            this.opts.options = this.opts.options
             if(this.opts.riotValue){
                 this.value = this.opts.riotValue
             } else{
@@ -326,12 +334,26 @@
         }
         this.updateAttributes()
 
+        fixListHeight(){
+            // if list has enough height to display all initial items, we need to list a little bit
+            // shorter to force scrollbar to show. User can scroll and initiate onListScroll which
+            // shows more items
+            if(!this.opts.showAll && this.showLimit < this.opts.options.length){
+                delay(function(){
+                    if(this.refs.list && this.refs.list.clientHeight && this.refs.list.scrollHeight <= this.refs.list.clientHeight){
+                        $(this.refs.list).css("max-height", (this.refs.list.clientHeight - 30) + "px")
+                    }
+                }.bind(this), 1)
+            }
+        }
+
         this.on("mount", () => {
             if(isDef(this.opts.riotValue)){
                 let idx = this.opts.options.findIndex(o => { return o.value === this.opts.riotValue}, this)
                 this.cursorPosition = idx == -1 ? null : idx
             }
             this.markSelected()
+            this.fixListHeight()
             setTimeout(this.scrollSelectedIntoView.bind(this), 0)
         })
 
@@ -343,6 +365,7 @@
         this.on("updated", () => {
             this.cursorPosition = null
             this.markSelected()
+            this.fixListHeight()
         })
         this.on("before-unmount", this.removeTooltips)
     </script>

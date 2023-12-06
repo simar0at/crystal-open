@@ -58,14 +58,12 @@
         onInput(evt){
             evt.preventUpdate = true
             evt && evt.stopPropagation()
-            this.isMounted && isFun(this.opts.onInput) && this.opts.onInput(this.refs.textarea.value, this.opts.name, evt)
+            this.isMounted && isFun(this.opts.onInput) && this.opts.onInput(this.refs.textarea.value, this.opts.name, evt, this)
         }
 
         callOnChange(evt){
             if(this.isMounted){
-                if(typeof this.opts.onChange == "function"){
-                    this.opts.onChange(this.refs.textarea.value, this.opts.name)
-                }
+                isFun(this.opts.onChange) && this.opts.onChange(this.refs.textarea.value, this.opts.name, evt, this)
             }
             evt && evt.stopPropagation()
         }

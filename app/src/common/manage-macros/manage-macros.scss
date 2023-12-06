@@ -1,0 +1,60 @@
+@import 'app/styles/constants';
+
+.macro-select{
+    > *{
+        vertical-align: middle;
+    }
+    > i {
+        &:not(.disabled){
+            color: $blue-800;
+        }
+        &.disabled{
+            pointer-events: none;
+        }
+        &.locked{
+            opacity: 1;
+        }
+    }
+}
+
+.manage-macros-icon{
+    display: inline-block;
+    line-height: 24px;
+    height: 24px;
+    i{
+        color: $blue-800;
+    }
+}
+
+
+.manage-macros-dialog{
+    display: block;
+    min-width: 300px;
+    .topBar{
+        .ui-input{
+            width: calc(100% - 120px);
+        }
+    }
+    .newMacroNote{
+        padding-right: 15px;
+    }
+    table td {
+        &:last-child{
+            width: 40px;
+        }
+        i {
+            color: $blue-800;
+        }
+    }
+    .noMacros{
+        opacity: 0.4;
+        i{
+            font-size: 4em;
+            position: relative;
+            bottom: -10px;
+        }
+        div{
+            font-size: 2em;
+        }
+    }
+}

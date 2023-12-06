@@ -3,7 +3,11 @@
 </wordlist-tab-about>
 
 <wordlist-tabs class="wordlist-tabs">
-    <ui-tabs ref="tabs" name="wordlist-tabs" tabs={tabs} active={store.data.tab}
+    <ui-tabs ref="tabs"
+            class="searchTabs"
+            name="wordlist-tabs"
+            tabs={tabs}
+            active={store.data.tab}
             on-tab-change={onTabChange}>
     </ui-tabs>
 

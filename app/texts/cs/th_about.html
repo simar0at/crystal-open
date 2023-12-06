@@ -1,0 +1,55 @@
+<div class="aboutLeftCol">
+    <p>Tezaurus v nástroji Sketch Engine je automaticky generovaný seznam synonym nebo slov patřících do stejné kategorie (sémantického pole). Seznam je vytvořen na základě kontextu, v němž se slova vyskytují ve vybraném korpusu. Ve většině korpusů jsou podporována pouze podstatná jména, přídavná jména, slovesa a příslovce.</p>
+</div>
+<div class="aboutRightCol">
+    <iframe width="400" height="225" src="https://www.youtube.com/embed/kLsNUdTrTLk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+</div>
+
+<br>
+<ul class="clearfix collapsible">
+    <li>
+        <div class="collapsible-header">V čem je tezaurus jedinečný?</div>
+        <div class="collapsible-body">
+            <div>Vzhledem k tomu, že se nejedná o ruční práci, lze seznamy synonym generovat pro libovolné slovo v jazyce, pokud je v korpusu nalezen dostatečný počet výskytů. Proto lze generovat seznamy synonym i pro vzácná slova, která by se do tradičních tezaurů nedostala.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Jak se určují synonyma?</div>
+        <div class="collapsible-body">
+            <div>Synonyma jsou identifikována automaticky na základě kontextu, ve kterém se vyskytují. Vychází se přitom z teorie distribuční sémantiky, která stručně řečeno říká, že slova, která se vyskytují ve stejném kontextu, mají podobný význam. V aplikaci Sketch Engine to znamená, že slova, která si udržují podobné <a href="https://www.sketchengine.eu/my_keywords/collocation/" target="_blank">kolokace</a>, jsou si významově podobná. Klíčem k určení podobnosti je word sketch. Pro určení synonym hledaného slova se porovnává word sketch všech slov se stejnou částí řeči a vypisují se ta, která mají největší podíl %[collocate|kolokátů]%. Skóre uvedené u každého synonyma udává procento sdílených kolokací.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Kvalita tezauru</div>
+        <div class="collapsible-body">
+            <div>Kvalita tezauru je silně závislá na bohatých word sketch obsahujících velké množství kolokací, což je následně závislé na vysoké %[frequency|frekvenci] % hledaného slova a také na vysoké frekvenci potenciálních synonym. To znamená, že je zapotřebí velmi rozsáhlý korpus. Velikost kolem 100 000 slov je naprosté minimum, aby bylo možné získat nějaký použitelný výsledek pro slova s vysokou frekvencí. Pro vzácná slova je však zapotřebí mnohem větší korpus, aby byla zajištěna dostatečná frekvence. Důrazně doporučujeme používat naše korpusy s několika miliardami slov.</div>
+            <br>
+            <div>Seznam synonym může obsahovat slova, která by v něm neměla být uvedena. Je to výsledek automatického zpracování. Sketch Engine nemůže určit podobnost významu přímo, může pouze porovnat kolokace. Pokud mají dvě slova stejné kolokace, budou uvedena jako synonyma, i když jejich význam není podobný. Tyto občasné nepřesnosti nečiní nástroj méně užitečným. Chcete-li se jim vyhnout, používejte větší korpus. Tezaurus pro extrémně vzácná slova (frekvence jen několika set slov nebo méně) bude nevyhnutelně poskytovat špatné výsledky nebo nemusí tezaurus vůbec vytvořit.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Jak se skóre vypočítává a interpretuje?</div>
+        <div class="collapsible-body">
+            <div>Skóre, které lze zobrazit pomocí možností zobrazení, je jednoduše procentuální podíl sdílených kolokací. Pro jeho stanovení se porovnává word sketch hledaného slova s word sketch všech ostatních slov v korpusu se stejným slovním druhem. Každá gramatická relace se porovnává zvlášť. Vzorec a podrobnosti naleznete v <a href="https://www.sketchengine.eu/statistics-used-in-sketch-engine" target="_blank">Statistiky ve Sketch Engine</a>.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Požadavky pro správnou funkci tezauru</div>
+        <div class="collapsible-body">
+            <div>
+                <b>Word sketch</b> <br />Tezaurus může fungovat pouze tehdy, pokud v korpusu existují word sketch. Korpus musí být ve Sketch Engine označkován nebo musí používat stejný tagset. Vlastní <a href="https://www.sketchengine.eu/my_keywords/word-sketch-grammar/" target="_blank">gramatika word sketch</a> musí být použita, pokud je korpus označen jinou sadou tagů. <br />Tezaurus bude fungovat i s univerzálními gramatikami sketch se všemi souvisejícími omezeními. Viz word sketch.
+            </div>
+            <br>
+            <div>
+                <b>Tay a lemmata</b> <br />Pro plnohodnotný tezaurus je zapotřebí %[tag|značkovaný]% and %[lemma|lemmatizovaný]% korpus. Tezaury vytvořené z neoznačkovaných a nelemmatizovaných korpusů s univerzálními word sketch budou mít výrazně sníženou kvalitu. Přesto mohou být velmi užitečné, zejména u jazyků s méně zdroji, kde značkování a lemmatizace nejsou dostupné.
+            </div>
+            <br>
+            <div>
+                <b>Velikost korpusu</b> <br />Kvalita tezauru je zcela závislá na bohatých word sketch. Bohatý word sketch je definována velkým počtem kolokací ve všech gramatických relacích. Bohatý word sketch musí existovat nejen pro hledané slovo, ale i pro všechna ostatní slova se stejným slovním druhem, aby je bylo možné porovnat. Tento požadavek lze splnit pouze tehdy, má-li slovo v korpusu vysokou %[frequency|frekvenci]%, ideálně tisíce výskytů nebo více. V důsledku toho je zapotřebí velmi rozsáhlý korpus, aby i méně frekventovaná slova mohla vytvořit bohaté náčrty slov. Pro každou seriózní práci s tezaurem doporučujeme používat naše korpusy s mnoha miliardami slov.
+            </div>
+        </div>
+    </li>
+</ul>
+

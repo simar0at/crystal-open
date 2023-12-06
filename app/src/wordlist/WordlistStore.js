@@ -1,6 +1,7 @@
 const {FeatureStoreMixin} = require("core/FeatureStoreMixin.js")
 const {AppStore} = require("core/AppStore.js")
 const {Connection} = require('core/Connection.js')
+const {Url} = require("core/url.js")
 const Meta = require("./Wordlist.meta.js")
 
 class WordlistStoreClass extends FeatureStoreMixin {
@@ -9,19 +10,17 @@ class WordlistStoreClass extends FeatureStoreMixin {
         this.feature = "wordlist"
         this.data = $.extend(this.data, {
             onecolumn: false,
-            values: true,
             bars: true,
-            random: 0,
+            random: false,
             find: "word",
             lpos: "",
             filter: "all",
             keyword: "",
             viewAs: 1,
-            relfreq: false,
+            cols: ["frq"],
             showLineNumbers: true,
             wlmaxitems: 20000,
-            wlsort: "f",
-            subcnorm: "freq",
+            wlsort: "frq",
             usesubcorp: "",
             wlattr: "word",
             wlpat: ".*",
@@ -29,72 +28,67 @@ class WordlistStoreClass extends FeatureStoreMixin {
             wlmaxfreq: 0,
             wlfile: "",
             wlblacklist: "",
-            wlnums: "frq",
             wltype: "simple",
             wlstruct_attr1: "",
             wlstruct_attr2: "",
             wlstruct_attr3: "",
-            wlicase: 1,
-            include_nonwords: 0,
+            wlicase: true,
+            include_nonwords: false,
             criteria: [],
             exclude: false,
             criteriaOperator: Meta.operators.AND, // criteria joined with AND
             itemsPerPage: 50,
-            cols: [], // columns in result
             histid: "",
             findxList: [],
             showrank: false,
             showratio: true,
-            findxListLoaded: false
+            findxListLoaded: false,
+            chartitems: 10
         })
-        this.defaults = this._copy(this.data)
+        this.defaults = window.copy(this.data)
 
-        this.xhrOptions = ["wlmaxitems", "wlsort", "subcnorm",
+        this.xhrOptions = ["wlmaxitems", "wlsort",
                 "usesubcorp", "wlattr", "wlpat", "wlminfreq", "wlicase",
                 "wlmaxfreq", "wlfile", "wlblacklist", "wlnums", "wltype", "include_nonwords",
                 "wlstruct_attr1", "wlstruct_attr2", "wlstruct_attr3", "random"]
 
-        this.urlOptions = ["lpos", "find", "keyword", "filter", "viewAs", "relfreq",
-            "onecolumn", "bars", "values", "wlmaxitems", "wlsort", "subcnorm",
+        this.urlOptions = ["lpos", "find", "keyword", "filter", "viewAs",
+            "onecolumn", "bars", "wlmaxitems",
             "usesubcorp", "wlattr", "wlminfreq", "wlicase",
-            "wlmaxfreq", "wlfile", "wlblacklist", "wlnums", "wltype", "exclude",
+            "wlmaxfreq", "wlfile", "wlblacklist", "wltype", "exclude",
             "wlstruct_attr1", "wlstruct_attr2", "wlstruct_attr3", "criteria",
             "include_nonwords", "criteriaOperator", "page", "itemsPerPage",
             "showLineNumbers", "tab", "showresults", "random", "tts", "histid",
-            "showrank", "showratio"]
+            "showrank", "showratio", "chartitems", "cols", "search_query",
+            "search_mode", "search_matchCase"]
 
         this.searchOptions = [
-            ["wlmaxitems", "wl.wlmaxitems"],
-            ["wlsort", "wl.wlsort"],
-            ["subcnorm", "wl.subcnorm"],
-            ["usesubcorp", "wl.usesubcorp"],
-            ["wlattr", "wl.wlattr"],
-            ["wlpat", "wl.wlpat"],
-            ["wlminfreq", "wl.wlminfreq"],
-            ["wlmaxfreq", "wl.wlmaxfreq"],
-            ["wlfile", "wl.wlfile"],
-            ["wlblacklist", "wl.wlblacklist"],
-            ["wltype", "wl.wltype"],
-            ["viewAs", "wl.viewAs"],
-            ["wlstruct_attr1", "wl.wlstruct_attr1"],
-            ["wlstruct_attr2", "wl.wlstruct_attr2"],
-            ["wlstruct_attr3", "wl.wlstruct_attr3"],
-            ["wlicase", "wl.wlicase"],
-            ["include_nonwords", "wl.include_nonwords"],
-            ["criteria", "wl.criteria"],
-            ["exclude", "wl.exclude"],
-            ["criteriaOperator", "wl.criteriaOperator"],
+            ["wlmaxitems", "maxItems"],
+            ["usesubcorp", "subcorpus"],
+            ["wlattr", "attribute"],
+            ["wlpat", "wlpat"],
+            ["wlminfreq", "minFreq"],
+            ["wlmaxfreq", "maxFreq"],
+            ["wlfile", "whitelist"],
+            ["wlblacklist", "blacklist"],
+            ["viewAs", "wl.viewResultAs"],
+            ["wlstruct_attr1", "wlstruct_attr"],
+            ["wlstruct_attr2", "wlstruct_attr"],
+            ["wlstruct_attr3", "wlstruct_attr"],
+            ["wlicase", "icase"],
+            ["include_nonwords", "includeNonwords"],
+            ["criteria", "criteria"],
+            ["exclude", "wl.excludeWords"],
+            ["criteriaOperator", "criteriaOperator"],
             ["random", "random"],
-            ["wlnums", "wlnums"],
             ["histid", "histid"]
         ]
 
-        this.userOptionsToSave = ["tab", "itemsPerPage", "wlnums"]
-        this.validEmptyOptions = ["wlsort"]
+        this.userOptionsToSave = ["tab", "itemsPerPage", "cols"]
     }
 
     search(){ //overrides default
-        if(this.data.tab != "attribute" && !this.data.histid){
+        if(!this._isTextTypeAnalysis() && !this.data.histid){
             this.setWlattrAndLpos()
         }
         super.search()
@@ -102,22 +96,28 @@ class WordlistStoreClass extends FeatureStoreMixin {
 
     onDataLoadedProcessItems(payload){ //overrides default
         this.data.items = payload.Blocks ? payload.Blocks[0].Items : payload.Items
-        this.data.cols = payload.Blocks ? payload.Blocks[0].Head : []
         this.data.wllimit = payload.wllimit
         this.data.totalfrq = payload.totalfrq
         this.data.totalitems = payload.Blocks ? payload.Blocks[0].total : payload.total
+    }
 
-        // used for exporting data
-        this.updateRequestData(this.request[0], {
-            wlmaxitems: this.data.wllimit || 10000000, // 0 means unlimited
-            page: 1
-        })
+    onDataLoaded(payload){
+        super.onDataLoaded(payload)
+        if(!this._isTextTypeAnalysis()
+                && this.data.wlminfreq > 1
+                && this.data.raw.new_maxitems
+                && this.data.raw.new_maxitems > this.data.items.length ){
+            SkE.showToast(_("docfFreqWarning", [this.data.wlminfreq]), 8000)
+        }
     }
 
     loadFindxList(){
         if(!this.data.findxListLoaded){
             Connection.get({
-                url: window.config.URL_BONITO + "findx_list?corpname=" + this.corpus.corpname,
+                url: window.config.URL_BONITO + "findx_list",
+                data: {
+                    corpname: this.corpus.corpname
+                },
                 done: (payload) => {
                     this.data.findxListLoaded = true
                     this.data.findxList = payload.FindxList
@@ -127,28 +127,48 @@ class WordlistStoreClass extends FeatureStoreMixin {
         }
     }
 
+    filterTestItem(re, item){
+        if(this.isStructuredWordlist()){
+            return item.Word.some(word => re.test(word.n))
+        } else if(this.data.histid){
+            return re.test(item.word)
+        } else {
+            return re.test(item.str)
+        }
+    }
+
     saveUserOptions(){ //overrides default
-        this.data.tab != "attribute" && super.saveUserOptions(this.userOptionsToSave)
+        !this._isTextTypeAnalysis() && super.saveUserOptions(this.userOptionsToSave)
     }
 
     setCorpusDefaults(){ //overrides default
         let attr = AppStore.getAttributeByName("word")
         if(this.corpus && this.corpus.unicameral){
-            this.data.wlicase = 0
+            this.data.wlicase = false
         }
         if(attr){
             if(!attr.lc){
-                this.data.wlicase = 0
+                this.data.wlicase = false
             } else{
                 this.data.wlattr = this.data.wlicase ? attr.lc : attr.name
             }
         }
+        if(!isDef(this.userOptions.wlminfreq) && (this.corpus.sizes.tokencount * 1 < 10000000)){
+            this.data.wlminfreq = 0
+        }
+    }
+
+    getDefaultPosAttribute(){
+        let attribute = AppStore.getAttributeByName("lempos")
+            || AppStore.getAttributeByName("wordpos")
+            || AppStore.getAttributeByName("stempos")
+        return attribute ? attribute.name : ""
     }
 
     setWlattrAndLpos(){
         let attrName = this.data.find
         if(AppStore.getLposByValue(this.data.find)){
-            attrName = "lempos"
+            attrName = this.getDefaultPosAttribute()
             this.data.lpos = this.data.find
         } else {
             this.data.lpos = ""
@@ -158,7 +178,7 @@ class WordlistStoreClass extends FeatureStoreMixin {
     }
 
     getFindLabel(find){
-        if(this.data.tab == "attribute"){
+        if(this._isTextTypeAnalysis()){
             return find
         } else if(this.data.histid){
             return this.data.raw && this.data.raw.hist_desc || ""
@@ -215,7 +235,13 @@ class WordlistStoreClass extends FeatureStoreMixin {
             ["wlminfreq", "minFreq"],
             ["wlmaxfreq", "maxFreq"],
             ["wlicase", "ignoreCase"],
-            ["include_nonwords", "includeNonwords"]
+            ["include_nonwords", "includeNonwords"],
+            ["wlattr", "attribute"],
+            ["wlstruct_attr1", "wlstruct_attr"],
+            ["wlstruct_attr2", "wlstruct_attr"],
+            ["wlstruct_attr3", "wlstruct_attr"],
+            ["random", "randomSample"]
+
         ].forEach((option) => {
             value = options[option[0]]
             addValueToList(this.isOptionDefault(option[0], value), option[0], option[1], value)
@@ -232,39 +258,50 @@ class WordlistStoreClass extends FeatureStoreMixin {
         } else if(this.data.lpos){
             method = "poswordlist"
         }
-        return window.config.URL_BONITO + method + '?corpname=' + this.corpus.corpname
+        return window.config.URL_BONITO + method
     }
 
     getRequestData(){ //overrides default
         let data = {}
         if(!this.data.histid){
-             data = super.getRequestData()
-
-            if(this.data.wlblacklist && this.data.lpos){
-                // adding lpos to words in blacklist
-                data.wlblacklist = this.data.wlblacklist.split("\n").map(word => {
-                    return word + this.data.lpos
-                }).join("\n")
-            }
+            data = super.getRequestData()
+            data.relfreq = 1
+            data.reldocf = !this._isTextTypeAnalysis()
             data.wltype = "simple"
-            if(this.data.wlstruct_attr1){
-                data.wltype = "struct_wordlist"
+            if(this._isTextTypeAnalysis()){
+                data.wlnums = ""
+                data.include_nonwords = true
+            } else {
+                let cols = this.getRequestCols()
+                data.wlnums = cols.join(",")
+                if(this.data.wlblacklist && this.data.lpos){
+                    // adding lpos to words in blacklist
+                    data.wlblacklist = this.data.wlblacklist.split("\n").map(word => {
+                        return word + this.data.lpos
+                    }).join("\n")
+                }
+                if(this.data.wlstruct_attr1){
+                    data.wltype = "struct_wordlist"
+                    data.fmaxitems = this.data.wlmaxitems
+                    data.wlnums = "frq"
+                }
             }
-
             data[this.data.wltype == "struct_wordlist" ? "fpage" : "wlpage"] = 1
             data.wlpat = this.getWlpat()
+
         } else {
+            data.corpname = this.corpus.corpname
             data.histid = this.data.find
             data.wlminfreq = this.data.wlminfreq
             data.wlmaxitems = this.data.wlmaxitems
+            data.results_url = window.location.href + '&showresults=1'
         }
         data.wlfile = this._getWlfile()
-        data.results_url = window.location.href + '&showresults=1'
 
-        return "json=" + encodeURIComponent(JSON.stringify(data))
+        return data
     }
 
-    getRequestXhrParams(){
+    getSearchOptions(){
         return {
             contentType: "application/x-www-form-urlencoded"
         }
@@ -272,7 +309,7 @@ class WordlistStoreClass extends FeatureStoreMixin {
 
     getWlpat(){
         let options = this.data
-        let criteria = this._copy(options.criteria) || [];
+        let criteria = window.copy(options.criteria) || [];
         if(options.filter){ // value from list All, Starting with,....
             if(options.filter != "fromList" && (options.filter == "all" || options.keyword !== "")){
                 // whitelist doesnt change wlpat, other options than all have to have filled keyword
@@ -285,17 +322,13 @@ class WordlistStoreClass extends FeatureStoreMixin {
         let wlpat = ""
         let regex
         let joinWith = options.criteriaOperator == Meta.operators.OR ? "|" : ""
-        if(options.filter == "regex"){
-            wlpat = options.keyword
-        } else {
-            // conditions to regex have to be added in specific order. Eg. startign with k and ending with a is (k.*)(.*a), not (.*a)(k.*)
-            ["startingWith", "containing", "endingWith"].forEach((filter) => {
-                regex = this._getFilterRegex(criteria, filter)
-                if(regex){
-                    wlpat += (wlpat ? joinWith : "") + regex
-                }
-            })
-        }
+        // conditions to regex have to be added in specific order. Eg. startign with k and ending with a is (k.*)(.*a), not (.*a)(k.*)
+        ;["startingWith", "containing", "endingWith", "regex"].forEach((filter) => {
+            regex = this._getFilterRegex(criteria, filter)
+            if(regex){
+                wlpat += (wlpat ? joinWith : "") + regex
+            }
+        })
 
         if(!wlpat) {
             wlpat = this.defaults.wlpat
@@ -308,9 +341,92 @@ class WordlistStoreClass extends FeatureStoreMixin {
         return wlpat
     }
 
+    getResultPageObject(){
+        let resultObject = super.getResultPageObject()
+        if(this._isTextTypeAnalysis()){
+            resultObject.data.tta = 1
+        }
+        return resultObject
+    }
+
+    getUrlToResultPage(options){
+        let data = Object.assign({showresults: 1}, options)
+        return Url.create(data.tta ? "text-type-analysis" : this.feature, this._getQueryObject(data))
+    }
+
+    getDownloadRequest(idx){
+        let request = super.getDownloadRequest(idx)
+        let data = {
+            relfreq: this.data.cols.includes("relfreq"),
+            reldocf: this.data.cols.includes("reldocf"),
+            wlmaxitems: this.data.wllimit || 10000000, // 0 means unlimited
+            page: 1
+        }
+        if(!this.data.wlstruct_attr1){
+            let cols = this.getRequestCols()
+            data.wlnums = cols.join(",")
+        }
+        Object.assign(request.data, data)
+        return request
+    }
+
+    getRequestCols(){
+        let cols = this.data.cols.map(c => {
+            c = c.startsWith("rel") ? c.substr(3) : c
+            return c == "freq" ? "frq" : c
+        }).filter(c => c != this.data.wlsort)
+        return [...new Set(cols)] //remove duplicates
+    }
+
+    sortCols(){
+        this.data.cols.sort((a, b) => {
+            let idxA = Meta.wlnumsList.findIndex(i => i.value == a)
+            if(idxA == -1){
+                return 1
+            }
+            let idxB = Meta.wlnumsList.findIndex(i => i.value == b)
+            if(idxB == -1){
+                return -1
+            }
+            return idxA - idxB
+        })
+    }
+
+    isStructuredWordlist(){
+        return this.data.tab == "advanced" && this.data.viewAs == 2
+    }
+
+    stringifyValue(value, name){
+        if(name == "criteria"){
+            return value.map(v => {
+                return `${_(v.filter)} "${v.value}"`
+            }).join(", ")
+        } else if(name == "criteriaOperator"){
+            return `"${this.data.criteriaOperator == 1 ? _("and") : _("or")}"`
+        } else {
+            return super.stringifyValue(value, name)
+        }
+    }
+
+    _setDataFromUrl(query){
+        // TODO just for temporary backwards compatibility, remove at the end of 2022
+        super._setDataFromUrl(query)
+        if(this.data.wlsort == "norm:l"){
+            this.data.wlsort = "frq"
+        }
+    }
+
     _onCorpusChange(){ // overrides default
         super._onCorpusChange()
         this._isActualFeature() && this.loadFindxList()
+    }
+
+    _getQueryObject(data){ // overrides default
+        let queryObject = super._getQueryObject(data)
+        if(this._isTextTypeAnalysis()){
+            queryObject.wlsort = this.data.wlsort
+        }
+        return queryObject
     }
 
     _getWlfile(){
@@ -339,6 +455,10 @@ class WordlistStoreClass extends FeatureStoreMixin {
         }
         let filterMeta = Meta.filters[criterion.filter]
         return criterion.value ? `(${filterMeta.regex.replace("{key}", criterion.value)})` : filterMeta.regex
+    }
+
+    _isTextTypeAnalysis(){
+        return window.location.href.split("?")[0].split("#")[1] == "text-type-analysis"
     }
 }
 

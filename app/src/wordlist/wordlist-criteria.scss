@@ -22,17 +22,20 @@
     }
     #btnAddCriterionSubmit {
         line-height: 36px;
-        margin: 0;
+        margin: 0 .75rem 0 0;
         font-size: 12px;
         padding: 0px 10px;
     }
     #btnAddCriterion i {
-        background-color: $new_mediumBlue;
-        color: $new_darkBlue;
+        background-color: $blue-200;
+        color: $blue-800;
     }
 
-    .insert-characters label{
-        pointer-events: none;
+    .insert-characters {
         display: block;
+        label{
+            pointer-events: none;
+            display: block;
+        }
     }
 }

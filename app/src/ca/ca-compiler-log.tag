@@ -1,4 +1,4 @@
-<ca-compiler-log class="ca-compile-log">
+<ca-compiler-log class="ca-compiler-log">
     <div class="cardtitle">{_("ca.compilationLog")}</div>
     <div class="card-panel">
         <div ref="contentWrapper" class="logWrapper">

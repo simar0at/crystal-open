@@ -13,8 +13,8 @@
 , "glyphs":
   { "0xe900": "export/xml_i.svg"
   , "0xe901": "export/xml.svg"
-  , "0xe902": "export/xls_i.svg"
-  , "0xe903": "export/xls.svg"
+  , "0xe902": "export/xlsx_i.svg"
+  , "0xe903": "export/xlsx.svg"
   , "0xe904": "export/tmx_i.svg"
   , "0xe905": "export/tmx.svg"
   , "0xe906": "export/tbx_i.svg"
@@ -70,6 +70,8 @@
   , "0xe939": "features/ocd_i.svg"
   , "0xe940": "wordsketch/pin.svg"
   , "0xe941": "wordsketch/pin_active.svg"
+  , "0xe941": "features/biterms.svg"
+  , "0xe941": "features/biterms_i.svg"
   }
 , "sfnt_names":
   [ ["English (US)", "Copyright", "Copyright (c) 2017 by Lexical Computing"]

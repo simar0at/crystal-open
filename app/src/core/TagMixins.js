@@ -4,20 +4,29 @@ const {AppStore} = require("core/AppStore.js")
 
 riot.mixin({
     init: function(){
-        // make every tag to react on locale change and translate itself
-
         this.on("mount", function(){
             if(isDef(this.opts.width)){
                 this.root.style.width = this.opts.width + "px";
             }
             if(isDef(this.opts.inline)){
-                this.root.classList.add("inlineBlock")
+                this.root.classList.add("inline-block")
             }
         })
 
-        $(window).bind("load", function(){
-            debouncedUppdateTextFields()
-        })
+        if(this.opts.dataIs || this.opts.copyOpts){
+            // Copy opts form opts.opts to opts. Used for <div data-is="tagName" opts={objectWithOpts}>
+            this._copyOpts()
+            this.on("update", this._copyOpts)
+        }
+
+    },
+
+    _copyOpts(){
+        if(this.opts.opts){
+            for(let key in this.opts.opts){
+                this.opts[key] = this.opts.opts[key]
+            }
+        }
     }
 })
 
@@ -29,6 +38,7 @@ riot.mixin('feature-child', {
         this.data = this.store.data
 
         this.on("update", () => {
+            this.corpus = this.store.corpus
             this.data = this.store.data
         })
     }
@@ -157,14 +167,18 @@ riot.mixin('adjust-gramrel-sizes', {
         })
 
         this.on("update", () => {
-            $(this.refs.gramrelbox).fadeTo(250, 0) // for the case gramrels are already displayed (changing view)
-            $(this.refs.main_spinner).show()
+            if(!this.data.noSizeAdjust){
+                $(this.refs.gramrelbox).fadeTo(250, 0) // for the case gramrels are already displayed (changing view)
+                $(this.refs.main_spinner).show()
+            }
         })
 
         this.on("updated", () => {
-            $(this.refs.gramrelbox).fadeTo(50, 0) // for the case gramrels are not yet displayed (loading)
-            $(this.refs.main_spinner).show()
-            this.scheduleAdjustSizes()
+            if(!this.data.noSizeAdjust){
+                $(this.refs.gramrelbox).fadeTo(50, 0) // for the case gramrels are not yet displayed (loading)
+                $(this.refs.main_spinner).show()
+                this.scheduleAdjustSizes()
+            }
         })
     }
 })

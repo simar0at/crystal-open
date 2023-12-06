@@ -1,12 +1,12 @@
-@import 'app/styles/base';
+@import 'app/styles/constants';
 
 .text-type-selection{
     display: block;
     .btnMore{
         cursor: pointer;
         width: auto;
-        color: #fff;
-        background-color: $primaryColor;
+        color: $white;
+        background-color: $persianGreen;
     }
     &.compressed{
         .chip{

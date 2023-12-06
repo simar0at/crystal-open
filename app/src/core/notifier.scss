@@ -1,0 +1,29 @@
+.bologneUniDialog .modal{
+    background-color: #fff!important;
+    img{
+        max-width: 70%;
+    }
+    .bu_text{
+        margin-bottom: 10px;
+    }
+    .bu_divider{
+        padding: 20px 0;
+    }
+    .bu_author{
+        font-size: 12px;
+    }
+    @media screen and(max-width: 1000px) {
+        img{
+            max-width: 100%;
+        }
+    }
+
+    @media screen and(max-width: 550px) {
+        .bu_text{
+            margin-bottom: 0px;
+        }
+        .bu_divider{
+            padding: 10px 0;
+        }
+    }
+}

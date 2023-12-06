@@ -1,11 +1,11 @@
 <collocations-tab-advanced class="collocations-tab-advanced">
     <a onclick={onResetClick} data-tooltip={_("resetOptionsTip")} class="tooltipped resetOptions btn btn-floating btn-flat">
-        <i class="material-icons dark">settings_backup_restore</i>
+        <i class="material-icons color-blue-800">settings_backup_restore</i>
     </a>
     <div class="columns">
         <collocations-form></collocations-form>
 
-        <span class="inlineBlock colFuncs">
+        <span class="inline-block colFuncs">
             <ui-list label-id="col.showFuncs"
                 inline=1
                 value={options.c_cbgrfns}
@@ -15,14 +15,14 @@
                 tooltip="t_id:conc_r_coll_cbgrfns"
                 on-change={onCbgrfnsChange}></ui-list>
         </span>
-        <span class="inlineBlock">
+        <span class="inline-block">
             <div>
                 <ui-input
                     inline=0
                     type="number"
                     min="0"
                     name="c_cminfreq"
-                    size=3
+                    size=4
                     on-change={onOptionChange}
                     label-id="col.cminfreq"
                     tooltip="t_id:conc_r_coll_cminfreq"
@@ -34,7 +34,7 @@
                     type="number"
                     min="0"
                     name="c_cminbgr"
-                    size=3
+                    size=4
                     on-change={onOptionChange}
                     label-id="col.cminbgr"
                     tooltip="t_id:conc_r_coll_cminbgr"
@@ -50,11 +50,11 @@
         </span>
     </div>
 
-    <div class="center-align">
+    <div class="primaryButtons">
         <br>
-        <a class="btn contrast" id="btnCollAGo" onclick={onSearch} disabled={data.c_isLoading}>{_("go")}</a>
+        <a class="btn btn-primary" id="btnCollAGo" onclick={onSearch} disabled={data.c_isLoading}>{_("go")}</a>
     </div>
-    <floating-button onclick={onSearch}
+    <floating-button on-click={onSearch}
         name="btnGoFloat"
         periodic=1
         refnodeid="btnCollAGo"></floating-button>

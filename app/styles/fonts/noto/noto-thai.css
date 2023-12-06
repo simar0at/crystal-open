@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-thai ._t{
-    font-family: 'Noto Thai'
+.script-thai ._t,
+body .script-thai ._t,
+body .script-thai._t{
+    font-family: 'Noto Thai', 'Noto Sans', sans-serif;
 }

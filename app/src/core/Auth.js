@@ -40,15 +40,12 @@ class AuthClass{
         return this._user.licence_type == "site"
     }
 
-    isLoggedAs(){
-        return !!this._session.emulated_user
+    isAcademic(){
+        return ["acorg", "acind"].includes(this._user.licence_type)
     }
 
-    getElexis(){
-        return {
-            is: this._user.elexis,
-            agreed: this._user.elexis_agreed
-        }
+    isLoggedAs(){
+        return !!this._session.emulated_user
     }
 
     getSession(){
@@ -61,6 +58,10 @@ class AuthClass{
 
     getUsername() {
         return this._user.username
+    }
+
+    getSiteLicence(){
+        return this._session.site_licence
     }
 
     getUserId() {
@@ -80,19 +81,19 @@ class AuthClass{
     }
 
     getAnnotationGroup() {
-        return this._user.annotation_group
+        return this._user.annotation_group || ("user_" + this._user.username)
     }
 
     loadSession(){
         return Connection.get({
             query: "",
-            url: window.config.URL_CA + "/session",
+            url: window.config.URL_CA + "session",
             xhrParams: {
                 method: "get",
                 contentType: "application/json"
             },
             done: function(payload, request){
-                if(payload.data.user_type == "FULL_ACCOUNT"){
+                if(payload.data && payload.data.user_type == "FULL_ACCOUNT"){
                     this._onLoginDone(payload)
                 } else { // ANONYMOUS os SITELICENCE_MEMBER
                     this._isLogged = true
@@ -101,6 +102,9 @@ class AuthClass{
                     Dispatcher.trigger("AUTH_ANONYMOUS_LOGIN", payload)
                 }
             }.bind(this),
+            fail: payload => {
+                SkE.showError("Could not load session.", getPayloadError(payload))
+            },
             always: (payload) => {
                 Dispatcher.trigger("SESSION_LOADED", payload)
             }
@@ -111,11 +115,16 @@ class AuthClass{
         // checks, if user has active session. If not, user is redirected to login page.
         this.loadSession()
         Dispatcher.one("SESSION_LOADED", (payload) => {
-            let authorized = payload.data.user_type == "FULL_ACCOUNT"
+            let authorized = payload.data && payload.data.user_type == "FULL_ACCOUNT"
             if(!authorized){
-                window.location.href = window.config.URL_RASPI + "?next=" + encodeURIComponent(window.location.href)
+                if(window.config.URL_RASPI){
+                    window.location.href = window.config.URL_RASPI + "?next=" + encodeURIComponent(window.location.href)
+                } else {
+                    Dispatcher.trigger("ROUTER_GO_TO", "unauthorized")
+                }
+            } else {
+                callback && callback(authorized)
             }
-            callback && callback(authorized)
         })
     }
 
@@ -123,7 +132,7 @@ class AuthClass{
         Connection.get({
             query: "",
             loadingId: "logout",
-            url: window.config.URL_CA + "/session",
+            url: window.config.URL_CA + "session",
             xhrParams: {
                 method: 'DELETE',
                 type: 'json'
@@ -138,7 +147,7 @@ class AuthClass{
         Connection.get({
             query: "",
             loadingId: "login",
-            url: window.config.URL_CA + "/session",
+            url: window.config.URL_CA + "session",
             skipDefaultCallbacks: true,
             xhrParams: {
                 method: "put",
@@ -163,26 +172,10 @@ class AuthClass{
         Dispatcher.trigger("ROUTER_GO_TO", "dashboard")
     }
 
-    resetPassword(email){
-        Connection.get({
-            query: "",
-            url: window.config.URL_CA + "/reset_password",
-            skipDefaultCallbacks: true,
-            xhrParams: {
-                method: "post",
-                data: JSON.stringify({email: email}),
-                contentType: "application/json"
-            },
-            done: (payload) => {
-                Dispatcher.trigger("AUTH_RESET_PASSWORD_DONE", payload)
-            }
-       })
-    }
-
     reloadUserSpace(){
         !window.config.NO_CA &&Connection.get({
             query: "",
-            url: window.config.URL_CA + "/users/me/get_used_space",
+            url: window.config.URL_CA + "users/me/get_used_space",
             xhrParams: {
                 method: "post",
                 data: JSON.stringify({}),
@@ -190,12 +183,13 @@ class AuthClass{
             },
             done: (payload) => {
                 let s = payload.result
-                this._space ={
+                this._space = {
                     total: s.space_total,
                     total_str: window.Formatter.num(s.space_total),
                     used: s.space_used,
                     used_str: window.Formatter.num(s.space_used),
-                    percent: Math.floor(s.space_used / s.space_total * 100)
+                    percent: Math.floor(s.space_used / s.space_total * 100),
+                    has_space: !s.space_total || (s.space_total > s.space_used)
                 }
                 Dispatcher.trigger("USER_SPACE_RELOADED", this._space)
             }

@@ -1,4 +1,4 @@
-<ui-pagination class="ui ui-pagination text-secondary {opts.narrow ? 'narrow' : ''}">
+<ui-pagination class="ui ui-pagination text-secondary {narrow: opts.narrow} {center: opts.center}">
     <span class="pagination-per-page">
         {_("ui.rowsPerPage")}
     </span>
@@ -28,13 +28,14 @@
             </a>
         </li>
 
-        <li class="hide-on-small-only">
+        <li class="hide-on-small-only {showTotalPages: pageCount}">
             <ui-input ref="input"
                 placeholder="page"
                 on-submit={onPageInputChange}
                 riot-value={actual}
                 class="center-align"
                 style="width: 45px;"></ui-input>
+            <span class="totalPages">/ {window.Formatter.num(pageCount)}</span>
         </li>
 
         <li if={showPrevNext} class={disabled: actual == pageCount || opts.lastpage}>

@@ -3,19 +3,16 @@
         <span class="name">{_("corpus")}:</span>
         <span class="corpname">{corpus.name}</span>
         <span class="language">({corpus.language_name})</span>
-        <a if={corpus && corpus.user_can_manage && !window.config.READ_ONLY} class="btn btn-floating btn-flat btn-small btn-waves" onclick={onCorpusEditClick}>
-            <i class="material-icons grey-text text-darken-2">edit</i>
-        </a>
-        <span if={corpus.isEmpty} class="badge red lighten-2 white-text" style="float: none">
+        <span if={corpus.isEmpty} class="badge red lighten-2 white-text t_empty" style="float: none">
             {_("db.emptyTitle")}
         </span>
-        <span if={!corpus.isEmpty && corpus.needs_recompiling} class="badge red lighten-2 white-text" style="float: none">
+        <span if={corpus.hasDocuments && corpus.needs_recompiling} class="badge red lighten-2 white-text t_should_compile" style="float: none">
             {_("ca.shouldCompile")}
         </span>
-        <span if={!corpus.isEmpty && corpus.can_be_upgraded && !data.upgradeTagsetInProgress && corpus.user_can_manage} class="badge red lighten-2 white-text" style="float: none">
+        <span if={corpus.hasDocuments && corpus.can_be_upgraded && !data.upgradeTagsetInProgress && corpus.user_can_manage} class="badge red lighten-2 white-text t_should_upgrade" style="float: none">
             {_("ca.shouldUpgrade")}
         </span>
-        <span if={!corpus.isEmpty && corpus.isCompilationFailed} class="badge red lighten-2 white-text" style="float: none">
+        <span if={corpus.hasDocuments && corpus.isCompilationFailed} class="badge red lighten-2 white-text t_compilation_failed" style="float: none">
             {_("ca.compilation_failedDesc")}
         </span>
     </div>
@@ -24,7 +21,7 @@
 
     <div if={isBusy} class="busy center-align">
         <span class="statusText">
-            <h5 class="inlineBlock" ref="compilationText">
+            <h5 class="inline-block" ref="compilationText">
                 {corpus.isCompiling ? _("ca.compiling") : _("ca.upgrading")}
             </h5>
             <a id="btnCancelCompilation"
@@ -42,7 +39,7 @@
     </div>
 
     <div class="options">
-        <span each={option in options} class="inlineBlock {ca-tooltip: option.disabled}" data-tooltip={_("notAllowed")}>
+        <span each={option in options} class="inline-block {ca-tooltip: option.disabled}" data-tooltip={_("notAllowed")}>
             <a href={option.href} onclick={option.onclick} id="btnCa{option.id}" class="cardBtn card-panel {disabled: option.disabled} {option.class} {ca-tooltip: option.disabled} {pulse: option.highlight && !option.disabled}">
                 <i class="material-icons {orange-text: option.highlight && !option.disabled}">{option.icon}</i>
                 <div class="title">{_(option.title)}</div>
@@ -67,26 +64,6 @@
         this.tooltipMargin = -105
         this.mixin("tooltip-mixin")
 
-        onCorpusEditClick(){
-            Dispatcher.trigger("openDialog", {
-                title: _("corpus"),
-                tag: "ca-corpus-edit-dialog",
-                small: true,
-                id: "editCorpus",
-                buttons: [{
-                    label: _("save"),
-                    id: "corpusEditSaveBtn",
-                    onClick: function(){
-                        AppStore.updateCorpus(this.corpus.id, {
-                            name: $(".ca-edit-name input").val(),
-                            info: $(".ca-edit-info textarea").val()
-                        })
-                        Dispatcher.trigger("closeDialog", "editCorpus")
-                    }.bind(this)
-                }]
-            })
-        }
-
         onDownloadClick(){
             Dispatcher.trigger("openDialog", {
                 id: "downloadCorpus",
@@ -101,36 +78,46 @@
 
         onConfigClick(){
             Dispatcher.trigger("openDialog", {
-                id: "expertsOnly",
-                content: _("ca.expertsOnly"),
                 title: _("ca.corpusSettings"),
-                type: "warning",
+                tag: "ca-corpus-edit-dialog",
                 small: true,
+                id: "editCorpus",
                 buttons: [{
-                    label: _("ca.iAmExpert"),
+                    label: _("expertSettings"),
+                    class: "mr-2",
                     onClick: () => {
-                        Dispatcher.trigger("closeDialog", "expertsOnly")
-                        Dispatcher.trigger("ROUTER_GO_TO", "ca-config");
+                        Dispatcher.trigger("closeDialog", "editCorpus")
+                        Dispatcher.trigger("ROUTER_GO_TO", "ca-config")
+                    }
+                }, {
+                    label: _("save"),
+                    class: "btn-primary",
+                    id: "corpusEditSaveBtn",
+                    onClick: () => {
+                        AppStore.updateCorpus(this.corpus.id, {
+                            name: $(".ca-edit-name input").val(),
+                            info: $(".ca-edit-info textarea").val()
+                        })
+                        Dispatcher.trigger("closeDialog", "editCorpus")
                     }
                 }]
             })
         }
 
         onUpgradeClick(){
-            let content = _("ca.upgradeTagsetDialog1")
+            let content = _("ca.upgradeCorpusDialog1")
             if(this.corpus.tagsetdoc){
-                content += "<br><br>"
-                        + _("ca.upgradeTagsetDialog2")
-                        + ' <a href="' + this.corpus.tagsetdoc +'" target="_blank">' + _("here") + '</a>.'
+                content += "<br><br><b>"
+                        + _("ca.upgradeCorpusDialog2")
+                        + '</b>'
             }
             content += "<br><br>"
-                    + _("ca.upgradeTagsetDialog3")
-                    + ' <a href="mailto:' + externalLink("supportMail") + '">' + externalLink("supportMail") + '</a>.'
+                    + _("ca.upgradeCorpusDialog2Desc", ['<a href="mailto:' + externalLink("supportMail") + '">' + externalLink("supportMail") + '</a>'])
 
             Dispatcher.trigger("openDialog", {
                 id: "upgradeTagset",
                 content: content,
-                title: _("ca.upgradeTagset"),
+                title: _("ca.upgradeCorpus"),
                 type: "warning",
                 small: true,
                 buttons: [{
@@ -155,14 +142,14 @@
                 icon: "folder",
                 title: "browse",
                 desc: "ca.browseDesc",
-                disabled: this.corpus.isEmpty
+                disabled: this.corpus.isEmpty && !this.corpus.hasDocuments
             }, {
                 id: "addContent",
                 href: "#ca-add-content",
                 icon: "add_circle",
                 title: "enlargeCorpus",
                 desc: "ca.makeBiggerDesc",
-                highlight: this.corpus.isEmpty
+                highlight: !this.corpus.hasDocuments
             }, {
                 id: "share",
                 href: "#ca-share",
@@ -184,7 +171,7 @@
                 title: "ca.compile",
                 desc: "ca.compileDesc",
                 disabled: this.corpus.isEmpty,
-                highlight: !this.corpus.isEmpty && (this.corpus.isCompilationFailed || this.corpus.needs_recompiling)
+                highlight: this.corpus.hasDocuments && (this.corpus.isCompilationFailed || this.corpus.needs_recompiling)
             }, {
                 id: "delete",
                 onclick: this.onDeleteClick,
@@ -220,7 +207,7 @@
                         onclick: this.onUpgradeClick,
                         icon: "update",
                         title: "upgrade",
-                        desc: "ca.upgradeCorpusTagsetDesc",
+                        desc: "ca.upgradeCorpusDesc",
                         highlight: this.corpus.isCompilationFailed
                     })
                 }
@@ -243,7 +230,7 @@
         }
 
         onCancelCompilation(evt){
-            this.refs.compilationText.innerHTML = _("ca.canceling")
+            this.refs.compilationText.innerHTML = _("ca.cancelling")
             $(evt.currentTarget).addClass("disabled")
             CAStore.cancelCompilation(this.corpus.id)
             this.update()

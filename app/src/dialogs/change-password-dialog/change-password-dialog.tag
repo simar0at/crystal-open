@@ -1,4 +1,4 @@
-<change-password-dialog>
+<change-password-dialog class="change-password-dialog">
     <div class="columnForm">
         <div if={error} class="red-text">
             {error}
@@ -7,6 +7,7 @@
             <label class="col m5 s12">{_("oldPassword")}</label>
             <div class="col m5 s12">
                 <ui-input type="password"
+                        name="old_password"
                         validate={true}
                         required={true}
                         on-input={refreshChangeBtnDisable}
@@ -19,6 +20,7 @@
             <label class="col m5 s12">{_("newPassword")}</label>
             <div class="col m5 s12">
                 <ui-input type="password"
+                        name="new_password1"
                         validate={true}
                         required={true}
                         on-input={refreshChangeBtnDisable}
@@ -30,6 +32,7 @@
             <label class="col m5 s12">{_("confirmPassword")}</label>
             <div class="col m5 s12">
                 <ui-input type="password"
+                        name="new_password2"
                         validate={true}
                         required={true}
                         on-input={refreshChangeBtnDisable}
@@ -59,7 +62,7 @@
             Connection.get({
                 query: "",
                 loadingId: "changePassword",
-                url: window.config.URL_CA + "/users/me/change_password",
+                url: window.config.URL_CA + "users/me/change_password",
                 xhrParams: {
                     method: "post",
                     data: JSON.stringify({

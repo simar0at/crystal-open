@@ -1,8 +1,8 @@
-<corpus-info-dialog class="corpus-info-dialog" style="position: relative;">
+<corpus-info-dialog class="corpus-info-dialog relative">
     <div if={!data}>
         <preloader-spinner overlay=1></preloader-spinner>
     </div>
-    <div if={data}>
+    <div if={data && !error}>
         <div class="titleWithButton">
             <span class="title">
                 <h4>{data.name}</h4>
@@ -10,11 +10,18 @@
                     {data.corpname}
                     <span if={corpusListData && corpusListData.created}>
                         ● {_("created")}
-                        {window.Formatter.dateTime(new Date(corpusListData.created))}
+                        {window.Formatter.date(new Date(corpusListData.created), {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                hour: "numeric",
+                                minute: "numeric",
+                                second: "numeric"
+                            })}
                     </span>
                 </span>
             </span>
-            <a if={window.permissions.ca} href="#ca" class="btn white-text" onclick={closeDialog}>
+            <a if={window.permissions.ca} href="#ca?corpname={data.corpname}" class="btn white-text" onclick={closeDialog}>
                 {_("manageCorpus")}
             </a>
         </div>
@@ -22,7 +29,7 @@
             {data.info}
         </div>
 
-        <div class="colsContainer {hasRightCol: activeRequest || (structs && structs.length)}">
+        <div class="colsContainer {hasRightCol: activeRequest || (structures && structures.length)}">
             <div class="leftCol">
                 <div class="corpInfoSections">
                     <div>
@@ -35,34 +42,38 @@
                                 </tr>
                                 <tr if={data.infohref}>
                                     <td>{_("ci.corpusDescription")}</td>
-                                    <td><a href={data.infohref} class="btn" target="_blank">{_("description")}</a></td>
+                                    <td><a href={data.infohref} class="btn" target="_blank">{_("read")}</a></td>
                                 </tr>
                                 <tr if={data.tagsetdoc}>
                                     <td>{_("tagset")}</td>
-                                    <td><a href={data.tagsetdoc} class="btn" target="_blank">{_("description")}</a></td>
+                                    <td><a href={data.tagsetdoc} class="btn" target="_blank">{_("listTags")}</a></td>
                                 </tr>
                                 <tr if={data.errsetdoc}>
                                     <td>{_("ci.errset")}</td>
-                                    <td><a href={data.errsetdoc} class="btn" target="_blank">{_("description")}</a></td>
+                                    <td><a href={data.errsetdoc} class="btn" target="_blank">{_("listCodes")}</a></td>
                                 </tr>
                                 <tr if={data.wsdef}>
                                     <td>{_("ci.wordSketchGrammar")}</td>
-                                    <td><button class="btn" onclick={showGrammarDialog.bind(this, false)}>{_("show")}</button></td>
+                                    <td><button class="btn t_showSketchGrammar" onclick={showGrammarDialog.bind(this, false)}>{_("show")}</button></td>
                                 </tr>
                                 <tr if={data.termdef}>
                                     <td>{_("termGrammar")}</td>
-                                    <td><button class="btn" onclick={showGrammarDialog.bind(this, true)}>{_("show")}</button></td>
+                                    <td><button class="btn t_showTermGrammar" onclick={showGrammarDialog.bind(this, true)}>{_("show")}</button></td>
                                 </tr>
                             </table>
                         </div>
                     </div>
 
                     <div>
-                        <div if={data.sizes}  class="card-panel">
+                        <div if={data.sizes}  class="counts card-panel">
                             <h5>{_("ci.counts")}&nbsp;<i class="material-icons tooltipped" data-tooltip="t_id:ci_counts">info</i></h5>
                             <table class="table">
                                 <tr each={obj, idx in sizesList} if={data.sizes[obj[0]] > 0}>
-                                    <td>{_(obj[1])}</td>
+                                    <td>
+                                        <span class={tooltipped : !!obj[2]} data-tooltip={obj[2]}>
+                                            {_(obj[1])}<sup if={obj[2]}>?</sup>
+                                        </span>
+                                    </td>
                                     <td class="right-align">{window.Formatter.num(parent.data.sizes[obj[0]])}</td>
                                 </tr>
                             </table>
@@ -76,7 +87,9 @@
                             <table if={!activeRequest} class="table">
                                 <tr each={attr in attributes}>
                                     <td>
-                                        {attr.name}
+                                        <span class={tooltipped : attr.name == "word"} data-tooltip={attr.name == "word" ? "t_id:ci_nonwords" : null}>
+                                            {attr.name}<sup if={attr.name == "word"}>?</sup>
+                                        </span>
                                         <i if={attr.label} class="material-icons tooltipped" data-tooltip={attr.label}>info_outline</i>
                                     </td>
                                     <td class="right-align">{isNaN(attr.id_range) ? "" : window.Formatter.num(attr.id_range)}</td>
@@ -91,7 +104,8 @@
                             <table class="table">
                                 <tr each={pos in data.wposlist}>
                                     <td>{pos.label}</td>
-                                    <td class="right-align">{pos.value}</td>
+                                    <td class="right-align"
+                                            style="word-break: break-all;">{pos.value}</td>
                                 </tr>
                             </table>
                             <a if={data.tagsetdoc}
@@ -105,7 +119,7 @@
                     </div>
 
                     <div>
-                        <div if={data.lposlist && data.lposlist.length} class="card-panel">
+                        <div if={data.lposlist && data.lposlist.length} class="card-panel t_lemposSuffixes">
                             <h5>{_("ci.lemposSuffixes")}&nbsp;<i class="material-icons tooltipped" data-tooltip="t_id:ci_lempos_suffixes">info</i></h5>
                             <table class="table">
                                 <tr each={pos in data.lposlist}>
@@ -146,21 +160,35 @@
                 </div>
             </div>
 
-            <div if={activeRequest || (structs && structs.length)} class="rightCol">
+            <div if={activeRequest || (structures && structures.length)} class="rightCol t_textTypes">
                 <div class="card-panel noPaddingCard">
-                    <h5>{_("textTypes")}&nbsp;<i class="material-icons tooltipped" data-tooltip="t_id:ci_text_types">info</i></h5>
+                    <h5>{_("textTypes")}
+                        &nbsp;
+                        <i class="material-icons tooltipped" data-tooltip="t_id:ci_text_types">info</i>
+                        <a href="#text-type-analysis?corpname={data.corpname}&wlminfreq=1&include_nonwords=1&showresults=1&wlicase=1&wlnums=frq"
+                                class="btn right"
+                                onclick={closeDialog}>
+                                {_("tta")}
+                        </a>
+                    </h5>
                     <preloader-spinner small=1 if={activeRequest}></preloader-spinner>
                     <ul if={!activeRequest} class="collapsible" data-collapsible="expandable">
-                        <li each={struct, idx in structs} class={active: idx == 0}>
-                            <div class="collapsible-header">{struct[0]} <span class="scnt">({struct[2].length})</span>
-                                <span class="right">{window.Formatter.num(struct[1])}</span>
+                        <li each={struct, idx in structures} class={active: idx == 0}>
+                            <div class="collapsible-header">
+                                <span class="t_structName"><{struct.name}> {struct.label}</span>
+                                <span class="scnt">({struct.attributes.length})</span>
+                                <span class="right">{window.Formatter.num(struct.size)}</span>
                             </div>
                             <div class="collapsible-body">
-                                <div each={itm in struct[2]}>
-                                    {itm[1]}, &nbsp;
-                                    <span class="attr">{itm[0]}</span>
-                                    <span class="right">{window.Formatter.num(itm[2])}</span>
-                                    <a href={getWordlistUrl(itm[0])}
+                                <i if={!struct.attributes.length} class="grey-text">
+                                    {_("structWithoutAttributes")}
+                                </i>
+                                <div each={attr in struct.attributes}>
+                                    <span class="t_attrName">{attr.label || attr.name}</span>
+                                    , &nbsp;
+                                    <span class="attr">{struct.name}.{attr.name}</span>
+                                    <span class="right">{window.Formatter.num(attr.size)}</span>
+                                    <a href={getTextTypeAnalysisUrl(struct.name + "." + attr.name)}
                                             class="tooltipped"
                                             data-tooltip={_("statsWholeCorp")}
                                             onclick={closeDialog}>
@@ -182,7 +210,7 @@
     <script>
         require('./corpus-info-dialog.scss')
         const {Connection} = require("core/Connection.js")
-        const {Router} = require('core/Router.js')
+        const {Url} = require('core/url.js')
         const {AppStore} = require('core/AppStore.js')
         const {Auth} = require('core/Auth.js')
         const Dialogs = require('dialogs/dialogs.js')
@@ -208,13 +236,15 @@
             ["doccount", "documents"]
         ]
 
-        getWordlistUrl(wlattr){
-            return window.stores.wordlist.getUrlToResultPage({
-                tab: "attribute",
-                wlattr: wlattr,
+        getTextTypeAnalysisUrl(wlattr){
+            return Url.create("text-type-analysis", {
+                corpname: this.opts.corpname,
                 wlminfreq: 1,
-                include_nonwords: 1,
-                onecolumn: 1
+                wlicase: true,
+                include_nonwords: true,
+                showresults: true,
+                wlnums: "frq",
+                wlattr: wlattr
             })
         }
 
@@ -225,10 +255,10 @@
             }
             this.activeRequest = Connection.get({
                 url: window.config.URL_BONITO + "corp_info",
-                query: {
+                data: {
                     corpname: opts.corpname,
-                    struct_attr_stats: 1,
-                    subcorpora: 1
+                    struct_attr_stats: true,
+                    subcorpora: true
                 },
                 done: this.onLoad,
                 fail: this.onFail
@@ -239,12 +269,16 @@
 
         onLoad(payload){
             if(this.isMounted){ // user could close dialog before loaded
-                this.attributes = payload.attributes
-                this.structs = payload.structs.sort((a, b) => {return b[2].length - a[2].length})
-                this.structs.forEach(s => {
-                    s[2].sort((a,b) => {return a[1].localeCompare(b[1])})
-                })
-                this.subcorpora = payload.subcorpora
+                if(payload.error){
+                    this.error = payload.error
+                } else {
+                    this.attributes = payload.attributes
+                    this.structures = payload.structures.sort((a, b) => {return b.attributes.length - a.attributes.length})
+                    this.structures.forEach(s => {
+                        s.attributes.sort((a,b) => {return (a.label || a.name).localeCompare(b.label || b.name)})
+                    })
+                    this.subcorpora = payload.subcorpora
+                }
                 this.activeRequest = null
                 this.update()
             }
@@ -282,4 +316,3 @@
 
     </script>
 </corpus-info-dialog>
-

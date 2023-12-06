@@ -9,7 +9,7 @@
     <br><br>
 
     <div class="center">
-        <a href="javascript:void(0);" class="btn waves-effect waves-light white-text" onclick={onAgreeClick}>{_("agree")}</a>
+        <a href="javascript:void(0);" class="btn white-text" onclick={onAgreeClick}>{_("agree")}</a>
     </div>
 
     <script>
@@ -19,7 +19,7 @@
         onAgreeClick(){
             Connection.get({
                 query: "",
-                url: window.config.URL_CA + "/users/" + Auth.getUserId(),
+                url: window.config.URL_CA + "users/" + Auth.getUserId(),
                 skipDefaultCallbacks: true,
                 xhrParams: {
                     method: "put",

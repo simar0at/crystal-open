@@ -1,0 +1,71 @@
+@import 'app/styles/constants';
+
+.result-options-annot {
+      table > thead {
+          border: none;
+      }
+      p#amt {
+          font-style: italic;
+          margin-bottom: 1em;
+      }
+      tbody > tr > td > a.btn-small {
+          padding: 0;
+      }
+      td > span.annot {
+          white-space: nowrap;
+      }
+      .annotLabelCell {
+          max-width: 200px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+      }
+      .annot {
+          padding: 2px 3px;
+          font-size: 75%;
+          font-weight: bold;
+          background-color: $green-300;
+      }
+      span.annot {
+          color: black;
+      }
+      .annotDetails {
+          width: 100%;
+          min-width: 400px;
+          margin-bottom: 1em;
+          background-color: $transparentWhite;
+
+          td.labelBar {
+              width: 100%;
+              div {
+                  height: .5em;
+              }
+          }
+          td {
+              padding: 4px 8px;
+          }
+      }
+      .btn-col {
+          .btn {
+              margin-bottom: 1em;
+              white-space: nowrap;
+              @media #{$large-and-up} {
+                  float: right;
+              }
+          }
+
+          @media #{$medium-and-down} {
+              text-align: center;
+              margin-top: 20px;
+          }
+      }
+      .clearFilter {
+          font-size: 14px;
+          opacity: 0.7;
+          &:hover {
+            opacity: 1;
+          }
+      }
+      .filterButton i {
+          font-size: 1.3rem !important;
+      }
+}

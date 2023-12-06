@@ -1,8 +1,8 @@
-<collocations-form class="collocations-form inlineBlock">
+<collocations-form class="collocations-form inline-block">
     <div class="columns">
-        <span class="inlineBlock">
+        <span class="inline-block">
             <ui-filtering-list
-                label={_("count")}
+                label={_("attribute")}
                 riot-value={parent.options.c_cattr}
                 name="c_cattr"
                 options={store.attrList}
@@ -10,10 +10,9 @@
                 value-in-search=1
                 open-on-focus=1
                 tooltip="t_id:conc_r_coll_count"
-                on-change={onCattrChange}
-                deselect-on-click={false}></ui-filtering-list>
+                on-change={onCattrChange}></ui-filtering-list>
         </span>
-        <span class="inlineBlock">
+        <span class="inline-block">
             <range-select
                 if={opts.hideCustomrange || !parent.options.c_customrange}
                 name="c_range"

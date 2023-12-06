@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-cyrl ._t{
-    font-family: 'Noto Sans'
+.script-cyrl ._t,
+body .script-cyrl ._t,
+body .script-cyrl._t{
+    font-family: 'Noto Sans', sans-serif;
 }

@@ -1,3 +1,5 @@
+@import 'app/styles/constants';
+
 .header-menu{
     #menuDropdownList{
         min-width: 220px;
@@ -41,7 +43,7 @@
         top: 13px;
         right: 13px;
         display: inline-block;
-        background-color: red;
+        background-color: $red-200;
         border-radius: 50%;
         height: 10px;
         width: 10px;
@@ -52,7 +54,7 @@
         left: 32px;
         display: inline-block;
         color: white;
-        background-color: red;
+        background-color: $red-200;
         border-radius: 50%;
         height: 18px;
         width: 18px;

@@ -1,0 +1,584 @@
+@import 'app/styles/constants';
+
+.page-annotation {
+    .helper-box {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, 0);
+        text-align: center;
+        z-index: 496;
+        >div {
+            background-color: $blue-100;
+            padding: 10px 20px;
+            display: inline-block;
+            position: relative;
+        }
+    }
+    &.givdnt .labels .lab_x,
+    &.gpdev .labels .lab_x,
+    &.gpdev .labels .lab_u,
+    &.gtpas .labels .lab_x,
+    &.gtpas .labels .lab_u {
+        display: none;
+    }
+    input#status {
+        height: 1.4rem;
+        font-size: 90%;
+    }
+    span.group {
+        font-weight: bold;
+        color: #EEE;
+    }
+    .card-title {
+        font-weight: bold;
+        line-height: 3rem;
+    }
+    select.browser-default.tiny {
+        height: 2rem;
+        width: auto;
+        display: inline-block;
+    }
+    footer {
+        color: #AAA;
+    }
+    .pointer {
+        cursor: pointer;
+    }
+    table.highlight > tbody tr:hover {
+        background-color: $blue-100;
+        cursor: pointer;
+    }
+    table.table td,
+    table.table th {
+        padding: .5rem;
+    }
+    .input-field {
+        margin-top: 0;
+    }
+    .input-field > input {
+        margin-bottom: 0;
+    }
+    .text-right {
+        text-align: right;
+    }
+    .skema > .row > .col {
+        padding: 0;
+    }
+    input + label {
+        margin-right: 2em;
+    }
+    label {
+        white-space: nowrap;
+        color: #333;
+        font-size: .8rem;
+    }
+    .label_head {
+        color: #555;
+        font-weight: bold;
+    }
+    .label {
+        padding: 2px 3px;
+        font-weight: bold;
+        background-color: $green-300;
+    }
+    .queries.card {
+        padding: .5em;
+        background-color: $blue-100;
+        display: table;
+        width: 100%;
+
+        .input-field {
+            display: inline-block;
+            input::placeholder {
+                color: #999;
+            }
+        }
+    }
+    .table-label {
+        font-weight: 700;
+    }
+
+    .actions {
+      white-space: nowrap;
+      width: 1em;
+      text-align: right;
+      i {
+          color: $blue-800;
+      }
+      .btn-floating:hover {
+          background-color: $blue-200;
+      }
+    }
+
+    .labels {
+        padding: .5em;
+        display: table;
+        width: 100%;
+        background-color: $blue-100;
+
+        tr.sub {
+            font-size: 85%;
+            td:first-child {
+                padding-left: 2em;
+            }
+        }
+
+        .input-field label {
+            color: black;
+        }
+        .table td.perc {
+            text-align: right;
+            font-weight: bold;
+        }
+    }
+    .below {
+        font-style: italic;
+    }
+    /* PATTERN STRING RULES */
+    .generic {
+        background-color: $blue-100;
+        span.name {
+            font-variant: small-caps;
+            color: darkred;
+            margin-left: .2em;
+            position: relative;
+            top: -.5em;
+            font-size: 75%;
+            font-weight: bold;
+        }
+    }
+    .pattern-string > span {
+        margin-right: .3em;
+    }
+    .attributes {
+        table-layout: fixed;
+    }
+    /* TPAS + CROATPAS */
+    .tpas .quote {
+        color: black;
+    }
+    .tpas .come {
+        margin-right: .2em;
+    }
+    .tpas .role:before {
+        content: "=";
+        margin: 0 .2em;
+    }
+    .tpas .feature:before {
+        content: ":";
+        margin: 0 .2em;
+    }
+    .pdev .subject,
+    .tpas .subject,
+    .croatpas .subject {
+        color: $red-200;
+    }
+    .tpas .prep,
+    .croatpas .prep {
+        margin-right: .2em;
+    }
+    .croatpas .kaoza {
+        font-weight: bold;
+        font-size: 80%;
+    }
+    .pdev .object,
+    .croatpas .object,
+    .tpas .object {
+        color: $green-500;
+    }
+    .pdev .adverbial,
+    .croatpas .adverbial,
+    .tpas .adverbial {
+        color: grey;
+    }
+    .pdev .ind_obj,
+    .croatpas .ind_obj,
+    .croatpas .ind_compl,
+    .tpas .ind_obj,
+    .tpas .ind_compl {
+        color: #2196F3;
+    }
+    .pdev .clausals,
+    .croatpas .clausals,
+    .tpas .clausals {
+        color: #673ab7;
+    }
+    .croatpas .predic_compl,
+    .tpas .predic_compl {
+        color: $persianGreen;
+    }
+    .pdev .sub_conj,
+    .croatpas .prep_compl,
+    .tpas .prep_compl {
+        color: #ff9800;
+    }
+    .pdev .opt:before,
+    .croatpas .opt:before,
+    .tpas .opt:before {
+        content: "(";
+        color: grey;
+    }
+    .pdev .or:before,
+    .croatpas .or:before,
+    .tpas .or:before {
+        content: "";
+        color: inherit;
+    }
+    .pdev .or:after,
+    .croatpas .or:after,
+    .tpas .or:after {
+        content: " |";
+        color: black;
+        font-weight: bold;
+    }
+    .pdev .prep_part,
+    .croatpas .prep_part,
+    .tpas .prep_part {
+        margin-right: .2em;
+    }
+    .croatpas .case {
+        font-size: 80%;
+        position: relative;
+        bottom: -.3em;
+        font-variant: small-caps;
+        font-weight: bold;
+    }
+    .tpas .stor,
+    .tpas .lsor,
+    .tpas .stlsor {
+        color: grey;
+        font-weight: bold;
+        padding: 0 .2em 0 .2em;
+    }
+    /* .croatpas .or + span:after,
+    .tpas .or + span:after, */
+    .pdev .or + span:after {
+        content: "";
+        color: inherit;
+    }
+    .pdev .opt:after,
+    .croatpas .opt:after,
+    .tpas .opt:after {
+        content: ")";
+        color: grey;
+    }
+    .pdev .opt.or:after,
+    .croatpas .opt.or:after,
+    .tpas .opt.or:after {
+        content: ") |";
+    }
+    .pdev .opt.or:before,
+    .croatpas .opt.or:before,
+    .tpas .opt.or:before {
+        content: "(";
+        color: grey;
+    }
+    .pdev .verb,
+    .croatpas .verb,
+    .tpas .verb {
+        color: #444;
+        font-weight: bold;
+    }
+    .croatpas .st:before,
+    .tpas .st:before {
+        content: "["
+    }
+    .croatpas .st:after,
+    .tpas .st:after {
+        content: "]";
+    }
+    .pdev .r:before,
+    .croatpas .r:before,
+    .tpas .r:before {
+        content: " = ";
+    }
+    .pdev .ls:before,
+    .croatpas .ls:before,
+    .tpas .ls:before {
+        content: "{";
+    }
+    .pdev .ls:after,
+    .croatpas .ls:after,
+    .tpas .ls:after {
+        content: "}";
+    }
+    .pdev .type,
+    .croatpas .type,
+    .tpas .type {
+        font-variant: small-caps;
+    }
+    .pdev select,
+    .croatpas select,
+    .tpas select {
+        height: 2rem;
+        border: none;
+    }
+    .tpas .infsep {
+        color: #AAA !important;
+    }
+    /* PDEV */
+    .pdev .idiompv {
+        font-size: 70%;
+        color: white;
+        font-weight: bold;
+        padding: 1px 4px;
+        border-radius: 4px;
+        background-color: #888;
+    }
+    .pdev .st:before {
+        content: "[["
+    }
+    .pdev .st:after {
+        content: "]]"
+    }
+    .pdev .cl {
+        color: #AAA;
+        padding-left: .5em;
+    }
+    .pdev .cl:before {
+        content: "["
+    }
+    .pdev .cl:after {
+        content: "]"
+    }
+    .pdev .adverbial_head {
+        margin-right: .3em;
+    }
+    .pdev .adverbial:before,
+    .pdev .adverbial_func:before {
+        content: "{"
+    }
+    .pdev .adverbial:after,
+    .pdev .adverbial_func:after {
+        content: "}"
+    }
+    .pdev .noobj {
+        color: grey;
+    }
+    .pdev .noobj:before {
+        content: "["
+    }
+    .pdev .noobj:after {
+        content: "]"
+    }
+    .ui-checkbox {
+        display: inline-block;
+        margin-right: .7em;
+    }
+    .ui {
+        margin-bottom: 0;
+    }
+    [type="checkbox"] + span:not(.lever) {
+        padding-left: 25px;
+    }
+    .ivdnt {
+        .exattrs {
+            font-size: 0.8rem;
+        }
+        select.browser-default {
+            margin: 0 0 20px 0;
+        }
+        table.table {
+            table-layout: fixed;
+            margin-bottom: 1rem;
+        }
+        .table th {
+            font-weight: normal;
+        }
+        tbody tr th,
+        tbody tr td {
+            vertical-align: top;
+            border-radius: 0;
+        }
+        select {
+            border: none;
+            height: 2.3rem;
+            outline: none;
+            background-color: #EEE;
+        }
+        .s4.input-field div input {
+            margin-bottom: 0.5em;
+        }
+        .text-right {
+            text-align: right;
+        }
+        input {
+            height: 2.2rem !important;
+        }
+        .sub {
+            font-size: 80%;
+        }
+        [type="checkbox"] + label {
+            padding-left: 1.5em !important;
+        }
+        .input-field label.active,
+        label {
+            color: black;
+        }
+        .btn-floating i {
+            color: #666;
+        }
+        .no-bottom-margin {
+            margin-bottom: 0 !important;
+        }
+        .slotid {
+            text-align: center;
+            font-size: 90%;
+            font-weight: bold;
+            color: #AAA;
+        }
+        .slotid.active {
+            background-color: black;
+            color: white;
+        }
+        .o, .b, .p, .g, .b, .x {
+            margin-right: .3em;
+        }
+        .o {
+            color: rgb(237,128,49);
+        }
+        .b {
+            color: black;
+        }
+        .p {
+            color: rgb(112, 48, 160);
+        }
+        .g {
+            color: rgb(0, 176, 80);
+        }
+        .b {
+            color: rgb(0, 176, 240);
+        }
+        .opt:before {
+            content: "(";
+            color: grey;
+        }
+        .opt:after {
+            content: ")";
+            color: grey;
+        }
+        .of {
+            font-style: italic;
+            color: grey;
+            margin-right: .2em;
+        }
+        .fixed {
+            color: grey;
+            font-weight: bold;
+        }
+        .meaning {
+            color: #999;
+            font-size: 80%;
+        }
+        .lsdummy,
+        .lsdummy2 {
+            color: black;
+        }
+        sup.ils {
+            color: black;
+            font-weight: bold;
+        }
+        .lsdummy2:before {
+            content: "{"
+        }
+        .lsdummy2:after {
+            content: "}"
+        }
+        .vc_dummy {
+            color: purple;
+        }
+    }
+    .lbtyp {
+        font-size: x-small;
+        position: relative;
+        top: -1em;
+        font-weight: bold;
+    }
+    .thin {
+        margin-bottom: 0;
+    }
+    .queriesTable .opened {
+        font-weight: bold;
+    }
+    .opened {
+      background-color: $gray-200 !important;
+      &:hover {
+          background-color: $blue-100 !important;
+      }
+    }
+    .active.ab {
+        position: absolute;
+        top: -1.2rem;
+    }
+    .fs85 {
+        font-size: 85%;
+    }
+    #skematag {
+        padding: .5em;
+    }
+    #skematag .row {
+        margin-bottom: 1em;
+    }
+    .fullscreen {
+        background-color: white;
+        position: fixed;
+        top: 1em;
+        left: 1em;
+        bottom: 1em;
+        right: 1em;
+        z-index: 1000;
+        overflow-y: auto;
+    }
+    .listing {
+        .listing_result td {
+            padding: 0;
+        }
+        .listing_result tr:nth-child(even) {
+            background-color: $gray-100;
+        }
+    }
+    @keyframes pulse {
+        from {
+            background-color: white;
+        }
+        to {
+            background-color: lightgreen;
+        }
+    }
+    .ontology {
+        >div > div > .node > div {
+            margin-left: 0 !important;
+        }
+        .semtype {
+            position: relative;
+            font-variant: small-caps;
+            font-weight: bold;
+        }
+        .toggleIcon{
+            position: absolute;
+            left: -10px;
+        }
+        .meta {
+            color: #999;
+        }
+        .meta .def {
+            font-style: italic;
+        }
+        .meta .ex {
+            font-weight: bold;
+            font-size: 80%;
+        }
+        .node > div {
+            margin-left: 3em;
+            color: $blue-800;
+        }
+    }
+    q {
+      text-transform: none;
+    }
+}
+
+.newLabelInput {
+      max-width: 250px;
+}

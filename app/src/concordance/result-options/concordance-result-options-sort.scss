@@ -12,7 +12,7 @@
         margin-bottom: 10px;
         .chip{
             font-size: inherit;
-            background-color: #f2f2f2;
+            background-color: $gray-100;
             color: rgb(102, 102, 102);
         }
     }
@@ -60,7 +60,7 @@
             border-radius: 1px;
             width: 8px;
             height: 8px;
-            background-color: #9e9e9e;
+            background-color: $gray-500;
             &:nth-child(4){
                 width: 16px;
                 margin: 2px 8px;
@@ -89,9 +89,5 @@
         padding: 5px;
         line-height: 20px;
         height: 27px;
-        background-color: $new_mediumBlue;
-        &:hover {
-            background-color: $new_mediumBlue;
-        }
     }
 }

@@ -52,15 +52,6 @@ class StoreMixin {
            return obj;
         }
     }
-
-    _copy(obj) {
-        try {
-            return JSON.parse(JSON.stringify(obj))
-        }
-        catch (err) {
-            return JSON.parse(JSON.stringify(JSON.decycle(obj)))
-        }
-    }
 }
 
 export {StoreMixin};

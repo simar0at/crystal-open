@@ -1,5 +1,9 @@
 <concordance-result-options-filter class="concordance-result-options-filter">
- <ui-tabs ref="tabs" tabs={tabs} active={tab} on-tab-change={this.onTabChange}>
+    <div if={data.total < data.fullsize}
+            class="grey-text">
+        {_(data.random ? "filterLimitationNoteRandom10M" : "filterLimitationNoteFirst10M", [Formatter.num(data.total)])}
+    </div>
+    <ui-tabs ref="tabs" tabs={tabs} active={data.filterTab} on-tab-change={onTabChange}>
     </ui-tabs>
 
     <script>

@@ -1,0 +1,117 @@
+@import 'constants.scss';
+
+.btn,
+.btn-small {
+    &:not(.btn-flat){
+        background-color: $blue-800;
+        color: $textOnDark;
+        &:hover {
+            background-color: $blue-750;
+        }
+    }
+}
+
+.btn-floating i {
+    color: inherit;
+}
+.btn[disabled], .btn.disabled {
+    cursor: not-allowed;
+    .material-clickable, input[type=file], span {
+        cursor: not-allowed;
+    }
+}
+
+.btn.btn-primary {
+    i.material-icons, i.ske-icons {
+        color: $white;
+    }
+    background-color: $red-400;
+    color: $white;
+    &:hover {
+        background-color: $red-300;
+    }
+}
+
+.sortContainer .btn-small{
+    background-color: transparent;
+    color: $blue-800;
+    &.active {
+        background-color: $blue-200;
+        color: $blue-800;
+    }
+    &:hover{
+        color: $white;
+    }
+}
+
+.btn-flat {
+    &.color-blue-200 {
+        i {
+            color: $blue-200;
+        }
+        &:hover,&:focus {
+            background-color: $blue-100;
+        }
+    }
+    &:hover{
+        background-color: $blue-200;
+    }
+}
+
+.btn-selector {
+    font-family: Roboto Condensed, Roboto, sans-serif;
+    &.btn-flat {
+        color: $blue-800;
+        background-color: $blue-200;
+        &:hover {
+            color: $white;
+        }
+    }
+    &.btn {
+        background-color: $blue-800;
+        color: $white;
+        &:hover {
+            background-color: $blue-200;
+        }
+    }
+}
+
+
+.cardBtn{
+    cursor: pointer;
+    display: inline-block;
+    min-width: 200px;
+    text-align: center;
+    vertical-align: top;
+    &.card-panel{
+        margin: 0 8px;
+        padding: 15px 10px;
+        vertical-align: top;
+        margin-bottom: 20px;
+    }
+    i{
+        font-size: 40px;
+    }
+    .title{
+        font-size: 1.3em;
+        color: $gray-800;
+    }
+    .desc{
+        font-size: 0.8em;
+        color: $gray-500;
+        &::first-letter{
+            text-transform: capitalize;
+        }
+    }
+    &:hover{
+        -webkit-box-shadow: 0 8px 17px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+        box-shadow: 0 8px 17px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    }
+    &.disabled{
+        background-color: $gray-100;
+        .title,
+        .desc{
+            opacity: 0.5;
+        }
+    }
+}

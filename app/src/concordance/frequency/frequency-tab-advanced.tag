@@ -1,13 +1,15 @@
 <concordance-frequency-tab-advanced class="frequency-tab-advanced">
     <div class="card-content">
         <a onclick={onResetClick} class="resetOptions btn btn-floating btn-flat">
-            <i class="material-icons dark">settings_backup_restore</i>
+            <i class="material-icons color-blue-800">settings_backup_restore</i>
         </a>
         <div class="columns">
-            <div class="freqmlContainer inlineBlock leftColumn">
+            <div class="freqmlContainer inline-block leftColumn">
                 <div each={freq, idx in freqml} class="card">
                     <div class="card-content">
-                        <i if={idx != 0} class="close material-icons grey-text material-clickable" onclick={parent.onRemoveClick.bind(this, idx)}>close</i>
+                        <i if={idx != 0 || freqml.length > 1}
+                                class="close material-icons grey-text material-clickable"
+                                onclick={parent.onRemoveClick.bind(this, idx)}>close</i>
                         <div>
                             <ui-filtering-list
                                 inline={true}
@@ -24,6 +26,7 @@
                             </ui-filtering-list>
                         </div>
                         <context-selector
+                            if={showContextSelector(freq.attr)}
                             data-idx={idx}
                             range=6
                             riot-value={freq.ctx}
@@ -31,7 +34,15 @@
                             kwic-label={getContextKwicLabel(freq.base)}
                             label-id="position"
                             on-change={onCtxChange.bind(this, idx)}></context-selector>
-
+                        <div class="baseSelect">
+                            <ui-select class="narrowCtx"
+                                    label="Base"
+                                    name="base"
+                                    inline=1
+                                    riot-value={getContextKwicLabel(freq.base)}
+                                    options={baseList}
+                                    on-change={onBaseChange.bind(this, idx)}></ui-select>
+                        </div>
                         <ul id='dd_freqBase_{idx}' class='dropdown-content'>
                             <li each={item in baseList} onclick={onBaseChange.bind(this, idx, item.value)}>
                                 <span>{item.label}</span>
@@ -42,9 +53,9 @@
                 <div class="center-align">
                     <a if={freqml.length < 4}
                             id="btnAddFrequency"
-                            class="waves-effect waves-light btn btn-floating btn-small"
+                            class="btn btn-floating btn-small"
                             onclick={onAddClick}>
-                        <i class="material-icons dark">add</i>
+                        <i class="material-icons color-blue-800">add</i>
                     </a>
                 </div>
                 <div if={freqml.length == 4} class="columnLimit">{_("frq.freqmlLimit")}</div>
@@ -55,8 +66,8 @@
                         label-id="groupByFirstCol"
                         disabled={freqml.length < 2}
                         on-change={onGroupChange}></ui-checkbox>
-                <div class="buttonGo center-align">
-                    <a id="btnGoFreqAdv" class="btn contrast" disabled={data.isLoading} onclick={onSearch}>{_("go")}</a>
+                <div class="primaryButtons buttonGo">
+                    <a id="btnGoFreqAdv" class="btn btn-primary" disabled={data.isLoading} onclick={onSearch}>{_("go")}</a>
                 </div>
             </div>
             <div class="frequency-quick-list">
@@ -64,7 +75,7 @@
             </div>
         </div>
     </div>
-    <floating-button onclick={onSearch}
+    <floating-button on-click={onSearch}
         name="btnGoFloat"
         periodic=1
         refnodeid="btnGoFreqAdv"></floating-button>
@@ -101,7 +112,11 @@
             }
         }
 
-        this.attrList = this.store.attrList.concat(this.store.refList)
+        let structList = copy(this.store.structList).filter(s => s.value != "g").map(s => {
+            s.label = s.label + " IDs"
+            return s
+        })
+        this.attrList = this.store.attrList.concat(this.store.refList).concat(structList)
 
         let textTypes = this.store.getAllTextTypes()
 
@@ -154,8 +169,7 @@
         }
 
         onResetClick(evt){
-            this.freqml = copy(this.store.defaults.f_freqml)
-            this.f_group = this.store.defaults.f_group
+            this.reset()
         }
 
         onAttrChange(idx, attr){
@@ -191,6 +205,11 @@
             this.update()
         }
 
+        reset(){
+            this.freqml = copy(this.store.defaults.f_freqml)
+            this.f_group = this.store.defaults.f_group
+        }
+
         initDropdown(){
             $("context-selector", this.root).each(function(idx, contextElem){
                 if(!$(contextElem).find(".dropdown-trigger").length){
@@ -211,8 +230,16 @@
             }).label
         }
 
+        showContextSelector(attr){
+            return this.store.attrList.findIndex(a => a.value == attr) != -1
+        }
+
         this.on("updated", () => {
             this.initDropdown()
+        })
+
+        this.on("before-mount", () => {
+            !this.data.f_freqml.length && this.reset()
         })
 
         this.on("mount", () => {

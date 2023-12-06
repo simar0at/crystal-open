@@ -1,13 +1,15 @@
 <page-corpus class="page-corpus">
     <introduction if={!skipWizard && isFullAccount && !noSkeNoCa}></introduction>
-    <div class="form card">
-        <ui-tabs if={!noSkeNoCa}
-                name="corpus-tabs"
-                tabs={tabs}
-                active={tab}
-                on-tab-change={onTabChange}>
-        </ui-tabs>
-        <corpus-tab-advanced if={noSkeNoCa}></corpus-tab-advanced>
+    <div class="pt2">
+        <div class="form card mt-0">
+            <ui-tabs if={!noSkeNoCa}
+                    name="corpus-tabs"
+                    tabs={tabs}
+                    active={tab}
+                    on-tab-change={onTabChange}>
+            </ui-tabs>
+            <corpus-tab-advanced if={noSkeNoCa}></corpus-tab-advanced>
+        </div>
     </div>
 
     <script>
@@ -26,7 +28,6 @@
         this.skipWizard = true
         this.isFullAccount = Auth.isFullAccount()
         this.languageCount = AppStore.get("languageList").length
-        this.tab = CorpusStore.get("tab")
         this.tabs = [{
             tabId: "basic",
             labelId: "basic",
@@ -51,7 +52,10 @@
                 this.tab = "basic"
             }
         }
-
+        this.tab = CorpusStore.get("tab")
+        if(this.tabs.findIndex(t => t.tabId == this.tab) == -1){
+            this.tab = this.tabs[0].tabId
+        }
 
         onTabChange(tabId){
             CorpusStore.changeTab(tabId)
@@ -65,11 +69,11 @@
         }
 
         this.on("mount", () => {
-            UserDataStore.on("globalUserDataChange", this.updateIntro)
+            UserDataStore.on("globalChange", this.updateIntro)
         })
 
         this.on("unmount", () => {
-            UserDataStore.off("globalUserDataChange", this.updateIntro)
+            UserDataStore.off("globalChange", this.updateIntro)
         })
     </script>
 </page-corpus>

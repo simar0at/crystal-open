@@ -1,5 +1,5 @@
 <wordlist-criteria class="wordlist-criteria">
-    <div class="row noMarginBottom {shadowOverlay:showCriteriaList && options.criteria.length}" style="position: relative;">
+    <div class="row mb-0 relative {shadowOverlay:showCriteriaList && options.criteria.length}">
         <div class="col s12">
             <label>&nbsp;</label>
         </div>
@@ -10,9 +10,9 @@
                     {_(criterion.filter)}
                     <span if={criterion.value}>"{parent.getCriterionValue(criterion.value)}"</span>
                 </div>
-                <div if={options.criteria.length && hasFilterListActiveOption} class="input-field inlineBlock">
+                <div if={options.criteria.length && hasFilterListActiveOption} class="input-field inline-block">
                     <a id="btnAddCriterion"
-                        class="btn-floating waves-effect waves-light"
+                        class="btn-floating"
                         onclick={onAddCriterionClick}>
                         <i class="material-icons">add</i>
                     </a>
@@ -32,10 +32,10 @@
         </div>
 
         <div if={showCriteriaList || !options.criteria.length} class="row">
-            <div class="col m6 s12">
+            <div class="col" style="min-width: 270px;">
                 <a if={options.criteria.length}
                     id="btnCloseCriteriaList"
-                    class="closeList btn btn-floating btn-flat waves-effect waves-light"
+                    class="closeList btn btn-floating btn-flat"
                     onclick={onCloseListClick}>
                     <i class="material-icons text-darken-1 grey-text">close</i>
                 </a>
@@ -47,32 +47,53 @@
                     on-change={onFilterChange}
                     style="max-width: 250px;"></ui-list>
             </div>
-            <div class="col m6 s12">
-                <ui-textarea if={showKeyword}
-                    monospace={options.filter == "regex"}
-                    placeholder={options.filter == "regex" ? ".*v.*" : _("abc")}
+            <div class="col" style="min-width: 265px;">
+                <ui-textarea if={showKeyword && options.filter != "regex"}
+                    placeholder={_("abc")}
                     class="left criteria-keyword"
                     name="keyword"
                     required=true
                     validate=true
                     value={options.keyword}
                     on-input={onKeywordInput}
-                    on-submit={onRegexSubmit}></ui-textarea>
-                <ui-textarea if={options.filter == "fromList"}
-                    class="left"
-                    name="wlfile"
-                    required=true
-                    validate=true
-                    value={options.wlfile}
-                    label={_("wl.pasteListHere")}
-                    on-input={onWlfileInput}
-                    tooltip="t_id:wl_a_from_list"
-                    style="max-width: 250px;"></ui-textarea>
+                    on-submit={onCriterionSubmitClick}></ui-textarea>
+                <expandable-textarea if={showKeyword && options.filter == "regex"}
+                        monospace=1
+                        placeholder=".*v.*"
+                        class="left criteria-keyword"
+                        name="keyword"
+                        required=true
+                        validate=true
+                        value={options.keyword}
+                        on-input={onKeywordInput}
+                        on-change={update}
+                        on-submit={onCriterionSubmitClick}
+                        rows=1
+                        dialog-title={_("matchingRegex")}
+                        style="margin-right: 10px;"></expandable-textarea>
+                <expandable-textarea if={options.filter == "fromList"}
+                        class="left"
+                        name="wlfile"
+                        required=true
+                        validate=true
+                        value={options.wlfile}
+                        label={_("wl.pasteListHere")}
+                        on-input={onWlfileInput}
+                        on-change={update}
+                        rows=1
+                        tooltip="t_id:wl_a_from_list"
+                        dialog-title={_("fromList")}
+                        style="width: 220px; margin-right: 10px;"></expandable-textarea>
                 <div class="clearfix"></div>
                 <div if={options.filter == "regex"}>
-                    <insert-characters characters={characterList}
+                    <insert-characters ref="characters"
+                            characters={characterList}
                             field=".criteria-keyword textarea"
                             on-insert={onCharacterInsert}></insert-characters>
+                    <a if={options.find == "tag"}
+                            href="javascript:void(0);"
+                            class="btn white-text vertical-top"
+                            onclick={onTagsHelpClick}>{_("tagP")}</a>
                     <br>
                     <a href={externalLink("regexManual")} target="_blank">
                         {_("help")}
@@ -80,7 +101,7 @@
                     </a>
                 </div>
                 <div class="input-field center-align">
-                    <a class="waves-effect waves-light btn"
+                    <a class="btn"
                         if={showKeyword && options.filter != "regex"}
                         id="btnAddCriterionSubmit"
                         onclick={onCriterionSubmitClick}>
@@ -175,15 +196,17 @@
 
         onCriterionSubmitClick(){
             // add selected filter and keyword to criteria list
-            this.showCriteriaList = false
-            this.options.criteria.push({
-                filter: this.options.filter,
-                value: this.options.keyword
-            })
-            this.options.filter = "all"
-            this.options.keyword = ""
-            this.isEditingCriterion = false
-            this.update()
+            if(this.options.keyword !== ""){
+                this.showCriteriaList = false
+                this.options.criteria.push({
+                    filter: this.options.filter,
+                    value: this.options.keyword
+                })
+                this.options.filter = "all"
+                this.options.keyword = ""
+                this.isEditingCriterion = false
+                this.update()
+            }
         }
 
         onFilterChange(filter, name){
@@ -192,11 +215,11 @@
                 this.options.wlfile = ""
             }
             if(filter == "regex"){
-                this.options.wlicase = 0
-                this.options.include_nonwords = 1
+                this.options.wlicase = false
+                this.options.include_nonwords = true
             }
             if (filter == "all") {
-                this.options.include_nonwords = 0
+                this.options.include_nonwords = false
             }
             this.parent.update()
             this.focusInput()
@@ -212,10 +235,14 @@
         }
 
         onKeywordInput(keyword){
-            this.options.keyword = keyword.trim()
-            this.parent.turnOnIncludeNonwords(this.options.keyword)
-            this.updateAddCriterionButtonDisabled()
-            this.parent.refreshSearchButtonDisable()
+            keyword = keyword.trim()
+            let change = !keyword != !this.options.keyword
+            this.options.keyword = keyword
+            if(change){ // only if keyword changes from empty string to non empty string or vice versa
+                this.parent.turnOnIncludeNonwords(this.options.keyword)
+                this.updateAddCriterionButtonDisabled()
+                this.parent.refreshSearchButtonDisable()
+            }
         }
 
         onCriterionClick(evt){
@@ -227,13 +254,27 @@
             this.focusInput()
         }
 
-        onRegexSubmit(){
-            this.parent.onSearch()
-        }
-
         onCharacterInsert(character, value){
             this.options.keyword = value
             this.parent.refreshSearchButtonDisable()
+        }
+
+        onTagsHelpClick(evt){
+            evt.preventUpdate = true
+            Dispatcher.trigger("openDialog", {
+                tag: "tags-dialog",
+                opts:{
+                    wposlist: this.corpus.wposlist,
+                    tagsetdoc: this.corpus.tagsetdoc,
+                    onTagClick: function(tag){
+                        this.refs.characters.insert(tag)
+                        Dispatcher.trigger("closeDialog")
+                        this.update()
+                    }.bind(this)
+                },
+                small: true,
+                fixedFooter: true
+            })
         }
 
         updateAddCriterionButtonDisabled(){

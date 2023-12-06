@@ -2,11 +2,11 @@
     <a onclick={onResetClick}
             data-tooltip={_("resetOptionsTip")}
             class="cffTooltip resetOptions btn btn-floating btn-flat">
-        <i class="material-icons dark">settings_backup_restore</i>
+        <i class="material-icons color-blue-800">settings_backup_restore</i>
     </a>
     <div class="filterRow dividerBottomDotted">
         <div class="flexContainer">
-            <div class="inlineBlock" style="flex: 3;">
+            <div class="inline-block" style="flex: 3;">
                 <div class="filterCol">
                     <ui-list options={queryselectorOptions}
                         ref="queryselector"
@@ -15,11 +15,11 @@
                         riot-value={value.queryselector}
                         on-change={onQueryselectorChange}></ui-list>
                 </div>
-                <div class="inlineBlock">
+                <div class="inline-block">
                     <div class="filterCol" if={value.queryselector == "lemma" }>
                         <ui-list
                             name="lpos"
-                            label-id="pos"
+                            label={capitalize(_("pos"))}
                             options={lposOptions}
                             riot-value={lpos}
                             on-change={onLposChange}
@@ -28,7 +28,7 @@
                     <div class="filterCol" if={value.queryselector == "word"}>
                         <ui-list
                             name="wpos"
-                            label-id="pos"
+                            label={capitalize(_("pos"))}
                             options={wposOptions}
                             riot-value={wpos}
                             on-change={onWposChange}
@@ -46,52 +46,20 @@
                             value={value.keyword}></ui-input>
                         <ui-checkbox if={!corpus.unicameral && value.queryselector == "word"}
                             name="qmcase"
-                            checked={value.qmcase == 0}
+                            checked={!value.qmcase}
                             on-change={onQmcaseChange}
                             tooltip="t_id:wlicase"
                             label={_("ignoreCase")}></ui-checkbox>
                     </div>
                     <div if={value.queryselector == "cql"}
                             class="filterCqlCol">
-                        <ui-textarea placeholder={_("cc.cqlPlaceholder")}
-                            inline=1
-                            monospace=1
-                            ref="cql"
-                            label="cql"
-                            value={value.cql}
-                            name="cql"
-                            rows=1
-                            on-input={refreshDisabled}
-                            on-change={onOptionChange}
-                            onkeydown={onCqlKeyDown}
-                            style="width: 100%; max-width: 600px;"></ui-textarea>
 
-                        <div class="cqlBar">
-                            <label>{_("insert")}</label>
-                            <span class="btn btn-flat cffTooltip"
-                                    data-tooltip={_("cc.squareBracketTip")}
-                                    onclick={insertIntoCQL.bind(this, "[]")}>[]</span>
-                            <span class="btn btn-flat cffTooltip"
-                                    data-tooltip={_("cc.curlyBracketTip")}
-                                    onclick={insertIntoCQL.bind(this, "{}")}>{"{}"}</span>
-                            <span class="btn btn-flat cffTooltip"
-                                    data-tooltip={_("cc.quotesTip")}
-                                    onclick={insertIntoCQL.bind(this, '""')}>""</span>
-                            <span class="btn btn-flat cffTooltip"
-                                    data-tooltip={_("cc.pipeTip")}
-                                    onclick={insertIntoCQL.bind(this, "|")}>|</span>
-                            <span class="btn btn-flat cffTooltip"
-                                    data-tooltip={_("cc.ampBracketTip")}
-                                    onclick={insertIntoCQL.bind(this, "&")}
-                                    style="margin-right: 20px;">&amp;</span>
-                            <a href="javascript:void(0);"
-                                    class="btn white-text"
-                                    onclick={onTagsHelpClick}>{_("tagP")}</a>
-                        </div>
-                        <br>
-                        <a id="btnCqlBuilder" class="btn btn-floating btn-flat hidden">
-                            <i class="material-icons grey-text">build</i>
-                        </a>
+                        <cql-textarea riot-value={value.cql}
+                                name="cql"
+                                ref="cql"
+                                on-input={refreshDisabled}
+                                on-change={onOptionChange}
+                                on-submit={onSubmit}></cql-textarea>
                         <br>
                         <ui-select
                             inline=1
@@ -111,18 +79,6 @@
                         on-change={onOptionChange}></subcorpus-select>
                 <br>
             </div>
-
-            <div if={value.queryselector == "cql"}
-                    class="cqlYoutube inlineBlock hidden">
-                <div class="youtubeVideoContainer">
-                    <iframe width="560"
-                            height="315"
-                            src={externalLink("sketchEngineIntro")}
-                            frameborder="0"
-                            allow="autoplay; encrypted-media"
-                            allowfullscreen></iframe>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -130,25 +86,26 @@
     <ui-collapsible label={_("cc.filterContext")} if={opts.isDisplayed && (!isDef(opts.showContext) || opts.showContext)}
         tag="concordance-context"
         opts={{store: store}}
-        open={false}>
+        is-open={false}>
     </ui-collapsible>
 
-    <text-types-collapsible></text-types-collapsible>
+    <text-types ref="texttypes"
+            collapsible=1
+            on-change={onTtsChange}></text-types>
 
 
-    <div class="center-align">
-        <a id="btnGoFilter" class="waves-effect waves-light btn contrast leftPad" disabled={isSearchDisabled} onclick={onSubmit}>{_("go")}</a>
+    <div class="primaryButtons">
+        <a id="btnGoFilter" class="btn btn-primary leftPad" disabled={isSearchDisabled} onclick={onSubmit}>{_("go")}</a>
     </div>
 
     <floating-button disabled={isSearchDisabled}
         name="btnGoFloat"
-        onclick={onSubmit}
+        on-click={onSubmit}
         refnodeid="btnGoFilter"
         periodic="1"></floating-button>
 
     <script>
         require("./concordance-context.tag")
-        require("./query-types/concordance-tags-help.tag")
         const {AppStore} = require("core/AppStore.js")
 
         this.tooltipClass = ".cffTooltip"
@@ -185,18 +142,9 @@
             this.opts.onSubmit()
         }
 
-        onCqlKeyDown(evt){
-            if(evt.keyCode == 13){
-                evt.preventDefault()
-                if(this.refs.cql.getValue()){
-                    this.onSubmit()
-                }
-            }
-        }
-
         onQmcaseChange(checked){
             this.changeOptions({
-                qmcase: checked ? 0 : 1
+                qmcase: !checked
             })
         }
 
@@ -215,7 +163,7 @@
         onLposChange(value){
             this.changeOptions({
                 lpos: value == "any" ? "" : value,
-                qmcase: 0
+                qmcase: false
             })
             this.focusInput()
         }
@@ -233,33 +181,10 @@
             })
         }
 
-        onTagsHelpClick(evt){
-            evt.preventUpdate = true
-            Dispatcher.trigger("openDialog", {
-                tag: "concordance-tags-help",
-                opts:{
-                    wposlist: this.corpus.wposlist,
-                    tagsetdoc: this.corpus.tagsetdoc,
-                    onTagClick: function(tag){
-                        this.insertIntoCQL(tag)
-                        Dispatcher.trigger("closeDialog")
-                        this.update()
-                    }.bind(this)
-                },
-                small: true,
-                fixedFooter: true
+        onTtsChange(tts){
+            this.changeOptions({
+                tts: tts
             })
-        }
-
-        insertIntoCQL(insertStr, evt){
-            let ta = this.refs.cql.refs.textarea
-            let cursorPos = getCaretPosition(ta)
-            let textBefore = ta.value.substring(0,  cursorPos)
-            let textAfter  = ta.value.substring(cursorPos, ta.value.length)
-            this.value.cql = textBefore + insertStr + textAfter
-            delay(function(){
-                setCaretPosition(ta, cursorPos + 1)
-            }.bind(this), 0)
         }
 
         changeOptions(options){
@@ -279,8 +204,9 @@
             for(let key in this.value){
                 this.value[key] = this.data[key]
             }
+            this.isSearchDisabled = true
             this.update()
-            this.refreshDisabled()
+            isFun(this.opts.onReset) && this.opts.onReset()
         }
 
         refreshDisabled(evt){

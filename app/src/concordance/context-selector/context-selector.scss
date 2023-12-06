@@ -6,8 +6,8 @@
         margin: 0 20px;
         font-family: Roboto Condensed, Roboto, sans-serif;
         font-size: 16px;
-        background-color: #A3CCDD;
-        color: $new_darkBlue;
+        background-color: $blue-200;
+        color: $blue-800;
         box-shadow: none;
         &.squareBtn{
             padding: 1px 1rem;
@@ -20,12 +20,12 @@
             margin-right: 0!important;
         }
         &.btn-flat:hover{
-            color: #fff;
+            color: $white;
             background-color: #5b8da4;
         }
         &.selected{
-            background-color: $new_darkBlue;
-            color: #fff;
+            background-color: $blue-800;
+            color: $white;
         }
     }
     .kwicBtn{

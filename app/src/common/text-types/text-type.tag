@@ -1,51 +1,52 @@
 <text-type class="text-type" data-testing-name={textTypeName}>
-    <div class="col xl4 l6 m6 s12">
-        <div class="card {expanded:expanded, collapsed: !expanded, hasSelection: selection.length && !isRE}" onclick={onCardClick}>
-            <div class="{overlay: disabled}"></div>
-            <div class="card-content">
-                <div class="buttons right">
-                    <a id="btnShowDetail" onclick={onShowDetailView} class="iconButton btn btn-floating btn-flat">
-                        <i class="material-icons grey-text text-darken-1">zoom_out_map</i>
-                    </a>
-                    <a if={opts.textType.attr_doc && expanded} href={opts.textType.attr_doc} target="_blank" class="iconButton btn btn-floating btn-flat">
-                        <i class="material-icons grey-text text-darken-1">info_outline</i>
-                    </a>
-                </div>
-                <span class="card-title {truncate: !expanded}" onclick={onTitleClick}>
+    <div class="card {expanded:expanded, collapsed: !expanded, hasSelection: selection.length && !isRE}" onclick={onCardClick}>
+        <div class="{overlay: disabled}"></div>
+        <div class="card-content">
+            <div class="buttons right">
+                <a id="btnShowDetail" onclick={onShowDetailView} class="iconButton btn btn-floating btn-flat">
+                    <i class="material-icons grey-text text-darken-1">zoom_out_map</i>
+                </a>
+                <a if={opts.textType.attr_doc && expanded} href={opts.textType.attr_doc} target="_blank" class="iconButton btn btn-floating btn-flat">
+                    <i class="material-icons grey-text text-darken-1">info_outline</i>
+                </a>
+            </div>
+            <span if={!expanded && selection.length} class="chip left btn-chip white-text" onclick={toggleExpand}>
+                {selection.length}
+            </span>
+            <span class="card-title" onclick={onTitleClick}>
+                <span class="inline {truncate: !expanded}">
                     {opts.textType.label}
                 </span>
-                <span if={!expanded && selection.length} class="chip left btn-chip white-text" onclick={toggleExpand}>
-                    {selection.length}
-                </span>
-                <text-type-selection if={expanded} text-type={opts.textType}></text-type-selection>
-                <text-type-list if={expanded && !isRE} ref="list" text-type={opts.textType}></text-type-list>
-                <div if={expanded && isRE} class="warningRE">{_("cannotCombineRE")}</div>
-            </div>
+                <i class="material-icons inline-block vertical-top">{expanded ? "keyboard_arrow_up" : "keyboard_arrow_down"}</i>
+            </span>
+            <text-type-selection if={expanded} text-type={opts.textType}></text-type-selection>
+            <text-type-list if={expanded && !isRE} ref="list" text-type={opts.textType}></text-type-list>
+            <div if={expanded && isRE} class="warningRE">{_("cannotCombineRE")}</div>
         </div>
     </div>
     <script>
         require("./text-type.scss")
-        const {TextTypesStore} = require("./TextTypesStore.js")
-
-        this.textTypeName = opts.textType.name
+        this.textTypeName = this.opts.textType.name
+        this.textTypesTag = this.parent
 
         updateAttributes(){
-            this.selection = TextTypesStore.getSelection(this.textTypeName)
+            this.selection = this.textTypesTag.getSelection(this.textTypeName)
             this.isRE = this.selection[0] && this.selection[0].startsWith("%RE%")
             this.expanded = opts.textType.expanded
-            this.disabled = opts.textType.disabled || TextTypesStore.data.disabled
+            this.disabled = opts.textType.disabled || this.textTypesTag.disabled
         }
         this.updateAttributes()
 
         onShowDetailView(textType){
-            TextTypesStore.toggleDetail(this.opts.textType)
+            this.textTypesTag.toggleDetail(this.opts.textType)
         }
 
         onCloseDetail(){
-            TextTypesStore.toggleDetail(null)
+            this.textTypesTag.toggleDetail(null)
         }
 
-        onCardClick(){
+        onCardClick(evt){
+            evt.preventUpdate = true
             !this.expanded && !this.disabled && this.toggleExpand()
         }
 
@@ -55,11 +56,11 @@
         }
 
         toggleExpand(){
-            TextTypesStore.toggleExpand(this.textTypeName)
+            this.textTypesTag.toggleExpand(this.textTypeName)
             !this.opts.textType.disabled && $("input:visible", this.root).focus()
         }
 
-        onTexTypeChange(textType){
+        onTextTypeChange(textType){
             (textType.name == this.textTypeName) && this.update()
         }
 
@@ -81,11 +82,11 @@
 
         this.on("mount", () => {
             delay(this.refreshListheight, 1) // wait so rest of page is generated
-            TextTypesStore.on("textTypeChange", this.onTexTypeChange)
+            this.textTypesTag.on("textTypeChange", this.onTextTypeChange)
         })
 
         this.on("unmount", () => {
-            TextTypesStore.off("textTypeChange", this.onTexTypeChange)
+            this.textTypesTag.off("textTypeChange", this.onTextTypeChange)
         })
     </script>
 </text-type>

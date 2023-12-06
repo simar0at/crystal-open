@@ -9,7 +9,6 @@
         autocomplete={opts.autocomplete}
         open-on-focus=true
         value-in-search={opts.valueInSearch}
-        deselect-on-click={false}
         on-change={onChange}></ui-filtering-list>
 
     <script>
@@ -31,33 +30,36 @@
             isFun(opts.onChange) && this.opts.onChange(corpname)
         }
 
-        corpLangGenerator(item){
-            let html = '<i class=\"material-icons\">'
-                    + "language"
-                    + '</i><span class=\"cLabel\">' + item.label + "</span>"
+        optionGenerator(item){
+            let html = '<span class=\"cLabel\">' + (item.autonym ? item.autonym : item.label)
+            if(item.autonym){
+                html += ' (' + item.label + ')'
+            }
+            html += '</span>'
             return html
         }
 
         refreshLangCorpList(){
-            this.options = []
-            this.loading = false
-            const languageList = AppStore.get("availableLanguageList").sort((a, b) => {
-                return (a.name > b.name) ? 1 : -1
-            })
-            languageList.forEach((lang) => {
-                if(lang.reference_corpus){
-                    this.options.push({
-                        value: lang.reference_corpus,
-                        label: lang.name,
-                        type: "lang",
-                        generator: this.corpLangGenerator
+            this.options = AppStore.get("availableLanguageList")
+                    .filter(l => !!l.reference_corpus)
+                    .map(l => {
+                        return {
+                            value: l.reference_corpus,
+                            label: l.name,
+                            autonym: l.autonym,
+                            search: [l.autonym], // for ui-filtering list to search in autonym too
+                            generator: this.optionGenerator
+                        }
+                        return l
+                    }, this)
+                    .sort((a, b) => {
+                        return a.label.localeCompare(b.label)
                     })
-                }
-            })
         }
         this.refreshLangCorpList()
 
         onCorpusListLoad(corpusList){
+            this.loading = false
             this.refreshLangCorpList()
             this.update()
         }

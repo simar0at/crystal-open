@@ -41,6 +41,16 @@
                 <div class="desc">{_("hp.notificationsDesc")}</div>
             </div>
         </a>
+
+        <a if={news.length}
+                href="javascript:void(0);"
+                onclick={onWhatsNewClick}>
+            <div class="cardBtn card-panel">
+                <i class="material-icons">new_releases</i>
+                <div class="title">{_("whatsNew")}</div>
+                <div class="desc">{_("hp.whatsNewDesc")}</div>
+            </div>
+        </a>
     </div>
 
     <div if={showForm}>
@@ -54,19 +64,21 @@
                 on-fail={onFeedbackFail}
                 on-valid-change={onFeedbackValidChange}></feedback-form>
 
-        <div class="center-align">
+        <div class="primaryButtons">
             <a class="btn btn-flat" onclick={toggleForm.bind(this, false)}>{_("back")}</a>
-            <a class="btn contrast disabled sendSupportMessageBtn" onclick={sendMessage}>{_("send")}</a>
+            <a class="btn btn-primary disabled sendSupportMessageBtn" onclick={sendMessage}>{_("send")}</a>
         </div>
     </div>
 
     <script>
         const {intros} = require("common/wizards.js")
         const {Auth} = require("core/Auth.js")
+        const {WhatsNew} = require("misc/whats-new/whatsnew.js")
 
         this.showForm = false
         this.isSending = false
         this.isFullAccount = Auth.isFullAccount()
+        this.news = WhatsNew.getAllNewsList()
 
         toggleForm(show){
             this.showForm = show
@@ -101,17 +113,38 @@
             Dispatcher.trigger("ROUTER_GO_TO", "corpus", {tab: "basic"})
             intros["newui"].start()
         }
+
+        onWhatsNewClick(){
+            WhatsNew.openDialog()
+        }
     </script>
 </help-help-tab>
 
 
 <help-video-tab>
+    <br>
     <div class="videoContainer">
         <div class="videoLeftCol">
             <div class="colHeader">{_("hp.videoStarting")}</div>
             <br>
             <div class="youtubeVideoContainer">
-                <iframe width="560" height="315" src={externalLink("sketchEngineIntro")} frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <a if={window.config.DISABLE_EMBEDDED_YOUTUBE}
+                        href={externalLink("sketchEngineIntro")}
+                        target="_blank"
+                        class="youtubePlaceholder"
+                        style="width:560px;height:315px;">
+                    <img src="images/youtube-placeholder.jpg"
+                            loading="lazy"
+                            alt="Sketch Engine intro">
+                </a>
+                <iframe if={!window.config.DISABLE_EMBEDDED_YOUTUBE}
+                        width="560"
+                        height="315"
+                        src={externalLink("sketchEngineIntro")}
+                        frameborder="0"
+                        allow="autoplay; encrypted-media"
+                        allowfullscreen
+                        loading="lazy"></iframe>
             </div>
         </div>
         <div class="videoRightCol">
@@ -119,7 +152,7 @@
             <br>
             {_("hp.youtube1")}<a href={externalLink("youtubeChannel")} target="_blank">{_("hp.youtube2")}</a>
             <br><br>
-            <div class="center-align">
+            <div>
                 <a href={externalLink("youtubeChannel")} target="_blank">
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                          viewBox="0 0 380.9 85" xml:space="preserve" style="width: 140px;">
@@ -167,13 +200,13 @@
 
 <help-keyboard-tab>
     <br>
-    <div class="noteBar">
+    <div class="noteBar background-color-blue-100">
         {_("hp.hotkeysDesc")}
     </div>
-    <img src="images/hotkeys.gif">
+    <img src="images/hotkeys.gif" loading="lazy">
     <div each={feature, featureId in hotkeys} class="hotkeyFeature">
         <h4>{feature.label}</h4>
-        <div each={hotkey in feature.bindings}>
+        <div each={hotkey in feature.bindings} if={!hotkey.hidden}>
             <span class="key">
                 <raw-html content={this.parent.parent.getHotkeyShortcut(hotkey)}></raw-html>
             </span>

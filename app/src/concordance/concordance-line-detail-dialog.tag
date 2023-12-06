@@ -1,9 +1,9 @@
 <concordance-line-detail-dialog class="concordance-line-detail-dialog {directionRTL: corpus.righttoleft}">
     <h4>{_("lineDetailTitle")}</h4>
     <div class="grey-text">
-        <raw-html content={_("lineDetailDesc", ['<i class="material-icons rotate90CW" style="opacity:0.6; color: #004B69;vertical-align: text-bottom;">insert_chart</i>'])}></raw-html>
+        <raw-html content={_("lineDetailDesc", ['<i class="material-icons rotate90CW color-blue-800" style="opacity:0.6; vertical-align: text-bottom;">insert_chart</i>'])}></raw-html>
     </div>
-    <span class="inlineBlock options">
+    <span class="inline-block options">
         <ui-checkbox
             inline=1
             checked={data.refs_up}
@@ -28,7 +28,7 @@
                 size=3
                 on-change={onOptionChange}
                 riot-value={data.shorten_refs ? data.ref_size: ""}></ui-input>
-            <span style="color:#004B69">
+            <span class="color-blue-800">
                 {_("cc.shortenEnd")}
             </span>
         </virtual>
@@ -51,18 +51,17 @@
                         <i class="material-icons grey-text">arrow_downward</i>
                     </a>
                 </span>
-                <div class="table result-table">
-                    <div class="td leftCol _t rtlNode">
-                        <concordance-result-context data={line.Left}></concordance-result-context>
+                <div class="result-table">
+                    <div class="leftCol _t rtlNode">
+                        <concordance-result-items data={line.Left}></concordance-result-items>
                     </div>
-                    <div class="td center-align middle _t rtlNode">
+                    <div class="center-align middle _t rtlNode">
                         <span each={kwic in line.Kwic} class="kwicWrapper">
-                            <span class="kwic">{kwic.str}</span>
-                            <span if={kwic.attr} class="attr">{kwic.attr.substr(1)}</span>
+                            <span class="itm">{kwic.str}</span>
                         </span>
                     </div>
-                    <div class="td rightCol _t rtlNode">
-                        <concordance-result-context data={line.Right}></concordance-result-context>
+                    <div class="rightCol _t rtlNode">
+                        <concordance-result-items data={line.Right}></concordance-result-items>
                     </div>
                 </div>
             </div>
@@ -90,7 +89,6 @@
     <script>
         const {Connection} = require("core/Connection.js")
         require("./concordance-line-detail-dialog.scss")
-
         this.mixin("tooltip-mixin")
 
         this.store = this.opts.store
@@ -146,7 +144,7 @@
                         +"</a>"
             }
             html += "<span class=\"ld_label\">" + getLabel(item) + "</span>"
-            if(this.isUrl(item.rowVal)){
+            if(window.isURL(item.rowVal)){
                 html += "<span class=\"ld_value\">"
                 html += "<a href=\"" + item.rowVal + "\" target=\"_blank\">"
                 html += (isDef(item.rowVal) ? item.rowVal : "") + "</span>"
@@ -251,11 +249,14 @@
             this.isLoading = true
             Connection.get({
                 url: window.config.URL_BONITO + "fullref",
-                query: {
+                data: {
                     pos: this.toknum,
                     corpname: this.corpus.corpname
                 },
-                done: this.onDataLoaded.bind(this)
+                done: this.onDataLoaded.bind(this),
+                fail: payload => {
+                    SkE.showError("Could not load concordance data.", getPayloadError(payload))
+                }
             })
         }
 
@@ -272,11 +273,6 @@
         onShowAllClick(){
             this.showAll = true
             this.refreshList()
-        }
-
-        isUrl(str){
-            let urlRegEx = RegExp(/(http(s)?:\/\/.)(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/)
-            return urlRegEx.test(str);
         }
 
         this.on("update", this.updateAttributes)

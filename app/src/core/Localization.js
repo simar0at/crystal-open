@@ -8,14 +8,21 @@ class LocalizationClass extends Polyglot{
 
     constructor() {
         super()
-
+        let lang = LocalizationMeta.default
         this.resources = {
-            en: require('locale/en.json')
+            // load always en. If other lang is set as default, it might not have all translations
+            en: require("locale/en.json")
         }
-
+        if(window.config.DEFAULT_LOCALE && GetLangMeta(window.config.DEFAULT_LOCALE)){
+            lang = window.config.DEFAULT_LOCALE.toLowerCase()
+        }
+        if(lang != "en"){
+            this.resources[lang] = require(`locale/${lang}.json`)
+        }
         riot.observable(this)
+        this._loadCustomLocale(lang)
         this._setDefaultPhrases()
-        this._setLocale("en", this.resources.en)
+        this._setLocale(lang, this.resources[lang])
 
         SettingsStore.on("change", this._onChangeLocaleSettings.bind(this))
     }
@@ -36,6 +43,11 @@ class LocalizationClass extends Polyglot{
                     url: `${base}/locale/${locale}.json`,
                     done: function(locale, payload) {
                         this.resources[locale] = typeof payload == "object" ? payload : JSON.parse(payload)
+                        for(let key in this.resources[locale]){
+                            // remove empty strings so english text will be used instead
+                            this.resources[locale][key] === "" && delete this.resources[locale][key]
+                        }
+                        this._loadCustomLocale(locale)
                         this.setLocale(locale)
                     }.bind(this, locale),
                     fail: (payload) => {
@@ -55,7 +67,6 @@ class LocalizationClass extends Polyglot{
             if(isDef(this.phrases[key]) || this.currentLocale == "en"){
                 return this.t(key, options)
             } else{
-                console.log(`Missing translation for key: "${key}"`)
                 // show english text when translation is not available
                 return this.t(key, Object.assign({
                     "_": this._defaultPhrases[key]}, options))
@@ -63,6 +74,24 @@ class LocalizationClass extends Polyglot{
 
         } else{
             console.log(`Localization.translate: Undefined key`)
+        }
+    }
+
+    _loadCustomLocale(locale){
+        if(window.config["CUSTOM_LOCALE_" + locale.toUpperCase()]){
+            Connection.get({
+                loadingId: "locale",
+                url: window.config["CUSTOM_LOCALE_" + locale.toUpperCase()],
+                done: function(locale, payload) {
+                    let customLocale = typeof payload == "object" ? payload : JSON.parse(payload)
+                    Object.assign(this.resources[locale], customLocale)
+                    this._setLocale(locale, this.resources[locale])
+                    Dispatcher.trigger("LOCALIZATION_CHANGE", this.currentLocale)
+                }.bind(this, locale),
+                fail: (payload) => {
+                    SkE.showError(_("localeLoadFailed"))
+                }
+            })
         }
     }
 

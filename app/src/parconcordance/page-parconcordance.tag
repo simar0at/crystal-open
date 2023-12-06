@@ -1,6 +1,7 @@
 <page-parconcordance class="page-parconcordance">
-    <preloader-spinner if={store.data.isLoading} on-cancel={store.onLoadingCancel.bind(store)} overlay=1 fixed=1 browser-indicator=1></preloader-spinner>
-    <div if={!store.hasBeenLoaded && store.isConc && !hideForm} class="card form narrowForm">
+    <result-preloader-spinner store={store}></result-preloader-spinner>
+    <div if={!store.hasBeenLoaded && store.isConc && !hideForm}
+            class="card form narrowForm mt-0 mt-2">
         <parconcordance-tabs></parconcordance-tabs>
     </div>
     <div if={store.data.showresults} class="content card parconcordance-result {directionRTL: store.corpus.righttoleft}">
@@ -11,7 +12,7 @@
         <parconcordance-result if={store.isConc && !store.data.isError}></parconcordance-result>
         <h2 if={store.isConc && store.data.isEmpty && !store.data.isLoading} class="emptyResult">{_("nothingFound")}</h2>
         <parconcordance-frequency-result if={store.isFreq}></parconcordance-frequency-result>
-        <collocations-result if={store.isColl}></collocations-result>
+        <parconcordance-collocations-result if={store.isColl}></parconcordance-collocations-result>
     </div>
 
     <script>
@@ -26,10 +27,11 @@
         require("./parconcordance.scss")
         require("./parconcordance-translations.tag")
         require("./parconcordance-kwicsen.tag")
+        require("./parconcordance-result-options-distribution.tag")
+        require("./parconcordance-collocations-result.tag")
         require("concordance/concordance-detail-window.tag")
         require("concordance/concordance-breadcrumbs.tag")
         require("concordance/concordance-lemma-menu.tag")
-        require("concordance/collocations/collocations-result.tag")
 
         const {ParconcordanceStore} = require("./parconcordancestore.js")
 

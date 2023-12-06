@@ -1,0 +1,72 @@
+<div>L'estrazione di parole chiave e termini è usata per:</div>
+<ul class="browser-default">
+    <li>estrarre la terminologia da usare nella traduzione e nell'interpretazione</li>
+    <li>estrarre unità di parole singole o espressioni multi-parola che sono tipiche di un corpus/documento/testo o che definiscono il suo contenuto o argomento</li>
+    <li>confrontare due corpora/documenti/testi identificando ciò che è unico nel primo corpus rispetto al secondo</li>
+</ul>
+<div>Il risultato è diviso in <a href="https://www.sketchengine.eu/my_keywords/keyword/" rel="noopener" target="_blank">parole chiave</a> (elementi di una sola parola) e <a href="https://www.sketchengine.eu/my_keywords/term/" rel="noopener" target="_blank">termini</a> (elementi di più parole) e sono visualizzati insieme ai link alle frasi sia nel corpus di focus sia nel corpus di riferimento.
+</div>
+<br>
+<div>Parole chiave e termini estratti da un corpus di testi sulla fotografia digitale.</div>
+<div>
+    <br>
+    <img src="https://www.sketchengine.eu/wp-content/uploads/keywords-1.png" loading="lazy">
+    <br><br>
+</div>
+
+<ul class="collapsible">
+    <li>
+        <div class="collapsible-header">Parole chiave e termini</div>
+        <div class="collapsible-body">
+            <div>
+                <b>Parole chiave</b> <br>Le parole chiave sono parole individuali (%[token|token]%) che appaiono più frequentemente nel <a href="https://www.sketchengine.eu/my_keywords/focus-corpus/" rel="noopener" target="_blank">corpus di focus</a> che nel <a href="https://www.sketchengine.eu/my_keywords/reference-corpus-2/" rel="noopener" target="_blank">corpus di riferimento</a>. Qualsiasi %[token]% può qualificarsi come parola chiave se è usata più frequentemente nel corpus di focus che nel corpus di riferimento. In realtà, il risultato includerà principalmente nomi e aggettivi perché le frequenze delle altre parti del discorso tendono ad essere simili in tutti i testi.
+            </div>
+            <br>
+            <div>
+                <b>Termini</b> <br> I termini sono espressioni di più parole che appaiono più frequentemente nel corpus di focus che nel corpus di riferimento e, inoltre, corrispondono al formato tipico della terminologia nella lingua. Il formato è definito nella <a href="https://www.sketchengine.eu/my_keywords/term-grammar/" rel="noopener" target="_blank">term grammar</a>.
+            </div>
+            <br>
+            <div>Il risultato dell'estrazione di termini è visualizzato come %[lemma|lemmi]%. <a href="https://www.sketchengine.eu/my_keywords/gender-lemma/" rel="noopener" target="_blank">Lemmi specificati per genere</a> sono utilizzati per le lingue in cui la forma lessicale di un aggettivo deve corrispondere al genere del nome.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Corpus di focus e corpus di riferimento</div>
+        <div class="collapsible-body">
+            <div>Perché lo strumento funzioni, devono esistere almeno 2 corpora (o 2 subcorpora) nella lingua. Il corpus in cui vengono identificate le parole chiave e i termini è chiamato corpus di focus. Il corpus usato per il confronto è chiamato corpus di riferimento.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Simple maths</div>
+        <div class="collapsible-body">
+            <div>Il metodo simple maths è usato per determinare il <a href="https://www.sketchengine.eu/documentation/simple-maths/" rel="noopener" target="_blank">punteggio di keyness</a> sia delle parole chiave sia dei termini. Funziona con frequenze normalizzate (relative, <a href="https://www.sketchengine.eu/my_keywords/freqmill/" rel="noopener" target="_blank">per milione</a>) nei corpora di focus e di riferimento.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Estrazione di terminologia</div>
+        <div class="collapsible-body">
+            <div>L'estrazione di terminologia estrae parole che sono tipiche dell'argomento del documento o del corpus, cioè appaiono nel corpus più frequentemente che nella lingua in generale. Un corpus grande non specializzato nella lingua è utilizzato per rappresentare la lingua in generale. <br>Le impostazioni predefinite sono normalmente sufficienti affinché l'estrazione fornisca risultati di alta qualità.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Estrarre caratteristiche uniche di un corpus</div>
+        <div class="collapsible-body">
+            <div>Questo uso è quasi identico all'estrazione della terminologia. La differenza è che l'utente potrebbe non essere interessato solo al lessico specializzato che è raro nel linguaggio generale, ma a volte potrebbe essere interessante guardare quali parole a media frequenza o anche parole ad alta frequenza sono usate più spesso che nel linguaggio generale. Usa lo slider nella scheda avanzata per focalizzare l'estrazione su diverse parti dell'intervallo di frequenza.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Confrontare corpora</div>
+        <div class="collapsible-body">
+            <div>Confrontare due testi manualmente non è realistico se i due testi sono molto lunghi. Anche con testi brevi, il confronto statistico può far emergere fenomeni che passerebbero inosservati quando si confronta manualmente. <br>Parole chiave e termini possono essere utilizzati per confrontare due corpora o subcorpora. Quando si confrontano subcorpora, questi possono essere nello stesso corpus o in uno diverso. <br> Il risultato mostrerà cosa è tipico nel (sub)corpus di focus in confronto al (sub)corpus di riferimento.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Requisiti per il buon funzionamento di parole chiave e termini</div>
+        <div class="collapsible-body">
+            <div>Le parole chiave saranno estratte da qualsiasi corpus tokenizzato. I termini possono essere estratti solo da corpora che sono etichettati e lemmatizzati in lingue per le quali esiste una term grammar.</div>
+        </div>
+    </li>
+</ul>

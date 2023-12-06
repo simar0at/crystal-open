@@ -16,7 +16,7 @@
                         on-suffix-icon-click={onSuffixIconClick}>
                 </ui-input>
                 <a href="#ca-create" if={window.permissions["ca-create"]}
-                        class="btn contrast tooltipped right"
+                        class="btn btn-primary tooltipped right"
                         data-tooltip={_("ca.newCorpusDesc")}>
                     {_("newCorpus")}
                 </a>
@@ -75,7 +75,7 @@
                     <td onclick={onSelectCorpus} ref="{idx}_l">{corpus.language_name}</td>
                     <td onclick={onSelectCorpus}>
                         <span ref="{idx}_n">{corpus.name}</span>
-                        <span class="badge new skeblue hide-on-small-and-down"
+                        <span class="badge new background-color-blue-100 hide-on-small-and-down"
                             data-badge-caption="">
                             {corpus.owner_name}
                         </span>
@@ -83,7 +83,7 @@
                     <td onclick={onSelectCorpus} class="right-align">
                         {corpus.sizes ? window.Formatter.num(corpus.sizes.wordcount) : ""}
                     </td>
-                    <td class="menuCell" style="position: relative">
+                    <td class="menuCell relative">
                         <a href="javascript:void(0);"
                                 if={!config.READ_ONLY}
                                 class="iconButton btn btn-flat btn-floating"

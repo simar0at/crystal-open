@@ -1,19 +1,12 @@
-<concordance-result-context class="rtlNode {opts.class}">
-    <span each={item, idxI in opts.data} class="itm">
-        <span if={item.str || item.attr}
-                class="str {item.class} {coll: item.coll}"
-                style={item.color ? "color: " + item.color : ""}
-                data-tooltip={opts.show_as_tooltips && item.attr ? item.attr.substr(1) : ""}>
-            {item.str.match(/\S/) ? item.str : "&nbsp;"}
-        </span>
-        <span if={!opts.show_as_tooltips && item.attr} class="attr stdDir">
-            {item.attr.substr(1)}
-        </span>
-        <span if={item.strc} class="strc">
-            {item.strc}
-        </span>
-    </span>
-</concordance-result-context>
+<concordance-result-items class="rtlNode {opts.class}">
+    <span each={item, idxI in opts.data} no-reorder
+        if={item.str || item.strc}
+        class="itm {item.class} {coll: item.coll} {strc: item.strc}"
+        onclick={opts.onClick}
+        data-tooltip={item.attr && opts.show_as_tooltips ? item.attr.substr(1) : ""}
+        attr={item.attr && !opts.show_as_tooltips && item.attr.substr(1)}
+        style="{item.color ? 'color: '  + item.color : ''}">{isDef(item.str) ? (item.str.match(/\S/) ? item.str : "&nbsp;") : null}{item.strc}</span>
+</concordance-result-items>
 
 <concordance-result-head class="thead">
     <div class="tr">
@@ -31,7 +24,7 @@
                 desc-allowed={false}
                 asc-allowed={isRefSortAllowed}
                 order-by={"refs"}
-                actual-sort={sort}
+                actual-sort={actualSort}
                 actual-order-by={ctx}
                 on-sort={onRefsSort}>
             </table-label>
@@ -43,7 +36,7 @@
                     desc-allowed={false}
                     asc-allowed={true}
                     order-by={corpus.righttoleft ? "1" : "-1"}
-                    actual-sort={sort}
+                    actual-sort={actualSort}
                     actual-order-by={ctx}
                     on-sort={onSort}>
                 </table-label></div>
@@ -53,25 +46,35 @@
                     desc-allowed={false}
                     asc-allowed={true}
                     order-by={"0"}
-                    actual-sort={sort}
+                    actual-sort={actualSort}
                     actual-order-by={ctx}
                     on-sort={onSort}>
                 </table-label></div>
-            <div class="th" if={data.annotconc}></div>
+            <div class="th" if={data.annotconc}>
+                <table-label
+                    label={_("an.annotLabel")}
+                    desc-allowed={false}
+                    asc-allowed={true}
+                    order-by="L"
+                    actual-sort={actualSort}
+                    actual-order-by={ctx}
+                    on-sort={onLabelSort}>
+                </table-label>
+            </div>
             <div class="th left-align">
                 <table-label
                     label={_("cc.rightContext")}
                     desc-allowed={false}
                     asc-allowed={true}
                     order-by={corpus.righttoleft ? "-1" : "1"}
-                    actual-sort={sort}
+                    actual-sort={actualSort}
                     actual-order-by={ctx}
                     on-sort={onSort}>
                 </table-label></div>
         </virtual>
         <div if={parent.data.viewmode == "sen"} class="th center-align">{_("sentence")}</div>
-        <div if={parent.data.gdex_enabled && parent.data.show_gdex_scores} class="th">{_("cc.gdexScore")}</div>
-        <div if={parent.data.gdex_enabled && parent.data.show_gdex_scores} class="th">{_("cc.gdexScore")}</div>
+        <div if={parent.data.gdex_enabled && parent.data.show_gdex_scores} class="th right-align gdexTh">{_("cc.gdexScore")}</div>
+        <div if={parent.v.showCopyButton} class="th copyTh"></div>
     </div>
 
     <script>
@@ -87,10 +90,10 @@
         if(sort.length >= 1){
             if(this.refsList.includes("=" + sort[0].attr)){ // sorted by line details
                 this.ctx = "refs"
-                this.sort = sort[0].bward == "r" ? "desc" : "asc"
+                this.actualSort = sort[0].bward == "r" ? "desc" : "asc"
             } else if(sort.length == 1){
                 this.ctx = sort[0].ctx
-                this.sort = "asc"
+                this.actualSort = "asc"
             }
         }
 
@@ -105,6 +108,15 @@
                 }
             })
             this.sort(sorts)
+        }
+
+        onLabelSort(sort) {
+            this.sort([{
+                    attr: "label",
+                    ctx: "L",
+                    labelsort: 1,
+                    label: "Label"
+                }])
         }
 
         onSort(sort){
@@ -160,7 +172,9 @@
             <a class="btn btn-flat btn-floating lineDetail t_lineDetail">
                 <i class="material-icons medium" data-tooltip={_("lineDetailsTip")}>info_outline</i>
             </a>
-            <span class="refsUpValues" onmouseover={showTooltip}>{opts.item.ref}</span>
+            <span if={parent.data.refs !== ""}
+                    class="refsUpValues"
+                    onmouseover={showTooltip}>{opts.item.ref}</span>
         </span>
     </div>
     <div class="td" if={parent.v.showLineNumbersUp && parent.v.showCheckboxes}></div>
@@ -168,7 +182,7 @@
         <div class="td"></div>
         <div class="td"></div>
     </virtual>
-    <div class="td copyCell"></div>
+    <div if={parent.v.showCopyButton} class="td copyCell"></div>
 
     <script>
         showTooltip(evt){
@@ -183,22 +197,29 @@
     </script>
 </concordance-result-refs-row>
 
-
-<concordance-result class="concordance-result dragscroll {fullContext: data.fullcontext} {directionRTL: corpus.righttoleft} {directionLTR: !corpus.righttoleft}">
+<concordance-result class={concordance-result: true,
+            fullContext: data.fullcontext,
+            directionRTL: corpus.righttoleft,
+            directionLTR: !corpus.righttoleft,
+            hasAttributes: hasAttributes,
+            hasContextAttributes: hasContextAttributes,
+            viewSen: data.viewmode == "sen",
+            viewKwic: data.viewmode == "kwic"}>
     <concordance-selected-lines-box></concordance-selected-lines-box>
     <concordance-detail-window structctx={corpus.structctx}></concordance-detail-window>
     <concordance-media-window></concordance-media-window>
-    <div if={!data.isLoading && items.length} class="table material-table highlight result-table {data.viewmode == 'sen' ? 'displaySen' : 'displayKwic'}"
-        onmouseover={onMouseOver}>
+    <div if={!data.isLoading && items.length}
+            class="table material-table highlight result-table"
+            onmouseover={onMouseOver}>
         <concordance-result-head ref="head"></concordance-result-head>
         <div class="tbody {data.annotconc ? "noselect" : ""}">
-            <virtual each={item, idx in items}>
+            <virtual each={item, idx in items} no-reorder key={item.toknum}>
                 <concordance-result-refs-row if={v.showRefsUp}
                     item={item}
                     num={(data.itemsPerPage * (data.page - 1)) + idx + 1}
                     onclick={onRefClick}></concordance-result-refs-row>
                 <div class="tr tn-{item.toknum} r-{idx + 1} {selected: store.isLineSelected(item.toknum)}">
-                    <div if={v.showLineNumbersLeft} class="td num medium">
+                    <div if={v.showLineNumbersLeft} class="td num color-blue-200">
                         {(data.itemsPerPage * (data.page - 1)) + idx + 1}
                     </div>
                     <div if={v.showLineNumbersUp && v.showCheckboxes} class="td">
@@ -219,77 +240,60 @@
                     </div>
                     <div if={v.showRefsLeft}
                             class="td ref {hasRef: item.ref !== ''}"
-                            onclick={onRefClick}
-                            style="max-width: {data.shorten_refs ? ('calc(60px + ' + data.ref_size + 'ch)') : 'auto'}">
+                            onclick={onRefClick}>
                         <span><i class="material-icons material-clickable t_lineDetail"
                                     data-tooltip={_("lineDetailsTip")}>
-                            info_outline</i><span data-tooltip={data.shorten_refs ? (data.refs !== "" ? item.ref : "") : null}>
-                                {data.refs !== "" ? item.ref : ""}
+                            info_outline</i>&nbsp;
+                            <span if={data.refs !== ""}
+                                    data-tooltip={(data.shorten_refs && data.refs !== "") ? item.ref : null}
+                                    class="ref-label">
+                                {(data.refs !== "" && data.ref_size < item.ref.length) ? item.ref.substring(0,data.ref_size)+"..." : item.ref}
                             </span>
                         </span>
                     </div>
                     <virtual if={data.viewmode == "kwic"}>
                         <div class="td leftCol _t" style="text-align: right;"
                                 onclick={annotSelectLine.bind(this, item.toknum)}>
-                            <concordance-result-context data={isRTL ? item.Right : item.Left} class="leftCtx" show_as_tooltips={data.show_as_tooltips}></concordance-result-context>
+                            <concordance-result-items data={isRTL ? item.Right : item.Left}
+                                    class="leftCtx"
+                                    show_as_tooltips={data.show_as_tooltips}></concordance-result-items>
                         </div>
-
                         <div class="td center-align middle _t rtlNode">
-                            <span each={kwic in item.Kwic} class="kwicWrapper" onclick={onKwicClick.bind(this, item)}>
-                                <virtual if={kwic.str}>
-                                    <span class="kwic" data-tooltip={data.show_as_tooltips && kwic.attr ? kwic.attr.substr(1) : ""}>{kwic.str}</span>
-                                    <span if={!data.show_as_tooltips && kwic.attr} class="attr">{kwic.attr.substr(1)}</span>
-                                </virtual>
-                                <span if={kwic.strc} class="strc">{kwic.strc}</span>
-                            </span>
+                            <concordance-result-items data={item.Kwic}
+                                    class="kwicWrapper"
+                                    on-click={onKwicClick.bind(this, item)}></concordance-result-items>
                         </div>
                         <div class="td left-align middle annotconc" if={data.annotconc}>
                             <a href="javascript:void(0);"
-                                    class="annot annotbox dropdown-trigger"
-                                    data-target="annotmenu_{item.toknum}"
-                                    if={data.annotconc}>{data.labels[item.linegroup_id] || "_"}</a>
-                            <ul id="annotmenu_{item.toknum}" class="annotmenu dropdown-content">
-                                <li each={label in store.data.annotLabels}
-                                        onclick={labelLine.bind(this, item.toknum)}>
-                                    <span class={leftpad: label.name.indexOf('.')>=0}>{label.name}</span>
-                                </li>
-                                <li if={item.linegroup_id}>
-                                    <a href="javascript:void(0);"
-                                            onclick={addLabelExample.bind(this, item)}>{_("saveLabelExample")}</a>
-                                </li>
-                            </ul>
+                                    onclick={onLabelMenuClick.bind(this, item)}
+                                    class="annot annotbox dropdown-trigger">{lngroup2label[item.linegroup_id] || "_"}</a>
                         </div>
                         <div class="td rightCol _t" style="text-align: left;"
                                 onclick={annotSelectLine.bind(this, item.toknum)}>
-                            <concordance-result-context data={isRTL ? item.Left : item.Right} class="rightCtx" show_as_tooltips={data.show_as_tooltips}></concordance-result-context>
+                            <concordance-result-items data={isRTL ? item.Left : item.Right}
+                                    class="rightCtx"
+                                    show_as_tooltips={data.show_as_tooltips}></concordance-result-items>
                         </div>
                     </virtual>
 
                     <virtual if={data.viewmode == "sen"}>
                         <div class="td rtlNode {data.annotconc ? "annotconc" : ""}"
-                                onclick={annotSelectLine.bind(this, item.toknum)}
                                 style="{corpus.righttoleft ? 'text-align: right;' : ''}">
-                            <concordance-result-context data={item.Left} class="leftCtx" show_as_tooltips={data.show_as_tooltips}></concordance-result-context>
-                            <span each={kwic in item.Kwic} class="kwicWrapper" onclick={onKwicClick.bind(this, item)}>
-                                <span class="kwic" data-tooltip={data.show_as_tooltips && kwic.attr ? kwic.attr.substr(1) : ""}>{kwic.str}</span>
-                                <span if={!data.show_as_tooltips && kwic.attr} class="attr">{kwic.attr.substr(1)}</span>
-                                <span if={kwic.strc} class="strc">{kwic.strc}</span>
-                            </span>
+                            <concordance-result-items data={item.Left}
+                                    class="leftCtx _t"
+                                    onclick={annotSelectLine.bind(this, item.toknum)}
+                                    show_as_tooltips={data.show_as_tooltips}></concordance-result-items>
+                            <concordance-result-items data={item.Kwic}
+                                    class="kwicWrapper _t"
+                                    on-click={onKwicClick.bind(this, item)}></concordance-result-items>
                             <a href="javascript:void(0);"
                                     class="annot annotbox dropdown-trigger"
-                                    data-target="annotmenu_{item.toknum}"
-                                    if={data.annotconc}>{data.labels[item.linegroup_id] || "_"}</a>
-                            <ul id="annotmenu_{item.toknum}" class="annotmenu dropdown-content">
-                                <li each={label in store.data.annotLabels}
-                                        onclick={labelLine.bind(this, item.toknum)}>
-                                    <span>{label.name}</span>
-                                </li>
-                                <li if={item.linegroup_id}>
-                                    <a href="javascript:void(0);"
-                                            onclick={addLabelExample.bind(this, item)}>{_("saveLabelExample")}</a>
-                                </li>
-                            </ul>
-                            <concordance-result-context data={item.Right} class="rightCtx" show_as_tooltips={data.show_as_tooltips}></concordance-result-context>
+                                    onclick={onLabelMenuClick.bind(this, item)}
+                                    if={data.annotconc}>{lngroup2label[item.linegroup_id] || "_"}</a>
+                            <concordance-result-items data={item.Right}
+                                    onclick={annotSelectLine.bind(this, item.toknum)}
+                                    class="rightCtx _t"
+                                    show_as_tooltips={data.show_as_tooltips}></concordance-result-items>
                         </div>
                     </virtual>
                     <div if={data.gdex_enabled && data.show_gdex_scores} class="td gdex">
@@ -298,13 +302,14 @@
                         </span>
                     </div>
                     <div class="td mediaCell" if={v.showMediaIcon}>
-                        <i each={link in item.Links}
+                        <i each={link in item.Links} no-reorder
                                 class="material-icons tooltipped red-text"
                                 data-tooltip={getIconTooltip(link)}
                                 data-position="left"
                                 onclick={onOpenMediaClick}>{link.icon}</i>
                     </div>
-                    <div class="td copyCell">
+                    <div  if={v.showCopyButton}
+                            class="td copyCell">
                         <i class="material-icons"
                                 data-position="left"
                                 data-tooltip={_("copyLine")}
@@ -328,6 +333,8 @@
 
     <script>
         const {Localization} = require("core/Localization.js")
+        const {AnnotationStore} = require('annotation/annotstore.js')
+
         require("./concordance-result.scss")
         require("./concordance-detail-window.tag")
         require("./concordance-media-window.tag")
@@ -342,18 +349,79 @@
         this.lastSelectedToknum = -1
         this.lastSelectedLineIdx = null
 
+        this.lngroup2label = {}
+        this.annotation_group = AnnotationStore.annotation_group
+
+
+        onLabelMenuClick(item, evt){
+            evt.preventUpdate = true
+            evt.stopPropagation()
+            let menuNode = $(evt.target)
+            if(menuNode.attr("data-target")){
+                // recreate each time, list of labels might change
+                let instance = M.Dropdown.getInstance(menuNode)
+                instance && instance.destroy()
+            }
+            let id = "ts_" + Date.now() + Math.floor((Math.random() * 10000))
+            let ul = $("<ul>", {class: "dropdown-content annotmenu", id: id} ).appendTo($("body"))
+            AnnotationStore.labels.forEach(label => {
+                let aNode = $("<a>").appendTo($("<li>").appendTo(ul))
+                    .on("click", this.labelLine.bind(this, item.toknum, label))
+                $("<span>", {html: label.label, class: (label.label.indexOf('.')>=0 ? "leftpad" : "")}).appendTo(aNode)
+            }, this)
+            if(this.annotation_group == "ivdnt" && item.linegroup_id){
+                let aNode = $("<a>", {html: _("an.useExample")}).appendTo($("<li>").appendTo(ul))
+                    .on("click", AnnotationStore.addLabelExample.bind(AnnotationStore, item, ""))
+            }
+            menuNode.attr("data-target", id)
+                .dropdown({
+                    constrainWidth: false,
+                    closeOnClick: true
+                })
+                .dropdown("open")
+        }
+
+        getContextReducedItems(items){
+            // combine items into groups - [{str:"have"}, {str:"some"}, {str:"time"}, {strc:"<s>"}, {str:"How"}] ->[{str:"have some time"}, {strc:"<s>"}, {str:"How"}]
+            return items.reduce((arr, token) => {
+                if(!arr.length){
+                    arr.push(token)
+                } else{
+                    let lastToken = arr[arr.length - 1]
+                    if(!token.strc && !lastToken.strc && token.coll === lastToken.coll && token.color === lastToken.color){
+                        arr[arr.length-1].str += " " + token.str
+                    } else {
+                        arr.push(token)
+                    }
+                }
+                return arr
+            }, [])
+        }
+
         updateAttributes(){
             this.isRTL = Localization.getDirection() == "rtl" && this.corpus.righttoleft
             this.showResultsFrom = (this.data.page - 1) * this.data.itemsPerPage
-            this.items = this.data.items
+            this.hasAttributes = this.data.attrs.split(",").length > 1
+            this.hasContextAttributes =  this.hasAttributes && this.data.attr_allpos == "all"
+            this.lngroup2label = AnnotationStore.lngroup2label
+            if(this.hasContextAttributes){
+                this.items = this.data.items
+            } else{
+                this.items = copy(this.data.items)
+                this.items.forEach(item => {
+                    item.Left = this.getContextReducedItems(item.Left)
+                    item.Right = this.getContextReducedItems(item.Right)
+                }, this)
+            }
             let showRefsLeft            = !this.data.refs_up || this.data.refs === ""
             let showRefsUp              = !showRefsLeft
             let showLineNumbers         = this.data.linenumbers
             let showCheckboxes          = this.data.checkboxes
+            let showCopyButton          = this.data.showcopy
             let showLineNumbersLeft     = showLineNumbers && !showRefsUp
             let showLineNumbersUp       = showLineNumbers && showRefsUp
             let showMediaIcon           = this.items.some(i => {return i.Links.length})
-            this.v = {showRefsLeft, showCheckboxes, showRefsUp, showLineNumbers, showLineNumbersLeft, showLineNumbersUp, showMediaIcon}
+            this.v = {showRefsLeft, showCheckboxes, showRefsUp, showLineNumbers, showLineNumbersLeft, showLineNumbersUp, showMediaIcon, showCopyButton}
         }
         this.updateAttributes()
 
@@ -386,6 +454,7 @@
                 },
                 buttons: [{
                     label: _("save"),
+                    class: "btn-primary",
                     onClick: (dialog) => {
                         dialog.contentTag.save()
                     }
@@ -409,7 +478,7 @@
             if(evt.ctrlKey || event.metaKey){
                 this.toggleLineSelection(evt.item.idx, evt.shiftKey)
             } else {
-                window.copyToClipboard(this.store.getLineCopyText(evt.item.item), SkE.showToast.bind(null, "copied"))
+                window.copyToClipboard(this.store.getLineCopyText(evt.item.item), SkE.showToast.bind(null, _("copied")))
             }
             this.lastSelectedLineIdx = evt.item.idx
         }
@@ -451,10 +520,6 @@
             }
         }
 
-        addLabelExample(item, evt) {
-            this.store.addLabelExample(item)
-        }
-
         onOpenMediaClick(evt){
             evt.preventUpdate = true
             Dispatcher.trigger("concordanceOpenMedia", {...evt.item.link})
@@ -492,18 +557,40 @@
             return isDef(score) ? (score + "").substr(0, 5) : ""
         }
 
-        labelLine(toknum, event) {
+        updateLabels(toknums, lid) {
+            for (let i=0; i<toknums.length; i++) {
+                for (let j=0; j<this.data.items.length; j++) {
+                    if (this.data.items[j].toknum == toknums[i]) {
+                        this.data.items[j].linegroup_id = lid
+                    }
+                }
+                Object.keys(this.store.preloadedData).forEach((key) => {
+                    if (!isNaN(key)) {
+                        let lines = this.store.preloadedData[key].data
+                        for (let j=0; j<lines.length; j++) {
+                            if (lines[j].toknum == toknums[i]) {
+                                lines[j].linegroup_id = lid
+                            }
+                        }
+                    }
+                })
+            }
+        }
+
+        labelLine(toknum, label, event) {
             event.preventUpdate = true
             event.stopPropagation()
             this.annotSelectLine(toknum, event)
-            let lid = event.item.label ? event.item.label.id : 0
+            let lid = label ? label.id : 0
             this.selectedToknums.push(toknum)
-            this.store.labelToknums(this.selectedToknums, lid)
+            AnnotationStore.labelToknums(this.selectedToknums, lid)
+            this.updateLabels(this.selectedToknums, lid)
             this.selectedToknums = []
             let selectedLines = document.querySelectorAll(".tr.selected_annot")
             for (let i=0; i<selectedLines.length; i++) {
                 selectedLines[i].classList.remove("selected_annot")
             }
+            $(`.tn-${toknum} .annotconc .annot`).addClass("disabled")
         }
 
         getIconTooltip(line){
@@ -514,7 +601,6 @@
 
         this.on('updated', () => {
             if (this.data.annotconc) {
-                this.initAnnotMenu()
                 if (this.selectedToknums.length) {
                     for (let i=0; i<this.selectedToknums.length; i++) {
                         let el = document.getElementsByClassName("tn-" + this.selectedToknums[i])
@@ -527,32 +613,22 @@
             }
         })
 
-        initAnnotMenu() {
-            $('.annotbox').dropdown({constrainWidth: false})
+        onLabelSaved(payload){
+            payload.request.toknum.split(" ").forEach(toknum => {
+                $(`.tn-${toknum} .annotconc .annot`).html(payload.label).removeClass("disabled")
+            })
         }
 
         this.on("update", this.updateAttributes)
 
         this.on("mount", () => {
-            this.initAnnotMenu()
             this.store.on("countChange", this.update) // pagination
-            Dispatcher.on("ANNOTATION_SUCCESSFUL", this.update)
-            Dispatcher.on("ANNOTATION_LABELS_UPDATED", this.update)
-            this.lscheck && clearInterval(this.lscheck)
-            this.lscheck = setInterval(function () {
-                let ls = localStorage.getItem("SKE_ANNOTATION_LABELS_UPDATED")
-                if (ls) {
-                    localStorage.removeItem("SKE_ANNOTATION_LABELS_UPDATED")
-                    this.store.getAnnotLabels()
-                }
-            }.bind(this), 1000)
+            AnnotationStore.on("ANNOTATION_SUCCESSFUL", this.onLabelSaved)
         })
 
         this.on("unmount", () => {
             this.store.off("countChange", this.update)
-            Dispatcher.off("ANNOTATION_SUCCESSFUL", this.update)
-            Dispatcher.off("ANNOTATION_LABELS_UPDATED", this.update)
-            this.lscheck && clearInterval(this.lscheck)
+            AnnotationStore.off("ANNOTATION_SUCCESSFUL", this.onLabelSaved)
         })
     </script>
 </concordance-result>

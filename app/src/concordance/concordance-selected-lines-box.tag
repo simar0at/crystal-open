@@ -71,7 +71,7 @@
                 str += (str ? "\n" : "") + line.text
                 return str
             }, "")
-            window.copyToClipboard(text, SkE.showToast.bind(null, "copied"))
+            window.copyToClipboard(text, SkE.showToast.bind(null, _("copied")))
         }
 
         onSelectPageClick(){

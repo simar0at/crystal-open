@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-guru ._t{
-    font-family: 'Noto Gurmukhi'
+.script-guru ._t,
+body .script-guru ._t,
+body .script-guru._t{
+    font-family: 'Noto Gurmukhi', 'Noto Sans', sans-serif;
 }

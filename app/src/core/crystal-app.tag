@@ -1,5 +1,5 @@
 <crystal-app class="crystal-app">
-    <screen-overlay event-name={"LOADING_CHANGED"} multiple={true}></screen-overlay>
+    <screen-overlay event-name={"LOADING_CHANGED"} multiple={true} show-academic-warning={true}></screen-overlay>
     <notification-bar></notification-bar>
     <modal-dialog></modal-dialog>
 

@@ -3,7 +3,7 @@
         <div class="modal-content valign-wrapper" style="height: 70vh">
             <div class="center-align valign" style="margin: auto;">
                 <h1 id="welcome">Welcome!</h1>
-                <img id="intro_logo" src="images/logo_blue.png"/>
+                <img id="intro_logo" src="images/logo_blue.png" loading="lazy">
                 <div id="first_time">
                     <h3>First time in our new interface?</h3>
                     <div id="cards">
@@ -36,7 +36,7 @@
         })
 
         onDismiss() {
-            UserDataStore.saveUserData({"global": {"skipWizard": 1}})
+            UserDataStore.saveGlobalData({"skipWizard": 1})
             $("#intro_modal").modal("close")
             intros["newui"].goToStepNumber(8).start()
         }
@@ -48,7 +48,7 @@
         onIntroStart (event) {
             $("#intro_modal").modal("close")
             intros["newui"].oncomplete(function () {
-                UserDataStore.saveUserData({"global": {"skipWizard": 1}})
+                UserDataStore.saveGlobalData({"skipWizard": 1})
             }).start()
         }
     </script>

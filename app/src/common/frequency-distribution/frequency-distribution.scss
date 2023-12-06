@@ -1,0 +1,31 @@
+.frequency-distribution{
+    .distributionContainer{
+        overflow: auto;
+    }
+    .svgChart{
+        max-width: 1px;
+    }
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #CCC;
+        shape-rendering: crispEdges;
+    }
+    .axis text.legend {
+        display: block;
+        fill: black !important;
+    }
+    .axis text {
+        fill: #555;
+    }
+    .bar {
+        fill: #4682B4;
+    }
+    .bar.active {
+        fill: #B22222;
+        cursor: pointer;
+    }
+    .external-text {
+        white-space: normal;
+    }
+}

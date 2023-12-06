@@ -12,28 +12,28 @@
                 <div>
                     <ui-select inline
                         name="fc_lemword_type"
-                        value={store.data.fc_lemword_type}
+                        riot-value={store.data.fc_lemword_type}
                         on-change={onOptionChange}
                         options={quantityList}
                         width=65></ui-select>
                     <span class="inline-text">{_("of")}</span>
                     <ui-input inline
                         name="fc_lemword"
-                        value={store.data.fc_lemword}
+                        riot-value={store.data.fc_lemword}
                         on-input={onOptionChange}
                         placeholder={_(hasLemma ? "cc.contextLemmaPlaceholder" : "cc.contextWordPlaceholder")}
                         width=300></ui-input>
                     <span class="inline-text">{_("within")}</span>
                     <ui-select inline
                         name="fc_lemword_wsize"
-                        value={store.data.fc_lemword_wsize}
+                        riot-value={store.data.fc_lemword_wsize}
                         on-change={onOptionChange}
                         options={tokenList}
                         width=55></ui-select>
                     <span class="inline-text">{_("tokens")}</span>
                     <ui-select inline
                         name="fc_lemword_window_type"
-                        value={store.data.fc_lemword_window_type}
+                        riot-value={store.data.fc_lemword_window_type}
                         on-change={onOptionChange}
                         options={positionList}
                         width=150></ui-select>
@@ -44,7 +44,7 @@
                 <div class="context-label">{_("cc.onlyKeepLines")}</div>
                 <ui-select inline
                     name="fc_pos_type"
-                    value={store.data.fc_pos_type}
+                    riot-value={store.data.fc_pos_type}
                     on-change={onOptionChange}
                     options={quantityList}
                     width=65></ui-select>
@@ -53,21 +53,21 @@
                     size=3
                     name="fc_pos"
                     multiple={true}
-                    value={store.data.fc_pos}
+                    riot-value={store.data.fc_pos}
                     on-change={onOptionChange}
                     options={wposlistList}
                     width=200></ui-list>
                 <span class="inline-text">{_("within")}</span>
                 <ui-select inline
                     name="fc_pos_wsize"
-                    value={store.data.fc_pos_wsize}
+                    riot-value={store.data.fc_pos_wsize}
                     on-change={onOptionChange}
                     options={tokenList}
                     width=55></ui-select>
                 <span class="inline-text">{_("tokens")}</span>
                 <ui-select inline
                     name="fc_pos_window_type"
-                    value={store.data.fc_pos_window_type}
+                    riot-value={store.data.fc_pos_window_type}
                     on-change={onOptionChange}
                     options={positionList}
                     width=150></ui-select>

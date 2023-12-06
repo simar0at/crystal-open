@@ -1,7 +1,11 @@
-<kwicsen class="kwicsen">
-    <a id="kwicsen_chip" class="chip waves-effect waves-light tooltipped"
-            href="javascript:void(0);" data-target="kwicsen_list"
-            data-tooltip={options[sel].tooltip}>
+<kwicsen class="kwicsen" data-value={sel}>
+    <a id="kwicsen_chip"
+            ref="link"
+            class="chip tooltipped"
+            href="javascript:void(0);"
+            data-target="kwicsen_list"
+            data-tooltip={options[sel].tooltip}
+            onclick={onKwicSenClick}>
         {options[sel].label}
         <i class="material-icons">arrow_drop_down</i>
     </a>
@@ -15,6 +19,8 @@
     </ul>
 
     <script>
+        this.tooltipExitDelay = 0
+        this.tooltipPosition = "left"
         this.mixin("tooltip-mixin")
 
         this.options = {
@@ -37,6 +43,11 @@
         onClick(event) {
             isFun(this.opts.onClick) &&
                     this.opts.onClick(event.target.attributes.pos.value)
+        }
+
+        onKwicSenClick(evt){
+            evt.preventUpdate = true
+            M.Tooltip.getInstance(this.refs.link).close()
         }
 
         initDropdown(){

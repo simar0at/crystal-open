@@ -61,6 +61,7 @@ class AsyncResultsClass {
         this.settings.beforeCheck && this.settings.beforeCheck()
         this.request = Connection.get({
             url: this.settings.url,
+            data: this.settings.data || {},
             xhrParams: this.settings.xhrParams || {},
             always: this._onData.bind(this)
         })

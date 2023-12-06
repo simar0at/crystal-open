@@ -3,7 +3,7 @@
         <preloader-spinner if={isLoading}></preloader-spinner>
     </div>
     <div if={data}>
-        <div if={data.web_crawl.seed_words.length}>
+        <div if={data.web_crawl.seed_words.length > 1}>
             {_("ca.seeds")}: <b>{data.web_crawl.seed_words.join(", ")}</b>
             <br><br>
         </div>
@@ -14,7 +14,7 @@
         </div>
 
         <div if={data.web_crawl.urls.length}>
-            {_("ca.urls")}:
+            {_(data.web_crawl.seed_words.length > 1 ? "ca.foundUrls" : "ca.urls")}:
             <div each={url in data.web_crawl.urls}>
                 <a href={url} target="_blank">{url}</a>
             </div>
@@ -28,13 +28,16 @@
         this.isLoading = true
 
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + opts.corpus_id + "/filesets/" + opts.fileset_id,
+            url: window.config.URL_CA + "corpora/" + opts.corpus_id + "/filesets/" + opts.fileset_id,
             xhrParams:{type: "GET"},
             done: function(payload){
                 this.isLoading = false
                 this.data = payload.data
                 this.update()
-            }.bind(this)
+            }.bind(this),
+            fail: payload => {
+                SkE.showError("Could not load data.", getPayloadError(payload))
+            }
         })
 
     </script>

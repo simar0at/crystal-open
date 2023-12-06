@@ -84,8 +84,6 @@
                 "btn-selector": 1,
                 "pos": 1,
                 "disabled": this.opts.disabled,
-                "waves-effect": 1,
-                "waves-light": 1,
                 "squareBtn": item.value != 0,
                 "kwicBtn": item.value == 0
             }

@@ -75,6 +75,10 @@ let RoutingMeta = {
             labelId: "wordlist",
             icon: "word_list"
         },
+        "text-type-analysis": {
+            feature: "wordlist",
+            labelId: "textTypesAnalysis"
+        },
         "keywords": {
             feature: "keywords",
             labelId: "keywords",
@@ -89,6 +93,13 @@ let RoutingMeta = {
         "test": {
             labelId: "Test",
             icon: "playlist_add_check"
+        },
+        "annotation": {
+            labelId: "an.annotationManagement",
+            feature: "annotation",
+            icon: "concordance"
+        },
+        "unauthorized": {
         },
     }
 }

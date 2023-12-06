@@ -2,7 +2,7 @@
     <div class="card-content">
         <div class="center-table">
             <div class="columns">
-                <span class="inlineBlock leftColumn">
+                <span class="inline-block leftColumn">
                     <frequency-links-column column={_getColumnDef("frq.left1", -1)}></frequency-links-column>
                     <frequency-links-column column={_getColumnDef("kwic", 0)}></frequency-links-column>
                     <frequency-links-column column={_getColumnDef("frq.right1", 1)}></frequency-links-column>
@@ -24,6 +24,7 @@
 
         this.hasLemma = !!AppStore.getAttributeByName("lemma")
         this.hasTags = !!AppStore.getAttributeByName("tag")
+        this.hasPos = !!AppStore.getAttributeByName("pos")
 
         _getColumnDef(colLabelId, ctx){
             let colSuffix = {"-1": "left", "0": "kwic", "1": "right"}[ctx]
@@ -34,6 +35,12 @@
                     labelId: "wordForms",
                     tooltip: "t_id:conc_r_freq_words_" + colSuffix,
                     href: this.store.f_getContextLink(ctx, "kwic", "word", "basic")
+                }, {
+                    id: "pos_" + colSuffix,
+                    labelId: "pos",
+                    tooltip: "t_id:conc_r_freq_pos_" + colSuffix,
+                    href: this.store.f_getContextLink(ctx, "kwic", "pos", "basic"),
+                    disabled: !this.hasPos
                 }, {
                     id: "tags_" + colSuffix,
                     labelId: "frq.tags",

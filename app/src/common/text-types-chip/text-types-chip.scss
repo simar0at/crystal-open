@@ -1,0 +1,21 @@
+@import 'app/styles/constants';
+
+.text-types-chip{
+    display: inline-block;
+    vertical-align: middle;
+    .chip{
+        margin-bottom: 0;
+        color: $blue-800;
+        &.tooltipped{
+            cursor: pointer;
+        }
+    }
+    i{
+        vertical-align: middle;
+        line-height: 15px;
+        opacity: 0.7;
+        &:hover{
+            opacity: 1;
+        }
+    }
+}

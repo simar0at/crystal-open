@@ -4,7 +4,11 @@
 
 
 <concordance-tabs class="concordance-tabs">
-    <ui-tabs ref="tabs" name="concordance-tabs" tabs={tabs} active={data.tab}
+    <ui-tabs ref="tabs"
+            class="searchTabs"
+            name="concordance-tabs"
+            tabs={tabs}
+            active={data.tab}
             on-tab-change={onTabChange}>
     </ui-tabs>
 
@@ -14,7 +18,6 @@
         require("./concordance-tab-advanced.tag")
         require("./concordance-tab-error.tag")
         const {AppStore} = require('core/AppStore.js')
-        const {TextTypesStore} = require("common/text-types/TextTypesStore.js")
 
         this.mixin("feature-child")
 
@@ -36,16 +39,12 @@
         }
         this.tabs.push({
             tabId: "about",
-            label: "about",
+            labelId: "about",
             tag: "concordance-tab-about"
         })
 
         onTabChange(tabId){
             if(this.data.tab != tabId){
-                TextTypesStore.reset()
-                if(this.data.selection && this.data.selection.length){
-                    TextTypesStore.setSelection(this.data.selection)
-                }
                 this.data.tab = tabId
                 delay(() => {
                     $("input[name=\"keyword\"]:visible, textarea[name=\"cql\"]:visible", this.root).first().focus()
@@ -55,22 +54,12 @@
             }
         }
 
-        onSelectionChange(selection){
-            this.data.selection = selection
-        }
-
         this.on("mount", () => {
-            TextTypesStore.on("selectionChange", this.onSelectionChange)
             $(document).ready(function(){
                 $('.tooltipped', this.root).tooltip({
                     enterDelay: 50
                 })
            })
         })
-
-        this.on("unmount", () => {
-            TextTypesStore.off("selectionChange", this.onSelectionChange)
-        })
-
     </script>
 </concordance-tabs>

@@ -3,7 +3,7 @@
     <div class="tab-content card-content">
         <div class="controlBar">
             <div class="col s12">
-                <ui-input
+                <ui-input riot-value={searchQuery}
                         class="fuzzy-input"
                         placeholder={_("cp.filterByName")}
                         inline={true}
@@ -16,7 +16,7 @@
                         on-suffix-icon-click={onSuffixIconClick}>
                 </ui-input>
                 <a href="#ca-create" if={window.permissions["ca-create"]}
-                        class="btn contrast tooltipped right"
+                        class="btn btn-primary tooltipped right"
                         data-tooltip={_("ca.newCorpusDesc")}>
                     {_("newCorpus")}
                 </a>
@@ -76,7 +76,7 @@
                     <td onclick={onSelectCorpus}>
                         <i class="material-icons shared tooltipped" data-tooltip={_("iShareCorpus")} if={corpus.is_shared}>group</i>
                         <span ref="{idx}_n">{corpus.name}</span>
-                        <span class="badge new skeblue hide-on-small-and-down"
+                        <span class="badge new background-color-blue-100 hide-on-small-and-down"
                             if={corpus.owner_id && corpus.owner_id != userid}
                             data-badge-caption="">
                             {corpus.owner_name}
@@ -85,7 +85,7 @@
                     <td onclick={onSelectCorpus} class="right-align">
                         {corpus.sizes ? window.Formatter.num(corpus.sizes.wordcount) : ""}
                     </td>
-                    <td class="menuCell" style="position: relative">
+                    <td class="menuCell relative">
                         <a href="javascript:void(0);"
                                 if={!config.READ_ONLY}
                                 class="iconButton btn btn-flat btn-floating"
@@ -113,6 +113,7 @@
     <script>
         const {AppStore} = require('core/AppStore.js')
         const {CorpusStore} = require("corpus/CorpusStore.js")
+        const {UserDataStore} = require("core/UserDataStore.js")
         const {Auth} = require('core/Auth.js')
         const FuzzySort = require('libs/fuzzysort/fuzzysort.js')
         require("ca/ca-corpus-download-dialog.tag")
@@ -122,8 +123,8 @@
         this.userid = Auth.getUserId()
         this.isFullAccount = Auth.isFullAccount()
         this.sort = {
-            sort: 'asc',
-            orderBy: 'name'
+            sort: UserDataStore.getOtherData("corpus_select_sort") || 'asc',
+            orderBy: UserDataStore.getOtherData("corpus_select_order_by") || 'name'
         }
         this.showLimit = 60
         this.searchQuery = ""
@@ -195,6 +196,10 @@
             this.sort = sort
             this.sortCorpora()
             this.update()
+            UserDataStore.saveOtherData({
+                    'corpus_select_sort': sort.sort,
+                    'corpus_select_order_by': sort.orderBy
+                })
         }
 
         onSelectCorpus(event) {

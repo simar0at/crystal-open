@@ -10,9 +10,8 @@
 
         onLetterClick(evt){
             Dispatcher.trigger("closeDialog", "concordanceJumpTo")
-            // TODO: just temporary, until Bonito is updated, then remove "page" option
             ConcordanceStore.searchAndAddToHistory({
-                page: isDef(evt.item.letter.page) ? evt.item.letter.page : evt.item.letter.pos / ConcordanceStore.get("itemsPerPage") + 1
+                page: Math.floor(evt.item.letter.pos / ConcordanceStore.get("itemsPerPage") + 1)
             })
         }
     </script>

@@ -1,15 +1,15 @@
 const webpack = require('webpack')
 const path = require('path')
-require("@babel/polyfill");
 
 
 let webpackConfig = {
     mode: "production",
-    entry: ["@babel/polyfill", "./app/main.js"],
+    entry: ["./app/main.js"],
     output: {
         path: path.resolve(__dirname, '/'),
         publicPath: '/',
-        filename: 'bundle.js'
+        filename: 'bundle.js',
+        chunkFilename: '[name].js'
     },
     resolve: {
         modules: ["node_modules", "app", "app/src", "app/ui/", "app/styles/"],
@@ -22,6 +22,7 @@ let webpackConfig = {
             'pages':       path.join(__dirname, '/app/src/pages/'),
             'thesaurus':   path.join(__dirname, '/app/src/thesaurus'),
             'wordlist':    path.join(__dirname, '/app/src/wordlist'),
+            'wordsketch':  path.join(__dirname, '/app/src/wordsketch'),
             'concordance': path.join(__dirname, '/app/src/concordance'),
             'corpus':      path.join(__dirname, '/app/src/corpus'),
             'ca':          path.join(__dirname, '/app/src/ca'),
@@ -41,28 +42,14 @@ let webpackConfig = {
             test: /\.tag$/,
             exclude: /node_modules/,
             use: [{
-                loader: 'babel-loader',
-                options: {
-                    presets: ['@babel/preset-env']
-                }
-            }, {
                 loader: 'riot-tag-loader',
                 options: {
                     hot: true
                 }
             }]
         }, {
-            test: /\.js$/,
-            exclude: /node_modules\/(?![ske-viz|d3.*])/,
-            use: {
-                loader: 'babel-loader',
-                options: {
-                    presets: ['@babel/preset-env']
-                }
-            }
-        }, {
             test: /\.scss$/,
-            exclude: /node_modules/,
+            exclude: ['/node_modules/', '/app/styles/bundle.scss'],
             use: [{
                 loader: "style-loader"
             }, {
@@ -81,6 +68,32 @@ let webpackConfig = {
                 name: "app/images/[name].[ext]"
             }
         }]
+    },
+    optimization: {
+        splitChunks: {
+          chunks: 'all',
+          automaticNameDelimiter: '-',
+          cacheGroups: {
+            vendor: {
+              name: 'vendors',
+              chunks: 'all',
+              // Dependencies for the main app
+              test: /[\\/]node_modules[\\/](?!(lodash|kld.*))[\\/]/
+            },
+            vizVendors: {
+              name: 'vendors-viz',
+              chunks: 'all',
+              // Dependencies only for visualizations
+              test: /[\\/]node_modules[\\/](lodash|kld.*|d3-transition|d3-force|d3-quadtree|d3-request|d3-dsv|d3-easy|d3-collection|d3-timer|d3-dispatch|d3-ease)[\\/]/
+            },
+            viz: {
+              name: 'viz',
+              chunks: 'all',
+              // Code of visualizations
+              test: /[\\/]app[\\/]libs[\\/]ske-viz[\\/]src[\\/]/
+            }
+          }
+        }
     }
 }
 

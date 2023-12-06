@@ -1,14 +1,14 @@
 <collocations-tab-basic class="collocations-tab-basic">
     <a onclick={onResetClick} data-tooltip={_("resetOptionsTip")} class="tooltipped resetOptions btn btn-floating btn-flat">
-        <i class="material-icons dark">settings_backup_restore</i>
+        <i class="material-icons color-blue-800">settings_backup_restore</i>
     </a>
     <collocations-form hide-custom-range={true}></collocations-form>
 
-    <div class="center-align">
+    <div class="primaryButtons">
         <br>
-        <a class="btn contrast" id="btnCollBGo" onclick={onSearch} disabled={data.isLoading}>{_("go")}</a>
+        <a class="btn btn-primary" id="btnCollBGo" onclick={onSearch} disabled={data.isLoading}>{_("go")}</a>
     </div>
-    <floating-button onclick={onSearch}
+    <floating-button on-click={onSearch}
         name="btnGoFloat"
         periodic=1
         refnodeid="btnCollBGo"></floating-button>

@@ -8,9 +8,9 @@
     .card-panel{
         padding: 10px;
     }
-    .btn:not(.btn-floating):not(.contrast){
-        line-height: 26px;
-        height: 25px;
+    .btn:not(.btn-floating){
+        line-height: 26px !important;
+        height: 26px !important;
         padding: 0 8px;
     }
     span.badge{
@@ -83,8 +83,7 @@
             }
         }
         .ui-list-list{
-            min-height: 29px;
-            padding: 2px 0;
+            min-height: 19px;
             li{
                 padding: 1px 10px;
                 &.checkbox{
@@ -150,6 +149,11 @@
             line-height: 20px;
             padding: 3px 5px;
         }
+    }
+
+    .collapsible-header{
+        line-height: 1;
+        padding: 0.2rem 0.5rem;
     }
 
     [type='radio']:not(:checked) + label,
@@ -275,7 +279,10 @@
     }
 
     .result-list .clear{
-        top: 15px;
+        top: 26px;
+        line-height: 0.8rem;
+        height: 0.8rem;
+        font-size: 0.8rem;
     }
 
     .page-concordance{
@@ -343,11 +350,12 @@
     }
 
     .page-trends{
-        .arrowIco{
-            .material-icons{
-                line-height: 11px;
-                position: relative;
-                top: 7px;
+        tbody{
+            .arrowIco{
+                .material-icons{
+                    line-height: 11px;
+                    position: relative;
+                }
             }
         }
     }
@@ -420,7 +428,7 @@
     .card-panel{
         padding: 16px;
     }
-    .btn:not(.btn-floating):not(.contrast){
+    .btn:not(.btn-floating){
         line-height: 31px;
         height: 30px;
         padding: 0 12px;
@@ -484,8 +492,7 @@
             }
         }
         .ui-list-list{
-            min-height: 45px;
-            padding: 3px 0;
+            min-height: 29px;
             li{
                 padding: 6px 15px;
                 &.checkbox{
@@ -549,6 +556,11 @@
             line-height: 30px;
             padding: 8px 10px;
         }
+    }
+
+    .collapsible-header{
+        line-height: 1.2;
+        padding: 0.5rem 0.8rem;
     }
 
     [type='radio']:not(:checked) + label,
@@ -776,6 +788,18 @@
             .dropdown-content li > a{
                 line-height: initial;
             }
+        }
+    }
+}
+
+.density-high,
+.density-medium,
+.density-low{
+    .primaryButtons{
+         .btn:not(.btn-floating){
+            height: 36px;
+            line-height: 36px;
+            padding: 0 16px;
         }
     }
 }

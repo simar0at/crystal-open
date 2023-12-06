@@ -6,10 +6,12 @@
     <script>
         require('./page-router.scss')
         require('pages/page-404.tag')
+        require('pages/page-unauthorized.tag')
         require('pages/page-not-allowed.tag')
         require('concordance/page-concordance.tag')
         require('parconcordance/page-parconcordance.tag')
         require('wordlist/page-wordlist.tag')
+        require('wordlist/page-text-type-analysis.tag')
         require('keywords/page-keywords.tag')
         require('corpus/page-corpus.tag')
         require('open/page-open.tag')
@@ -17,6 +19,7 @@
         require('ca/page-ca-subcorpora.tag')
         require('dashboard/page-dashboard.tag')
         require('bgjobs/page-bgjobs.tag')
+        require('annotation/page-annotation.tag')
 
         const {Router} = require('core/Router.js')
 

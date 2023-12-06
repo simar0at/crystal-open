@@ -44,9 +44,9 @@
     </form>
 
     <script>
-        let self = this
-
         this.allowedFileTypes = []
+        this.droppedFiles = []
+        this.isUploading = false
         if(this.opts.accept){
             this.allowedFileTypes = this.opts.accept.split(",").map(t => {
                 return t.trim().toLowerCase().replace(".", "")
@@ -54,18 +54,32 @@
         }
 
         onComplete(){
-            $('form', this.root).removeClass('is-uploading')
+            this.setUploading(false)
         }
 
         onCloseWarningClick(evt){
             evt.preventUpdate = true
-            $(self.root).removeClass("showWarning")
+            this.toggleWarning(false)
+        }
+
+        setUploading(isUploading){
+            this.isUploading = isUploading
+            $('form', this.root).toggleClass('is-uploading', this.isUploading)
+        }
+
+        toggleWarning(showWarning){
+            $(this.root).toggleClass("showWarning", showWarning)
+        }
+
+        resetForm(){
+            this.droppedFiles = []
+            $('form input[type="file"]', this.root)[0].value = ""
         }
 
         this.on("mount", () => {
             let form = $('form', this.root)
             let input = form.find('input[type="file"]')
-            let droppedFiles = false
+            this.droppedFiles = []
 
             // automatically submit the form on file select
             input.on('change', function(e) {
@@ -81,14 +95,14 @@
                 }).on('dragleave dragend drop', function(){
                     form.removeClass('is-dragover')
                 }).on('drop', function(e){
-                    droppedFiles = []
+                    this.droppedFiles = []
                     for(let i = 0; i < e.originalEvent.dataTransfer.files.length; i++){
                         let f = e.originalEvent.dataTransfer.files[i]
                         let fileType = f.name.split(".").pop().toLowerCase()
-                        this.allowedFileTypes.includes(fileType) && droppedFiles.push(f)
+                        this.allowedFileTypes.includes(fileType) && this.droppedFiles.push(f)
                     }
 
-                    if(droppedFiles.length){
+                    if(this.droppedFiles.length){
                         form.trigger('submit') // automatically submit the form on file drop
                     } else{
                         SkE.showToast(_("uploaderWrongFileType", [this.opts.accept]))
@@ -97,38 +111,27 @@
 
             form.on('submit', function(e){
                 // preventing the duplicate submissions if the current one is in progress
-                if(form.hasClass('is-uploading')) return false
+                if(this.isUploading){
+                    return false
+                }
                 e.preventDefault()
-                let formFiles = form.find("input[type=file]")[0].files
-                if(self.opts.maxFiles && (parseInt(self.opts.maxFiles, 10) < formFiles.length)){
-                    $(self.root).addClass("showWarning")
+                let files = [...form.find("input[type=file]")[0].files].concat(this.droppedFiles)
+                let filesValid = true
+                if((this.opts.maxFiles && (parseInt(this.opts.maxFiles, 10) < files.length))
+                    || (this.opts.maxFileSize && files.some(file => file.size / 1024 /1024 > this.opts.maxFileSize))){
+                    this.toggleWarning(true)
+                    this.setUploading(false)
+                    this.resetForm()
                     return
                 }
-                if(self.opts.maxFileSize){
-                    for(let i = 0; i < formFiles.length; i++){
-                        if(formFiles[i].size / 1024 / 1024 > self.opts.maxFileSize){
-                            $(self.root).addClass("showWarning")
-                            return
-                        }
-                    }
-                }
-                let files = []
-                form.addClass('is-uploading')
-                for(let i = 0; i < formFiles.length; i++){
-                    files.push(formFiles.item(i))
-                }
-                if(droppedFiles){
-                    files = files.concat(droppedFiles)
-                }
-                self.opts.onAdd(files, function() {
-                    // on complete
-                    form.removeClass('is-uploading')
-                })
+                this.setUploading(true)
+
+                this.opts.onAdd(files, this.setUploading.bind(this, false))
 
                 // Firefox focus bug fix for file input
                 input.on('focus', function(){ input.addClass('has-focus') })
                     .on('blur', function(){ input.removeClass('has-focus') })
-            })
+            }.bind(this))
         })
     </script>
 </ui-uploader>

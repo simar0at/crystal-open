@@ -1,6 +1,6 @@
 <ui-input-file class="ui ui-input-file">
     <div class="file-field input-field">
-        <div class="btn {opts.btnClass}">
+        <div class="btn {opts.btnClass} {disabled: this.opts.disabled}" disabled={this.opts.disabled}>
             <span>
                 {_(opts.labelId || "file")}
                 <lazy-dialog if={opts.helpDialog} file={opts.helpDialog}></lazy-dialog>
@@ -23,7 +23,7 @@
     onChange(evt){
         this.updateFileList()
         if(typeof this.opts.onChange == "function"){
-            this.opts.onChange(this.refs.input.files, this.opts.name)
+            this.opts.onChange(this.refs.input.files, this.opts.name, evt, this)
         }
         evt.stopPropagation()
     }

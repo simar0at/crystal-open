@@ -11,8 +11,8 @@ side-nav{
             height: 100%;
             padding-top: 10px;
             padding-bottom: 20px;
-            span {
-                background-image: url("images/logo_white_300.png");
+            .logo {
+                background-image: url("images/logo_white_300_uk.png");
                 background-repeat: no-repeat;
                 background-size: cover;
                 width: 30px;
@@ -20,12 +20,49 @@ side-nav{
                 display: inline-block;
                 transition: all 0.3s linear;
             }
+            &.noSkeLogo{
+                padding-left: 3px;
+                .logo{
+                    width: 45px;
+                    height: 45px;
+                    background-image: url("images/logo_noske_uk.png");
+                }
+            }
         }
     }
-    &.show ul#side-nav #navMain span{
-        width: 200px;
-        height: 100%;
-        transition-delay: 1000ms;
+    .academicUseOnly{
+        height: 2em;
+        div{
+            text-align: center;
+            background-color: #26a69a;
+            line-height: 2em;
+            font-weight: bold;
+            color: #fff;
+            opacity: 0;
+            transition: opacity 0.2s linear;
+            a {
+                background-color: none!important;
+                padding-left: 0;
+                vertical-align: middle;
+                line-height: 1em;
+                i{
+                    font-size: 16px
+                }
+            }
+        }
+    }
+    &.show{
+        ul#side-nav #navMain span{
+            width: 200px;
+            height: 100%;
+            transition-delay: 1100ms;
+        }
+        .academicUseOnly{
+            div{
+                transition-delay: 1000ms;
+                opacity: 1;
+            }
+        }
     }
 
     #side-nav.open #navMain {
@@ -40,7 +77,7 @@ side-nav{
 
     ul#side-nav{
         box-shadow: none;
-        background-color: $new_darkBlue;
+        background-color: $blue-800;
         transition: 0.3s cubic-bezier(0.800, 0.000, 0.200, 1.000);
         &::-webkit-scrollbar {
             width: 10px;
@@ -58,9 +95,6 @@ side-nav{
                 i, span {
                     color: white;
                 }
-                &:hover {
-                    background-color: rgba(0,0,0,0.3)
-                }
             }
             &.disabled{
                 opacity: 0.3;
@@ -73,11 +107,14 @@ side-nav{
                 a{
                     cursor: default;
                 }
-                background-color: $new_skeBlue;
+                background-color: $blue-600;
                 i,
                 span{
-                    color: #fff;
+                    color: $white;
                 }
+            }
+            &.feature a:hover {
+                background-color: rgba(0,0,0,0.3)
             }
         }
         .skeLogo{
@@ -88,7 +125,7 @@ side-nav{
         }
     }
     &.show ul#side-nav,
-    &.show ul#side-nav a{
+    &.show ul#side-nav li a{
         transition-delay: 1000ms;
     }
     #side-nav{
@@ -114,11 +151,14 @@ side-nav{
     }
     &.show{
         ul{
-            li:not(:first-child){
+            li.feature{
                 a{
                     padding: 0 0 0 32px;
                 }
             }
+        }
+        #navMain a.noSkeLogo{
+            padding-left: 32px;
         }
     }
     #side-nav{
@@ -128,7 +168,7 @@ side-nav{
         }
         @media only screen and (max-width: 992px){
             width: 330px!important;
-            li:not(:first-child){
+            li.feature{
                 a{
                     padding: 0 32px;
                     .linkText{

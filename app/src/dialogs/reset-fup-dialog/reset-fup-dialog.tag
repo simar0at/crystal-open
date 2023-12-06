@@ -1,9 +1,16 @@
-<reset-fup-dialog>
+<reset-fup-dialog class="reset-fup-dialog">
 	{_("fupResetInfo")}
 	<br><br>
-	<div class="center-align">
+	<ui-checkbox label-id="fupOnlyWeb" on-change={onCheckboxChange}></ui-checkbox>
+	<span class="onlyWebHelp">
+		<a href={window.config.links.fupInfo} target="_blank">
+			{_("whatDoesThisMean")}
+		</a>
+	</span>
+	<br><br>
+	<div if={showCaptcha} class="center-align">
 		<preloader-spinner if={isLoading} center=1></preloader-spinner>
-		<img if={image} src="data:image/png;base64,{image}"/>
+		<img if={image} src="data:image/png;base64,{image}" loading="lazy">
 		<button if={image}
 				class="btn btn-flat btn-floating material-clickable"
 				onclick={reloadCaptcha}
@@ -18,13 +25,13 @@
 				on-input={refreshBtnDisabled}
 				on-submit={resetFup}></ui-input>
 		<button ref="btn"
-				class="btn contrast disabled"
+				class="btn btn-primary disabled"
 				onclick={onResetFupClick}>verify</button>
-		<div class="red-text" style="position: relative;">
+		<div class="red-text relative">
 			<span>
 				{!isReseting &&isIncorrect ? _("fupIncorrect") : "&nbsp"}
 			</span>
-			<span if={isReseting} class="inlineBlock" style="position: absolute; left: 50%; top: 15px; margin-left: -13px;">
+			<span if={isReseting} class="inline-block" style="position: absolute; left: 50%; top: 15px; margin-left: -13px;">
 				<preloader-spinner tiny=1></preloader-spinner>
 			</span>
 		</div>
@@ -32,6 +39,7 @@
 
 
 	<script>
+		require("./reset-fup-dialog.scss")
 		const {Connection} = require("core/Connection.js")
 
 		this.isLoading = true
@@ -42,7 +50,7 @@
 			this.isLoading = true
 			this.isIncorrect = false
 			Connection.get({
-				url: window.config.URL_CA + "/other/get_captcha",
+				url: window.config.URL_CA + "other/get_captcha",
 				xhrParams: {
 					method: "POST",
 					contentType: "application/json",
@@ -53,7 +61,7 @@
 					this.hashed = payload.result.hashed
 				},
 				fail: (payload) => {
-					SkE.showError(payload.error || _("somethingWentWrong"))
+					SkE.showError(getPayloadError(payload) || _("somethingWentWrong"))
 				},
 				always: () =>{
 					this.isLoading = false
@@ -65,6 +73,12 @@
 		}
 		this.reloadCaptcha()
 
+		onCheckboxChange(){
+			this.showCaptcha = !this.showCaptcha
+			this.update()
+			this.showCaptcha && this.focus()
+		}
+
 		onResetFupClick(evt){
 			evt.preventUpdate = true
 			this.resetFup()
@@ -75,7 +89,7 @@
 				return
 			}
 			Connection.get({
-				url: window.config.URL_CA + "/users/me/reset_fup",
+				url: window.config.URL_CA + "users/me/reset_fup",
 				xhrParams: {
 					method: "POST",
 					contentType: "application/json",
@@ -93,7 +107,7 @@
 						content: _("fupResetDone"),
 						buttons: [{
 							label: _("reloadPage"),
-							class: "contrast",
+							class: "btn-primary",
 							onClick: () => {
 								window.location.reload()
 							}
@@ -104,7 +118,7 @@
 					if(payload.error == "INVALID_CAPTCHA"){
 						this.isIncorrect = true
 					} else {
-						SkE.showError(payload.error || _("somethingWentWrong"))
+						SkE.showError(getPayloadError(payload) || _("somethingWentWrong"))
 					}
 				},
 				always: () => {
@@ -117,7 +131,9 @@
 		}
 
 		focus(){
-			delay(() => {$("input", this.refs.input.root).focus()}, 1)
+			this.refs.input && delay(() => {
+				$("input", this.refs.input.root).focus()
+			}, 1)
 		}
 
 		refreshBtnDisabled(value){

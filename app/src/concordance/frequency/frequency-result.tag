@@ -1,24 +1,69 @@
 <frequency-result class="frequency-result">
-    <preloader-spinner if={data.isLoading} overlay=1 fixed=1 on-cancel={store.onLoadingCancel.bind(store)} browser-indicator=1></preloader-spinner>
-    <h4 class="header">{_("frequency")}</h4>
-    <span class="headerButtons">
-        <a id="btnNewSearch" class="btn contrast" onclick={onToggleShowFormClick}>
-            {_("newSearch")}
+    <result-preloader-spinner store={store}></result-preloader-spinner>
+    <collfreq-selected-lines-box ref="selectedLinesBox"
+            get-data-length={getSelectedLinesBoxDataLength}
+            on-close-click={onSelectedLinesBoxClose}
+            get-url-to-result-page={getSelectedLinesBoxUrl}></collfreq-selected-lines-box>
+    <virtual if={data.f_hasBeenLoaded || !data.isLoading}>
+        <a href="javascript:void(0);"
+                if={data.total < data.fullsize}
+                id="frequencyWarning"
+                class="tooltipped warningBtn btn btn-floating {red: !data.random} mr-2"
+                data-tooltip={_(data.random ? "freqRandom10M" : "freqFirst10M")}
+                onclick={onRandomClick}>
+            <i class="material-icons white-text">
+                priority_high
+            </i>
         </a>
-        <a id="btnBackToConcordance" class="btn contrast" onclick={store.goBackToTheConcordance.bind(store)}>
-            {_("backToConcordance")}
-        </a>
-    </span>
-    <div if={!data.f_isEmpty && !data.isLoading} class="dividerTop center-align">
-        <div if={showRelFreq} class="z-depth-1 card-content frequencyOptions">
-            <ui-checkbox id="showrelfrq"
-                name="showrelfrq"
-                checked={data.f_showrelfrq}
-                label-id="relFreq"
-                on-change={onShowrelfrqChange}></ui-checkbox>
+        <h4 class="header">{_("frequency")}</h4>
+        <span class="headerButtons">
+            <a id="btnNewSearch" class="btn btn-primary" onclick={onToggleShowFormClick}>
+                {_("newSearch")}
+            </a>
+            <a id="btnBackToConcordance" class="btn btn-primary" onclick={store.goBackToTheConcordance.bind(store)}>
+                {_("backToConcordance")}
+            </a>
+        </span>
+    </virtual>
+    <bgjob-card if={data.jobid}
+            is-loading={data.isBgJobLoading}
+            desc={data.raw.desc}
+            progress={data.raw.processing}></bgjob-card>
+    <div if={!data.f_isEmpty && !data.isLoading && !data.jobid} class="dividerTop center-align">
+        <div class="z-depth-1 card-content frequencyOptions">
+            <ui-checkbox if={showRelFrqAndPerc}
+                     id="showrelfrq"
+                    name="f_showrelfrq"
+                    checked={data.f_showrelfrq}
+                    inline=1
+                    label-id="showRelFrq"
+                    on-change={setCheckboxValue.bind(this, "f_showrelfrq")}></ui-checkbox>
+            <ui-checkbox if={showRelFrqAndPerc}
+                    id="showperc"
+                    name="f_showperc"
+                    checked={data.f_showperc}
+                    inline=1
+                    label-id="showPercOfConc"
+                    on-change={setCheckboxValue.bind(this, "f_showperc")}></ui-checkbox>
+            <ui-checkbox if={showRelTtAndRelDens}
+                     id="showreltt"
+                    name="f_showreltt"
+                    checked={data.f_showreltt}
+                    inline=1
+                    label-id="showRelTT"
+                    on-change={setCheckboxValue.bind(this, "f_showreltt")}></ui-checkbox>
+            <ui-checkbox if={showRelTtAndRelDens}
+                    id="showreldens"
+                    name="f_showreldens"
+                    checked={data.f_showreldens}
+                    inline=1
+                    label-id="showReldens"
+                    on-change={setCheckboxValue.bind(this, "f_showreldens")}></ui-checkbox>
         </div>
         <br>
-        <frequency-result-block each={block, idx in data.f_items} class="block_{idx + 1}" block="{block}" show-rel-freq={showRelFreq}>
+        <frequency-result-block each={block, idx in data.f_items}
+                idx={idx}
+                block="{block}">
         </frequency-result-block>
     </div>
 
@@ -34,22 +79,50 @@
 
     <interfeature-menu ref="interfeatureMenu"
                 links={interFeatureMenuLinks}
+                is-feature-link-active={isFeatureLinkActive}
                 get-feature-link-params={getFeatureLinkParams}></interfeature-menu>
 
     <script>
         require("./frequency-result-block.tag")
         require("./frequency-result.scss")
+        require("concordance/collfreq-selected-lines-box.tag")
 
         this.mixin("feature-child")
+        this.mixin("tooltip-mixin")
+
+        getSelectedLinesBoxUrl(pn){
+            let cqls = []
+            this.data.f_items.forEach(block => {
+                block.selection.forEach(idx => {
+                    let cql = block.Items[idx].pfilter_list[0]
+                    cqls.push(cql.substr(cql.indexOf("[") - 1))
+                })
+            })
+            let tmp = this.data.f_items[0].Items[0].pfilter_list[0].split(" ")
+            return this.store.getUrlToResultPage(this._getFilterLinkParams([{
+                pn: pn,
+                filfpos: tmp[0].substr(1),
+                filtpos: tmp[1],
+                cql: cqls.length > 1 ? `(${cqls.join(")|(")})` : cqls[0]
+            }]))
+        }
+
+        onSelectedLinesBoxClose(){
+            this.data.f_items.forEach(block => {block.selection.splice(0, block.selection.length)})
+            this.store.updatePageTag()
+        }
+
+        onRandomClick(){
+            this.store.toggleRandom()
+        }
+
+        getSelectedLinesBoxDataLength(){
+            return this.data.f_items.reduce((total, block) => {return total + block.selection.length}, 0)
+        }
 
         updateAttributes(){
-            this.showRelFreq = false
-            if(this.store.data.f_mode != "texttypes"){
-                let refListFlat = this.store.refList.map(ref => {return ref.value})
-                this.showRelFreq = !this.store.data.f_freqml.some(freq => {
-                    return refListFlat.includes(freq.attr)
-                })
-            }
+            this.showRelFrqAndPerc = this.store.f_showRelFrqAndPerc()
+            this.showRelTtAndRelDens = this.store.f_showRelTtAndRelDens()
             this.interFeatureMenuLinks = [{
                 name: "concordance",
                 feature: "concordance",
@@ -68,75 +141,81 @@
         }
         this.updateAttributes()
 
+        isFeatureLinkActive(feature, rowData, evt, linkObj){
+            if(!this.data.f_freqml.length){
+                return true
+            }
+            // if frequency is computed on structre and row value is "", do not allow filters
+            return this.data.f_freqml.some((freq, idx) => {
+                let attr = rowData.block.Head[idx].id.split("/")[0]
+                return rowData.Word[idx].n !== "" || (this.store.structList.findIndex(r => {
+                    return r.value == attr
+                }) == -1)
+            }, this)
+        }
+
         getFeatureLinkParams(feature, rowData, event, featureParams){
-            let value = rowData.Word[0].n
-            let block = rowData.block
+            let filterArr = rowData.pfilter_list.map(f => {
+                let tmp = f.split(" ")
+                return {
+                    pn: featureParams.pn,
+                    filfpos: tmp[0].substr(1),
+                    filtpos: tmp[1],
+                    cql: f.substr(f.indexOf("[") - 1)
+                }
+            })
+            return this._getFilterLinkParams(filterArr)
+        }
+
+        onToggleShowFormClick(){
+            Dispatcher.trigger("FEATURE_TOOLBAR_SHOW_OPTIONS", this.data.act_opts == "frequency" ? null : "frequency")
+        }
+
+        setCheckboxValue(name, value){
+            this.data[name] = value
+            this.store.saveUserOptions([name])
+            this.store.updateUrl()
+            this.update()
+        }
+
+        updateBlocksWidth(){
+            let maxWidth = 0
+            let containerWidth = $(this.root).width()
+            $("frequency-result-block .table", this.root).each((idx, elem) => {
+                maxWidth = Math.max(maxWidth, $(elem).width())
+            })
+            maxWidth = Math.min(maxWidth, containerWidth)
+
+            $("frequency-result-block .table", this.root).each((idx, elem) => {
+                $(elem).css("min-width", maxWidth + "px")
+            })
+        }
+
+        _getFilterLinkParams(filterArr){
             let operations = JSON.parse(JSON.stringify(this.data.operations))
 
-            const addFilter = (filter, desc) => {
+            filterArr.forEach(f => {
                 operations.push({
-                    id: Math.floor((Math.random() * 10000)),
                     name: "filter",
-                    arg: desc,
-                    query: filter,
-                    active: true
-                })
-            }
-
-            if(this.data.f_mode == "texttypes"){
-                addFilter({
-                    ["sca_" + block.Head[0].id]: value,
-                    pnfilter: featureParams.pn,
-                    queryselector: "cqlrow",
-                    filfpos: 0,
-                    filtpos: 0,
-                    inclkwic: true,
-                    cql: "[]"
-                }, `sca_${block.Head[0].id}${(featureParams.pn == "p" ? " is " : " is not ")}'${value}'`)
-            } else if(this.data.f_mode == "multilevel"){
-                this.data.f_freqml.forEach((freq, idx) => {
-                    let attr = block.Head[idx].id.split("/")[0]
-                    let cql = ""
-                    let isTextType = this.store.refList.findIndex(r => {return r.value == attr}) != -1
-                    if(isTextType){
-                        cql += `[] within<${attr.replace(".", " ")}=="${rowData.Word[idx].n}"/>`
-                    } else{
-                        rowData.Word[idx].n.split(" ").forEach(part => {
-                            let clearPart = part.trim()
-                            if(clearPart){
-                                clearPart = clearPart.replace(/[\"\\]/g, "\\$&") //escape " and \
-                                cql += `[${attr}=="${clearPart}"]`
-                            }
-                        }, this)
-                    }
-                    let filfpos
-                    let filtpos
-
-                    if(freq.ctx == 0 && freq.base == "kwic"){
-                        filfpos = filtpos = "0"
-                    } else if (!isNaN(freq.base)){
-                        // filter on collocates
-                        filfpos = freq.ctx + "<" + freq.base
-                        filtpos = freq.ctx + ">" + freq.base
-                    } else {
-                        filfpos = filtpos = this.store.getFilterContextStr(freq.ctx, freq.base)
-                    }
-                    addFilter({
-                        pnfilter: featureParams.pn,
+                    arg: (f.pn == "n" ? "not " : "") + f.cql,
+                    query: {
+                        pnfilter: f.pn,
                         queryselector: "cqlrow",
                         inclkwic: true,
-                        filfpos: filfpos,
-                        filtpos: filtpos,
-                        cql: cql
-                    }, (featureParams.pn == "n" ? "not " : "") + cql)
-                }, this)
-            }
+                        filfpos: f.filfpos,
+                        filtpos: f.filtpos,
+                        partial_match: 0,
+                        cql: f.cql
+                    }
+                })
+            })
+
             let params = {}
             this.store.urlOptions.forEach(option => {
                 params[option] = this.data[option]
             })
             Object.assign(params, {
-                tab: "advanced",
+                tab: this.store.data.tab == "error" ? "error" : "advanced",
                 page: 1,
                 results_screen: "concordance",
                 corpname: this.data.corpname,
@@ -146,34 +225,14 @@
             return params
         }
 
-        onShowrelfrqChange(showrelfrq){
-            this.data.f_showrelfrq = showrelfrq ? 1 : 0
-            this.update()
-        }
-
-        onToggleShowFormClick(){
-            Dispatcher.trigger("FEATURE_TOOLBAR_SHOW_OPTIONS", this.data.act_opts == "frequency" ? null : "frequency")
-        }
-
         this.on("update", () => {
             this.updateAttributes()
         })
 
-        this.on("updated", () => {
-            let maxWidth = 0
-            let containerWidth = $(this.root).width()
-            $("frequency-result-block .col-tab-col>table", this.root).each((idx, elem) => {
-                maxWidth = Math.max(maxWidth, $(elem).width())
-            })
-            maxWidth = Math.min(maxWidth, containerWidth)
-
-            $("frequency-result-block .col-tab-col>table", this.root).each((idx, elem) => {
-                $(elem).css("min-width", Math.max($(elem).width(), maxWidth) + "px")
-            })
-        })
+        this.on("updated", this.updateBlocksWidth.bind(this))
 
         this.on("mount", () => {
-            if(!this.data.f_hasBeenLoaded){
+            if(!this.data.f_hasBeenLoaded && !this.data.isLoading){
                 this.store.f_search()
             }
         })

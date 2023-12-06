@@ -1,6 +1,9 @@
 <floating-button>
     <div class="floatingSearchBtn fixed-action-btn scale-transition scale-out" ref="floatingSearchButton" >
-        <a href={opts.href} class="btn contrast btn-floating btn-large {opts.classes}" disabled={opts.disabled}>
+        <a href={opts.href}
+                class="btn btn-primary btn-floating btn-large {opts.classes} {disabled: opts.disabled}"
+                disabled={opts.disabled}
+                onclick={opts.onClick}>
             <i class="large material-icons" if={!label}>{icon}</i>
             {label}
         </a>
@@ -9,7 +12,7 @@
         // Component for floating button.
         // Button is visible, when reference node is not visible and vice versa.
         // params: icon - material icon
-        //         onclick - callback
+        //         onClick - callback
         //         refnodeid - selector to get reference node - on this node is checked, if is visible
         //         periodic - test, if floating button should be displayed is run
         //                  every second. (for cases, when vieport is stretcch via javascript)

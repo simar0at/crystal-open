@@ -1,0 +1,29 @@
+@import 'app/styles/constants';
+
+.expandable-textarea{
+    display: block;
+}
+
+.expandable-textarea textarea{
+    padding-right: 40px!important;
+    max-height: 180px;
+    overflow: auto;
+}
+
+.expandable-textarea .expandIcon {
+    color: $blue-800;
+    position: absolute;
+    right: 15px;
+}
+
+.density-low .expandable-textarea .expandIcon{
+    bottom: 27px;
+}
+
+.density-medium .expandable-textarea .expandIcon{
+    bottom: 20px;
+}
+
+.density-high .expandable-textarea .expandIcon{
+    bottom: 10px;
+}

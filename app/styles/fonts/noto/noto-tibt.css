@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-tibt ._t{
-    font-family: 'Noto Tibetan'
+.script-tibt ._t,
+body .script-tibt ._t,
+body .script-tibt._t{
+    font-family: 'Noto Tibetan', 'Noto Sans', sans-serif;
 }

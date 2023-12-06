@@ -1,4 +1,4 @@
-<ui-radio class="ui ui-radio {radio-inline: opts.inline}">
+<ui-radio class="ui ui-radio {opts.class} {radio-inline: opts.inline}">
    <div each={option, idx in opts.options}>
         <label for={parent.opts.name + "-" + idx}
             data-tooltip={option.tooltip || parent.opts.tooltip}
@@ -27,10 +27,8 @@
 
 
     onChange(evt){
-        if(typeof this.opts.onChange == "function"){
-            this.opts.onChange(evt.item.option.value, this.opts.name)
-        }
         evt.stopPropagation()
+        isFun(this.opts.onChange) && this.opts.onChange(evt.item.option.value, this.opts.name, evt, this)
     }
 
    </script>

@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-khmr ._t{
-    font-family: 'Noto Khmer'
+.script-khmr ._t,
+body .script-khmr ._t,
+body .script-khmr._t{
+    font-family: 'Noto Khmer', 'Noto Sans', sans-serif;
 }

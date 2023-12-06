@@ -1,15 +1,21 @@
 <collocations-result class="collocations-result">
+    <collfreq-selected-lines-box ref="selectedLinesBox"
+            get-data-length={getSelectedLinesBoxDataLength}
+            on-close-click={onSelectedLinesBoxClose}
+            get-url-to-result-page={getSelectedLinesBoxUrl}></collfreq-selected-lines-box>
     <h4 class="header">{_("collocations")}</h4>
-    <a if={feature == "concordance"}
-            id="btnNewSearch"
-            class="btn contrast"
+    <a id="btnNewSearch"
+            class="btn btn-primary"
             onclick={onToggleShowFormClick}>
         {_("newSearch")}
     </a>
-    <a id="btnBackToConcordance" class="btn contrast" onclick={store.goBackToTheConcordance.bind(store)}>
+    <a id="btnBackToConcordance" class="btn btn-primary" onclick={store.goBackToTheConcordance.bind(store)}>
         {_("backToConcordance")}
     </a>
-    <bgjob-card if={data.jobid} data={data}></bgjob-card>
+    <bgjob-card if={data.jobid}
+            is-loading={data.isBgJobLoading}
+            desc={data.raw.desc}
+            progress={data.raw.processing}></bgjob-card>
     <div if={!data.c_error && !data.isLoading && store.c_hasBeenLoaded && data.c_showItems}>
         <div if={!data.c_isEmpty} class="hasItemsContent">
             <br>
@@ -51,6 +57,7 @@
 
     <script>
         require("./collocations-result.scss")
+        require("concordance/collfreq-selected-lines-box.tag")
         const {AppStore} = require("core/AppStore.js")
 
         this.mixin("feature-child")
@@ -71,23 +78,28 @@
         }]
 
         formatNum(val){
-            return window.Formatter.num(parseFloat(Math.round(val * 100) / 100).toFixed(2), {minimumFractionDigits: 2})
+            return window.valueFormatter(parseFloat(Math.round(val * 100) / 100), 2)
         }
 
         getFeatureLinkParams(feature, rowData, event, featureParams){
+            rowData = Array.isArray(rowData) ? rowData : [rowData]
+            let cql = []
+            let arg = []
+            rowData.forEach(item => {
+                cql.push(`[${this.data.c_cattr}="${escapeRE(item.str)}"]`)
+                arg.push(item.str)
+            })
             let operations = copy(this.data.operations)
             let operation = {
-                id: Math.floor((Math.random() * 10000)),
                 name: "filter",
-                arg: rowData.str + " " + this.data.c_cfromw + ", " + this.data.c_ctow,
+                arg: arg.join(",") + " " + this.data.c_cfromw + ", " + this.data.c_ctow,
                 query: {
                     pnfilter: featureParams.pn,
                     queryselector: "cqlrow",
                     filfpos: this.data.c_cfromw,
                     filtpos: this.data.c_ctow,
-                    cql: `[${this.data.c_cattr}="${rowData.str}"]`
-                },
-                active: true
+                    cql: cql.join("|")
+                }
             }
             if(this.feature == "parconcordance"){
                 operation.corpname = this.data.alignedCorpname
@@ -109,10 +121,31 @@
             return params
         }
 
+        getSelectedLinesBoxUrl(pn){
+            return this.store.getUrlToResultPage(this.getFeatureLinkParams("concordance", this.data.c_selection.map(i => ({str: i})), null, {pn: pn} ))
+        }
+
+        getSelectedLinesBoxDataLength(){
+            return this.data.c_selection.length
+        }
 
         setColMeta(){
             let attr = AppStore.getAttributeByName(this.data.c_cattr)
             this.colMeta = [{
+                id: "chbox",
+                "class": "chboxColumn",
+                generator: (item, colMeta) => {
+                    return `<label>
+                        <input type="checkbox" ${(this.data.c_selection.indexOf(item.str) != -1) ? 'checked=checked' : ''}/>
+                        <span></span>
+                    </label>`
+                },
+                onclick: function(item, colMeta, evt) {
+                    evt.preventUpdate = true
+                    evt.preventDefault() // without this event is fired twice
+                    this.onItemSelectToggleClick(item, evt)
+                }.bind(this)
+            }, {
                 id: "str",
                 "class": "word",
                 label: attr ? attr.label : this.data.c_cattr
@@ -162,7 +195,7 @@
                 id: "menu",
                 "class": "menuColumn",
                 generator: () => {
-                    return "<a class=\"iconButton waves-effect waves-light btn btn-flat btn-floating\"><i class=\"material-icons menuIcon\" >more_horiz</i></a>"
+                    return "<a class=\"iconButton btn btn-flat btn-floating\"><i class=\"material-icons menuIcon\" >more_horiz</i></a>"
                 },
                 onclick: function(item, colMeta, evt) {
                     this.refs.interfeatureMenu.onOpenMenuButtonClick(evt, item)
@@ -199,12 +232,30 @@
             }
         }
 
-        onToggleShowFormClick(){
+        onToggleShowFormClick(evt){
             Dispatcher.trigger("FEATURE_TOOLBAR_SHOW_OPTIONS", this.data.act_opts == "collocations" ? null : "collocations")
+            this.opts.onToggleShowForm && this.opts.onToggleShowForm(evt)
         }
 
         onShowErrorDetailsClick(){
             this.showErrorDetails = true
+        }
+
+        onSelectedLinesBoxClose(){
+            this.data.c_selection.splice(0, this.data.c_selection.length) // empty field but keep referece
+            this.store.updatePageTag()
+        }
+
+        onItemSelectToggleClick(item, evt){
+            let input = $(evt.currentTarget).find("input")
+            input.prop("checked", !input.prop("checked"))
+            let idx = this.data.c_selection.indexOf(item.str)
+            if(idx == -1){
+                this.data.c_selection.push(item.str)
+            } else {
+                this.data.c_selection.splice(idx, 1)
+            }
+            this.refs.selectedLinesBox.update()
         }
 
         this.on("update", () => {

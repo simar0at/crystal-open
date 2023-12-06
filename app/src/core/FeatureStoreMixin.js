@@ -1,9 +1,11 @@
 const {StoreMixin} = require("core/StoreMixin.js")
+const {Url} = require("core/url.js")
 const {Router} = require("core/Router.js")
 const {AppStore} = require("core/AppStore.js")
+const {Auth} = require("core/Auth.js")
 const {UserDataStore} = require("core/UserDataStore.js")
 const {TextTypesStore} = require('common/text-types/TextTypesStore.js')
-const {Connection} = require('core/Connection.js')
+const {Connection, SSEConnection} = require('core/Connection.js')
 
 
 class FeatureStoreMixin extends StoreMixin{
@@ -22,7 +24,12 @@ class FeatureStoreMixin extends StoreMixin{
             page: 1,
             tab: "basic",
             activeRequest: null, // actual pending ajax call to get result data
-            showresults: false // should displayed result screen?
+            showresults: false,
+            allItems: [],  // all loaded items, data.items might be filtered
+            search_query: "",
+            search_mode: "containing",
+            search_matchCase: false,
+            isEmptySearch: false
         }
         this.hasBeenLoaded = false
         this.savedState = {}
@@ -32,8 +39,7 @@ class FeatureStoreMixin extends StoreMixin{
         this.searchOptions = []
         this.pageTag = null // reference to page-xxx.tag component
         this.validEmptyOptions = []
-        this.bgJobTimeoutHandle = null
-        this.bgJobWaitTime = 2000
+        this.bgJobEventSource = null
 
         Dispatcher.on("ROUTER_CHANGE", this._onPageChange.bind(this))
         Dispatcher.on("RESET_STORE", this._onResetStore.bind(this))
@@ -42,7 +48,7 @@ class FeatureStoreMixin extends StoreMixin{
         Dispatcher.on("RESULT_NEXT_PAGE", this.nextPage.bind(this))
         Dispatcher.on("FEATURE_HOTKEY", this._onHotkey.bind(this))
         AppStore.on("corpusChanged", this._onCorpusChange.bind(this))
-        UserDataStore.on("featureDataLoaded", this._onUserDataLoaded.bind(this))
+        UserDataStore.on("corpusDataLoaded", this._onUserDataLoaded.bind(this))
     }
 
     resetSearchAndAddToHistory(options){
@@ -65,36 +71,30 @@ class FeatureStoreMixin extends StoreMixin{
         this.data.showresults = true
         this.updatePageTag()
 
-        this.data.activeRequest = Connection.get({
+        this.data.activeRequest = Connection.get(Object.assign({
             url: this.getRequestUrl(params),
-            query: this.getRequestQuery(params),
-            xhrParams: Object.assign({
-                method: "POST",
-                data: this.getRequestData(params)
-            }, this.getRequestXhrParams(params)),
+            data: this.getRequestData(params),
             done: this.onDataLoadDone.bind(this),
             fail: this.onDataLoadFail.bind(this),
             always: this.onDataLoadAlways.bind(this)
-        })
+        }, this.getSearchOptions()))
         this.request = [this.data.activeRequest]
+        this.trigger("search")
     }
 
     getRequestUrl(){
         throw "FeatureStoreMixin.getRequestUrl: Not implemented"
     }
 
-    getRequestQuery(){
-        return {
-            corpname: this.corpus.corpname
-        }
-    }
-
-    getRequestXhrParams(){
+    getSearchOptions(){
         return {}
     }
 
     getRequestData(){
-        let data = {}
+        let data = {
+            corpname: this.corpus.corpname,
+            results_url: window.location.href + '&showresults=1'
+        }
         this.xhrOptions.forEach(attr => {
             if(isDef(this.data[attr])){
                 data[attr] = this.data[attr]
@@ -104,29 +104,38 @@ class FeatureStoreMixin extends StoreMixin{
         return data
     }
 
+    getDownloadRequest(idx){
+        return this.request[idx]
+    }
+
     onDataLoadDone(payload){
         if(!this._isActualFeature()){
             return // request was send and then user navigated to another feature
         }
         this.onDataLoaded(payload)
+        this.trigger("onDataLoadDone")
     }
 
-    onDataLoadFail(payload){}
+    onDataLoadFail(payload){
+        this.trigger("onDataLoadFail")
+    }
 
     onDataLoadAlways(payload){
         this.data.activeRequest = null
         this.data.isLoading = false
-        this.data.keepFeatureToolbar = false
+        this.data.closeFeatureToolbar = false
         this.saveState()
         this.updatePageTag()
+        this.trigger("onDataLoadAlways")
     }
 
     onDataLoaded(payload){
         this.data.items = []
+        this.data.allItems = []
         this.data.total = 0
         this.data.error = ''
-        this.data.jobid = null
         this.data.isEmpty = true
+        this.data.isEmptySearch = false
         this.data.isError = false
         this.data.raw = payload
         this.onDataLoadedProcessBGJob(payload)
@@ -134,6 +143,7 @@ class FeatureStoreMixin extends StoreMixin{
         if(!this.data.isError && !this.data.jobid){
             this.onDataLoadedProcessItems(payload)
             this.countItems(payload)
+            this.filterResults()
             this.data.isEmpty = this.data.total == 0
             this.calculatePagination() // after data.total is computed
             if(!this.data.isEmpty){
@@ -144,31 +154,70 @@ class FeatureStoreMixin extends StoreMixin{
                 this.showEmptyResultMessage()
             }
         }
-        if(!this.data.isError && !this.data.keepFeatureToolbar){
+        if(!this.data.isError && !this.data.isEmpty && this.data.closeFeatureToolbar){
             Dispatcher.trigger("FEATURE_TOOLBAR_SHOW_OPTIONS", null)
         }
     }
 
-    onDataLoadedProcessBGJob(payload){
+    onDataLoadedProcessBGJob(payload, searchMethod){
+        this.data.jobid = null
         if(payload.jobid){
             this.data.jobid = payload.jobid
-            if (!this.bgJobTimeoutHandle) {
-                AppStore.loadBgJobs()
-            }
-            this.bgJobTimeoutHandle = setTimeout(this.search.bind(this), this.bgJobWaitTime)
-            if(this.bgJobWaitTime < 30000){
-                this.bgJobWaitTime += 2000
+            if(Auth.isFullAccount()){
+                !this.bgJobEventSource && AppStore.loadBgJobs()
+                this._checkBgJob(searchMethod || this.search.bind(this), payload.jobid)
             }
         } else {
             this._stopBgJobInterval()
         }
     }
 
+    _checkBgJob(searchMethod, jobid){
+        this.bgJobEventSource = SSEConnection.get({
+            url: window.config.URL_BONITO + "jobproxy",
+            data: {
+                task: "job_progress",
+                jobid: jobid,
+                sse: 1
+            },
+            message: function(payload){
+                if (payload.error) {
+                    this._stopBgJobInterval()
+                    SkE.showError(_("bj.bgJobFailedToRun", [payload.error]))
+                } else if (payload.signal) {
+                    let signal = JSON.parse(payload.signal)[0]
+                    if(payload.signal == "[]" || (signal.progress == 100 && signal.status[0] != "err")){
+                        this._stopBgJobInterval()
+                        searchMethod()
+                    } else if (signal.status[0] == "err"){
+                        delete this.data.jobid
+                        this._stopBgJobInterval()
+                        let superUserError = signal.stderr ? ("\n\n" + signal.stderr) : ""
+                        SkE.showError(_("bj.bgJobFailed"), signal.status[1] + superUserError)
+                        this.updatePageTag()
+                    } else {
+                        if(this.data.raw){
+                            this.data.raw.processing = signal.progress
+                        }
+                    }
+                } else {
+                    SkE.showError(_("somethingWentWrong"))
+                }
+                this.updatePageTag()
+
+            }.bind(this),
+            fail: payload => {
+                SkE.showToast("Could not check computation progress.", getPayloadError(payload))
+            }
+        })
+        this.updatePageTag()
+    }
+
     onDataLoadedProcessError(payload){
         if(payload.error){
             this.data.error = payload.error
             this.data.isError = true
-            this.showError(payload.error)
+            this.showError(getPayloadError(payload))
         }
     }
 
@@ -206,11 +255,14 @@ class FeatureStoreMixin extends StoreMixin{
             }
         }
         this.data.tts = {}
+        ;["search_query", "search_mode", "search_matchCase"].forEach(key => {
+            this.data[key] = this.defaults[key]
+        })
     }
 
     getUrlToResultPage(options){
         let data = Object.assign({showresults: 1}, options)
-        return Router.createUrl(this.feature, this._getQueryObject(data))
+        return Url.create(this.feature, this._getQueryObject(data))
     }
 
     getResultPageObject(){
@@ -252,6 +304,10 @@ class FeatureStoreMixin extends StoreMixin{
 
     resetGivenOptions(options){
         for(let key in options){
+            // usesubcorp is locked, do not reset
+            if(key == "usesubcorp" && UserDataStore.getCorpusData(this.corpus.corpname, "defaultSubcorpus")){
+                continue
+            }
             if(isDef(this.defaults[key])){
                 if(typeof this.defaults[key] == "object"){
                     // new object, so one in defaults is not used (by reference)
@@ -294,17 +350,21 @@ class FeatureStoreMixin extends StoreMixin{
     }
 
     updateUrl(addToHistory, forceUpdate) {
-        Router.updateUrlQuery(this._getQueryObject(), addToHistory, forceUpdate)
+        Url.setQuery(this._getQueryObject(), addToHistory, forceUpdate)
     }
 
     saveState(){
-        this.savedState = this._copy(this.data)
+        this.savedState = {}
+        this.urlOptions.forEach(key => {
+            if(isDef(this.data[key])){
+                this.saveState[key] = window.copy(this.data[key])
+            }
+        }, this)
     }
 
     restoreState(){
         if(this.savedState){
             for(let key in this.savedState){
-                // TODO realy?
                 // just copy values, so this.data object is not changed - unlike this.data = this.savedState
                 this.data[key] = this.savedState[key]
             }
@@ -317,25 +377,22 @@ class FeatureStoreMixin extends StoreMixin{
             id: "searchEmptyDialog",
             title: _("nothingFound"),
             small: true,
-            content: _("nothingFoundDesc")
+            content: _("nothingFoundDesc"),
+            onClose: () => {
+                $(".mainFormField:visible")
+                    .find("input[type=text], input[type=file], textarea, select, .ui-list-list")
+                    .first()
+                    .focus()
+            }
         })
     }
 
     showError(errorMessage){
-        Dispatcher.trigger("openDialog", {
-            id: "searchErrorDialog",
-            title: _("somethingWentWrong"),
+        SkE.showError(_("searchError"), errorMessage, {
+            id: "t_searchErrorDialog",
             small: true,
-            type: "error",
-            content: errorMessage
+            type: "error"
         })
-    }
-
-    updateRequestData(request, data){
-        // update data in serialized xhrParams.data. Used for export/download requests
-        let oldData = this._parseRequestData(request)
-        let newData = Object.assign(oldData, data)
-        request.xhrParams.data = "json=" + encodeURIComponent(JSON.stringify(newData))
     }
 
     _onHotkey(args){
@@ -346,10 +403,6 @@ class FeatureStoreMixin extends StoreMixin{
                 SkE.showToast("Wrong shortcut")
             }
         }
-    }
-
-    _parseRequestData(request){
-        return JSON.parse(decodeURIComponent(request.xhrParams.data.substring(5)))
     }
 
     _setItemsPerPageAndRecalculate(itemsPerPage){
@@ -395,6 +448,96 @@ class FeatureStoreMixin extends StoreMixin{
         }
     }
 
+    changeFilter(search_query, search_mode, search_matchCase){
+        if(search_query === this.data.search_query
+                && this.data.search_mode == search_mode
+                && this.data.search_matchCase == search_matchCase){
+            return
+        }
+        if(search_query === ""){
+            this.cancelFilter()
+        } else {
+            this.data.search_query = search_query
+            this.data.search_mode = search_mode
+            this.data.search_matchCase = search_matchCase
+            this.data.page = 1
+            this.filterResults()
+            this.updatePageTag()
+            this.updateUrl()
+        }
+    }
+
+    filterResults(){
+        if(this.data.search_query !== ""){
+            if(!this.data.allItems.length){
+                this.data.allItems = copy(this.data.items)
+            }
+            let re = this.getFilterRegEx()
+            this.data.items = this.data.allItems.filter(item => this.filterTestItem(re, item))
+            this.data.isEmptySearch = !this.data.items.length
+            this.countItems()
+            this.calculatePagination()
+        }
+    }
+
+    filterTestItem(re, item){
+        throw "FeatureStoreMixin.filterTestItem: Not implemented"
+    }
+
+    cancelFilter(){
+        if(this.data.search_query !== ""){
+            this.data.search_query = ""
+            this.data.search_mode = this.defaults.search_mode
+            this.data.items = copy(this.data.allItems)
+            this.data.isEmptySearch = false
+            this.countItems()
+            this.calculatePagination()
+            this.updatePageTag()
+            this.updateUrl()
+        }
+    }
+
+    getFilterRegEx(){
+        let re = null
+        let reStr = this.data.search_mode == "matchingRegex"
+                ? this.data.search_query
+                : window.escapeRE(this.data.search_query)
+        if(this.data.search_mode == "exactMatch"){
+            reStr = "^" + reStr + "$"
+        } else if(this.data.search_mode == "startingWith"){
+            reStr = "^" + reStr
+        } else if (this.data.search_mode == "endingWith"){
+            reStr = reStr + "$"
+        }
+        try{
+            re = new RegExp(reStr, this.data.search_matchCase ? "" : "i")
+        } catch(e){
+            re = new RegExp()
+            SkE.showToast(_("regexInvalid"))
+        }
+        return re
+    }
+
+    stringifyValue(value, name){
+        if(value === ""){
+            return _("none")
+        }
+        if(typeof value == "boolean" || (name && typeof this.defaults[name] == "boolean")){
+            return `"${value ? _("yes") : _("no")}"`
+        }
+        if(Array.isArray(value)){
+            return value.map(v => {
+                return this.stringifyValue(v)
+            }).join(", ")
+        }
+        if(typeof value == "object"){
+            return Object.keys(value).map(key => {
+                return `${key}: ${this.stringifyValue(value[key])}`
+            }).join(", ")
+        }
+        return value + ""
+    }
+
     _isActualFeature(){
         // return true if actual displaz
         return Router.getActualFeature() == this.feature
@@ -423,7 +566,13 @@ class FeatureStoreMixin extends StoreMixin{
             AppStore.changeActualFeatureStore(this)
             if(this.pageTag && this.pageTag.isMounted && this.data.showresults){
                 // user navigated to the result page -> load results
-                this.search()
+                if(UserDataStore.isCorpusDataLoading()){
+                    // Corpus data are being loaded now, wait for it and then search.
+                    // Without wait params from url will overwritten by corpus data
+                    UserDataStore.one("corpusDataLoadDone", this.search.bind(this))
+                } else {
+                    this.search()
+                }
             }
         } else{
             this.cancelPreviousRequest()
@@ -439,18 +588,21 @@ class FeatureStoreMixin extends StoreMixin{
     }
 
     _onUserDataLoaded(){
-        this.userOptions = this._copy(UserDataStore.getFeatureOptions(this.feature)) // if there is an object in user data saving does not work - change is not detected
-        let tab = this.userOptions.tab
-        if(this._isActualFeature()){
-            if(this.pageTag){
-                // user changed corpus from open feature -> feature is already mounted -> update feature
-                this._setDataFromUserOptions()
-                this.updatePageTag()
-            }
-        } else{
-            if(tab && this.data.tab != tab){
-                // set default only to non-active features. In active features is tab set acording url
-                this.data.tab = tab
+        let userOptions = UserDataStore.getFeatureOptions(this.corpus.corpname, this.feature)
+        if(userOptions){
+            this.userOptions = window.copy(userOptions) // if there is an object in user data saving does not work - change is not detected
+            let tab = this.userOptions.tab
+            if(this._isActualFeature()){
+                if(this.pageTag){
+                    // user changed corpus from open feature -> feature is already mounted -> update feature
+                    this._setDataFromUserOptions()
+                    this.updatePageTag()
+                }
+            } else{
+                if(tab && this.data.tab != tab){
+                    // set default only to non-active features. In active features is tab set acording url
+                    this.data.tab = tab
+                }
             }
         }
     }
@@ -472,7 +624,7 @@ class FeatureStoreMixin extends StoreMixin{
     }
 
     _resetOptions() {
-        this.data = this._copy(this.defaults)
+        this.data = window.copy(this.defaults)
         this.hasBeenLoaded = false
         this.corpus && this.setCorpusDefaults()
         this._setDataFromUserOptions()
@@ -492,7 +644,9 @@ class FeatureStoreMixin extends StoreMixin{
         for (let i in this.urlOptions) {
             let option = this.urlOptions[i]
             let value = data[option]
-            if(this.isOptionDefault(option, value)){
+            //  keep all options from userOptionsToSave in URL so stored user_options will not
+            //  override default values when opening link
+            if(!this.userOptionsToSave.includes(option) && this.isOptionDefault(option, value)){
                 continue
             }
             if (typeof value == "object") {
@@ -510,7 +664,7 @@ class FeatureStoreMixin extends StoreMixin{
 
     _addTextTypesToData(data){
         if(!$.isEmptyObject(this.data.tts)){
-            Object.assign(data, TextTypesStore.getSelectionQuery())
+            Object.assign(data, TextTypesStore.getQueryFromTextTypes(this.data.tts))
             data.instantSubCorp = 1
         }
     }
@@ -531,7 +685,7 @@ class FeatureStoreMixin extends StoreMixin{
 
     _setNonEmptyOptions(options){
         for(let key in options){
-            if(options[key] !== "" || this.validEmptyOptions.includes(key)){
+        if(options[key] !== "" || this.validEmptyOptions.includes(key)){
                 this.data[key] = options[key]
             } else {
                 this.data[key] = this.defaults[key]
@@ -552,21 +706,22 @@ class FeatureStoreMixin extends StoreMixin{
                 this.data[option] = query[option]
             }
         }
-        query.tts && TextTypesStore.setSelection(this.data.tts)
     }
 
     _setDataFromUserOptions(){
+        if(this.corpus && isDef(this.data.usesubcorp)){
+            // subcorp is locked -> set
+            this.data.usesubcorp = UserDataStore.getCorpusData(this.corpus.corpname, "defaultSubcorpus") || ""
+        }
         for(let key in this.userOptions){
-            this.data[key] = this.userOptions[key]
+            this.set(key, this.userOptions[key])
         }
     }
 
     _stopBgJobInterval(){
-        if(this.bgJobTimeoutHandle){
-            clearTimeout(this.bgJobTimeoutHandle)
-            this.bgJobTimeoutHandle = null
+        if(this.bgJobEventSource){
+            SSEConnection.abortRequest(this.bgJobEventSource)
         }
-        this.bgJobWaitTime = 2000
     }
 }
 

@@ -1,6 +1,10 @@
-@import 'app/styles/base';
+@import 'app/styles/constants';
 
 .wordlist-result-table{
+    .ui-pagination{
+        justify-self: flex-end;
+    }
+
     .oneColumn{
         max-width: 600px;
         margin: auto;
@@ -15,7 +19,7 @@
     .menuColumn {
         width: 1%;
         i{
-            color: $mediumGray;
+            color: $gray-600;
         }
     }
     .barsColumn{

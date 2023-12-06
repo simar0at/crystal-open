@@ -1,15 +1,23 @@
-.script-jpan ._t{
-    font-family: 'Noto Sans JP';
+.script-jpan ._t,
+body .script-jpan ._t,
+body .script-jpan._t{
+    font-family: 'Noto Sans JP', 'Noto Sans', sans-serif;;
 }
 
-.script-kore ._t{
-    font-family: 'Noto Sans KR';
+.script-kore ._t,
+body .script-kore ._t,
+body .script-kore._t{
+    font-family: 'Noto Sans KR', 'Noto Sans', sans-serif;;
 }
 
-.script-hant ._t{
-    font-family: 'Noto Sans TC';
+.script-hant ._t,
+body .script-hant ._t,
+body .script-hant._t{
+    font-family: 'Noto Sans TC', 'Noto Sans', sans-serif;;
 }
 
-.script-hans ._t{
-    font-family: 'Noto Sans SC';
+.script-hans ._t,
+body .script-hans ._t,
+body .script-hans._t{
+    font-family: 'Noto Sans SC', 'Noto Sans', sans-serif;;
 }

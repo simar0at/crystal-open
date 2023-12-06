@@ -1,0 +1,10 @@
+.result-filter-chip{
+    .chip{
+        display: inline-flex;
+        vertical-align: middle;
+        align-items: center;
+        &>span{
+            max-width: 350px;
+        }
+    }
+}

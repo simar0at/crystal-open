@@ -2,7 +2,7 @@ const {Connection} = require('core/Connection.js')
 const {AppStore} = require("core/AppStore.js")
 const {StoreMixin} = require("core/StoreMixin.js")
 const {AsyncResults} = require("core/asyncresults.js")
-const {Router} = require("core/Router.js")
+const {Url} = require("core/url.js")
 require("./ca-space-dialog.tag")
 
 class CAStoreClass extends StoreMixin {
@@ -20,11 +20,7 @@ class CAStoreClass extends StoreMixin {
     }
 
     updateUrl(){
-        if(this.corpus){
-            let query = Router.getUrlQuery()
-            query.corpname = this.corpus.corpname
-            Router.updateUrlQuery(query)
-        }
+        this.corpus && Url.updateQuery({corpname: this.corpus.corpname})
     }
 
     allFilesetsReady(){
@@ -42,8 +38,8 @@ class CAStoreClass extends StoreMixin {
             return
         }
         this.data.requests["filesets_" + corpus_id] = Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/filesets",
-            xhrParams:{type: "GET"},
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/filesets",
+            xhrParams:{method: "GET"},
             done: (payload) => {
                 this.data.requests["filesets_" + corpus_id] = null
                 this._onFilesetsLoaded(payload)
@@ -59,8 +55,16 @@ class CAStoreClass extends StoreMixin {
         this.data.requests[r_id] && this._cancelPreviousRequest(r_id)
         this.data.filesLoading = true
         this.data.requests[r_id] = Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/documents?fileset_id=" + fileset_id,
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents?fileset_id=" + fileset_id,
             done: this._onFilesLoaded.bind(this, corpus_id),
+            fail: this._defaultOnFail.bind(this)
+        })
+    }
+
+    loadFile(corpus_id, file_id){
+        Connection.get({
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents/" + file_id,
+            done: this._onFileLoaded.bind(this, file_id),
             fail: this._defaultOnFail.bind(this)
         })
     }
@@ -68,43 +72,34 @@ class CAStoreClass extends StoreMixin {
     loadSomefile(somefile_id){
         return Connection.get({
             query: {},
-            url: window.config.URL_CA + "/somefiles/" + somefile_id
+            url: window.config.URL_CA + "somefiles/" + somefile_id
         })
     }
 
-    loadTagSets(params){
-        let tagset = this.data.tagset
-        let query = ""
-        if(isDef(params.id)){
-            if(!tagset || tagset.id != params.id){
-                query = "/" + params.id
-            }
-        } else if(isDef(params.language_id)){
-            if(!tagset || tagset.language_id != params.language_id){
-                query = "?language_id=" + params.language_id
-            }
-        }
-        if(query){
-            this.data.isTagsetsLoading = true
-            Connection.get({
-                url: window.config.URL_CA + "/tagsets" + query,
-                done: this._onTagsetsLoaded.bind(this, params),
-                fail: this._defaultOnFail.bind(this)
-            })
-        }
+    loadTagSets(language_id){
+        this.data.isTagsetsLoading = true
+        Connection.get({
+            url: window.config.URL_CA + "tagsets?language_id=" + language_id,
+            done: this._onTagsetsLoaded.bind(this),
+            fail: this._defaultOnFail.bind(this)
+        })
     }
 
     loadActualTagSet(){
-        CAStore.loadTagSets({
-            id: this.corpus.tagset_id
-        })
+        if(!this.data.tagset || this.data.tagset.id != this.corpus.tagset_id){
+            Connection.get({
+                url: window.config.URL_CA + "tagsets/" + this.corpus.tagset_id,
+                done: this._onActualTagsetLoaded.bind(this),
+                fail: this._defaultOnFail.bind(this)
+            })
+        }
     }
 
     loadSketchGrammars(corpus_id){
         if(!this.data.isSketchGrammarsLoading){
             this.data.isSketchGrammarsLoading = true
             Connection.get({
-                url: window.config.URL_CA + "/sketch_grammars?corpus_id=" + corpus_id,
+                url: window.config.URL_CA + "sketch_grammars?corpus_id=" + corpus_id,
                 done: this._onSketchGrammarsLoaded.bind(this),
                 fail: this._defaultOnFail.bind(this)
             })
@@ -113,7 +108,7 @@ class CAStoreClass extends StoreMixin {
 
     loadSketchGrammar(grammar_id, onDone){
         Connection.get({
-            url: window.config.URL_CA + "/sketch_grammars/" + grammar_id,
+            url: window.config.URL_CA + "sketch_grammars/" + grammar_id,
             done: onDone,
             fail: this._defaultOnFail.bind(this)
         })
@@ -121,7 +116,7 @@ class CAStoreClass extends StoreMixin {
 
     loadTerms(corpus_id){
         Connection.get({
-            url: window.config.URL_CA + "/sketch_grammars?corpus_id=" + corpus_id + "&is_term=1",
+            url: window.config.URL_CA + "sketch_grammars?corpus_id=" + corpus_id + "&is_term=1",
             done: this._onTermsLoaded.bind(this),
             fail: this._defaultOnFail.bind(this)
         })
@@ -130,7 +125,7 @@ class CAStoreClass extends StoreMixin {
     loadSharing(corpus_id){
         this.data.filesLoaded = false
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/sharing",
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/sharing",
             done: this._onSharingLoaded.bind(this),
             fail: this._defaultOnFail.bind(this)
         })
@@ -139,7 +134,7 @@ class CAStoreClass extends StoreMixin {
     loadFileContent(corpus_id, file_id, type, start){
         // type = plaintext | vertical
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/documents/" + file_id + "/" + type,
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents/" + file_id + "/" + type,
             xhrParams: {
                 "headers": {
                     Range: "bytes=" + start + "-"
@@ -158,7 +153,7 @@ class CAStoreClass extends StoreMixin {
 
     createCorpus(name, language_id, tagset_id, info){
         Connection.get({
-            url: window.config.URL_CA + "/corpora",
+            url: window.config.URL_CA + "corpora",
             xhrParams: {
                 method: "POST",
                 contentType: "application/json",
@@ -176,7 +171,7 @@ class CAStoreClass extends StoreMixin {
 
     createGrammar(grammar){
         Connection.get({
-            url: window.config.URL_CA + "/sketch_grammars",
+            url: window.config.URL_CA + "sketch_grammars",
             xhrParams: {
                 method: "POST",
                 contentType: "application/json",
@@ -198,7 +193,7 @@ class CAStoreClass extends StoreMixin {
 
     updateSharing(corpus_id, sharing){
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/sharing",
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/sharing",
             xhrParams: {
                 method: "POST",
                 contentType: "application/json",
@@ -210,9 +205,9 @@ class CAStoreClass extends StoreMixin {
 
     updateCompilerSettings(corpus_id, settings, done){
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id,
+            url: window.config.URL_CA + "corpora/" + corpus_id,
             xhrParams:{
-                type: "PUT",
+                method: "PUT",
                 data: JSON.stringify(settings)
             },
             done: done,
@@ -245,11 +240,8 @@ class CAStoreClass extends StoreMixin {
         file.progress = -1
         file.cancelling = true
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/documents/" + document_id + "/cancel_job",
-            xhrParams: this.EMPTY_POST,
-            done:() => {
-                this._startFolderUploadedChecking(corpus_id)
-            },
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents/" + document_id + "/cancel_job",
+            xhrParams: this._getEmptyXhrParams(),
             fail: this._defaultOnFail.bind(this)
         })
     }
@@ -258,7 +250,7 @@ class CAStoreClass extends StoreMixin {
         let formData = new FormData()
         formData.append("file", file)
         return Connection.get({
-            url: window.config.URL_CA + "/somefiles",
+            url: window.config.URL_CA + "somefiles",
             xhrParams: {
                 method: "POST",
                 processData: false,
@@ -270,7 +262,7 @@ class CAStoreClass extends StoreMixin {
 
     changeTMXCorpusSettings(somefile_id, settings){
         return Connection.get({
-            url: window.config.URL_CA + "/somefiles/" + somefile_id,
+            url: window.config.URL_CA + "somefiles/" + somefile_id,
             xhrParams: {
                 method: "PUT",
                 contentType: "application/json",
@@ -281,7 +273,7 @@ class CAStoreClass extends StoreMixin {
 
     uploadPlainText(corpus_id, text){
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/documents?feeling=lucky",
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents?feeling=lucky",
             xhrParams: {
                 method: "POST",
                 contentType: "application/json",
@@ -301,8 +293,8 @@ class CAStoreClass extends StoreMixin {
             this.setActiveFilesetId(corpus_id, null)
         }
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/filesets/" + fileset_id,
-            xhrParams:{type: "DELETE"},
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/filesets/" + fileset_id,
+            xhrParams:{method: "DELETE"},
             done: this._onFilesetDeleted.bind(this, fileset_id),
             fail: function(fileset_id, payload){
                 let fileset = this._getFileset(fileset_id)
@@ -319,8 +311,8 @@ class CAStoreClass extends StoreMixin {
         // delete files in batch of 100 max. Otherwise url length limit might be reached
         let file_ids_str = file_ids.splice(0, 100).join(",")  // file IDs joined with ","
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/documents/" + file_ids_str,
-            xhrParams:{type: "DELETE"},
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents/" + file_ids_str,
+            xhrParams:{method: "DELETE"},
             done: function(corpus_id, file_ids, fileset_id){
                 if(file_ids.length){
                     this.deleteFiles(corpus_id, file_ids, fileset_id, all_file_ids)
@@ -332,19 +324,9 @@ class CAStoreClass extends StoreMixin {
         })
     }
 
-    loadFileEncodings(){
-        Connection.get({
-            url: window.config.URL_CA + "/charsets",
-            done: (payload) => {
-                this.trigger("fileEncodingsLoaded", payload.data)
-            },
-            fail: this._defaultOnFail.bind(this)
-        })
-    }
-
     loadFilePreview(corpus_id, file_id, parameters){
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/documents/" + file_id + "/preview",
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents/" + file_id + "/preview",
             xhrParams:{
                 method: "POST",
                 contentType: "application/json",
@@ -363,7 +345,7 @@ class CAStoreClass extends StoreMixin {
 
     loadFilePlaintextPreview(corpus_id, file_id, parameters){
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/documents/" + file_id + "/plaintext",
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents/" + file_id + "/plaintext",
             always: function(file_id, payload){
                 this.trigger("filePlaintextPreviewLoadFinished", file_id, payload)
             }.bind(this, file_id)
@@ -372,7 +354,7 @@ class CAStoreClass extends StoreMixin {
 
     updateFile(corpus_id, file){
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/documents/" + file.id,
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents/" + file.id,
             xhrParams:{
                 method: "PUT",
                 contentType: "application/json",
@@ -383,6 +365,7 @@ class CAStoreClass extends StoreMixin {
                 this.data.files[this._getFileIndex(file.id)] = file
                 this._startFolderUploadedChecking(corpus_id)
                 this._startFileChecking(corpus_id, file.id)
+                this._checkIfCompilationIsNeeded()
                 this.trigger("filesChanged", this.data.files)
             }.bind(this, corpus_id),
             fail: this._defaultOnFail.bind(this)
@@ -394,8 +377,8 @@ class CAStoreClass extends StoreMixin {
         this.data.files.splice(idx, 1)
         this.trigger("filesChanged", this.data.files)
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/documents/" + file_id + "/expand_archive",
-            xhrParams: this.EMPTY_POST,
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents/" + file_id + "/expand_archive",
+            xhrParams: this._getEmptyXhrParams(),
             done: (payload) => {
                 this.loadFilesets(corpus_id)
                 this.one("filesetsChanged", this.trigger.bind(this, "fileExpanded", payload.result))
@@ -429,6 +412,16 @@ class CAStoreClass extends StoreMixin {
         }, 0)
     }
 
+    getAttributeList(){
+        let attributes = []
+        this.data.files.forEach(f => {
+            for(let key in f.metadata){
+                attributes.push(key)
+            }
+        })
+        return [...new Set(attributes)].map(key => ({value: key, label: key}))
+    }
+
     setActiveFilesetId(corpus_id, fileset_id){
         if(this.data.activeFilesetId !== fileset_id){
             this.data.activeFilesetId = fileset_id
@@ -439,13 +432,17 @@ class CAStoreClass extends StoreMixin {
                 }, this)
                 this.loadFilesetFiles(this.corpus.id, fileset_id)
             }
+            if(fileset_id == 0){
+                let ar = this.get("asyncResults." + corpus_id + "_0")
+                ar && ar.stop()
+            }
             this.trigger("activeFilesetChanged")
         }
     }
 
     saveFilesMetadata(corpus_id, data){
         return Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/documents",
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents",
             xhrParams: {
                 method: "PUT",
                 contentType: "application/json",
@@ -459,6 +456,7 @@ class CAStoreClass extends StoreMixin {
                     }
                 }, this)
                 SkE.showToast("saved")
+                this._checkIfCompilationIsNeeded()
             },
             fail: this._defaultOnFail.bind(this)
         })
@@ -466,7 +464,7 @@ class CAStoreClass extends StoreMixin {
 
     compileCorpus(corpus_id, data){
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/compile",
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/compile",
             xhrParams: {
                 method: "POST",
                 contentType: "application/json",
@@ -480,8 +478,8 @@ class CAStoreClass extends StoreMixin {
         this._cancelPreviousRequest("check")
         this._stopAsyncResults("corpus_" + corpus_id)
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/cancel_job",
-            xhrParams: this.EMPTY_POST,
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/cancel_job",
+            xhrParams: this._getEmptyXhrParams(),
             done: this.checkCorpusStatus.bind(this, corpus_id)
         })
     }
@@ -500,13 +498,13 @@ class CAStoreClass extends StoreMixin {
                     return
                 }
             }
-            Dispatcher.trigger("CA_CORPUS_PROGRESS", corpus_id, progress)
+            Dispatcher.trigger("CA_CORPUS_PROGRESS", corpus_id, progress, payload)
         }.bind(this, corpus_id)
 
         this.data.asyncResults["corpus_" + corpus_id] = new AsyncResults()
         this.data.asyncResults["corpus_" + corpus_id].check({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/get_progress",
-            xhrParams: this.EMPTY_POST,
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/get_progress",
+            xhrParams: this._getEmptyXhrParams(),
             isFinished: (payload) => {
                 return payload.result.progress == 100 || payload.result.progress <= 0
             },
@@ -524,8 +522,8 @@ class CAStoreClass extends StoreMixin {
         this.data.upgradeTagsetInProgress = true
         SkE.showToast(_("ca.tagsetUpgradeStarted"), 8000)
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + this.corpus.id + "/upgrade_tagset",
-            xhrParams: this.EMPTY_POST,
+            url: window.config.URL_CA + "corpora/" + this.corpus.id + "/upgrade_tagset",
+            xhrParams: this._getEmptyXhrParams(),
             done: () => {
                 SkE.showToast(_("ca.tagsetUpgradeFinished"), 8000)
                 this.data.upgradeTagsetInProgress = false
@@ -534,11 +532,26 @@ class CAStoreClass extends StoreMixin {
         })
     }
 
+    upgradeTermDef(){
+        return Connection.get({
+            url: window.config.URL_CA + "corpora/" + this.corpus.id + "/upgrade_termdef",
+            xhrParams: this._getEmptyXhrParams(),
+            done: (payload) => {
+                if(payload.error){
+                    SkE.showToast(payload.error, 8000)
+                } else {
+                    SkE.showToast(_("ca.termdefUpgradeFinished"), 8000)
+                }
+                AppStore.loadCorpus(this.corpus.corpname)
+            }
+        })
+    }
+
     loadUrlsFromSeeds(corpus_id, params){
          Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/filesets/search_seeds",
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/filesets/search_seeds",
             xhrParams:{
-                type: "POST",
+                method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify(params)
             },
@@ -552,10 +565,10 @@ class CAStoreClass extends StoreMixin {
     startWebBootCaT(corpus_id, params){
         Dispatcher.trigger("BOOTCAT_STARTING", true)
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/filesets"
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/filesets"
                     + (this.data.compileWhenFinished ? "?compile_when_finished=1" : ""),
             xhrParams:{
-                type: "POST",
+                method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify(params)
             },
@@ -577,14 +590,22 @@ class CAStoreClass extends StoreMixin {
         SkE.showToast(_("ca.webBootCaTStarted"))
     }
 
+    cancelFilesetProcess(corpus_id, fileset_id){
+        if(fileset_id == 0){
+            this.data.filesToUpload = []
+        } else {
+            CAStore.cancelWebBootCaT(corpus_id, fileset_id)
+        }
+    }
+
     cancelWebBootCaT(corpus_id, fileset_id){
         let fileset = this._getFileset(fileset_id)
         fileset.progress = -1
         fileset.cancelling = true
         this._stopAsyncResults(corpus_id + "_" + fileset_id)
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/filesets/"+ fileset_id + "/cancel_job",
-            xhrParams: this.EMPTY_POST,
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/filesets/"+ fileset_id + "/cancel_job",
+            xhrParams: this._getEmptyXhrParams(),
             done: () => {
                 this.loadFilesets(corpus_id)
                 this.trigger("filesetsChanged")
@@ -606,7 +627,7 @@ class CAStoreClass extends StoreMixin {
         }
         this.data.asyncResults.log = new AsyncResults()
         this.data.asyncResults.log.check({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/logs/last.log",
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/logs/last.log",
             isFinished: (payload) => {
                 return !this.corpus.isCompiling
             },
@@ -619,6 +640,25 @@ class CAStoreClass extends StoreMixin {
 
     stopLogChecking(corpus_id){
         this._stopAsyncResults("log")
+    }
+
+    turnOffExpertMode(){
+        Connection.get({
+            url: window.config.URL_CA + "corpora/" + this.corpus.id,
+            loadingId: "EXPERT_MODE_OFF",
+            xhrParams: {
+                method: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify({expert_mode: false})
+            },
+            done: () => {
+                this.corpus.expert_mode = false
+                this.trigger("expertModeOff")
+            },
+            fail: payload => {
+                SkE.showError(_("ca.updateCorpusError"), getPayloadError(payload))
+            }
+        })
     }
 
     _startFilesChecking(corpus_id){
@@ -634,24 +674,24 @@ class CAStoreClass extends StoreMixin {
         if(this.data.asyncResults[ar_id]){
             return // already checking
         }
-        let callback = function(corpus_id, document_id, payload){
-            let idx = this._getFileIndex(document_id)
-            if(this.corpus && this.corpus.id == corpus_id && idx != -1){
-                this._computeFileData(payload.data)
-                this.data.files[idx] = payload.data
-                this.trigger("filesChanged")
-            }
-        }.bind(this, corpus_id, document_id)
         this.data.asyncResults[ar_id] = new AsyncResults()
         this.data.asyncResults[ar_id].check({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/documents/" + document_id,
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents/" + document_id + "/get_progress",
+            xhrParams: this._getEmptyXhrParams(),
             isFinished: (payload) => {
-                return payload.data.vertical_progress == 100 || payload.data.vertical_progress <= 0
+                return payload.result.progress == 100 || payload.result.progress <= 0
             },
             checkOnStart: true,
             onStop: this.set.bind(this, "asyncResults." + ar_id, null),
-            onData: callback,
-            onComplete: callback,
+            onData: function(corpus_id, document_id, payload){
+                let idx = this._getFileIndex(document_id)
+                if(this.corpus && this.corpus.id == corpus_id && idx != -1){
+                    this.data.files[idx].vertical_progress = payload.result.progress
+                    this.data.files[idx].inProgress = payload.result.progress > 0 && payload.result.progress < 100
+                    this.trigger("filesChanged")
+                }
+            }.bind(this, corpus_id, document_id),
+            onComplete: this.loadFile.bind(this, corpus_id, document_id),
             interval: 2000,
             intervalStep: 1000,
             intervalMax: 10000
@@ -671,7 +711,7 @@ class CAStoreClass extends StoreMixin {
                 let formData = new FormData()
                 formData.append("file", this.data.filesToUpload.pop())
                 Connection.get({
-                    url: window.config.URL_CA + "/corpora/" + corpus_id + "/documents?feeling=lucky",
+                    url: window.config.URL_CA + "corpora/" + corpus_id + "/documents?feeling=lucky",
                     xhrParams: {
                         method: "POST",
                         processData: false,
@@ -739,8 +779,8 @@ class CAStoreClass extends StoreMixin {
         let asyncResults = new AsyncResults()
         this._setAsyncResult(corpus_id, fileset_id, asyncResults)
         asyncResults.check({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/filesets/"+ fileset_id + "/get_progress",
-            xhrParams: this.EMPTY_POST,
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/filesets/"+ fileset_id + "/get_progress",
+            xhrParams: this._getEmptyXhrParams(),
             isFinished: (payload) => {
                 let d = payload.data || payload.result || {}
                 return d.progress == 100 || d.progress == -1 || d.error
@@ -813,11 +853,11 @@ class CAStoreClass extends StoreMixin {
         let asyncResults = new AsyncResults()
         this._setAsyncResult(corpus_id, 0, asyncResults)
         asyncResults.check({
-            url: window.config.URL_CA + "/corpora/" + corpus_id + "/documents?fileset_id=0",
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents?fileset_id=0",
             isFinished: (payload) => {
-                return !payload.data || !payload.data.filter(f => {
+                return !this.data.filesToUpload.length && (!payload.data || !payload.data.filter(f => {
                     return f.vertical_progress > 0 && f.vertical_progress < 100
-                }).length
+                }).length)
             },
             checkOnStart: true,
             onStop: this._setAsyncResult.bind(this, corpus_id, 0, null),
@@ -890,14 +930,30 @@ class CAStoreClass extends StoreMixin {
         Dispatcher.trigger("RELOAD_USER_SPACE")
     }
 
-    _onTagsetsLoaded(params, payload){
+    _onFileLoaded(file_id, payload){
+        this._computeFileData(payload.data)
+        this.data.files[this._getFileIndex(file_id)] = payload.data
+        if(this.data.activeFilesetId === 0){
+            let fileset = this._getFilesetUploaded()
+            fileset.word_count = this.data.files.reduce((sum, file) => {
+                return sum + file.word_count
+            }, 0)
+        } else {
+            this._startFolderUploadedChecking(this.corpus.id)
+        }
+        Dispatcher.trigger("RELOAD_USER_SPACE")
+        this.trigger("filesChanged")
+    }
+
+    _onTagsetsLoaded(payload){
         this.data.isTagsetsLoading = false
-        this.data.tagsets = Array.isArray(payload.data) ? payload.data : [payload.data]
-        this.data.tagset = this.data.tagsets[0]
-        this.data.tagsets.forEach(t => {
-            t.language_id = params.laguage_id
-        })
+        this.data.tagsets = payload.data
         this.trigger("tagsetsLoaded", this.data.tagsets)
+    }
+
+    _onActualTagsetLoaded(payload){
+        this.data.tagset = payload.data
+        this.trigger("actualTagsetLoaded")
     }
 
     _onSketchGrammarsLoaded(payload){
@@ -933,7 +989,10 @@ class CAStoreClass extends StoreMixin {
         let fileset = this._getFilesetUploaded()
         fileset.progress = Math.round((1 - this.data.filesToUpload.length / this.data.totalFiles) * 100)
         if(this.data.activeFilesetId === 0){
-            this.loadFilesetFiles(this.corpus.id, 0)
+            this.data.files.unshift(payload.data)
+            this._startFileChecking(this.corpus.id, payload.data.id)
+        } else {
+            this._startFolderUploadedChecking(this.corpus.id)
         }
         this.trigger("filesetsChanged")
     }
@@ -944,7 +1003,7 @@ class CAStoreClass extends StoreMixin {
         fileset.progress = 100
         fileset.verticalInProgress = 1
         this._startFolderUploadedChecking(corpus_id)
-        this._startFilesChecking(corpus_id)
+        this.data.activeFilesetId == 0 && this._startFilesChecking(corpus_id)
         this.trigger("filesetsChanged")
         this.trigger("isUploadingChange", false)
         Dispatcher.trigger("RELOAD_USER_SPACE")
@@ -986,7 +1045,7 @@ class CAStoreClass extends StoreMixin {
 
     _computeFileData(file){
         file.inProgress = file.vertical_progress > 0 && file.vertical_progress < 100
-        file.isArchive = file.parameters.type == "tar" || file.parameters.type == "zip"
+        file.isArchive = ["tar", "zip"].includes(file.parameters.type)
     }
 
     _onSharingLoaded(payload){
@@ -1055,6 +1114,28 @@ class CAStoreClass extends StoreMixin {
         this.corpus = AppStore.getActualCorpus()
     }
 
+    _checkIfCompilationIsNeeded(){
+        // was compiled earlier, it is not a new corpus, but it changed and needs to be compiled
+        if(this.corpus.compiled && !AppStore.get("corpus.needs_recompiling")){
+            AppStore._loadCorpusCA(this.corpus.corpname)
+            AppStore.one("corpusChanged", () => {
+                Dispatcher.trigger('openDialog', {
+                    small: true,
+                    title: _("db.toCompileTitle"),
+                    content: _("changedRecompile")
+                })
+            })
+        }
+    }
+
+    _getEmptyXhrParams(){
+        return {
+            method: "POST",
+            contentType: "application/json",
+            data: "{}"
+        }
+    }
+
     _reset(){
         this.data = {
             error: "",
@@ -1081,7 +1162,8 @@ class CAStoreClass extends StoreMixin {
             filesWithoutfFolderLoaded: false,
             activeFilesetId: null,
             bootcat: {
-                max_urls_per_query: 20,
+                max_urls_per_query: 30,
+                tuple_size: 3,
                 sites_list: ""
             }
         }

@@ -15,7 +15,7 @@
             .table{
                 width: 1px;
                 thead {
-                    background-color: $new_lightBlue;
+                    background-color: $blue-100;
                 }
                 td, th{
                     white-space: nowrap;
@@ -57,7 +57,7 @@
                 padding-right: 10px;
                 font-size: 0.8em;
                 white-space: nowrap;
-                color: $new_mediumBlue;
+                color: $blue-200;
             }
         }
     }

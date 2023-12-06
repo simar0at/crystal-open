@@ -13,6 +13,9 @@
         require("./parconcordance-result-options-filter.tag")
         require("./parconcordance-result-options-freq.tag")
         require("concordance/collocations/collocations-tabs.tag")
+        require("concordance/concordance-subcorpus-dialog.tag")
+
+        const {Auth} = require("core/Auth.js")
 
         this.mixin('feature-child')
 
@@ -69,13 +72,13 @@
                 labelId: "frequency",
                 contentTag: "parconcordance-result-options-freq",
                 contentOpts: {
-                    corpname: this.opts.corpname,
-                    has_no_kwic: opts.has_no_kwic
+                    corpname: this.opts.corpname
                 },
                 disabled: opts.has_no_kwic
             }, {
                 id: "collocations",
-                iconClass: "ske-icons skeico_collocation",
+                iconClass: "material-icons",
+                icon: "linear_scale",
                 labelId: "collocations",
                 contentTag: "collocations-tabs",
                 contentOpts: {
@@ -83,18 +86,31 @@
                     has_no_kwic: opts.has_no_kwic
                 },
                 disabled: opts.has_no_kwic
-            }/*, {
-                id: "distribution",
-                icon: "insert_chart",
-                iconClass: "material-icons",
-                labelId: "cc.freqDistrib",
-                contentTag: "parconcordance-result-options-distribution",
-                contentOpts: {
-                    corpname: this.opts.corpname,
-                    has_no_kwic: opts.has_no_kwic
-                },
-                disabled: opts.has_no_kwic
-            }*/]
+            }]
+            if (!this.opts.corpname || !this.opts.has_no_kwic) {
+                this.optionsList.push({
+                    id: "distribution",
+                    icon: "insert_chart",
+                    iconClass: "material-icons",
+                    labelId: "cc.freqDistrib",
+                    contentTag: "parconcordance-result-options-distribution",
+                    contentOpts: {
+                        corpname: this.opts.corpname ? this.store.addPrefixToCorpname(this.opts.corpname) : ""
+                    }
+                })
+            }
+            if(Auth.isFullAccount()){
+                this.optionsList.push({
+                    id: "addsubc",
+                    icon: "add",
+                    iconClass: "material-icons",
+                    labelId: "createSubcorpus",
+                    contentTag: "concordance-subcorpus-dialog",
+                    contentOpts: {
+                        corpname: this.opts.corpname ? this.store.addPrefixToCorpname(this.opts.corpname) : ""
+                    }
+                })
+            }
             if (opts.allowrm) {
                 this.optionsList.push({
                     id: "close",

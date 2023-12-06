@@ -3,11 +3,12 @@
         feature-page="concordance"
         options={optionsList}
         active={data.act_opts}
-        formats={["txt", "csv", "xls", "xml"]}
-        download-limit={data.raw.concordance_size_limit}
+        formats={["txt", "csv", "xlsx", "xml"]}
+        download-limit={data.raw && data.raw.concordance_size_limit}
+        download-disabled={isDownloadDisabled}
         show-limit=1
         limit-name={limitName}
-        pulse-id={store.isConc && isEmpty ? (wasOperation ? "undo": "settings") : ""}
+        pulse-id={store.isConc && isEmpty && !wasOperation ? "settings" : ""}
         settings-tag="concordance-tabs"
         on-open={onOptionsOpen}
         on-close={onOptionsClose}></feature-toolbar>
@@ -15,6 +16,7 @@
     <script>
         this.mixin("tooltip-mixin")
         this.mixin("feature-child")
+        const {AnnotationStore} = require("annotation/annotstore.js")
 
         require("./concordance-result-options.scss")
         require("./kwicsen.tag")
@@ -24,7 +26,7 @@
         require("./concordance-result-options-shuffle.tag")
         require("./concordance-result-options-sort.tag")
         require("./concordance-result-options-filter.tag")
-        require("./concordance-result-options-annot.tag")
+        require("annotation/result-options-annot.tag")
         require("./concordance-parconc-dialog.tag")
         require("concordance/collocations/collocations-tabs.tag")
         require("concordance/frequency/frequency-tabs.tag")
@@ -35,11 +37,6 @@
 
 
         const {Auth} = require("core/Auth.js")
-
-        onUndoClick(){
-            let operations = this.data.operations
-            this.store.removeOperation(operations[operations.length - 1])
-        }
 
         onViewChange(view){
             this.store.searchAndAddToHistory({
@@ -53,7 +50,7 @@
                 this.store.updateUrl()
             }
             if (optionsId == "annotate") {
-                this.store.getAnnotLabels()
+                AnnotationStore.getAnnotLabels()
             }
         }
 
@@ -80,7 +77,9 @@
             } else if(this.store.isColl){
                 this.limitName = "cmaxitems"
             }
-
+            this.isDownloadDisabled = this.store.isConc && this.data.isEmpty
+                    || this.store.isColl && this.data.c_isEmpty
+                    || this.store.isFreq && this.data.f_isEmpty
             this.optionsList = []
             if(this.store.corpus.aligned.length){
                 this.optionsList.push({
@@ -90,23 +89,18 @@
                     iconClass: "ske-icons skeico_parallel_concordance"
                 })
             }
-            if (Auth.getAnnotationGroup()) {
-                this.optionsList.push({
-                    id: "annotate",
-                    icon: "toc",
-                    labelId: "cc.tipAnnotate",
-                    contentTag: "concordance-result-options-annot",
-                    iconClass: "material-icons" + (this.data.annotconc ? " annot" : "")
-                })
-            }
+            window.config.ENABLE_ANNOTATION && this.optionsList.push({
+                id: "annotate",
+                icon: "toc",
+                labelId: "cc.tipAnnotate",
+                contentTag: "result-options-annot",
+                iconClass: "material-icons",
+                btnClass: this.data.annotconc ? "annot" : "",
+                contentOpts: {
+                    source: "conc"
+                }
+            })
             this.optionsList = this.optionsList.concat([{
-                    id: "undo",
-                    labelId: "undo",
-                    icon: "undo",
-                    iconClass: "material-icons",
-                    onclick: this.onUndoClick,
-                    disabled: this.isLoading || !this.wasOperation
-                }, {
                     id: "view",
                     icon: "visibility",
                     iconClass: "material-icons",
@@ -133,7 +127,7 @@
                     id: "filter",
                     icon: "filter_list",
                     iconClass: "material-icons",
-                    label: "filter",
+                    labelId: "filter",
                     contentTag: "concordance-result-options-filter"
                 }, {
                     id: "gdex",
@@ -148,7 +142,8 @@
                     contentTag: "frequency-tabs"
                 },{
                     id: "collocations",
-                    iconClass: "ske-icons skeico_collocation",
+                    icon: "linear_scale",
+                    iconClass: "material-icons",
                     labelId: "collocations",
                     contentTag: "collocations-tabs"
                 }, {
@@ -181,6 +176,8 @@
                 this.optionsList.push({
                     id: "addsubc",
                     icon: "add",
+                    disabled: !!this.store.data.usesubcorp,
+                    tooltip: this.store.data.usesubcorp ? _("createSubcorpDisabled") : "",
                     iconClass: "material-icons",
                     labelId: "createSubcorpus",
                     contentTag: "concordance-subcorpus-dialog"
@@ -194,7 +191,7 @@
                 labelId: 'concordanceDescription'
             })
             this.optionsList.forEach(option => {
-                if(option.id != "undo" && this.isEmpty){
+                if(this.isEmpty){
                     option.disabled = true
                 }
                 if(!this.store.isConc){

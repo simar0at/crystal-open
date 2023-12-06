@@ -11,7 +11,7 @@
                 </div>
                 <div if={!loading}>
                     <a href="javascript:void(0);"
-                            class="btn white-text langBtn waves-effect waves-light"
+                            class="btn white-text langBtn"
                             each={corpus in quickCorpList}
                             onclick={onLangClick}>{corpus.language_name.split(" ")[0]}</a>
                     <br><br>
@@ -25,12 +25,23 @@
             <div class="corpusRightCol" id="intro_tutorial">
                 <h5 class="cardtitle">{_("cp.quickStartTutorial")}</h5>
                 <div class="youtubeVideoContainer">
-                    <iframe width="560"
+                    <a if={window.config.DISABLE_EMBEDDED_YOUTUBE}
+                            href={externalLink("sketchEngineIntro")}
+                            target="_blank"
+                            class="youtubePlaceholder"
+                            style="width:560px;height:315px;">
+                        <img src="images/youtube-placeholder.jpg"
+                                loading="lazy"
+                                alt="Sketch Engine Intro">
+                    </a>
+                    <iframe if={!window.config.DISABLE_EMBEDDED_YOUTUBE}
+                            width="560"
                             height="315"
                             src={externalLink("sketchEngineIntro")}
                             frameborder="0"
                             allow="autoplay; encrypted-media"
-                            allowfullscreen></iframe>
+                            allowfullscreen
+                            loading="lazy"></iframe>
                 </div>
             </div>
         </div>
@@ -41,32 +52,7 @@
 
         this.mixin("tooltip-mixin")
         this.tab = "basic"
-        this.corpusList = AppStore.get("corpusList")
-
-        // TODO: when history is empty, show featured, otherwise show latest
-        this.quickStartCorporaIdList = [{
-            corpname: "preloaded/bnc2_tt2",
-            name: "British national corpus"
-        }, {
-            corpname: "preloaded/ententen15_tt21",
-            name: "English Web"
-        }, {
-            corpname: "preloaded/frtenten12_1",
-            name: "French web"
-        }, {
-            corpname: "preloaded/estenten11_freeling_v4_virt",
-            name: "Spanish web"
-        }, {
-            corpname: "preloaded/artenten12_stanford",
-            name: "Arabic web"
-        }, {
-            corpname: "preloaded/zhtenten",
-            name: "Chinese web"
-        }]
-        this.quickStartCorporaList = []
         this.loading = !AppStore.get("corpusListLoaded")
-
-
 
         onLangClick(evt){
             let corpus = evt.item.corpus
@@ -76,32 +62,34 @@
             })
         }
 
-        onCorpusListLoad(corpusList){
+        onCorpusListLoad(){
             this.loading = false
-            this.corpusList = corpusList
             this.refreshQuickCorpList()
             this.update()
         }
 
         refreshQuickCorpList() {
-            if(this.corpusList){
-                this.quickCorpList = [];
-                ["preloaded/ententen15_tt21",
-                    "preloaded/frtenten12_1",
-                    "preloaded/estenten11_freeling_v4_virt",
-                    "preloaded/ittenten16_2",
-                    "preloaded/artenten12_stanford",
-                    "preloaded/rutenten11_8",
-                    "preloaded/detenten13_rft3",
-                    "preloaded/pttenten11_fl4",
-                    "preloaded/pltenten12_rft",
-                    "preloaded/jptenten11_2",
-                    "preloaded/zhtenten"].forEach(corpname => {
-                        let corpus = AppStore.getCorpusByCorpname(corpname)
-                        if(corpus){
-                            this.quickCorpList.push(AppStore.getLatestCorpusVersion(corpus))
-                        }
-                    })
+            if(AppStore.data.corpusList.length){
+                this.quickCorpList = AppStore.data.corpusList.filter(c => {
+                    return c.is_featured
+                })
+                let userLang = (navigator.language || navigator.userLanguage).split("-")[0]
+                if(!this.quickCorpList.find(c => c.language_id == userLang)){ // language is not in featured
+                    let userLangCorpora = AppStore.data.corpusList.filter(c => c.language_id == userLang && c.user_can_read && !c.id)
+                    this.quickCorpList = this.quickCorpList.concat(userLangCorpora)
+                }
+                this.quickCorpList.sort((a, b) => {
+                    return a.language_name.localeCompare(b.language_name)
+                })
+                // use only the biggest corpus for each language
+                this.quickCorpList = this.quickCorpList.filter(c => {
+                    return !this.quickCorpList.find(c2 => { //no bigger corpus of same language found -> keep it
+                        return c2.language_id == c.language_id && c.corpname != c2.corpname && c.sizes.wordcount < c2.sizes.wordcount
+                    }, this)
+                }, this)
+                this.quickCorpList = this.quickCorpList.map(c => {
+                    return AppStore.getLatestCorpusVersion(c)
+                })
             }
         }
         this.refreshQuickCorpList()

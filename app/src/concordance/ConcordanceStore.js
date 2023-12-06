@@ -1,6 +1,7 @@
 const {FeatureStoreMixin} = require("core/FeatureStoreMixin.js")
 const {AppStore} = require("core/AppStore.js")
-const {Router} = require("core/Router.js")
+const {AnnotationStore} = require('annotation/annotstore.js')
+const {Url} = require("core/url.js")
 const {AsyncResults} = require("core/asyncresults.js")
 const {TextTypesStore} = require('common/text-types/TextTypesStore.js')
 const {Connection} = require('core/Connection.js')
@@ -23,9 +24,8 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
             searchdesc: "",
             lpos: "",
             wpos: "",
-            qmcase: 0,
+            qmcase: false,
             attrs: "word",
-            ctxattrs: "word",
             default_attr: "",
             structs: "",
             refs: "#",
@@ -39,26 +39,25 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
             fc_pos_type: "all",
             usesubcorp: "",
             errcorr_switch: "err",
-            cup_err_code: "",
+            cup_err_code: ".*",
             cup_err: "",
             cup_corr: "",
             cup_hl: "q",
             viewmode: "kwic",
             page: 1,
-            linenumbers: 1,
-            checkboxes: 1,
-            fullcontext: 0,
-            glue: 1,
-            refs_up: 0,
-            shorten_refs: 1,
+            linenumbers: true,
+            checkboxes: true,
+            fullcontext: false,
+            glue: true,
+            refs_up: false,
+            shorten_refs: true,
             ref_size: 15,
-            gdex_enabled: 0,
+            gdex_enabled: false,
             gdexcnt: 300,
             gdexconf: "",
-            show_gdex_scores: 0,
+            show_gdex_scores: false,
             sort: [],
-            selection: [],
-            random: 0,
+            random: false,
             results_screen: "concordance",
             act_opts: "", // opened result options
             itemsPerPage: 20,
@@ -67,7 +66,9 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
             isCountLoading: false,
             showcontext: "none", // "none" | "lemma" | "pos"
             showTBL: false,
+            showcopy: true,
             tbl_template: "",
+            macro: "",
             ///// frequency
             f_items: [],
             f_tab: "basic",
@@ -76,7 +77,7 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
                 ctx: "0",
                 base: "kwic"
             }],
-            f_showrelfrq: 1,
+            f_showrelfrq: true,
             f_mode: "multilevel",
             f_sort: "freq",
             f_itemsPerPage: 20,
@@ -85,6 +86,10 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
             f_isEmpty: false,
             f_isError: false,
             f_group: null,
+            f_showreltt: false,
+            f_showperc: false,
+            f_showreldens: false,
+            f_fmaxitems: 5000,
             ///// collocations
             c_items: [],
             c_tab: "basic",
@@ -97,17 +102,14 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
             c_customrange: false,
             c_cbgrfns: ["t", "m", "d"],
             c_csortfn: "d",
-            c_onecolumn: 0,
+            c_onecolumn: false,
             c_itemsPerPage: 20,
             c_page: 1,
-            c_showresults: false,
             c_isEmpty: false,
             c_isError: false,
+            c_selection: [],
             annotconc: "",
-            annotation_group: "",
-            storedconcs: [],
-            labels: {},
-            annotLabels: []
+            downloadcontext: ""
         })
 
         this.isConc = true
@@ -116,10 +118,12 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         this.f_hasBeenLoaded = false
         this.c_hasBeenLoaded = false
         this.asyncResults = new AsyncResults()
-        this.defaults = this._copy(this.data)
+        this.defaults = window.copy(this.data)
         this.preloadedData = {}
         this.validEmptyOptions = ["refs"]
         this.selectedLines = []
+        this.errCodeList = null
+        this.corrCodeList = null
 
         this.urlOptions = ["queryselector", "keyword", "lpos", "wpos", "attrs", "viewmode",
                 "attr_allpos", "linenumbers", "refs_up", "shorten_refs", "fc_lemword_window_type",
@@ -127,28 +131,28 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
                 "fc_pos_window_type", "fc_pos_wsize", "fc_pos_type", "fc_pos", "gdex_enabled",
                 "gdexcnt", "show_gdex_scores", "page", "itemsPerPage", "random", "structs",
                 "refs", "attrs", "qmcase", "default_attr", "cql", "searchdesc", "sort",
-                "selection", "usesubcorp", "showresults", "tab", "showcontext", "cup_err",
+                "usesubcorp", "showresults", "tab", "showcontext", "cup_err",
                 "cup_hl", "cup_corr", "cup_err_code", "errcorr_switch", "results_screen", "act_opts",
-                "tts", "showTBL", "tbl_template", "gdexconf", "checkboxes", "cb", "fullcontext",
+                "tts", "showTBL", "tbl_template", "gdexconf", "checkboxes", "cb", "fullcontext", "macro",
                 //frequency
                 "f_freqml", "f_tab", "f_showrelfrq", "f_mode", "f_itemsPerPage",
-                "f_page", "f_sort", "f_texttypes", "f_group",
+                "f_page", "f_sort", "f_texttypes", "f_group", "f_showperc", "f_showreldens",
+                "f_showreltt",
                 // collocations
                 "c_funlist", "c_cattr", "c_cminfreq", "c_cminbgr", "c_cfromw", "c_ctow",
-                "c_cbgrfns", "c_csortfn", "c_page", "c_itemsPerPage", "c_showresults", "c_customrange",
+                "c_cbgrfns", "c_csortfn", "c_page", "c_itemsPerPage", "c_customrange",
                 // annotations
                 "annotconc"]
 
         this.xhrOptions = ["reload", "lpos", "wpos", "default_attr", "attrs", "refs",
-                "ctxattrs", "attr_allpos", "usesubcorp", "viewmode", "cup_hl", "cup_err",
-                "cup_corr", "cup_err_code", "structs", "annotconc",
-                "annotation_group"]
+                "attr_allpos", "usesubcorp", "viewmode", "cup_hl",
+                "structs", "annotconc"]
 
         this.c_xhrOptions = ["c_cattr", "c_cfromw", "c_ctow", "c_cbgrfns", "c_cminfreq",
                 "c_cminbgr", "c_csortfn"]
 
         this.searchOptions = [
-                ["iquery", "cc.iquery"],
+                ["iquery", "iquery"],
                 ["queryselector", "cc.queryselector"],
                 ["keyword", "keyword"],
                 ["cql", "cql"],
@@ -184,7 +188,9 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         this.userOptionsToSave = ["tab", "viewmode", "attrs", "attr_allpos",
                 "structs", "glue", "itemsPerPage", "ref_size", "refs", "refs_up",
                 "shorten_refs", "show_as_tooltips", "showTBL", "tbl_template",
-                "c_customrange", "f_tab", "c_tab"]
+                "c_customrange", "f_tab", "c_tab", "show_gdex_scores", "gdexcnt",
+                "gdexconf", "downloadcontext", "f_showrelfrq", "f_showperc",
+                "f_showreldens", "f_showreltt"]
 
         this.linkIcons = {
             audio: "play_circle_outline",
@@ -210,17 +216,14 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         this.trigger("selectedLinesChanged")
         super.search(params)
         this._initPreloadedDataIfNeeded()
-        if (this.data.annotconc) {
-            AppStore.data.annotconc = this.data.annotconc
-        }
-        this.updateRequestData(this.request[0], {
+        Object.assign(this.request[0].data, {
             pagesize: this.corpus.preloaded ? 10000 : 10000000,
             fromp: 1
         })
     }
 
     getRequestUrl(){ // overriden
-        return window.config.URL_BONITO + "concordance?corpname=" + this.corpus.corpname
+        return window.config.URL_BONITO + "concordance"
     }
 
     getRequestData(dataIn){ // overriden
@@ -230,14 +233,38 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         data.concordance_query = this.getConcordanceQuery()
         data.kwicleftctx = "100#"
         data.kwicrightctx = "100#"
-        data.ctxattrs = this.data.attr_allpos == "all" ? this.data.attrs : "word"
         data.structs = this.getStructs()
-        data.annotation_group = Auth.getAnnotationGroup()
         data = Object.assign(data, dataIn || {})
+        if(Auth.isAnonymous()){
+            delete data.instantSubCorp
+        }
+        this._addErrorAnalysisOptions(data)
         if(this.data.showTBL && this.data.tbl_template){
             data.tbl_template = this.data.tbl_template
         }
-        return "json=" + encodeURIComponent(JSON.stringify(data))
+        return data
+    }
+
+    _addTextTypesToData(){  // overrides default
+        // Do not add text types to the request. Text types are inserted into
+        // concordance_query. Sending dubious text types with instantSubCorp=1
+        // produces error in Bonito.
+    }
+
+    getDownloadRequest(idx){
+        let request = super.getDownloadRequest(idx)
+        let data = {}
+        if(this.isFreq){
+            let showRelFrqAndPerc = this.f_showRelFrqAndPerc()
+            let showRelTtAndRelDens = this.f_showRelTtAndRelDens()
+            data.showpoc = this.data.f_showperc && showRelFrqAndPerc
+            data.showfpm = this.data.f_showrelfrq && showRelFrqAndPerc
+            data.showreltt = this.data.f_showreltt && showRelTtAndRelDens
+            data.showrel = this.data.f_showreldens && showRelTtAndRelDens
+            data.fmaxitems = this.data.raw.wllimit || 10000000
+        }
+        Object.assign(request.data, data)
+        return request
     }
 
     onDataLoadedProcessItems(payload){ // overriden
@@ -245,12 +272,7 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         this.data.gdex_scores = payload.gdex_scores
         this.data.relsize = payload.relsize
         this.data.fullsize = payload.fullsize
-        this.data.items.forEach(item => {
-            item.ref = item.Refs.join(" ● ")
-            item.Links.forEach(link => {
-                link.icon = this.linkIcons[link.mediatype]
-            })
-        })
+        this._addComputedData(this.data.items)
     }
 
     onDataLoaded(payload){ // overriden
@@ -260,7 +282,7 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
             this._checkAndPreload()
         }
         if (this.data.annotconc) {
-            this.getAnnotLabels()
+            AnnotationStore.getAnnotLabels()
         }
     }
 
@@ -284,20 +306,19 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
             if (!operations_annotconc.length) {
                 operations_annotconc = this.operationsAnnotconcInit()
             }
-            operations_annotconc.forEach((o) => {
-                o.active && query.push(o.query)
+            operations_annotconc.forEach(o => {
+                !o.inactive && query.push(o.query)
             })
-            if (this.data.gdex_enabled) {
-                let gc = ""
-                if (!this.data.gdexconf || this.data.gdexconf == "__default__") {
-                    gc = ""
+            this._addGdexToQuery(query)
+
+            if(this.data.sort.length){
+                if(this.data.sort[0].labelsort){
+                    query.push({q: "g" + this.data.annotconc})
+                } else {
+                     query.push({
+                        mlsort_options: this.data.sort
+                    })
                 }
-                else {
-                    gc = " " + this.data.gdexconf
-                }
-                query.push({
-                    q: (this.data.show_gdex_scores ? "E" : "e") + this.data.gdexcnt + gc
-                })
             }
             return query
         }
@@ -305,25 +326,20 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         if(!operations.length){
             operations = this.operationsInit()
         }
-        operations.forEach((operation) => {
-            operation.active && query.push(operation.query)
+        operations.forEach(operation => {
+            !operation.inactive && query.push(operation.query)
         })
         this.data.sort.length && query.push({
             mlsort_options: this.data.sort
         })
-        if (this.data.gdex_enabled) {
-            let gc = ""
-            if (!this.data.gdexconf || this.data.gdexconf == "__default__") {
-                gc = ""
+        this._addGdexToQuery(query)
+        for(let key in query[0]){
+            // remove previously added text types
+            if(key.startsWith("sca_") || key.startsWith("fsca_")){
+                delete query[0][key]
             }
-            else {
-                gc = " " + this.data.gdexconf
-            }
-            query.push({
-                q: (this.data.show_gdex_scores ? "E" : "e") + this.data.gdexcnt + gc
-            })
         }
-        Object.assign(query[0], TextTypesStore.getSelectionQuery())
+        Object.assign(query[0], TextTypesStore.getQueryFromTextTypes(this.data.tts))
         if(this.data.random == 1){
             query[0].random = 1
         } else{
@@ -350,16 +366,14 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
             q: 's' + this.data.annotconc
         }
         this.addOperation({
-            name: "annotate",
+            name: "",
             arg: this.data.annotconc,
-            active: true,
             query: query
         })
         if (this.data.cql && this.data.cql.length) {
             this.addOperation({
                 name: "word sketch",
                 arg: this.data.cql,
-                active: true,
                 query: {
                     queryselector: "cql",
                     cql: this.data.cql
@@ -371,44 +385,61 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
 
     operationsInit(){
         this.data.operations = []
-        let queryselector = this.data.queryselector
-        let val = this.data[queryselector == "cql" ? "cql" : "keyword"]
-        let desc = this.data.searchdesc
+        this.addOperation(this.getBaseOperation(this.data))
+        this._addContextToOperations(this.data, this.data.operations)
+        return this.data.operations
+    }
+
+    getBaseOperation(data){
+        let queryselector = data.queryselector
+        let val = data[queryselector == "cql" ? "cql" : "keyword"]
+        let desc = data.searchdesc
         let query = {
             queryselector: queryselector + "row",
             [queryselector]: val
         }
         if(queryselector == "lemma"){
-            query.lpos = this.data.lpos
+            query.lpos = data.lpos
         }
         if(queryselector == "lemma" || queryselector == "phrase" || queryselector == "word"){
-            query.qmcase = this.data.qmcase
+            query.qmcase = data.qmcase
         }
         if(queryselector == "cql"){
-            query.default_attr = this.data.default_attr
+            query.default_attr = data.default_attr
         }
-        this.addOperation({
+        return {
             name: queryselector,
             arg: desc ? desc : val,
-            active: true,
             query: query
-        })
-        this._addContextToOperations()
-        return this.data.operations
+        }
+    }
+
+    getFeatureLinkParams(data, macroId){
+        let macro = stores.macro.getMacro(macroId)
+        let macroOptions = macro ? macro.options : {}
+        let operations = [this.getBaseOperation(data)]
+        this._addContextToOperations(macro.options, operations)
+        if(macro){
+            macroOptions.macro = macro.id
+            if(macroOptions.operations){
+                operations = operations.concat(macroOptions.operations)
+            }
+            if(macro.options.tts){
+                Object.assign(operations[0].query, TextTypesStore.getQueryFromTextTypes(macro.options.tts))
+            }
+        }
+
+        return Object.assign({
+            tab: 'advanced'
+        }, data, macroOptions, {operations: operations})
     }
 
     addOperation(operation){
-        operation.id = Math.floor((Math.random() * 10000))
-        if (this.data.annotconc) {
-            this.data.operations_annotconc.push(operation)
-            this.data.operations_annotconc.forEach(o => o.active = true)
-            this.trigger("operationsChange", this.data.operations_annotconc)
-        }
-        else {
-            this.data.operations.push(operation)
-            this.data.operations.forEach(o => o.active = true)
-            this.trigger("operationsChange", this.data.operations)
-        }
+        let operations = this.data.annotconc ? this.data.operations_annotconc : this.data.operations
+        operation.id = this._getOperationId()
+        operations.push(operation)
+        operations.forEach(o => {delete o.inactive})
+        this.trigger("operationsChange", operations)
     }
 
     addOperationAndSearch(operations){
@@ -419,6 +450,7 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         } else{
             this.addOperation(operations)
         }
+        this.data.closeFeatureToolbar = true
         this.searchAndAddToHistory({
             page: 1,
             results_screen: "concordance"
@@ -436,163 +468,58 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
                 return op.id != operation.id
             })
         }
-        this.searchAndAddToHistory()
+        this.reloadActualResults()
     }
 
     goToOperation(operation){
-        if (this.data.annotconc) {
-            let idx = this.data.operations_annotconc.findIndex(o => {
-                return objectEquals(o, operation)
-            })
-            this.data.operations_annotconc.forEach((o, i) => o.active = i <= idx)
-            this.searchAndAddToHistory()
-            this.trigger("operationsChange", this.data.operations_annotconc)
-        }
-        else {
-            let idx = this.data.operations.findIndex(o => {
-                return objectEquals(o, operation)
-            })
-            this.data.operations.forEach((o, i) => o.active = i <= idx)
-            this.searchAndAddToHistory()
-            this.trigger("operationsChange", this.data.operations)
-        }
-    }
-
-    getAnnotations() {
-        let corpname = this.corpus.corpname
-        Connection.get({
-            url: window.config.URL_BONITO + 'storedconcs?corpname=' + corpname,
-            xhrParams: {
-                data: {
-                    annotation_group: Auth.getAnnotationGroup()
-                }
-            },
-            done: function (payload) {
-                if (payload.stored_concs) {
-                    this.data.storedconcs = payload.stored_concs.map(x => {
-                        return x.conc
-                    })
-                    this.trigger("ANNOTATIONS_UPDATED")
-                }
-            }.bind(this),
-            fail: function (data) {
-                console.log('FAILED', data)
+        let operations = this.data.annotconc ? this.data.operations_annotconc : this.data.operations
+        let idx = operations.findIndex(o => {
+            return objectEquals(o, operation)
+        })
+        operations.forEach((o, i) => {
+            if(i <= idx){
+                delete o.inactive
+            } else {
+                o.inactive = true
             }
         })
-    }
-
-    addLabelExample(item) {
-        let l = item.Left.filter(p => { return p.str })
-        let k = item.Kwic.filter(p => { return p.str })
-        let r = item.Right.filter(p => { return p.str })
-        let example = l.map(p => {return p.str.trim()}).join(' ') + ' '
-                + k.map(p => {return p.str.trim()}).join(' ') + ' '
-                + r.map(p => {return p.str.trim()}).join(' ')
-        localStorage.setItem('SKEMA_NEW_EXAMPLE', JSON.stringify({
-            example: example,
-            annotconc: this.data.annotconc,
-            corpname: this.corpus.corpname,
-            toknum: item.toknum,
-            label: item.linegroup
-        }))
-    }
-
-    getAnnotLabels() {
-        if (!this.data.annotconc) return
-        Connection.get({
-            url: window.config.URL_BONITO + "lngroupinfo?corpname=" + this.corpus.corpname,
-            xhrParams: {
-                data: {
-                    annotconc: this.data.annotconc,
-                    annotation_group: Auth.getAnnotationGroup(),
-                }
-            },
-            done: function (payload) {
-                if (payload.error) {
-                    console.log('FAILED', payload.error)
-                }
-                else {
-                    this.data.annotLabels = payload.labels
-                    for (let i=0; i<payload.labels.length; i++) {
-                        this.data.labels[payload.labels[i].id] = payload.labels[i].name
-                    }
-                    Dispatcher.trigger("ANNOTATION_LABELS_UPDATED")
-                }
-            }.bind(this),
-            fail: function(payload) {
-                console.log('FAILED', payload)
-            }
-        })
-    }
-
-    addLabel(label) {
-        Connection.get({
-            url: window.config.URL_BONITO + "addlngroup?corpname=" + this.corpus.corpname,
-            xhrParams: {
-                data: {
-                    annotconc: this.data.annotconc,
-                    annotation_group: Auth.getAnnotationGroup(),
-                    label: label
-                }
-            },
-            done: function (payload) {
-                if (payload.error) {
-                    console.log('FAILED', payload.error)
-                }
-                else {
-                    if (payload.labels) {
-                        localStorage.setItem('SKEMA_NEW_LABEL', this.data.annotconc)
-                        this.data.annotLabels = payload.labels
-                        for (let i=0; i<payload.labels.length; i++) {
-                            this.data.labels[payload.labels[i].id] = payload.labels[i].name
-                        }
-                    }
-                    Dispatcher.trigger("ANNOTATION_LABELS_UPDATED")
-                }
-            }.bind(this),
-            fail: function (payload) {
-                console.log('FAILED', payload)
-            }
-        })
+        this.reloadActualResults()
+        this.trigger("operationsChange", operations)
     }
 
     initAnnotation(storeconcname) {
         Connection.get({
-            url: window.config.URL_BONITO + "storeconc?corpname=" + this.corpus.corpname,
-            xhrParams: {
-                method: "POST",
-                data: this.getRequestData({
-                    concordance_query: this.getConcordanceQuery(),
-                    annotation_group: Auth.getAnnotationGroup(),
-                    storeconcname: storeconcname
-                })
-            },
+            url: window.config.URL_BONITO + "storeconc",
+            data: this.getRequestData({
+                concordance_query: this.getConcordanceQuery(),
+                storeconcname: storeconcname
+            }),
             done: function(payload) {
                 if (payload.error) {
                     this.showError(payload.error)
                 }
                 else {
+                    AnnotationStore.annotconc = storeconcname
                     if (payload.new) {
-                        LocalStorage.set("SKEMA_NEW_QUERY", payload.stored)
-                        Dispatcher.trigger("ANNOTATION_CREATED")
+                        AnnotationStore.getAnnotations()
+                        AnnotationStore.getAnnotLabels()
                     }
                     this.loadAnnotation(payload.stored)
                 }
             }.bind(this),
-            fail: function (payload) {
-                console.log('FAILED', payload)
+            fail: payload => {
+                SkE.showError("Could not load annotation data.", getPayloadError(payload))
             }
         })
     }
 
     loadAnnotation(storedconc) {
+        AnnotationStore.annotconc = storedconc
         this.data.annotconc = storedconc
-        AppStore.data.annotconc = storedconc
         this.data.showresults = true
         this.data.operations_annotconc = [{
-            name: "annot",
+            name: "",
             arg: storedconc,
-            active: true,
             query: {q: 's' + storedconc}
         }]
         this.changeResultScreen("concordance")
@@ -600,39 +527,9 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         this.search()
     }
 
-    delAnnotation(annotconc) { // called from dashboard
-        Connection.get({
-            url: window.config.URL_BONITO + "/delstored?corpname=" + this.corpus.corpname,
-            xhrParams: {
-                data: {
-                    annotconc: annotconc,
-                    annotation_group: Auth.getAnnotationGroup()
-                }
-            },
-            done: function (payload) {
-                if (payload.removed) {
-                    LocalStorage.set("SKEMA_QUERY_REMOVED", payload.removed)
-                    SkE.showToast(_("annotRemoved") + ": " + payload.removed)
-                    this.data.storedconcs = this.data.storedconcs.filter(x => {
-                        return x != payload.removed
-                    })
-                    this.trigger("ANNOTATION_REMOVED")
-                }
-                else {
-                    console.log('FAILED', payload)
-                }
-            }.bind(this),
-            fail: function (payload) {
-                console.log('FAILED', payload)
-            }
-        })
-        this.data.annotconc = ""
-        AppStore.data.annotconc = ""
-    }
-
     closeAnnotation() {
+        AnnotationStore.annotconc = ""
         this.data.annotconc = ""
-        AppStore.data.annotconc = ""
         this.data.operations_annotconc = []
         Dispatcher.trigger("FEATURE_TOOLBAR_SHOW_OPTIONS", "")
         this.data.hasBeenLoaded = false
@@ -646,50 +543,6 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
                 tab: this.data.tab
             })
         }
-    }
-
-    updateLabels(toknums, lid) {
-        for (let i=0; i<toknums.length; i++) {
-            for (let j=0; j<this.data.items.length; j++) {
-                if (this.data.items[j].toknum == toknums[i]) {
-                    this.data.items[j].linegroup_id = lid
-                }
-            }
-            Object.keys(this.preloadedData).forEach((key) => {
-                if (!isNaN(key)) {
-                    let lines = this.preloadedData[key].data
-                    for (let j=0; j<lines.length; j++) {
-                        if (lines[j].toknum == toknums[i]) {
-                            lines[j].linegroup_id = lid
-                        }
-                    }
-                }
-            })
-        }
-    }
-
-    labelToknums(toknums, lid) {
-        Connection.get({
-            url: window.config.URL_BONITO + "/setlngroup?corpname=" + this.corpus.corpname,
-            xhrParams: {
-                data: {
-                    annotconc: this.data.annotconc,
-                    annotation_group: Auth.getAnnotationGroup(),
-                    toknum: toknums.join(" "),
-                    group: lid
-                }
-            },
-            done: function (payload) {
-                if (payload.count) {
-                    this.updateLabels(toknums, lid)
-                    this.getAnnotLabels()
-                    Dispatcher.trigger("ANNOTATION_SUCCESSFUL", payload)
-                }
-            }.bind(this),
-            fail: function (data) {
-                console.log('FAILED', data)
-            }
-        })
     }
 
     shuffle(){
@@ -721,7 +574,7 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
 
     subHits(){
         this.addOperationAndSearch({
-            name: "filterSubHits",
+            name: "cc.filterSubHits",
             query: {
                 q: "D"
             }
@@ -754,16 +607,17 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         return context
     }
 
-    getContextStr(){
-        if(this.data.showcontext == "none"){
+    getContextStr(data){
+        data = data || this.data
+        if(data.showcontext == "none"){
             return ""
         }
-        let what = this.data.showcontext == "lemma" ? "lemword" : "pos"
+        let what = data.showcontext == "lemma" ? "lemword" : "pos"
         let context = ""
-        let parts = what == "pos" ? this._getFcPosList() : this.data.fc_lemword.split(" ")
-        let type = this.data["fc_" + what + "_type"]
-        let window_type = this.data["fc_" + what + "_window_type"]
-        let wsize = this.data["fc_" + what + "_wsize"]
+        let parts = what == "pos" ? this._getFcPosList(data) : data.fc_lemword.split(" ")
+        let type = data["fc_" + what + "_type"]
+        let window_type = data["fc_" + what + "_window_type"]
+        let wsize = data["fc_" + what + "_wsize"]
         if(type == "none"){
             context += _("noneOf")
         }
@@ -802,7 +656,7 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
                 }
             }
         }, this)
-        this.data.operations.forEach(operation => {
+        this.data.operations && this.data.operations.forEach(operation => {
             if(operation.name != "context"){
                 userOptions[operation.name] = {
                     labelId: "cc." + operation.name,
@@ -810,13 +664,13 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
                 }
             }
         })
-        if(!$.isEmptyObject(this.data.selection)){
+        if(!$.isEmptyObject(this.data.tts)){
             let value = ""
-            for(let textType in this.data.selection){
+            for(let textType in this.data.tts){
                 value += value ? ", " : ""
-                value += textType + ":" + this.data.selection[textType].join("|")
+                value += textType + ":" + this.data.tts[textType].join("|")
             }
-            userOptions.selection = {
+            userOptions.tts = {
                 labelId: "textTypes",
                 value: value
             }
@@ -854,13 +708,14 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
     getResultPageObject(){ // overriden
         let pageObj = super.getResultPageObject()
         pageObj.data.operations = this.data.operations
+        pageObj.data.operations_annotconc = this.data.operations_annotconc
         return pageObj
     }
 
     getAllTextTypes(){
         let allTextTypes = []
         if(!this.corpus.freqttattrs.length){
-            allTextTypes = TextTypesStore.get("textTypes").map(t => {return t.name + " 0"})
+            allTextTypes = TextTypesStore.data.textTypes.map(t => {return t.name + " 0"})
         } else {
             this.corpus.freqttattrs.forEach(item => { // parse weird freqttattrs format
                 item.split("|").forEach(attr => {
@@ -931,21 +786,23 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         this.structList = []
         this.refList = []
 
-        let arrStruct = []
-        for (let i = 0; i < this.corpus.structures.length; i++) {
-            arrStruct.push(this.corpus.structures[i].name)
-        }
+        let arrStruct = this.corpus.structures.map(s => s.name)
         let structures = []
         if (arrStruct.indexOf('s') >= 0) structures.push('s')
-        if (this.corpus.is_err_corpus) {
+        if (this.corpus.is_error_corpus) {
             if (arrStruct.indexOf('err') >= 0) structures.push('err')
             if (arrStruct.indexOf('corr') >= 0) structures.push('corr')
         }
+        if(this.corpus.defaultstructs && this.corpus.defaultstructs.length){
+            structures = [...new Set(structures.concat(this.corpus.defaultstructs))]
+        }
+
         this.data.structs = structures.join(',')
         this.attrList = this.corpus.attributes.map(a => {
             return {
                 value: a.name,
-                label: a.label
+                label: a.label,
+                isLc: a.isLc
             }
         })
         this.structList = this.corpus.structures.map(s => {
@@ -1026,23 +883,47 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
     }
 
     getLineCopyText(line){
-        let parts = []
-        let keys = ["Left", "Kwic", "Right"]
-        keys.forEach(block => {
-            line[block].forEach(item => {
-                if(isDef(item.str)){
-                    parts.push(item.str.trim())
-                }
+            let parts = []
+            ;["Left", "Kwic", "Right"].forEach(block => {
+                line[block].forEach(item => {
+                    isDef(item.str) && parts.push(item.str.trim())
+                })
             })
+            return parts.join(" ")
+
+    }
+
+    toggleRandom(random){
+        this.reloadActualResults({
+            random: !this.data.random
         })
-        let text = parts.join(" ")
-        return text
+        Dispatcher.trigger("closeDialog", "concordance10M")
+    }
+
+    showEmptyResultMessage(){
+        super.showEmptyResultMessage()
+        this._removeLastOperationIfNeeded()
+    }
+
+    showError(errorMessage){
+        super.showError(errorMessage)
+        this._removeLastOperationIfNeeded()
+    }
+
+    _removeLastOperationIfNeeded(){
+        let operations = this.data.operations
+        let lastOperation = operations[operations.length - 1]
+        if(this.isConc && lastOperation && lastOperation.name == "filter"){
+            this.removeOperation(lastOperation)
+        }
     }
 
     _onPageChange(pageId, query){
+        this._stopBgJobInterval()
         if (this._isActualFeature()) {
             this.selectedLinesDeselectAll()
             this._cancelRequestResetOptions()
+            stores.macro._setDataFromUserDataStore()
             if(query){
                 this._setDataFromUrl(query)
                 this.trigger("change")
@@ -1059,13 +940,13 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
 
     _cancelPreloadRequests(){
         for(let thousand in this.preloadedData){
-            let request = this.preloadedData[thousand]
-            request && request.cancel && request.cancel()
+            let request = this.preloadedData[thousand] && this.preloadedData[thousand].request
+            request && request.xhr && request.xhr.abort()
         }
     }
 
     _initPreloadedDataIfNeeded(){
-        let data = this._parseRequestData(this.data.activeRequest)
+        let data = window.copy(this.data.activeRequest.data)
         delete data.fromp
         delete data.pagesize
         if(!this.preloadedData.requestedData
@@ -1113,18 +994,16 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         }
         this.preloadedData[thousand] = {}
         let request = copy(this.request[0])
-        this.updateRequestData(request, {
+        Object.assign(request.data, {
             pagesize: 1000,
             fromp: (thousand || 0) + 1
         })
 
         this.preloadedData[thousand].request = Connection.get({
             url: request.url,
-            xhrParams: request.xhrParams,
+            data: request.data,
             done: function(thousand, payload){
-                payload.Lines.forEach(item => {
-                    item.ref = item.Refs.join(" ● ")
-                })
+                this._addComputedData(payload.Lines)
                 this.preloadedData[thousand].data = payload.Lines
             }.bind(this, thousand)
         })
@@ -1132,6 +1011,18 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
 
     _createOperationsFromFilters(filters){
         return filters.map(filter => {
+            return {
+                name: filter.name || "filter",
+                arg: this.getFilterDesc(filter),
+                query: filter
+            }
+        }, this)
+    }
+
+    getFilterDesc(filter){
+        if(filter.desc){
+            return filter.desc
+        } else {
             let selector = filter.queryselector.substr(0, filter.queryselector.length - 3) //lemmarow -> lemma, cqlrow -> cql
             let pn = filter.pnfilter == "n" ? "not, " : ""
             let fpos = filter.filfpos
@@ -1141,24 +1032,23 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
                 kwic = `,${filter.inclkwic ? "+" : "-"}KWIC`
             }
             let range = `${fpos}..${tpos}${kwic}`
-            return {
-                name: filter.name || "filter",
-                arg: filter.desc ? filter.desc : `${filter[selector]} (${pn}${range})`,
-                query: filter
-            }
-        })
+            return `${filter[selector]} (${pn}${range})`
+        }
     }
 
     _getQueryObject(dataIn){ // overriden
         let data = dataIn || this.data
         let queryObject = super._getQueryObject(data)
-        if(data.operations){
+        if(data.operations && data.operations.length){
             queryObject.operations = JSON.stringify(data.operations)
+        }
+        if(data.operations_annotconc && data.operations_annotconc.length){
+            queryObject.operations_annotconc = JSON.stringify(data.operations_annotconc)
         }
         return queryObject
     }
 
-    _addContextToOperations(){
+    _addContextToOperations(data, operations){
         function addContextFilter(filters, pn, cql, position, size){
             filters.push({
                 name: "context",
@@ -1186,33 +1076,55 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         }
 
         let filters = []
-        if(this.data.showcontext == "lemma"){
+        if(data.showcontext == "lemma"){
             append_filter (filters,
-                            this.data.default_attr || this.corpus.defaultattr,
-                            this.data.fc_lemword.split(" "),
-                            this.data.fc_lemword_type,
-                            this.data.fc_lemword_window_type,
-                            this.data.fc_lemword_wsize)
+                            data.default_attr || this.corpus.defaultattr,
+                            data.fc_lemword.split(" "),
+                            data.fc_lemword_type,
+                            data.fc_lemword_window_type,
+                            data.fc_lemword_wsize)
         }
-        if(this.data.showcontext == "pos"){
+        if(data.showcontext == "pos"){
             append_filter (filters,
                             "tag",
-                            this.data.fc_pos,
-                            this.data.fc_pos_type,
-                            this.data.fc_pos_window_type,
-                            this.data.fc_pos_wsize)
+                            data.fc_pos,
+                            data.fc_pos_type,
+                            data.fc_pos_window_type,
+                            data.fc_pos_wsize)
         }
 
-        this._createOperationsFromFilters(filters).forEach(this.addOperation.bind(this))
+        this._createOperationsFromFilters(filters).forEach(operation => {
+            operation.id = this._getOperationId()
+            operations.push(operation)
+        })
     }
 
     _setDataFromUrl(query){
         super._setDataFromUrl(query)
         if(query.operations){
             this.data.operations = JSON.parse(query.operations)
+            this.data.operations.forEach(o => {
+                if(!isDef(o.id)){
+                    o.id = this._getOperationId()
+                }
+            })
         }
-        if(query.selection){
-            TextTypesStore.setSelection(JSON.parse(query.selection))
+        if(query.operations_annotconc) {
+            this.data.operations_annotconc = JSON.parse(query.operations_annotconc)
+            this.data.operations_annotconc.forEach(o => {
+                if(!isDef(o.id)){
+                    o.id = this._getOperationId()
+                }
+            })
+        }
+
+        if(query.macro){
+            let macroStore = window.stores.macro
+            let macro = macroStore.getMacro(query.macro)
+            if(macro){
+                macroStore.data.id = query.macro
+                macroStore.data.macro = macro
+            }
         }
         this._setResultScreen(query.results_screen || "concordance")
         this._checkAndFixData()
@@ -1227,6 +1139,15 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         this._checkAndFixData()
     }
 
+    _addComputedData(items){
+        items.forEach(item => {
+            item.ref = item.Refs.join(" ● ")
+            item.Links.forEach(link => {
+                link.icon = this.linkIcons[link.mediatype]
+            })
+        })
+    }
+
     _checkAndFixData(){
         if(["kwic","sen"].indexOf(this.data.viewmode) == -1){ // do not allow other than kwic/sen
             this.data.viewmode = "kwic"
@@ -1234,16 +1155,12 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
     }
 
     _checkResultCount(payload){
-        let data = this.getRequestData({
-            fromp: 1,
-            pagesize: 1
-        })
         this.asyncResults.check({
-            url: window.config.URL_BONITO + "concordance?corpname=" + this.corpus.corpname,
-            xhrParams: {
-                method: "POST",
-                data: data
-            },
+            url: window.config.URL_BONITO + "concordance",
+            data: this.getRequestData({
+                fromp: 1,
+                pagesize: 1
+            }),
             isFinished: (data) => {
                 return data.finished !== 0
             },
@@ -1255,7 +1172,9 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
 
     _onCountDataLoaded(loading, data){
         if(data){
-            this.data.raw.Desc = data.Desc
+            ["Desc", "docf", "star"].forEach(key => {
+                this.data.raw[key] = data[key]
+            })
         }
         this.data.total = data ? data.concsize : 0
         this.data.fullsize = data ? data.fullsize : 0
@@ -1275,10 +1194,10 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         return super._isShowingResults() && this.isConc
     }
 
-    _getFcPosList(){
+    _getFcPosList(data){
         // for fc_pos (eg. ["N.*"]) returns descriptive variation (eg. ["noun"])
         let list = []
-        this.data.fc_pos.forEach(pos => {
+        data.fc_pos.forEach(pos => {
             let idx = this.corpus.wposlist.findIndex(p => {
                 return p.value == pos
             })
@@ -1291,8 +1210,71 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
 
     _onCorpusChange(){
         this._setResultScreen("concordance")
+        // Reset macroStore before calling super._onCorpusChange().
+        // Prevent to set this.data using macroStore.data.macro set by former corpus
+        window.stores.macro.reset()
         super._onCorpusChange()
-        Auth.getAnnotationGroup() && this.corpus && this.getAnnotations()
+        if(this.corpus){
+            window.config.ENABLE_ANNOTATION && AnnotationStore.getAnnotations()
+            if(this.corpus.is_error_corpus){
+                this.errCodeList = null
+                this.corrCodeList = null
+                this._loadErrCorrLists()
+            }
+        }
+    }
+
+    _loadErrCorrLists(){
+        // only err/corr included in corp_info structures
+        this.corpus.structures.map(s => s.name)
+            .filter(s => ["corr", "err"].includes(s))
+            .forEach(type => {
+                if(this[type + "CodeList"] == null){
+                    // type = ["err", "corr"]
+                    TextTypesStore.loadTextType(type + ".type")
+                        .done(function(payload) {
+                            this[type + "CodeList"] = window.arrayToOptionList(payload.suggestions.filter(value => value != "").sort())
+                            this[type + "CodeList"].unshift({labelId: "optionAll", value: ".*"})
+                        }.bind(this))
+                        .fail(function(type){
+                            SkE.showToast('Could not load text type "' + type + '.type"')
+                        }.bind(this))
+                        .always(function(){
+                            if(this.errCodeList && this.corrCodeList){
+                                if(this.errCodeList.length){
+                                    this.data.errcorr_switch = "err"
+                                } else if(this.corrCodeList.length){
+                                    this.data.errcorr_switch = "corr"
+                                }
+                            }
+                            this.trigger("errCorrListLoaded")
+                        }.bind(this))
+                }
+            })
+    }
+
+    _addGdexToQuery(query){
+        if (this.data.gdex_enabled) {
+            let gc = ""
+            if (this.data.gdexconf && this.data.gdexconf != "__default__") {
+                gc = " " + this.data.gdexconf
+            }
+            query.push({
+                q: (this.data.show_gdex_scores ? "E" : "e") + this.data.gdexcnt + gc
+            })
+        }
+    }
+
+    _addErrorAnalysisOptions(data){
+        if(this.data.tab == "error"){
+            ["errcorr_switch", "cup_hl", "cup_err", "cup_corr", "cup_err_code"].forEach(key => {
+                data[key] = this.data[key]
+            })
+        }
+    }
+
+    _getOperationId(){
+        return Math.floor(Math.random() * 10000)
     }
 
     //////////// FREQUENCY
@@ -1307,13 +1289,11 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         this.changeResultScreen("frequency")
         this.cancelPreviousRequest()
         this.data.isLoading = true
+        this.data.showresults = true
         this.updatePageTag()
         this.data.activeRequest = Connection.get({
-            url: window.config.URL_BONITO + (this.data.f_mode == "texttypes" ? "freqs" : "freqml") + '?corpname=' + this.corpus.corpname,
-            xhrParams: {
-                method: "POST",
-                data: this.f_getRequestData(block)
-            },
+            url: window.config.URL_BONITO + (this.data.f_mode == "texttypes" ? "freqs" : "freqml"),
+            data: this.f_getRequestData(block),
             done: this.f_onDataLoadDone.bind(this),
             fail: this.onDataLoadFail.bind(this),
             always: this.onDataLoadAlways.bind(this)
@@ -1323,17 +1303,26 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
     }
 
     f_getRequestData(block){
+        let sort = (block ? block.sort : this.data.f_sort) + ""
+        if(sort == "reltt"){
+            sort = "rel" // items order is the same for reltt or rel, Bonito sorts by rel
+        }
         let data = {
             corpname: this.corpus.corpname,
             format: "json",
             concordance_query: this.getConcordanceQuery(),
             usesubcorp: this.data.usesubcorp,
-            fmaxitems: 5000,
+            fmaxitems: this.data.f_fmaxitems,
             fpage: block ? block.page : this.data.f_page,
-            freq_sort: (block ? block.sort : this.data.f_sort) + "",
+            freq_sort: sort,
             blockId: block ? block.id : "",
-            group: this.data.f_group
+            group: !!this.data.f_group,
+            showpoc: 1,
+            showreltt: 1,
+            showrel: 1,
+            wpos: this.data.wpos
         }
+        this._addErrorAnalysisOptions(data)
         if(this.data.f_mode == "texttypes"){
             data.fcrit = []
             if(block){
@@ -1345,15 +1334,21 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
             data.freqlevel = 0
             this.data.f_freqml.forEach((freq, idx) => {
                 data.freqlevel++
+                let isStruct = this.structList.findIndex(s => {return s.value === freq.attr}) != -1
                 data["ml" + (idx + 1) + "attr"] = freq.attr
-                data["ml" + (idx + 1) + "ctx"] = this.getFilterContextStr(freq.ctx, freq.base)
-            })
+                data["ml" + (idx + 1) + "ctx"] = isStruct ? "0" : this.getFilterContextStr(freq.ctx, freq.base)
+                if(isStruct){
+                    data["ml" + (idx + 1) + "bwarde"] = 0
+                }
+            }, this)
         }
-        return "json=" + encodeURIComponent(JSON.stringify(data))
+        data.results_url = window.location.href + '&showresults=1'
+        return data
     }
 
     f_onDataLoadDone(payload){
         if(this.isFreq){
+            this.data.raw = payload
             this.data.total = payload.concsize
             this.data.fullsize = payload.fullsize
             if(payload.request.blockId){ // one block reloaded (sort,..)
@@ -1367,11 +1362,12 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
                 this.data.f_error = ''
                 this.data.f_isEmpty = true
                 this.data.f_isError = false
+                this.onDataLoadedProcessBGJob(payload, this.f_search.bind(this))
                 if(payload.error){
                     this.data.f_error = payload.error
                     this.data.f_isError = true
                     this.showError(payload.error)
-                } else{
+                } else if(!this.data.jobid){
                     this.f_onDataLoadedProcessItems(payload)
                     this.data.f_isEmpty = this.data.f_items.length == 0
                     if(!this.data.f_isEmpty){
@@ -1382,7 +1378,7 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
                         this.showEmptyResultMessage()
                     }
                 }
-                if(!this.data.f_isError){
+                if(!this.data.f_isError && !this.data.f_isEmpty){
                     Dispatcher.trigger("FEATURE_TOOLBAR_SHOW_OPTIONS", null)
                 }
             }
@@ -1391,27 +1387,33 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
 
     f_onDataLoadedProcessItems(payload){
         this.data.f_items = payload.Blocks.map(block => {
+            block.Items.forEach((item, idx) => {
+                item.id = idx
+            })
             return Object.assign(block, {
                 id: block.Head[0].id,
                 page: 1,
                 itemsPerPage: this.data.f_mode == "texttypes" ? 10 : this.data.f_itemsPerPage,
                 showResultsFrom: 0,
                 orderBy: "freq",
-                sort: "freq"
+                sort: "freq",
+                selection: []
             })
         })
     }
 
     f_getLink(data, mode, f_tab){
         let concQueryObj = this._getQueryObject(Object.assign({}, this.data, {
-            f_tab: f_tab,
             f_texttypes: [],
             f_freqml: [],
             f_page: 1,
             f_mode: mode
         }, data))
+        // If f_tab == "basic" (default value), then it is not included in url.
+        // And because of that tab is not set and then not saved in user options
+        concQueryObj.f_tab = f_tab
         concQueryObj.results_screen = "frequency"
-        return Router.createUrl("concordance", concQueryObj)
+        return Url.create("concordance", concQueryObj)
     }
 
     f_getContextLink(ctx, base, attr, f_tab){
@@ -1433,6 +1435,36 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         return texttypes !== "" ? [texttypes] : []
     }
 
+     f_showRelFrqAndPerc(){
+        let firstItem = this.data.f_items.length && this.data.f_items[0].Items[0]
+        return firstItem
+                && !isDef(firstItem.rel)
+                && !isDef(firstItem.reltt)
+                && (isDef(firstItem.poc) || isDef(firstItem.fpm))
+     }
+
+     f_showRelTtAndRelDens(){
+        let firstItem = this.data.f_items.length && this.data.f_items[0].Items[0]
+        return firstItem
+                && (isDef(firstItem.rel) || isDef(firstItem.reltt))
+     }
+
+     f_sortBlock(block){
+        if(block.Items.length < 5000){
+            // everything is loaded on frontend
+            let isNum = typeof block.sort == "number"  // frequency attribute index - there could be more of them in the result
+            block.Items.sort((a, b) => {
+                if(isNum){
+                    return a.Word[block.sort].n.localeCompare(b.Word[block.sort].n)
+                } else {
+                    return b[block.sort] - a[block.sort]
+                }
+            })
+        } else {
+            this.f_search(block)
+        }
+     }
+
     //////////// COLLOCATIONS
 
     c_searchAndAddToHistory(options){
@@ -1445,15 +1477,12 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         this.changeResultScreen("collocations")
         this.cancelPreviousRequest()
         this.data.isLoading = true
-        this.data.c_showresults = true
+        this.data.showresults = true
         this.updatePageTag()
 
         this.data.activeRequest = Connection.get({
-            url: window.config.URL_BONITO + "collx?corpname=" + this.corpus.corpname,
-            xhrParams: {
-                method: "POST",
-                data: this.c_getRequestData()
-            },
+            url: window.config.URL_BONITO + "collx",
+            data: this.c_getRequestData(),
             done: this.c_onDataLoadDone.bind(this),
             fail: this.onDataLoadFail.bind(this),
             always: this.onDataLoadAlways.bind(this)
@@ -1484,29 +1513,33 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
             "concordance_query": this.getConcordanceQuery(),
             "cmaxitems": cmaxitems,
             "collpage": page,
+            "wpos": this.data.wpos
         }
+        this._addErrorAnalysisOptions(data)
         this.data.c_loadedFrom = (page - 1) * cmaxitems
         this.c_xhrOptions.forEach(attr => {
             if(isDef(this.data[attr])){
                 data[attr.substr(2)] = this.data[attr]
             }
         })
-        return "json=" + encodeURIComponent(JSON.stringify(data))
+        return data
     }
 
     c_onDataLoadDone(payload){
         if(this.isColl){
-            this.request[0].xhrParams.data = this.c_getRequestData(payload.wllimit || 10000000, 1)
+            this.data.raw = payload
+            this.request[0].data = this.c_getRequestData(payload.wllimit || 10000000, 1)
             this.c_hasBeenLoaded = false
             this.data.c_items = []
             this.data.c_error = ''
             this.data.c_isEmpty = true
             this.data.c_isError = false
+            this.onDataLoadedProcessBGJob(payload, this.c_search.bind(this))
             if(payload.error){
                 this.data.c_error = payload.error
                 this.data.c_isError = true
                 this.showError(payload.error)
-            } else{
+            } else if(!this.data.jobid){
                 this.data.c_items = payload.Items
                 this.data.c_lastpage = payload.lastpage
                 this.data.c_isEmpty = this.data.c_items.length == 0
@@ -1520,7 +1553,7 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
                     this.showEmptyResultMessage()
                 }
             }
-            if(!this.data.c_isError){
+            if(!this.data.c_isError && !this.data.c_isEmpty){
                 Dispatcher.trigger("FEATURE_TOOLBAR_SHOW_OPTIONS", null)
             }
         }
@@ -1577,10 +1610,20 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         }[fun] || ""
     }
 
-    onSubcorpusChange(subcorpus){
-        let params = {
-            usesubcorp: subcorpus
+    setMacroOptionsAndReload(macro, options){
+        if(macro.options.results_screen){
+            this._setResultScreen(macro.options.results_screen)
+            this.updatePageTag()
         }
+        Object.assign(this.data, {page: 1}, macro.options, options)
+        this.operationsInit()
+        macro.options.operations.forEach(operation => {
+            this.data.operations.push(operation)
+        })
+        this.reloadActualResults()
+    }
+
+    reloadActualResults(params){
         this.isConc && this.searchAndAddToHistory(params)
         this.isFreq && this.f_searchAndAddToHistory(params)
         this.isColl && this.c_searchAndAddToHistory(params)

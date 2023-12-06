@@ -1,3 +1,5 @@
+@import 'app/styles/constants';
+
 .page-ca-tmx-compile{
     .columnWrapper{
         max-width: 600px;
@@ -16,7 +18,7 @@
     }
     .compiledBtns{
         .btn-flat i{
-            color: #004B69;
+            color: $blue-800;
         }
     }
     .leaveNote{

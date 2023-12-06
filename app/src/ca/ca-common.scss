@@ -1,13 +1,12 @@
-@import 'app/styles/base';
 @import 'app/styles/constants';
 
 .SkE .greyCard{
-    background-color: #f1f1f1;
+    background-color: $gray-100;
 }
 
 .caSupportedFormats{
     font-size: 13px;
-    color: #bdbdbd;
+    color: $gray-400;
     position: relative;
 }
 
@@ -23,14 +22,14 @@
             color: black;
         }
         .breadcrumb{
-            color: $new_mediumBlue;
+            color: $blue-200;
             text-transform: uppercase;
             &.active{
-                color: $new_darkBlue;
+                color: $blue-800;
                 font-weight: 500;
             }
             &::before{
-                color: $new_mediumBlue;
+                color: $blue-200;
             }
         }
     }
@@ -38,12 +37,14 @@
 
 .ca-title{
     display: flex;
+    flex-wrap: wrap;
     margin-bottom: 15px;
+    margin-top: 15px;
     font-size: 2em;
     align-items: center;
     .name{
         text-transform: uppercase;
-        color: $new_darkBlue;
+        color: $blue-800;
     }
     .corpname{
         color: black;
@@ -51,8 +52,11 @@
     }
     .language {
         font-size: .5em;
-        color: $new_darkBlue;
+        color: $blue-800;
         line-height: 3.5em;
+    }
+    .badge{
+        white-space: nowrap;
     }
     @media screen and (max-width: 950px){
         font-size: 1.5em;
@@ -69,5 +73,5 @@
 }
 
 #btnBack {
-    color: $new_darkBlue;
+    color: $blue-800;
 }

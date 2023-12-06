@@ -1,4 +1,5 @@
 <concordance-subcorpus-dialog>
+    <preloader-spinner if={isLoading} overlay=1 center=1></preloader-spinner>
     <div style="max-width: 500px; margin: auto;">
         <ui-input
             class="subcname"
@@ -13,11 +14,11 @@
             riot-value={subcstruct}
             required=1
             label={_("subcstruct")}></ui-list>
-        <div class="center-align">
+        <div class="center-aligned">
             <a href="#ca-subcorpora" class="btn">
                 {_("manageMySubcorpora")}
             </a>
-            <div class="btn contrast" onclick={createSubc}>
+            <div class="btn btn-primary" onclick={createSubc}>
                 {_("createSubcorpus")}
             </div>
         </div>
@@ -25,41 +26,54 @@
 
     <script>
         const {AppStore} = require("core/AppStore.js")
-        const {ConcordanceStore} = require('./ConcordanceStore.js')
 
-        this.structures = AppStore.get("corpus.structures").filter(structure => {
-            return structure.name != "g"
-        }).map(structure => {
-            return {
-                label: structure.name,
-                value: structure.label || structure.name
-            }
-        })
+        this.mixin("feature-child")
 
-        this.subcstruct = this.structures.length ? this.structures[0].value : ""
+        this.subcorpora = []
+        this.isLoading = false
+        this.actualCorpname = AppStore.getActualCorpname()
+        this.isActualCorpname = !this.opts.corpname || this.opts.corpname == this.actualCorpname
+        this.structures = AppStore.get("corpus.structures").filter(structure => structure.name != "g")
+                .map(structure => ({
+                    label: structure.name,
+                    value: structure.label || structure.name
+                }))
+        this.subcstruct = this.structures.findIndex(s => s.value == "s") != -1 ? "s" : this.structures[0].value
 
         createSubc() {
-            if(AppStore.getSubcorpus(this.refs.subcname.getValue())){
+            let subcname = this.refs.subcname.getValue()
+            if((this.isActualCorpname && AppStore.getSubcorpus(subcname))
+                 || (!this.isActualCorpname && this.subcorpora.includes(subcname))){
                 SkE.showToast(_("msg.subcorpAlreadyExists"))
                 return
             }
-            let q = ConcordanceStore.data.raw.q.reduce((str, q) => {
-                if (str) {
-                    str += '&'
-                }
-                return str += 'q=' + encodeURIComponent(q)
-            }, "")
-            AppStore.createSubcorpus(this.refs.subcname.getValue(), {
-                q: q,
+            AppStore.createSubcorpus(subcname, {
+                q: this.data.raw.q,
                 struct: this.refs.subcstruct.value
-            })
+            }, this.opts.corpname)
             this.refs.subcname.refs.input.value = ''
             // TODO: wait until the subcorpus is successfully created
             this.parent.closeOptions()
         }
 
+        onCorpusLoaded(data){
+            this.isLoading = false
+            this.subcorpora = data.subcorpora.map(s => s.n)
+            this.update()
+        }
+
+        if(!this.isActualCorpname){
+            AppStore.loadAnyCorpus(this.opts.corpname)
+            Dispatcher.one('ANY_CORPUS_LOADED', this.onCorpusLoaded)
+            this.isLoading = true
+        }
+
         this.on("mount", () => {
             delay(() => {$(this.refs.subcname.refs.input).focus()})
+        })
+
+        this.on("unmount", () => {
+            Dispatcher.off('ANY_CORPUS_LOADED', this.onCorpusLoaded)
         })
     </script>
 </concordance-subcorpus-dialog>

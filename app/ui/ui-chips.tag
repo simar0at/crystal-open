@@ -1,6 +1,6 @@
 <ui-chips class="ui ui-chips {opts.class} {empty: !opts.data || !opts.data.length }">
     <div ref="chips" class="chips">
-        <input ref="input" onkeydown={onChipKeyDown}>
+        <input ref="input" onkeydown={onChipKeyDown} oninput={onInput}>
     </div>
 
     <script>
@@ -8,12 +8,15 @@
 
         getValue(){
             if(this.isMounted){
-                return $(".chips", this.root).data().chips.map(chip => {
+                return M.Chips.getInstance($(".chips", this.root)).chipsData.map(chip => {
                     return chip.tag
                 })
-            } else{
-                return this.opts.riotValue
             }
+            return []
+        }
+
+        getInputValue(){
+            return this.refs.input.value
         }
 
         onChipKeyDown(evt){
@@ -22,6 +25,11 @@
                 evt.preventDefault()
             }
             evt.preventUpdate = true
+        }
+
+        onInput(evt){
+            evt.preventUpdate = true
+            isDef(this.opts.onInput) && this.opts.onInput(this.refs.input.value)
         }
 
         _addChip(){
@@ -57,7 +65,10 @@
         }
 
         _onChipAdd(){
-            this.opts.onAdd && this.opts.onAdd(this.refs.input.value)
+            this.opts.onAdd && delay(() => {
+                // call asynchronously to let materialize code finish first
+                this.opts.onAdd(this.refs.input.value)
+            }, 0)
             this._onDataChanged()
         }
 

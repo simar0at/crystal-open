@@ -15,12 +15,16 @@
                 </div>
         </div>
         <div class="col xl12 l7 m12">
-            <sortable-list tag-name="wordlist-option-display-item"
-                name="attributes"
-                items={items}
-                on-sort={onChangeOrder}
-                sortable-params={sortableParams}>
-            </sortable-list>
+            <div class="wlSortable">
+                <wordlist-option-display-item each={item, idx in items}
+                        id="{item.id}"
+                        name={item.name}
+                        disabled={item.disabled}
+                        lowercase={item.lowercase}
+                        show-checkbox={parent.caseSwitchAllowed}
+                        on-remove={parent.onRemove}
+                        on-checkbox-change={parent.onCheckboxChange}></wordlist-option-display-item>
+            </div>
         </div>
     </div>
 
@@ -34,9 +38,8 @@
         this.options = this.parent.options
         this.items = []
         this.attributesList = this.corpus.attributes || []
-        this.sortableParams = {
-            axis: "y"
-        }
+        this.caseSwitchAllowed = !AppStore.get("corpus.unicameral")
+
 
         setItemsFromStore(){
             this.items = []
@@ -70,30 +73,15 @@
             })
         }
 
-        onItemChange(item){
-            for(let i = 0; i < this.items.length; i++){
-                if(this.items[i].name == item.name){
-                    this.items[i] = item
-                    this.updateOptions()
-                    return
-                }
-            }
-        }
-
-        onRemove(name){
+        onRemove(evt){
             this.items = this.items.filter((attr) => {
-                return attr.name != name
+                return attr.name != evt.item.item.name
             })
             this.updateOptions()
         }
 
-        onCheckboxChange(name, checked){
-            this.items = this.items.map((item) => {
-                if(item.name == name){
-                    item.lowercase = checked
-                }
-                return item
-            })
+        onCheckboxChange(checked, name){
+            this.items.find(item => item.name == name).lowercase = checked
             this.updateOptions()
         }
 
@@ -103,18 +91,20 @@
         }
 
         onChangeOrder(items){
-            this.items = items
+            let order = []
+            $(".wordlist-option-display-item").each(function(idx, elem){
+                order.push(elem._tag.opts.id)
+            }.bind(this))
+            this.items.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id))
             this.updateOptions()
         }
 
         addItem(name, lowercase){
             this.items.push({
                 name: name,
-                lowercase: lowercase,
-                showCheckbox: !AppStore.get("corpus.unicameral"),
-                disabled: !AppStore.getAttributeByName(name).ignoreCaseAllowed,
-                onRemove: this.onRemove,
-                onCheckboxChange: this.onCheckboxChange
+                id: "itm_" + name,
+                disabled: AppStore.data.unicameral,
+                lowercase: lowercase
             })
         }
 
@@ -142,15 +132,23 @@
             this.parent.refreshSearchButtonDisable()
         }
 
-        this.on("before-mount", this.setItemsFromStore)
+        initSortable(){
+            var el = $(".wlSortable")[0]
+            el && Sortable.create(el, {
+                animation: 150,
+                onSort: this.onChangeOrder.bind(this)
+            })
+        }
 
+        this.on("before-mount", this.setItemsFromStore)
+        this.on("mount", this.initSortable)
         this.on("update", () => {
             if(this.isMounted){
-                const viewportWidth = $(window).width()
                 this.isLposSelected = !!AppStore.getLposByValue(this.options.find) // from find list is selected lpos and not attribute
                 this.setItemsFromStore()
             }
         })
+        this.on("updated", this.initSortable)
 
     </script>
 </wordlist-option-display>

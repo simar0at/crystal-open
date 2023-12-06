@@ -25,9 +25,9 @@
             checked={data.show_gdex_scores}
             on-change={onShowScoresChange}
             tooltip="t_id:conc_r_gdex_gdex_score"></ui-checkbox>
-        <div class="center-align">
+        <div class="primaryButtons">
             <br>
-            <a id="btnGoGdex" class="btn contrast" onclick={onSaveClick}>{_("go")}</a>
+            <a id="btnGoGdex" class="btn btn-primary" onclick={onSaveClick}>{_("go")}</a>
         </div>
     </div>
 
@@ -47,7 +47,7 @@
 
 
         onShowScoresChange(checked){
-            this.show_gdex_scores = checked ? 1 : 0
+            this.show_gdex_scores = checked
         }
 
         onSelectGDEXConf(value, name, event) {
@@ -63,12 +63,13 @@
         }
 
         onSaveClick(){
+            this.data.closeFeatureToolbar = true
             this.store.searchAndAddToHistory({
                 gdexcnt: this.refs.gdexcnt.getValue(),
                 page: 1,
                 sort: [],
-                gdex_enabled: 1,
-                gdexconf: this.refs.gdexconf.value,
+                gdex_enabled: true,
+                gdexconf: this.refs.gdexconf.getValue() || "",
                 show_gdex_scores: this.show_gdex_scores,
                 viewmode: "sen"
             })

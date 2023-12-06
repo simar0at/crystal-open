@@ -1,0 +1,55 @@
+@import 'constants.scss';
+
+.filter-input{
+    position: relative;
+    .dropdownBtn{
+        position: absolute;
+        left: 0px;
+        bottom: 0;
+        opacity: 0.4;
+        z-index: 1;
+        cursor: pointer;
+        &.disabled{
+            pointer-events: none;
+            i.material-icons{
+                color: $gray-600;
+            }
+            .raw-html svg{
+                fill: $gray-600;;
+            }
+        }
+        &:hover{
+            opacity: 1;
+        }
+        i.material-icons{
+            color: $blue-800;
+            vertical-align: middle;
+        }
+    }
+    .ui-input{
+        input{
+            padding-left: 65px!important;
+        }
+    }
+    .raw-html{
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        vertical-align: middle;
+        svg{
+            fill: $blue-800 ;
+        }
+    }
+    .dropdown-content{
+        .raw-html{
+            margin: 0 24px 0 0;
+        }
+        .ui-checkbox label span{
+            height: 30px;
+            padding-left: 55px;
+            color: $blue-800;
+            font-size: 16px;
+        }
+    }
+}

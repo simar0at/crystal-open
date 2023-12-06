@@ -1,6 +1,6 @@
 <concordance-result-options-filter-basic>
     <div class="center-align">
-        <span class="inlineBlock">
+        <span class="inline-block">
             <ui-input placeholder={_("abc")}
                     value=""
                     name="keyword"
@@ -12,9 +12,9 @@
                     style="max-width: 200px;">
             </ui-input>
         </span>
-        <div class="center-align">
+        <div class="primaryButtons">
             <a  id="btnBasicGoFilter"
-                    class="waves-effect waves-light btn"
+                    class="btn btn-primary"
                     disabled={isSearchDisabled}
                     onclick={onSubmit}>{_("go")}</a>
         </div>

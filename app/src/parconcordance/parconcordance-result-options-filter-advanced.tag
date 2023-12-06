@@ -1,11 +1,11 @@
-<parconcordance-result-options-filter-advanced class="parconcordance-result-options-filter-advanced">
+<parconcordance-result-options-filter-advanced class="parconcordance-result-options-filter-advanced pt-4">
     <div if={no_kwic} class="disabledcontextselector">{_("pc.alsegment")}</div>
-    <span if={!no_kwic} class="inlineBlock">
+    <span if={!no_kwic} class="inline-block">
         <ui-range if={!no_kwic} id="contextselector"
                 label={_("range")}
                 riot-value={{
-                            from: data.filterFrom,
-                            to: data.filterTo
+                            from: options.filterFrom,
+                            to: options.filterTo
                         }}
                 range={rangeOptions}
                 on-change={onRangeChange}></ui-range>
@@ -16,7 +16,7 @@
                 inline=1
                 name="inclkwic"
                 label-id="cc.exclKwic"
-                checked={!data.inclkwic}
+                checked={!options.inclkwic}
                 disabled={excludeKwicDisabled}
                 on-change={onExclKwickChange}></ui-checkbox>
         </div>
@@ -24,7 +24,7 @@
 
     <div class="row">
         <ui-select name="pnfilter"
-                value={data.pnfilter}
+                value={options.pnfilter}
                 inline=1
                 on-change={onOptionChange}
                 options={[ {label: _("pc.contains"), value: "p"},
@@ -36,7 +36,8 @@
                 riot-value={formValue}
                 btn-label={_("filter")}
                 on-change={onFormChange}
-                onsubmit={onSubmit}
+                on-submit={onSubmit}
+                on-reset={onFormReset}
                 is-displayed={true}
                 show-context={false}>
         </concordance-filter-form>
@@ -57,14 +58,20 @@
             }
         })
         this.excludeKwicDisabled = false
+        this.options = {
+            filterFrom: this.data.filterFrom,
+            filterTo: this.data.filterTo,
+            inclkwic: this.data.inclkwic,
+            pnfilter: this.data.pnfilter
+        }
 
         onRangeChange(value){
-            this.data.filterFrom = value.from
-            this.data.filterTo = value.to
+            this.options.filterFrom = value.from
+            this.options.filterTo = value.to
             let justKwic = value.from == "kwic" && value.to == "kwic"
             let kwicInRange = (value.from == "kwic" || value.from <= -1) && (value.to == "kwic" || value.to >= 1)
             if(justKwic){
-                this.data.inclkwic = true
+                this.options.inclkwic = true
                 this.excludeKwicDisabled = true
             } else {
                 this.excludeKwicDisabled = !kwicInRange
@@ -73,15 +80,21 @@
         }
 
         onExclKwickChange(checked){
-            this.data.inclkwic = !checked
+            this.options.inclkwic = !checked
             this.update()
         }
 
         this.formValue = {}
-        this.no_kwic = this.parent.parent.opts.opts.has_no_kwic
+        this.no_kwic = this.parent.parent.opts.has_no_kwic
 
         onOptionChange(value, name) {
-            this.data[name] = value
+            this.options[name] = value
+        }
+
+        onFormReset(){
+            debugger
+            this.store.resetGivenOptions(this.options)
+            this.update()
         }
 
         onFormChange(value) {
@@ -92,14 +105,14 @@
         }
 
         onSubmit() {
-            let corpname = this.parent.parent.opts.opts.corpname
+            let corpname = this.parent.parent.opts.corpname
             let qs = this.formValue.queryselector
             let query = this.formValue[qs == "cql" ? "cql" : "keyword"]
             let filter = {
-                pnfilter: this.data.pnfilter,
-                inclkwic: this.data.filterInclKwic,
-                filfpos: this.data.filterFrom,
-                filtpos: this.data.filterTo,
+                pnfilter: this.options.pnfilter,
+                inclkwic: this.options.filterInclKwic,
+                filfpos: this.options.filterFrom,
+                filtpos: this.options.filterTo,
                 queryselector: qs + "row",
                 lpos: this.formValue.lpos,
                 wpos: this.formValue.wpos
@@ -110,10 +123,14 @@
                 filter.maincorp = corpname
             }
 
+            for(let key in this.formValue.tts){
+                filter["sca_" + key] = this.formValue.tts[key]
+            }
+
             this.store.addOperationAndSearch({
                 name: "filter",
                 corpname: corpname,
-                arg: query,
+                arg: "(" + this.store.getAlignedLangName(corpname) + ") " + query,
                 query: filter
             })
         }

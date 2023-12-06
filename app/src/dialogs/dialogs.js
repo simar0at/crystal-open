@@ -1,15 +1,14 @@
 const {Connection} = require("core/Connection.js")
 const {Auth} = require("core/Auth.js")
-const {TextTypesStore} = require("common/text-types/TextTypesStore.js")
 require("./create-subcorpus-dialog/create-subcorpus-dialog.tag")
 require("./change-password-dialog/change-password-dialog.tag")
 require("./request-space-dialog/request-space-dialog.tag")
 require("./grammar-detail-dialog/grammar-detail-dialog.tag")
 require("./reset-fup-dialog/reset-fup-dialog.tag")
+require("./tags-dialog/tags-dialog.tag")
 
 
 const showCreateSubcorpus = (showManageBtn) => {
-    TextTypesStore.reset()
     Dispatcher.trigger("openDialog", {
         id: "createSubcorpus",
         tag: "add-subcorpus-dialog",
@@ -27,7 +26,7 @@ const showChangePasswordDialog = () => {
         buttons: [{
             id: "cpd_changeBtn",
             label: _("changePassword"),
-            class: "disabled contrast",
+            class: "disabled btn-primary",
             onClick: Dispatcher.trigger.bind(this, "changePassword")
         }]
     })
@@ -40,11 +39,11 @@ const showRequestMoreSpaceDialog = () => {
         small: true,
         buttons: [{
             label: _("send"),
-            class: "contrast",
+            class: "btn-primary",
             onClick: (dialog) => {
                 let extra_space = dialog.contentTag.refs.space.getValue()
                 Connection.get({
-                    url: window.config.URL_CA + "/users/me/request_more_space",
+                    url: window.config.URL_CA + "users/me/request_more_space",
                     loadingId: "sendQutoaRequest",
                     xhrParams: {
                         method: "POST",

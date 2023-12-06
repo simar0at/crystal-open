@@ -12,7 +12,6 @@
                 value={pnfilter}
                 options={pnOptionList}
                 on-change={onOptionChange}></ui-select>
-                <span>:</span>
             <br><br>
 
             <div class="queryWrapper">
@@ -26,7 +25,7 @@
             </div>
 
             <div class="filterRange">
-                <span class="inlineBlock">
+                <span class="inline-block">
                     <label class="tooltipped" data-tooltip="t_id:conc_r_filter_range">
                         {_("range")}
                         <sup>?</sup>
@@ -38,7 +37,7 @@
                             on-change={onFilterRangeChange}></ui-radio>
                 </span>
 
-                <span class="ranges inlineBlock {excludeKwic: !options.inclkwic}">
+                <span class="ranges inline-block {excludeKwic: !options.inclkwic}">
                     <div class="filterRangeToken">
                         <range-select if={options.filter_range == 0}
                                 label=""
@@ -114,16 +113,18 @@
         </div>
         <br>
 
-        <text-types-collapsible></text-types-collapsible>
+        <text-types ref="texttypes"
+                collapsible=1
+                on-change={onTtsChange}></text-types>
 
 
-        <div class="center-align">
-            <a id="btnGoAdvFilter" class="waves-effect waves-light btn contrast leftPad" disabled={isSearchDisabled} onclick={onSubmit}>{_("go")}</a>
+        <div class="primaryButtons">
+            <a id="btnGoAdvFilter" class="btn btn-primary leftPad" disabled={isSearchDisabled} onclick={onSubmit}>{_("go")}</a>
         </div>
 
         <floating-button disabled={isSearchDisabled}
             name="btnGoFloat"
-            onclick={onSubmit}
+            on-click={onSubmit}
             refnodeid="btnGoAdvFilter"
             periodic="1"></floating-button>
     </div>
@@ -132,7 +133,6 @@
         require("concordance/query-types/query-types.tag")
         require("concordance/concordance-quick-filters.tag")
         require("concordance/range-select/range-select.tag")
-        const {TextTypesStore} = require("common/text-types/TextTypesStore.js")
 
         this.mixin("feature-child")
         this.mixin("tooltip-mixin")
@@ -143,7 +143,8 @@
             filfpos: -3,
             filtpos: 3,
             inclkwic: true,
-            default_attr: 'word' // TODO: use DEFAULATTR
+            default_attr: 'word', // TODO: use DEFAULATTR
+            tts: {}
         }
         this.formValue = {
             queryselector: this.data.queryselector,
@@ -254,6 +255,7 @@
         onQueryTypesChange(value) {
             this.formValue = value
             this.formValue.default_attr = this.options.default_attr
+            this.update()
         }
 
         onQueryTypesValidChange(isValid){
@@ -263,47 +265,68 @@
             }
         }
 
+        onTtsChange(tts){
+            this.options.tts = tts
+            this.refreshDisabled()
+        }
+
         onSubmit(){
-            let filfpos = this.options.filfpos
-            let filtpos = this.options.filtpos
-            if(filfpos != "kwic" && (this.options.filter_range == 1 || (this.options.filter_range == 2 && this.options.range_from_type == "sentence"))){
-                filfpos += ":s"
-            }
-            if(filtpos != "kwic" && (this.options.filter_range == 1 || (this.options.filter_range == 2 && this.options.range_to_type == "sentence"))){
-                filtpos += ":s"
-            }
+            let queryselector = this.formValue.queryselector
+            let valueField = queryselector == "cql" ? "cql" : "keyword"
+            let direction = this.corpus.righttoleft ? - 1 : 1
+            let filfpos = this.options.filfpos == "kwic" ? "kwic" : this.options.filfpos * direction
+            let filtpos = this.options.filtpos == "kwic" ? "kwic" : this.options.filtpos * direction
+            let filfposIsSentence = this.options.filter_range == 1 || (this.options.filter_range == 2 && this.options.range_from_type == "sentence")
+            let filtposIsSentence = this.options.filter_range == 1 || (this.options.filter_range == 2 && this.options.range_to_type == "sentence")
+            let filfposDesc = filfpos
+            let filtposDesc = filtpos
             let filter = {
+                queryselector: queryselector + "row",
                 pnfilter: this.options.pnfilter,
                 inclkwic: this.options.inclkwic,
                 lpos: this.formValue.lpos,
                 wpos: this.formValue.wpos,
                 qmcase: this.formValue.qmcase,
-                filfpos: this.corpus.righttoleft ? -filtpos : filfpos,
-                filtpos: this.corpus.righttoleft ? -filfpos : filtpos
+                filfpos: filfpos,
+                filtpos: filtpos
+            }
+            filter[queryselector] = this.formValue[valueField]
+            if(filfposIsSentence){
+                if(filfpos == "kwic"){
+                    filter.filfpos = -1 * direction
+                } else {
+                    filter.filfpos = filfpos - 1 * direction * -Math.sign(filfpos)
+                }
+                filfposDesc += ":s"
+                filter.filfpos += ":s"
+            }
+            if(filtposIsSentence){
+                if(filtpos == "kwic"){
+                    filter.filtpos = 1 * direction
+                } else {
+                    filter.filtpos = filtpos + 1 * direction * Math.sign(filtpos)
+                }
+                filtposDesc += ":s"
+                filter.filtpos += ":s"
             }
 
-            let selection = TextTypesStore.get("selection")
-            for(let key in selection){
-                filter["sca_" + key] = selection[key]
+            for(let key in this.options.tts){
+                filter["sca_" + key] = this.options.tts[key]
             }
 
-            let queryselector = this.formValue.queryselector
-            let valueField = queryselector == "cql" ? "cql" : "keyword"
-            let value = this.formValue[valueField]
-            if(!$.isEmptyObject(selection)){
-                let textTyepsDesc = Object.values(selection).join(",")
+            filter.desc = this.store.getFilterDesc(Object.assign({}, filter, {
+                filfpos: filfposDesc,
+                filtpos: filtposDesc
+            }))
+            if(!$.isEmptyObject(this.options.tts)){
+                let textTyepsDesc = Object.values(this.options.tts).join(",")
                 // only texttype is selected
-                if(!value){
-                    queryselector = "cql"
-                    value = ""
+                if(!filter[queryselector]){
                     filter.desc = textTyepsDesc
                 } else {
-                    filter.desc = value + "," + textTyepsDesc
+                    filter.desc += "," + textTyepsDesc
                 }
             }
-            filter.queryselector = queryselector + "row"
-            filter[queryselector] = value
-            TextTypesStore.reset()
             this.store.filter(filter)
         }
 
@@ -329,7 +352,7 @@
 
         refreshDisabled(){
             let wasDisabled = this.isSearchDisabled
-            let isTextTypeSelected = !$.isEmptyObject(TextTypesStore.get("selection"))
+            let isTextTypeSelected = !$.isEmptyObject(this.options.tts)
             if(isTextTypeSelected){
                 this.isSearchDisabled = false
             } else {
@@ -341,15 +364,9 @@
         }
 
         this.on("mount", () => {
-            TextTypesStore.reset()
-            TextTypesStore.on("selectionChange", this.refreshDisabled)
             delay(function(){
                 $("input[name=\"keyword\"]:visible, textarea:visible", this.root).first().focus()
             }.bind(this), 400)
-        })
-
-        this.on("unmount", () => {
-            TextTypesStore.off("selectionChange", this.refreshDisabled)
         })
     </script>
 </concordance-result-options-filter-advanced>

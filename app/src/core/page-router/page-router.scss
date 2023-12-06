@@ -16,5 +16,11 @@
         .appContainer{
             padding: 5px;
         }
+        .page-dashboard{
+            margin: 0;
+            .col.m12{
+                padding: 0;
+            }
+        }
     }
 }

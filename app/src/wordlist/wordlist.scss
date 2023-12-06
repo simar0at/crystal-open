@@ -1,8 +1,10 @@
-@import 'app/styles/base';
 @import 'app/styles/constants';
 
-@mixin wordlistTabCommon{
+.wordlist-tabs .tabContent{
     position: relative;
+}
+
+@mixin wordlistTabCommon{
     >div.card-content{
         @media only screen and (max-width: 600px){
             max-width: 310px;
@@ -12,7 +14,7 @@
                 white-space: nowrap;
                 position: relative;
                 top: 30px;
-                color: $new_darkBlue;
+                color: $blue-800;
             }
         }
     }

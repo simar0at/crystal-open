@@ -1,5 +1,5 @@
-<parconcordance-result-options-freq>
-    <ui-tabs ref="tabs" tabs={tabs} active={tab} on-tab-change={this.onTabChange}>
+<parconcordance-result-options-freq class="frequency-tabs">
+    <ui-tabs ref="tabs" tabs={tabs} active={data.f_tab} on-tab-change={onTabChange}>
     </ui-tabs>
 
     <script>
@@ -18,7 +18,6 @@
                 tag: "parconcordance-result-options-freq-advanced"
             }
         ]
-        this.tab = this.store.data.f_tab
 
         onTabChange(tabId) {
             this.store.data.f_tab = tabId

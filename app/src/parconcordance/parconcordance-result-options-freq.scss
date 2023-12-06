@@ -6,4 +6,31 @@
         text-align: center;
         margin-bottom: 1em;
     }
+
+
+
+    .frequency-quick-list{
+        display: inline-block;
+        vertical-align: top;
+        @media only screen and (max-width: 1200px){
+            margin: auto;
+            display: table;
+            float: none;
+            margin-top: 20px;
+        }
+    }
+
+    .leftColumn{
+        @media only screen and (min-width: 1200px){
+            margin-right: 20px;
+            padding-right: 20px;
+            border-right: 1px solid rgb(206, 206, 206);
+            margin-bottom: 20px;
+        }
+    }
+
+    .kwicBaseDropdown{
+        position: relative;
+        left: -15px;
+    }
 }

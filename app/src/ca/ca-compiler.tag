@@ -1,6 +1,6 @@
 <ca-compiler class="ca-compiler">
     <preloader-spinner if={!canBeCompiledLoaded} center=1></preloader-spinner>
-    <virtual if={space.total >= space.used && canBeCompiledLoaded}>
+    <virtual if={space.has_space && canBeCompiledLoaded}>
         <div class="status card-panel">
             <virtual if={corpus.can_be_compiled || corpus.isCompiling || corpus.isTagging}>
                 <span class="statusText">
@@ -29,40 +29,39 @@
             </virtual>
 
             <br>
-            <div class="buttons center-align">
+            <div class="buttons primaryButtons">
                 <a href="#ca-create-content"
                         if={opts.showAddMoreFilesBtn}
                         id="btnMoreFiles"
-                        class="btn {btn-flat: !corpus.isEmpty, disabled: corpus.isCompiling}">
+                        class="btn {btn-flat: corpus.hasDocuments, disabled: corpus.isCompiling}">
                     {_("ca.addTexts")}
                 </a>
                 <a id="btnCompile"
                         ref="btnCompile"
                         onclick={onCompileCorpus}
-                        class="btn {contrast: !corpus.isCompiled}
+                        class="btn {btn-primary: !corpus.isCompiled}
                                 {btn-flat: corpus.isCompiled}
-                                {disabled: !corpus.can_be_compiled || corpus.isEmpty || corpus.isCompiling || corpus.isCancelling || (showSettings  && (invalidDocStructure || invalidFileStructure))}">
+                                {disabled: !corpus.can_be_compiled || !corpus.hasDocuments || corpus.isCompiling || corpus.isCancelling || (showSettings  && (invalidDocStructure || invalidFileStructure))}">
                     {_(corpus.isCompiled ? "ca.recompile" : "ca.compile")}
                 </a>
                 <a href="#dashboard"
                         if={corpus.isCompiled}
                         id="btnDashboard"
-                        class="btn {contrast: corpus.isCompiled}">
+                        class="btn {btn-primary: corpus.isCompiled}">
                     {_("ca.corpusDashboard")}
                 </a>
             </div>
         </div>
 
-        <div class="center-align" if={corpus.can_be_compiled || corpus.isCompiling}>
-            <a class="btn btn-flat btn-waves {disabled: corpus.isEmpty || corpus.isCompiling}"
-                    onclick={onSettingsToggle}
-                    style="text-transform: none;">
+        <div if={corpus.can_be_compiled || corpus.isCompiling}
+                class="center-align">
+            <a class="btn btn-flat noCapitalization {disabled: !corpus.hasDocuments || corpus.isCompiling}  t_btnExpertSettings"
+                    onclick={onSettingsToggle}>
                 {_("expertSettings")}
                 <i class="material-icons right">{showSettings ? "arrow_drop_up" : "arrow_drop_down"}</i>
             </a>
-            <a class="btn btn-flat btn-waves {disabled: corpus.isEmpty}"
-                    onclick={onShowLogClick}
-                    style="text-transform: none;">
+            <a class="btn btn-flat noCapitalization {disabled: !corpus.hasDocuments} t_btnLog"
+                    onclick={onShowLogClick}>
                 {_("log")}
                 <i class="material-icons right">{showLog ? "arrow_drop_up" : "arrow_drop_down"}</i>
             </a>
@@ -70,7 +69,7 @@
         </div>
     </virtual>
 
-    <div if={space.total < space.used} class="spaceLimitReached">
+    <div if={!space.has_space} class="spaceLimitReached">
         <br>
         <h5>{_("compilationDisabled")}</h5>
         <ca-space-dialog message={_("compilationDisabledMsg")}></ca-space-dialog>
@@ -95,10 +94,16 @@
             <div if={isCompilerSettingsLoading} class="centerSpinner">
                 <preloader-spinner></preloader-spinner>
             </div>
-            <virtual if={expertMode}>
-                <raw-html content={_("compilerExpertModeInfo", ['<a href="#ca-config">' + _("configPage") + "</a>"])}
-                        style="background-color: #CFECF4; padding: 5px 15px;"></raw-html>
-            </virtual>
+            <div if={expertMode}
+                    class="center-align background-color-blue-100 p-2">
+                {_("compilerExpertModeInfo")}
+                <div class="pb-2 pt-5">
+                    <a href="#ca-config" class="btn">{_("configPage")}</a>
+                    <a href="javascript:void(0);"
+                            class="btn"
+                            onclick={onTurnExpertModeOffClick}>{_("expertModeOff")}</a>
+                </div>
+            </div>
             <virtual if={!isCompilerSettingsLoading}>
                 <div class="row {hidden: expertMode}">
                     <label for="onion_structure" class="col m5 s12">
@@ -127,40 +132,42 @@
                         <a onclick={onAttrAllChangeChecked.bind(this, true)} class="link">{_("all")}</a>
                         |
                         <a onclick={onAttrAllChangeChecked.bind(this, false)} class="link">{_("none")}</a>
-                        <div each={struct, sIdx in available_structures} clas="ui-checkbox">
-                            <label for={"attr" + sIdx} class="strAttrLabel">
-                                <input type="checkbox"
-                                    class="struct"
-                                    id={"attr" + sIdx}
-                                    name={struct.name}
-                                    onchange={onStructureChange}
-                                    disabled={options.structures[struct.name].disabled}
-                                    checked={options.structures[struct.name].checked}/>
-                                <span>
-                                    {(struct.label || struct.name) + " (" + window.Formatter.num(struct.freq) + ")"}
-                                </span>
-                            </label>
-                            <a if={options.structures[struct.name].attributes.length} class="btn btn-floating btn-flat btn-small" onclick={onToggleAttributes}>
-                                <i class="material-icons grey-text">add</i>
-                            </a>
-                            <div if={options.structures[struct.name].attributes.length} class="attributes {hidden: !options.structures[struct.name].showAttributes}">
-                                <div each={attr in options.structures[struct.name].attributes} class="attr">
-                                    <label for={attr.id} class="strAttrLabel">
-                                        <input type="checkbox"
-                                            name={attr.id}
-                                            id="{attr.id}"
-                                            onchange={parent.parent.onAttributeChange}
-                                            checked={attr.checked} />
-                                        <span>
-                                            {attr.label || attr.name}
-                                        </span>
-                                    </label>
+                        <div class="t_structs">
+                            <div each={struct, sIdx in available_structures} class="ui-checkbox">
+                                <label for={"attr" + sIdx} class="strAttrLabel">
+                                    <input type="checkbox"
+                                        class="struct"
+                                        id={"attr" + sIdx}
+                                        name={struct.name}
+                                        onchange={onStructureChange}
+                                        disabled={options.structures[struct.name].disabled}
+                                        checked={options.structures[struct.name].checked}/>
+                                    <span>
+                                        {(struct.label || struct.name) + " (" + window.Formatter.num(struct.freq) + ")"}
+                                    </span>
+                                </label>
+                                <a if={options.structures[struct.name].attributes.length} class="btn btn-floating btn-flat btn-small" onclick={onToggleAttributes}>
+                                    <i class="material-icons grey-text">add</i>
+                                </a>
+                                <div if={options.structures[struct.name].attributes.length} class="attributes {hidden: !options.structures[struct.name].showAttributes}">
+                                    <div each={attr in options.structures[struct.name].attributes} class="attr">
+                                        <label for={attr.id} class="strAttrLabel">
+                                            <input type="checkbox"
+                                                name={attr.id}
+                                                id="{attr.id}"
+                                                onchange={parent.parent.onAttributeChange}
+                                                checked={attr.checked} />
+                                            <span>
+                                                {attr.label || attr.name}
+                                            </span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </span>
                 </div>
-                <div class="row">
+                <div class="row t_sketchGrammars">
                     <label for="sketch_grammars" class="col m5 s12">
                         {_("ca.sketch_grammars")}
                         <i class="help tooltipped material-icons" data-tooltip={_("ca.sketch_grammarsHelp")}>help_outline</i>
@@ -171,7 +178,8 @@
                                 <preloader-spinner center=1></preloader-spinner>
                             </div>
                             <div each={option, idx in sketch_grammarsOptions}>
-                                <label for={"sgo_" + idx}>
+                                <label for={"sgo_" + idx}
+                                        class="rb_{(option.value + "").replace(/\W/g,'_')}">
                                     <input type="radio"
                                         id={"sgo_" + idx}
                                         name="sketch_grammar_id"
@@ -180,7 +188,8 @@
                                         onchange={parent.onChangeOption}>
                                         <span>
                                             {getLabel(option)}
-                                            <span if={option.value == parent.data.tagset.default_sketchgrammar_id}>{_("recommended")}</span>
+                                            <span if={option.value == parent.data.tagset.default_sketchgrammar_id}
+                                                    class="grey-text">({_("recommended")})</span>
                                         </span>
                                 </label>
                                 <a if={option.value} class="btn btn-floating btn-flat btn-small" onclick={onShowGrammDetail.bind(this, option.value)}>
@@ -193,7 +202,7 @@
                         </a>
                     </span>
                 </div>
-                <div class="row">
+                <div class="row t_termGrammars">
                     <label for="terms" class="col m5 s12">
                         {_("ca.terms")}
                         <i class="help tooltipped material-icons" data-tooltip={_("ca.termsHelp")}>help_outline</i>
@@ -201,7 +210,8 @@
                     <span class="col m7 s12">
                         <div class="ca-radio ui-radio">
                             <div each={option, idx in termsOptions}>
-                                <label for={"tg_" + idx}>
+                                <label for={"tg_" + idx}
+                                        class="rb_{(option.value + "").replace(/\W/g,'_')}">
                                     <input type="radio"
                                         id={"tg_" + idx}
                                         name="term_grammar_id"
@@ -210,7 +220,8 @@
                                         onchange={parent.onChangeOption}>
                                     <span>
                                         {getLabel(option)}
-                                        <span if={option.value == parent.data.tagset.default_sketchgrammar_id}>{_("recommended")}</span>
+                                        <span if={option.value == parent.data.tagset.default_sketchgrammar_id}
+                                                class="grey-text">({_("recommended")})</span>
                                     </span>
                                 </label>
                                 <a if={option.value} class="btn btn-floating btn-flat btn-small" onclick={onShowGrammDetail.bind(this, option.value)}>
@@ -232,7 +243,7 @@
                         <ui-input ref="file_structure"
                             name="file_structure"
                             size=20
-                            on-change={onChangeAndUpdate}
+                            on-change={onChangeFileStructure}
                             on-input={validateFileStructure}
                             riot-value={options.file_structure}
                             inline=1></ui-input>
@@ -262,7 +273,7 @@
                 <div class="center-align dividerTop">
                     <br>
                     <a id="btnCompilerOptionsCancel" onclick={onSettingsCancelClick} class="btn btn-flat">{_("cancel")}</a>
-                    <a id="btnCompilerOptionsSave" onclick={onSettingsSaveClick} class="btn contrast {disabled: invalidDocStructure || invalidFileStructure}">{_("ca.saveAndCompile")}</a>
+                    <a id="btnCompilerOptionsSave" onclick={onSettingsSaveClick} class="btn btn-primary {disabled: invalidDocStructure || invalidFileStructure}">{_("ca.saveAndCompile")}</a>
                 </div>
             </virtual>
         </div>
@@ -271,7 +282,7 @@
     <ca-compiler-log if={showLog}></ca-compiler-log>
 
     <br>
-    <div class="quickInfo card-panel" if={canBeCompiledLoaded && corpus.isCompiled && space.total >= space.used}>
+    <div class="quickInfo card-panel" if={canBeCompiledLoaded && corpus.isCompiled && space.has_space}>
         <h5>{_("ca.getToKnowYourCorpus")}</h5>
         <div class="center-align">
             <a href="#keywords" class="btn tooltipped" data-tooltip={_("ca.keywordsAndTermsDesc")}>
@@ -294,7 +305,7 @@
         const {AppStore} = require("core/AppStore.js")
         const {Auth} = require("core/Auth.js")
         const {CAStore} = require("./castore.js")
-        const {Router} = require("core/Router.js")
+        const {Url} = require("core/url.js")
         const Dialogs = require("dialogs/dialogs.js")
 
         this.compileWhenFinished = CAStore.data.compileWhenFinished
@@ -302,7 +313,6 @@
         this.mixin("tooltip-mixin")
 
         this.corpus = CAStore.corpus || {}
-        this.expertMode = this.corpus.expert_mode
         this.showSettings = !this.corpus.use_all_structures
         this.invalidFileStructure = false
         this.invalidDocStructure = false
@@ -411,6 +421,7 @@
             this.sketchGrammars = this.data.sketchGrammars
             this.canBeCompiledLoaded = AppStore.get("canBeCompiledLoaded")
             this.isCompilerSettingsLoading = this.data.tagset === null || this.sketchGrammars === null || this.data.terms === null
+            this.expertMode = this.corpus.expert_mode
 
             if(this.isCompilerSettingsLoading){
                 this.sketch_grammarsOptions = []
@@ -446,10 +457,11 @@
         CAStore.checkCorpusStatus(this.corpus.id)
         CAStore.loadSketchGrammars(this.corpus.id)
         CAStore.loadTerms(this.corpus.id)
-        CAStore.loadTagSets({id: this.corpus.tagset_id})
+        CAStore.loadActualTagSet()
         AppStore.loadCanBeCompiled()
 
         onCompileCorpus(evt){
+            this.showSettings = false
             this.refs.btnCompile && this.refs.btnCompile.classList.add("disabled")
             CAStore.compileCorpus(this.corpus.id, {structures: "all"})
             if(this.showLog){
@@ -476,11 +488,6 @@
 
         onChangeOption(evt){
             this.options[evt.target.name] = evt.item.option.value
-        }
-
-        onChangeAndUpdate(value, name){
-            this.options[name] = value
-            this.update()
         }
 
         onOnionStructureChange(onion_structure){
@@ -522,6 +529,17 @@
             this.update()
         }
 
+        onChangeFileStructure(value){
+            if(value !== "" && this.options.docstructure == "-select-"){
+                this.options.docstructure = "$filestructure$"
+            } else if(value === "" && this.options.docstructure === "$filestructure$"){
+                this.options.docstructure = "-select-"
+                this.invalidDocStructure = true
+            }
+            this.options.file_structure = value
+            this.update()
+        }
+
         onDocStructureChange(value){
             this.options.docstructure = value
             this.invalidDocStructure = value == "-select-"
@@ -555,13 +573,18 @@
                 buttons: [{
                     id: "grammarDialogBtn",
                     label: _("create"),
-                    class: "contrast disabled",
+                    class: "btn-primary disabled",
                     onClick: function(dialog, modal){
                         CAStore.createGrammar(dialog.contentTag.getGrammar())
                         modal.close()
                     }.bind(this)
                 }]
             })
+        }
+
+        onTurnExpertModeOffClick(evt){
+            evt.preventUpdate = true
+            CAStore.turnOffExpertMode()
         }
 
         saveSettings(){
@@ -590,7 +613,7 @@
             if(!this.expertMode){
                 settings = Object.assign(settings, {
                     file_structure: this.options.file_structure,
-                    onion_structure: this.options.onion_structure,
+                    onion_structure: this.options.onion_structure == "@file@" ? this.options.file_structure : this.options.onion_structure,
                     structures: structures,
                     docstructure: this.options.docstructure == "$filestructure$" ? this.options.file_structure : this.options.docstructure
                 })
@@ -631,7 +654,7 @@
 
         onDeduplicateChange(checked){
             this.options.deduplicate = checked
-            this.options.onion_structure = null
+            this.options.onion_structure = checked ? "@file@" : null
             this.update()
         }
 
@@ -671,8 +694,6 @@
                     } else {
                         this.invalidFileStructure = true
                     }
-                } else {
-                    this.invalidDocStructure = true
                 }
                 (wasInvalid != this.invalidFileStructure) && this.update()
             }
@@ -692,11 +713,11 @@
         onStatusChange(){
             if(this.canBeCompiledLoaded
                 && this.corpus.can_be_compiled
-                && (this.corpus.isReady || this.corpus.isToBeCompiled)
-                && Router.getUrlQuery().run){
+                && (this.corpus.isReady || this.corpus.isToBeCompiled || this.corpus.isCompiled || this.corpus.isCompilationFailed)
+                && Url.getQuery().run){
                 let fn = () => {
                     this.onCompileCorpus()
-                    Router.updateUrlQuery({})
+                    Url.setQuery({})
                 }
                 this.isMounted ? fn() : this.one("mounted", fn)
             }
@@ -715,16 +736,17 @@
         this.on("mount", () => {
             AppStore.on("statusChange", this.onStatusChange)
             CAStore.on("change", this.refreshStructuresAndUpdate)
-            CAStore.on("tagsetsLoaded", this.refreshStructuresAndUpdate)
-            CAStore.on("tagsetsLoaded", this.refreshStructuresAndUpdate)
+            CAStore.on("actualTagsetLoaded", this.refreshStructuresAndUpdate)
             AppStore.on("corpusChanged", this.onCorpusChange)
+            CAStore.on("expertModeOff", this.update)
         })
 
         this.on("unmount", () => {
             AppStore.off("statusChange", this.onStatusChange)
             CAStore.off("change", this.refreshStructuresAndUpdate)
-            CAStore.off("tagsetsLoaded", this.refreshStructuresAndUpdate)
+            CAStore.off("actualTagsetLoaded", this.refreshStructuresAndUpdate)
             AppStore.off("corpusChanged", this.onCorpusChange)
+            CAStore.off("expertModeOff", this.update)
         })
     </script>
 </ca-compiler>

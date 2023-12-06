@@ -80,21 +80,19 @@
         <div class="card-panel greyCard">
             <span class="right rightCol">
                 <a if={hasTextTypes}
-                        class="btn contrast tooltipped"
+                        id="btnCreateSubcorpus"
+                        class="btn btn-primary tooltipped"
                         data-tooltip={_("ca.createDesc")}
                         onclick={onCreateSubcorpusClick}>
                     {_("createSubcorpus")}
                 </a>
-                <br>
-                <ui-checkbox label={_("showPreloadedSubcorpora")}
-                        riot-value={showPreloaded}
-                        on-change={onShowPreloadedChange}></ui-checkbox>
+
             </span>
             <div if={!subcorpora.length} class="center-align grey-text">
                 <br>
                 <h4>{_(isTextTypesLoaded ? "nothingHere" : "loading")}</h4>
-                <br>
             </div>
+
             <div class="subcorpora center-align">
                 <table if={subcorpora.length} class="material-table highlight">
                     <thead>
@@ -107,7 +105,7 @@
                         </tr>
                     </thead>
                     <tr each={subcorpus in subcorpora}>
-                        <td>
+                        <td class="t_name">
                             <span if={subcorpus.user == 2}
                                     class="tooltipped" data-tooltip="t_id:ca_subc_old">
                                 {subcorpus.n}
@@ -115,16 +113,16 @@
                             </span>
                             <span if={subcorpus.user != 2}>{subcorpus.n}</span>
                         </td>
-                        <td>{subcorpus.user == 2 ? "" : window.Formatter.num(subcorpus.tokens)}</td>
-                        <td>{subcorpus.user == 2 ? "" : ("~" + window.Formatter.num(subcorpus.words))}</td>
-                        <td>{subcorpus.user == 2 ? "" : window.Formatter.num(subcorpus.relsize, {maximumFractionDigits: 1})}</td>
+                        <td class="t_tokens">{subcorpus.user == 2 ? "" : window.Formatter.num(subcorpus.tokens)}</td>
+                        <td class="t_words">{subcorpus.user == 2 ? "" : ("~" + window.Formatter.num(subcorpus.words))}</td>
+                        <td class="t_relsize">{subcorpus.user == 2 ? "" : window.Formatter.num(subcorpus.relsize, {maximumFractionDigits: 1})}</td>
                         <td>
                             <i class="material-icons material-clickable grey-text"
                                     if={subcorpus.user}
                                     onclick={onSubcorpusInfoClick}>
                                 info
                             </i>
-                            <i class="material-icons material-clickable grey-text"
+                            <i class="material-icons material-clickable grey-text t_remove"
                                     if={subcorpus.user}
                                     onclick={onSubcorpusRemoveClick}>
                                 delete_forever
@@ -133,6 +131,11 @@
                     </tr>
                 </table>
                 <br>
+                  <div class="center-align">
+                    <ui-switch label={_("showPreloadedSubcorpora")}
+                            riot-value={showPreloaded}
+                            on-change={onShowPreloadedChange}></ui-switch>
+                  </div>
                 <div class="buttons">
                     <a href="#ca" id="btnBack" class="btn btn-flat">{_("back")}</a>
                 </div>
@@ -153,8 +156,8 @@
         TextTypesStore.loadTextTypes()
 
         updateAttributes(){
-            this.isTextTypesLoaded = TextTypesStore.get("isTextTypesLoaded")
-            this.hasTextTypes = TextTypesStore.get("hasTextTypes")
+            this.isTextTypesLoaded = TextTypesStore.data.isTextTypesLoaded
+            this.hasTextTypes = TextTypesStore.data.hasTextTypes
             this.subcorpora = AppStore.get("corpus.subcorpora").filter(s => {
                 return s.value !== "" && (this.showPreloaded || s.user)
             }, this)

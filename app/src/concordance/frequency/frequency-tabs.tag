@@ -5,7 +5,7 @@
 </frequency-tab-about>
 
 <frequency-tabs class="frequency-tabs">
-    <ui-tabs ref="tabs" name="frequency-tabs" tabs={tabs} active={tab} on-tab-change={onTabChange}></ui-tabs>
+    <ui-tabs ref="tabs" name="frequency-tabs" tabs={tabs} active={data.f_tab} on-tab-change={onTabChange}></ui-tabs>
 
     <script>
         require("./frequency-tabs.scss")
@@ -28,7 +28,6 @@
             tag: "frequency-tab-about"
         }]
 
-        this.tab = this.store.data.f_tab
 
         onTabChange(tab){
             this.store.data.f_tab = tab

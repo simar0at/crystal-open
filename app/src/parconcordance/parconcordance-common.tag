@@ -1,8 +1,8 @@
 <parconcordance-result-options-shuffle class="parconcordance-result-options-shuffle">
     <external-text text="conc_r_shuffle"></external-text>
     <br>
-    <div class="center">
-        <a class="btn contrast" onclick={store.shuffle.bind(store)}>{_("go")}</a>
+    <div class="primaryButtons">
+        <a id="btnGoShuffle" class="btn btn-primary" onclick={store.shuffle.bind(store)}>{_("shuffle")}</a>
     </div>
     <script>
         this.mixin('feature-child')
@@ -16,7 +16,8 @@
                 inline=1 min=1 placeholder="250" riot-value=250 required={true}
                 on-submit={onRandomSampleSubmit} size=4>
         </ui-input>
-        <a class="btn contrast" onclick={onRandomSampleSubmit}>{_("go")}</a>
+        &nbsp;
+        <a id="btnGoSample" class="btn btn-primary" onclick={onRandomSampleSubmit}>{_("go")}</a>
     </div>
 
     <script>
@@ -35,19 +36,15 @@
     </script>
 </parconcordance-result-options-sample>
 
-<parconcordance-result-context>
-    <div each={item, idxI in opts.data} class="itm">
-        <span if={item.str || item.attr} class="str {item.class} {coll: item.coll}">
-            {item.str.match(/\S/) ? item.str : "&nbsp;"}
-        </span>
-        <span if={item.attr} class="attr">
-            {item.attr.substr(1)}
-        </span>
-        <span if={item.strc} class="strc">
-            {item.strc}
-        </span>
-    </div>
-</parconcordance-result-context>
+<parconcordance-result-items>
+        <span each={item, idxI in opts.data} no-reorder
+        if={item.str || item.strc}
+        class="itm {item.class} {coll: item.coll} {strc: item.strc} {hl: item.hl}"
+        onclick={opts.onClick}
+        data-tooltip={item.attr && opts.show_as_tooltips ? item.attr.substr(1) : ""}
+        attr={item.attr && !opts.show_as_tooltips && item.attr.substr(1)}
+        style="{item.color ? 'color: '  + item.color : ''}">{isDef(item.str) ? (item.str.match(/\S/) ? item.str : "&nbsp;") : null}{item.strc}</span>
+</parconcordance-result-items>
 
 <parconcordance-result-refs-row class="tr refsUpRow tn-{opts.item.toknum}">
     <div if={parent.lineNumbersUp} class="td num">
@@ -55,16 +52,19 @@
     </div>
     <div class="td">
         <span class="refsUp">
-            <a class="btn btn-flat btn-floating lineDetail tooltipped" data-tooltip={_("lineDetailsTip")}>
-                <i class="material-icons medium">info_outline</i>
+            <a class="btn btn-flat btn-floating lineDetail tooltipped t_lineDetail" data-tooltip={_("lineDetailsTip")}>
+                <i class="material-icons color-blue-200">info_outline</i>
             </a>
-            <span class="refsUpValues" onmouseover={showTooltip}>{opts.item.ref}</span>
+            <span if={parent.data.refs !== ""}
+                    class="refsUpValues"
+                    onmouseover={showTooltip}>{opts.item.ref}</span>
         </span>
     </div>
     <virtual if={parent.data.viewmode == "kwic"}>
         <div class="td"></div>
         <div class="td"></div>
     </virtual>
+    <div each={opts.item.Align} class="td"></div>
 
     <script>
         showTooltip(evt){

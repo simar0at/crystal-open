@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-deva ._t{
-    font-family: 'Noto Devanagari'
+.script-deva ._t,
+body .script-deva ._t,
+body .script-deva._t{
+    font-family: 'Noto Devanagari','Noto Sans', sans-serif;
 }

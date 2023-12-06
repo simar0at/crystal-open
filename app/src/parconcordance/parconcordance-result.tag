@@ -1,17 +1,19 @@
-<parconcordance-result>
-    <div class="table material-table highlight result-table
-                display{data.viewmode == 'kwic' ? 'Kwic' : 'Sen'}" if={data.items.length}>
+<parconcordance-result class={hasAttributes: hasAttributes,
+            hasContextAttributes: hasContextAttributes,
+            viewSen: data.viewmode == "sen",
+            viewKwic: data.viewmode == "kwic"}>
+    <div class="table material-table highlight result-table" if={items.length} onmouseover={onMouseOver}>
         <div class="thead">
             <div class="tr">
                 <div if={data.linenumbers} class="th partmenu"></div>
                 <div if={refsLeft} class="th partmenu"></div>
-                <div class="th partmenu">
+                <div class="th partmenu t_m-1">
                     <parconcordance-result-options-part
                             allowrm={false}>
                     </parconcordance-result-options-part>
                 </div>
                 <div if={data.gdex_enabled && data.show_gdex_scores} class="th gdexth">{_("cc.gdexScore")}</div>
-                <div each={al, idx in data.items[0].Align} class="th partmenu">
+                <div each={al, idx in items[0].Align} no-reorder class="th partmenu t_m-{idx + 2}">
                     <parconcordance-result-options-part
                             has_no_kwic={al.has_no_kwic}
                             allowrm={data.formparts.length > 1}
@@ -22,136 +24,125 @@
         </div>
         <concordance-detail-window></concordance-detail-window>
         <div class="tbody">
-            <virtual each={item, idx in data.items}>
-                <parconcordance-result-refs-row if={data.refs_up}
+            <virtual each={item, idx in items} no-reorder>
+                <parconcordance-result-refs-row if={refsUp}
                         item={item}
                         num={(data.itemsPerPage * (data.page - 1)) + idx + 1}
                         onclick={onRefClick}>
                 </parconcordance-result-refs-row>
-                <div class="tr tn-{item.toknum}">
-                    <div if={lineNumbersLeft} class="td num medium">
+                <div class="tr r-{idx + 1} tn-{item.toknum}">
+                    <div if={lineNumbersLeft} class="td num color-blue-200">
                         {(data.itemsPerPage * (data.page-1)) + idx + 1}
                     </div>
                     <div if={lineNumbersUp} class="td"></div>
-                    <div class="td ref" if={refsLeft}
-                            onclick={onRefClick}
-                            style={"max-width: " + (data.shorten_refs ? (data.ref_size + "em;") : "auto")}>
-                        <span>
-                            <a class="btn btn-flat btn-floating lineDetail tooltipped"
+                    <div if={refsLeft} class="td ref {hasRef: item.ref !== ''}" onclick={onRefClick}>
+                        <span><i class="material-icons material-clickable t_lineDetail"
                                     data-tooltip={_("lineDetailsTip")}>
-                                <i class="material-icons medium">info_outline</i>
-                            </a>{item.ref}</span>
+                            info_outline</i>&nbsp;
+                            <span if={data.refs !== ""}
+                                    data-tooltip={(data.shorten_refs && data.refs !== "") ? item.ref : null}
+                                    class="ref-label">
+                                {(data.refs !== "" && data.ref_size < item.ref.length) ?
+                                  item.ref.substring(0,data.ref_size)+"..." : item.ref}
+                            </span>
+                        </span>
                     </div>
                     <virtual if={data.viewmode == "kwic"}>
-                        <div class="td ctd _t {corpusDirClass}"
-                                style={"width:" + 100/(item.Align.length+1) + "%"}>
+                        <div class="td ctd l-1 _t {corpusDirClass}"
+                                style="width: {100 / (item.Align.length + 1)}%">
                             <div class="subtdl right-align"
-                                    style={item.Left.length ? "width: 50%" : ""}>
-                                <parconcordance-result-context data={item.Left}></parconcordance-result-context>
+                                    style="{item.Left.length ? 'width: 50%' : ''}">
+                                <parconcordance-result-items data={item.Left}
+                                        class="t_leftContext"></parconcordance-result-items>
                             </div>
                             <div class="subtdc center-align"
-                                    style={item.Left.length+item.Right.length ? "white-space: nowrap" : ""}>
-                                <span each={kwic in item.Kwic}
-                                        class="kwicWrapper"
-                                        onclick={onKwicClick.bind(this, item)}>
-                                    <span if={kwic.str} class="kwic">{kwic.str}</span>
-                                    <span if={kwic.strc} class="strc">{kwic.strc}</span>
-                                    <span if={kwic.attr} class="attr">
-                                        {kwic.attr.substr(1)}
-                                    </span>
-                                </span>
+                                    style="{item.Left.length+item.Right.length ? 'white-space: nowrap' : ''}">
+                                <parconcordance-result-items data={item.Kwic}
+                                        class="t_kwic kwicWrapper"
+                                        onclick={onKwicClick.bind(this, item)}></parconcordance-result-items>
                             </div>
                             <div class="subtdr left-align"
-                                    style={item.Right.length ? "width: 50%" : ""}>
-                                <parconcordance-result-context data={item.Right}></parconcordance-result-context>
+                                    style="{item.Right.length ? 'width: 50%' : ''}">
+                                <parconcordance-result-items data={item.Right}
+                                        class="t_rightContext"></parconcordance-result-items>
                             </div>
                         </div>
                         <div if={data.gdex_enabled && data.show_gdex_scores} class="td gdex">
                             <span class="badge small">{getGDEXScore(item)}</span>
                         </div>
-                        <div each={al, idx2 in item.Align}
-                                class="td ctd {alignedClasses[idx2]} {noKWIC: al.hasKwic}"
-                                style={"width:" + 100/(item.Align.length+1) + "%"}>
+                        <div each={al, idx2 in item.Align} no-reorder
+                                class="td ctd l-{idx2 + 2} {alignedClasses[idx2]} {noKWIC: al.has_no_kwic}"
+                                style="width: {100 / (item.Align.length + 1)}%">
                             <div class="subtdl right-align _t"
-                                    style={al.hasKwic ? "width: 50%" : ""}>
-                                <parconcordance-result-context data={al.Left} if={al.Left}></parconcordance-result-context>
+                                    style="{al.has_no_kwic ? '' : 'width: 50%'}">
+                                <parconcordance-result-items if={al.Left}
+                                        class="t_leftContext"
+                                        data={al.Left} ></parconcordance-result-items>
                             </div>
                             <div class="subtdc center-align _t"
-                                    style={al.Left.length+al.Right.length ? "white-space: nowrap" : ""}>
-                                <span each={kwic in al.Kwic}
-                                        class="kwicWrapper"
-                                        onclick={onKwicClick.bind(this, al, idx2)}>
-                                    <span class="kwic">{kwic.str}</span>
-                                    <span if={kwic.attr} class="attr">
-                                        {kwic.attr.substr(1)}
-                                    </span>
-                                </span>
+                                    style="{al.Left.length+al.Right.length ? 'white-space: nowrap' : ''}">
+                                <parconcordance-result-items data={al.Kwic}
+                                        class="t_kwic kwicWrapper"
+                                        onclick={onKwicClick.bind(this, al, idx2)}></parconcordance-result-items>
                             </div>
                             <div class="subtdr left-align _t"
-                                    style={al.hasKwic ? "width: 50%" : ""}>
-                                <parconcordance-result-context data={al.Right} if={al.Right}></parconcordance-result-context>
+                                    style="{al.has_no_kwic ? '' : 'width: 50%'}">
+                                <parconcordance-result-items if={al.Right}
+                                        class="t_rightContext"
+                                        data={al.Right} ></parconcordance-result-items>
                             </div>
                         </div>
                     </virtual>
                     <virtual if={data.viewmode == "sen"}>
-                        <div class="td ctd _t {corpusDirClass}"
-                                style={"width:" + 100/(item.Align.length+1) + "%"}>
-                            <parconcordance-result-context data={item.Left}></parconcordance-result-context>
-                            <span each={kwic in item.Kwic}
-                                    class="kwicWrapper"
-                                    onclick={onKwicClick.bind(this, item)}>
-                                <span if={kwic.str} class="kwic">{kwic.str}</span>
-                                <span if={kwic.strc} class="strc">{kwic.strc}</span>
-                                <span if={kwic.attr} class="attr">
-                                    {kwic.attr.substr(1)}
-                                </span>
-                            </span>
-                            <parconcordance-result-context data={item.Right}></parconcordance-result-context>
+                        <div class="td ctd l-1 _t {corpusDirClass}"
+                                style="width: {100 / (item.Align.length + 1)}%">
+                            <parconcordance-result-items data={item.Left}
+                                    class="t_leftContext"></parconcordance-result-items>
+                            <parconcordance-result-items data={item.Kwic}
+                                    class="t_kwic kwicWrapper"
+                                    onclick={onKwicClick.bind(this, item)}></parconcordance-result-items>
+                            <parconcordance-result-items data={item.Right}
+                                     class="t_rightContext"></parconcordance-result-items>
                         </div>
                         <div if={data.gdex_enabled && data.show_gdex_scores} class="td gdex">
                             <span class="badge small">{getGDEXScore(item)}</span>
                         </div>
-                        <div each={al, idx2 in item.Align}
-                                class="td ctd {alignedClasses[idx2]} {noKWIC: al.hasKwic}"
-                                style={"width:" + 100/(item.Align.length+1) + "%"}>
-                            <parconcordance-result-context data={al.Left}></parconcordance-result-context>
-                            <span each={kwic in al.Kwic} class="kwicWrapper"
-                                    onclick={onKwicClick.bind(this, al, idx2)}>
-                                <span class="kwic">{kwic.str}</span>
-                                <span if={kwic.strc} class="strc">{kwic.strc}</span>
-                                <span if={kwic.attr} class="attr">{kwic.attr.substr(1)}</span>
-                            </span>
-                            <parconcordance-result-context data={al.Right}></parconcordance-result-context>
+                        <div each={al, idx2 in item.Align} no-reorder
+                                class="td ctd l-{idx2 + 2} {alignedClasses[idx2]} {noKWIC: al.has_no_kwic}"
+                                style="width: {100 / (item.Align.length + 1)}%">
+                            <parconcordance-result-items data={al.Left}
+                                     class="t_leftContext"></parconcordance-result-items>
+                            <parconcordance-result-items data={al.Kwic}
+                                    class="t_kwic kwicWrapper"
+                                    onclick={onKwicClick.bind(this, al, idx2)}></parconcordance-result-items>
+                            <parconcordance-result-items data={al.Right}
+                                     class="t_rightContext"></parconcordance-result-items>
                         </div>
                     </virtual>
                     <virtual if={data.viewmode == "align"}>
-                        <div class="td ctd_t {corpusDirClass}"
-                                style={"width:" + 100/(item.Align.length+1) + "%"}>
-                            <parconcordance-result-context data={item.Left}></parconcordance-result-context>
-                            <span each={kwic in item.Kwic}
-                                    class="kwicWrapper"
-                                    onclick={onKwicClick.bind(this, item)}>
-                                <span if={kwic.str} class="kwic">{kwic.str}</span>
-                                <span if={kwic.strc} class="strc">{kwic.strc}</span>
-                                <span if={kwic.attr}
-                                        class="attr">{kwic.attr.substr(1)}
-                                </span>
-                            </span>
-                            <parconcordance-result-context data={item.Right}></parconcordance-result-context>
+                        <div class="td ctd l-1 _t {corpusDirClass}"
+                                style="width: {100 / (item.Align.length + 1)}%">
+                            <parconcordance-result-items data={item.Left}
+                                    class="t_leftContext"></parconcordance-result-items>
+                            <parconcordance-result-items data={item.Kwic}
+                                    class="t_kwic kwicWrapper"
+                                    onclick={onKwicClick.bind(this, item)}></parconcordance-result-items>
+                            <parconcordance-result-items data={item.Right}
+                                     class="t_rightContext"></parconcordance-result-items>
                         </div>
                         <div if={data.gdex_enabled && data.show_gdex_scores} class="td gdex">
                             <span class="badge small">{getGDEXScore(item)}</span>
                         </div>
-                        <div each={al, idx2 in item.Align}
-                                class="td ctd {alignedClasses[idx2]}" style={"width:" + 100/(item.Align.length+1) + "%"}>
-                            <parconcordance-result-context data={al.Left}></parconcordance-result-context>
-                            <span each={kwic in al.Kwic} class="kwicWrapper"
-                                    onclick={al.has_no_kwic ? undefined : onKwicClick.bind(this, al, idx2)}>
-                                <span class={latentkwic: al.has_no_kwic, kwic: !al.has_no_kwic, hl: kwic.hl}>{kwic.str}</span>
-                                <span if={kwic.strc} class="strc">{kwic.strc}</span>
-                                <span if={kwic.attr} class="attr">{kwic.attr.substr(1)}</span>
-                            </span>
-                            <parconcordance-result-context data={al.Right}></parconcordance-result-context>
+                        <div each={al, idx2 in item.Align} no-reorder
+                                class="td ctd l-{idx2 + 2} _t {alignedClasses[idx2]}"
+                                style="width: {100 / (item.Align.length + 1)}%">
+                            <parconcordance-result-items data={al.Left}
+                                     class="t_leftContext"></parconcordance-result-items>
+                            <parconcordance-result-items data={al.Kwic}
+                                    class="t_kwic {kwicWrapper: !al.has_no_kwic} {latentkwic: al.has_no_kwic}"
+                                    onclick={al.has_no_kwic ? undefined : onKwicClick.bind(this, al, idx2)}></parconcordance-result-items>
+                            <parconcordance-result-items data={al.Right}
+                                    class="t_rightContext"></parconcordance-result-items>
                         </div>
                     </virtual>
                 </div>
@@ -171,7 +162,10 @@
 
     <script>
         const {AppStore} = require("core/AppStore.js")
+        const {AppStyle} = require("core/AppStyle.js")
         require("../concordance/concordance-line-detail-dialog.tag")
+        require("../concordance/concordance-result.tag")
+        require("../concordance/concordance-result.scss")
 
         this.mixin("feature-child")
 
@@ -180,17 +174,58 @@
             return corpname.substr(0, corpname.lastIndexOf("/") + 1)
         }
 
+        getContextReducedItems(items){
+            // combine items into groups - [{str:"have"}, {str:"some"}, {str:"time"}, {strc:"<s>"}, {str:"How"}] ->[{str:"have some time"}, {strc:"<s>"}, {str:"How"}]
+            return items.reduce((arr, token) => {
+                if(!arr.length){
+                    arr.push(token)
+                } else{
+                    let lastToken = arr[arr.length - 1]
+                    if(!token.strc && !lastToken.strc && token.coll === lastToken.coll && token.hl === lastToken.hl && token.color === lastToken.color){
+                        arr[arr.length-1].str += " " + token.str
+                    } else {
+                        arr.push(token)
+                    }
+                }
+                return arr
+            }, [])
+        }
+
         updateAttributes(){
-            this.refsLeft = !this.data.refs_up
-            this.lineNumbersLeft = this.data.linenumbers && !this.data.refs_up
-            this.lineNumbersUp = this.data.linenumbers && this.data.refs_up
+            this.refsLeft = !this.data.refs_up || this.data.refs === ""
+            this.refsUp = !this.refsLeft
+            this.lineNumbersLeft = this.data.linenumbers && !this.refsUp
+            this.lineNumbersUp = this.data.linenumbers && this.refsUp
             this.corpusDirClass = this.corpus.righttoleft ? "rtl" : "ltr"
             this.alignedClasses = []
+            this.hasAttributes = this.data.attrs.split(",").length > 1
+            this.hasContextAttributes =  this.hasAttributes && this.data.attr_allpos == "all"
+            if(this.hasContextAttributes){
+                this.items = this.data.items
+            } else{
+                this.items = copy(this.data.items)
+                this.items.forEach(item => {
+                    item.Left = this.getContextReducedItems(item.Left)
+                    item.Kwic = this.getContextReducedItems(item.Kwic)
+                    item.Right = this.getContextReducedItems(item.Right)
+                    item.Align.forEach(aligned => {
+                        aligned.Left = this.getContextReducedItems(aligned.Left)
+                        aligned.Kwic = this.getContextReducedItems(aligned.Kwic)
+                        aligned.Right = this.getContextReducedItems(aligned.Right)
+                    })
+                }, this)
+            }
             this.data.formparts.forEach((part, idx) => {
                 let corpus = AppStore.getCorpusByCorpname(this.getCorpusPrefix(this.corpus.corpname) + part.corpname)
-                let classes = corpus ? window.getLangFontClass(corpus.language_id) : ""
-                classes += this.store.isAlignedRtl(idx) ? " rtl": " ltr"
-                this.alignedClasses.push(classes)
+                let classes = [this.store.isAlignedRtl(idx) ? "rtl": "ltr"]
+                if(corpus){
+                    classes.push(AppStyle.getLangFontClass(corpus.language_id))
+                    let script = AppStyle.getCorpusScript(corpus.corpname)
+                    if(script != "Latn"){
+                        script && classes.push("script-" + script.toLowerCase())
+                    }
+                }
+                this.alignedClasses.push(classes.join(" "))
             }, this)
         }
         this.updateAttributes()
@@ -229,6 +264,7 @@
                 },
                 buttons: [{
                     label: _("save"),
+                    class: "btn-primary",
                     onClick: (dialog) => {
                         dialog.contentTag.save()
                     }
@@ -249,6 +285,22 @@
             $(".tn-" + toknum).toggleClass("highlight", highlight)
         }
 
+        onMouseOver(evt){
+            evt.preventUpdate = true
+            let tooltip = jQuery(evt.target).data().tooltip
+            tooltip && window.showTooltip(evt.target, tooltip, 600)
+        }
+
         this.on("update", this.updateAttributes)
+
+        this.on("mount", () => {
+            this.store.on("translations_loaded", this.update)
+            AppStore.on("corpusListChanged", this.update)
+        })
+
+        this.on("unmount", () => {
+            this.store.off("translations_loaded", this.update)
+            AppStore.off("corpusListChanged", this.update)
+        })
     </script>
 </parconcordance-result>

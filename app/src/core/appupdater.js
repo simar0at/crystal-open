@@ -1,37 +1,46 @@
-const {AsyncResults} = require('core/asyncresults.js')
+const {Connection} = require('core/Connection.js')
 
 class AppUpdaterClass {
 
     constructor(){
-        this.ar =  new AsyncResults()
+        this.CHECK_INTERVAL = 24 * 60 * 60 * 1000
+        this._intervalHandle = null
         if(window.version != "@VERSION@"){
-            this.startChecking()
+            this.startTimer()
         }
     }
 
-    startChecking(){
-        !this.ar.isChecking() && this.ar.check({
-            url: window.location.href.split("#")[0] + "version.txt",
-            isFinished: () => {
-                return false
-            },
-            continueOnPageChange: true,
-            interval: 24 * 60 * 60 * 1000,
-            onData: this.onData.bind(this)
-        })
+    startTimer(){
+        this._intervalHandle = setInterval(this.loadVersion.bind(this), this.CHECK_INTERVAL)
     }
 
-    stopChecking(){
-        this.ar.stop()
+    stopTimer(){
+        clearInterval(this._intervalHandle)
+        this._intervalHandle = null
+    }
+
+    checkNow(){
+        if(this._intervalHandle){  // if checking was stopped do not do anything
+            this.stopTimer()  // reset timer
+            this.startTimer()
+            this.loadVersion()
+        }
+    }
+
+    loadVersion(){
+        Connection.get({
+            url: window.location.href.split("#")[0] + "version.txt?" + (Math.random(1000000) + "").substr(2),
+            done: this.onData.bind(this)
+        })
     }
 
     onData(actualVersion){
         if(typeof actualVersion != "string") {
             return
         }
-        if(this.normalizeVersion(window.version) < this.normalizeVersion(actualVersion)){
+        if(window.version.trim() != actualVersion.trim()){
             this.showNotification()
-            $(".nb-content .btn").addClass("contrast")
+            $(".nb-content .btn").addClass("btn-primary")
         }
     }
 
@@ -44,16 +53,12 @@ class AppUpdaterClass {
                 window.location.reload()
             }
         })
-        this.stopChecking()
-    }
-
-    normalizeVersion(version){
-        return version.trim().split(".").map(part => {return part.padStart(5, 0)}).join("")
+        this.stopTimer()
     }
 }
 
 riot.tag("update-notification",
-        '<div class="un-title">{_("newVerionAvailableTitle")}</div><div>{_("newVerionAvailable")}</div>',
-        ".un-title{color: #004b69; font-size:24px; margin-bottom: 5px;}")
+        '<div class="un-title color-blue-800">{_("newVerionAvailableTitle")}</div><div>{_("newVerionAvailable")}</div>',
+        ".un-title{font-size:24px; margin-bottom: 5px;}")
 
 window.appUpdater = new AppUpdaterClass()

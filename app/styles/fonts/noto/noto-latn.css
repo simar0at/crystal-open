@@ -1,0 +1,16 @@
+@font-face {
+    font-family: 'Noto Sans';
+    src: local('Noto Sans'),
+        local('NotoSans'),
+        url('NotoSans.woff2') format('woff2'),
+        url('NotoSans.woff') format('woff'),
+        url('NotoSans.svg#NotoSans') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-latn._t,
+body .script-latn._t,
+body .script-latn ._t{
+    font-family: 'Noto Sans', sans-serif;
+}

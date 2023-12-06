@@ -17,7 +17,17 @@ class FormatterClass{
 
     num(num, options){
         if(options){
-            return new Intl.NumberFormat(this.locale, options).format(num)
+            if(typeof options == "number"){
+                if(!this["numFormat" + options]){
+                    this["numFormat" + options] = new Intl.NumberFormat(this.locale, {
+                        minimumFractionDigits: options,
+                        maximumFractionDigits: options
+                    })
+                }
+                return this["numFormat" + options].format(num)
+            } else {
+               return new Intl.NumberFormat(this.locale, options).format(num)
+            }
         }
         return this.numFormat.format(num);
     }

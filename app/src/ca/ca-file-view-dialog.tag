@@ -1,6 +1,7 @@
 <ca-file-view-dialog>
     <span class="right">
         <ui-select
+            name="type"
             label={_("show")}
             inline=1
             options={options}
@@ -13,18 +14,18 @@
     <div class="clearfix"></div>
     <br>
 
-    <div if={type=="plaintext"}>
+    <div if={type=="plaintext"} class="t_content {t_loaded: loadedBytes}">
         {content}
     </div>
     <div if={type=="vertical"}>
-        <pre>
+        <pre class="t_content {t_loaded: loadedBytes}">
             {content}
         </pre>
     </div>
-    <div class="grey-text center-align">{getSizeStr(loaded)} / {getSizeStr(total)}</div>
+    <div class="grey-text center-align">{getSizeStr(loadedBytes)} / {getSizeStr(totalBytes)}</div>
     <br>
 
-    <div class="center-align" if={start + 1024 < total}>
+    <div class="center-align" if={start + 1024 < totalBytes}>
         <a href="javascript:void(0);" class="btn" onclick={onLoadMoreClick}>Load more</a>
     </div>
 
@@ -35,8 +36,8 @@
         this.type = "plaintext"
         this.content = ""
         this.start = 0
-        this.loaded = 0
-        this.total = 0
+        this.loadedBytes = 0
+        this.totalBytes = 0
 
         this.options = [{
             label: _("plainText"),
@@ -57,16 +58,18 @@
         }
 
         onTypeChange(type){
+            this.loadedBytes = 0
             this.content = ""
             this.type = type
             this.start = 0
             this.load()
+            this.update()
         }
 
-        onFileContentLoaded(content, loaded, total){
+        onFileContentLoaded(content, loadedBytes, totalBytes){
             this.content += content
-            this.loaded = loaded
-            this.total = total
+            this.loadedBytes = loadedBytes
+            this.totalBytes = totalBytes
             this.update()
         }
 

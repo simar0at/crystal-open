@@ -18,7 +18,6 @@
                         options={attrList}
                         on-change={onOptionChange}
                         open-on-focus={true}
-                        deselect-on-click={true}
                         value-in-search={true}
                         tooltip="t_id:conc_r_sort_attribute"
                         floating-dropdown=1>
@@ -38,7 +37,7 @@
             </div>
         </div>
     </div>
-    <div class="buttonGo center-align">
+    <div class="buttonGo primaryButtons">
         <a id="btnGoSort" class="btn" disabled={isLoading}
                 onclick={onGoClick}>{_("go")}</a>
     </div>
@@ -49,44 +48,30 @@
 
         this.mixin("feature-child")
 
-        this.sortml = this.data.sortml
-        this.attrList = [].concat(this.store.attrList, this.store.refList)
+
+        this.attrList = [].concat(this.store.attrList, this.store.refList).filter(attr => !attr.isLc)
         this.attr = "word"
         this.ctx = "0"
         this.bward = false
         this.icase = false
 
+
         onOptionChange(value, name) {
             if (name == "ctx") value = String(value)
-            if (!this.sortml.length) {
-                this.sortml = [{[name]: value}]
-            }
-            else {
-                this.sortml[this.sortml.length-1][name] = value
-            }
             this[name] = value
         }
 
         onGoClick() {
-            if (!this.sortml.length) {
-                this.sortml = [{
+            this.data.closeFeatureToolbar = true
+            this.store.searchAndAddToHistory({
+                sort: [{
+                    corpname: this.opts.corpname,
                     attr: this.attr,
                     ctx: this.ctx,
                     icase: !!this.icase ? "i" : "",
                     bward: !!this.bward ? "r" : ""
-                }]
-            }
-            let corpname = this.opts.opts.corpname
-            let arg = this.store.findLang(corpname)
-            this.data.sortml.forEach (x => {
-                arg += " " + x.attr + " "
-                arg += x.ctx == '0' ? "" : x.ctx
-            })
-            this.store.addOperationAndSearch({
-                name: "sort",
-                corpname: corpname,
-                arg: arg,
-                query: {mlsort_options: this.store._copy(this.sortml)}
+                }],
+                page: 1
             })
         }
     </script>

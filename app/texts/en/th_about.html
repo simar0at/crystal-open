@@ -1,14 +1,12 @@
-<div class="row">
-   <div class="col m12 l7">
-<div>The thesaurus in Sketch Engine is an automatically generated list of synonyms or words belonging to the same category (semantic field). The list is produced based on the context in which the words appear in the selected corpus. Only nouns, adjectives, verbs and adverbs are supported in most corpora.</div>
-   </div>
-   <div class="col m12 l5">
-       <iframe width="400" height="225" src="https://www.youtube.com/embed/kLsNUdTrTLk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-   </div>
+<div class="aboutLeftCol">
+    <p>The thesaurus in Sketch Engine is an automatically generated list of synonyms or words belonging to the same category (semantic field). The list is produced based on the context in which the words appear in the selected corpus. Only nouns, adjectives, verbs and adverbs are supported in most corpora.</p>
+</div>
+<div class="aboutRightCol">
+    <iframe width="400" height="225" src="https://www.youtube.com/embed/kLsNUdTrTLk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
 </div>
 
 <br>
-<ul class="collapsible">
+<ul class="clearfix collapsible">
     <li>
         <div class="collapsible-header">What makes the thesaurus unique?</div>
         <div class="collapsible-body">
@@ -18,8 +16,7 @@
     <li>
         <div class="collapsible-header">How are synonyms identified?</div>
         <div class="collapsible-body">
-            <div>Synonyms are identified automatically based on the context in which they occur. This draws on the theory of distributional semantics which says, in a nutshell, that words that appear in the same context are similar in meaning. In Sketch Engine, this means that words which keep similar
-                <a href="https://www.sketchengine.eu/my_keywords/collocation/" target="_blank">collocations</a> are similar in meaning. The word sketch is key in determining the similarity. To determine synonyms of the search word, the word sketches of all words with the same part of speech are compared and those that share the largest proportion of %[collocate]%s are listed. The score given for each synonym indicates the percentage of shared collocates.
+            <div>Synonyms are identified automatically based on the context in which they occur. This draws on the theory of distributional semantics which says, in a nutshell, that words that appear in the same context are similar in meaning. In Sketch Engine, this means that words which keep similar <a href="https://www.sketchengine.eu/my_keywords/collocation/" target="_blank">collocations</a> are similar in meaning. The word sketch is key in determining the similarity. To determine synonyms of the search word, the word sketches of all words with the same part of speech are compared and those that share the largest proportion of %[collocate]%s are listed. The score given for each synonym indicates the percentage of shared collocates.
             </div>
         </div>
     </li>
@@ -34,8 +31,7 @@
     <li>
         <div class="collapsible-header">How is the score calculated and interpreted?</div>
         <div class="collapsible-body">
-            <div>The score, which can be displayed using the view options, is simply a percentage of the shared collocates. To establish this, the word sketch of the search word is compared to the word sketches of all other words in the corpus with the same part of speech. Each grammatical relation is compared separately. Please refer to
-                <a href="https://www.sketchengine.co.uk/statistics-used-in-sketch-engine" target="_blank">Statistics in Sketch Engine</a> for the formula and details.
+            <div>The score, which can be displayed using the view options, is simply a percentage of the shared collocates. To establish this, the word sketch of the search word is compared to the word sketches of all other words in the corpus with the same part of speech. Each grammatical relation is compared separately. Please refer to <a href="https://www.sketchengine.eu/statistics-used-in-sketch-engine" target="_blank">Statistics in Sketch Engine</a> for the formula and details.
             </div>
         </div>
     </li>
@@ -43,21 +39,15 @@
         <div class="collapsible-header">Requirements for the thesaurus to work well</div>
         <div class="collapsible-body">
             <div>
-                <b>Word sketch</b>
-                <br />Thesaurus can only work if word sketches exist in the corpus. The corpus has to be tagged in Sketch Engine or use the same tagset. A custom
-                <a href="https://www.sketchengine.eu/my_keywords/word-sketch-grammar/" target="_blank">word sketch grammar</a> has to be used if the corpus is tagged with a different tagset.
-                <br />Thesaurus will work even with universal sketch grammars with all the related limitations. See word sketch.
+                <b>Word sketch</b> <br />Thesaurus can only work if word sketches exist in the corpus. The corpus has to be tagged in Sketch Engine or use the same tagset. A custom <a href="https://www.sketchengine.eu/my_keywords/word-sketch-grammar/" target="_blank">word sketch grammar</a> has to be used if the corpus is tagged with a different tagset. <br />Thesaurus will work even with universal sketch grammars with all the related limitations. See word sketch.
             </div>
             <br>
             <div>
-                <b>Tags and lemmas</b>
-                <br />A
-                <a href="https://www.sketchengine.eu/my_keywords/tag/" target="_blank">tagged</a> and %[lemma|lemmatized]% corpus is required for a full-fledged thesaurus. Thesauri generated from untagged and non-lemmatized corpora with universal word sketches will suffer in quality. Yet they can be very useful, especially with less-resourced languages where tagging and lemmatization are not realistic.
+                <b>Tags and lemmas</b> <br />A %[tag|tagged]% and %[lemma|lemmatized]% corpus is required for a full-fledged thesaurus. Thesauri generated from untagged and non-lemmatized corpora with universal word sketches will suffer in quality. Yet they can be very useful, especially with less-resourced languages where tagging and lemmatization are not realistic.
             </div>
             <br>
             <div>
-                <b>Corpus size</b>
-                <br />The quality of the thesaurus is entirely dependent on rich word sketches. A rich word sketch is defined by a large number of collocations in all grammatical relations. A rich word sketch must exist for the search word but also for all other words with the same part of speech so that they can be compared. This requirement can only be met if the word has a high %[frequency]% in the corpus, ideally thousands of occurrences or more. Consequently, a very large corpus is needed so that even less frequent words can produce rich word sketches. The use of our multi-billion word corpora is recommended for any serious thesaurus work.
+                <b>Corpus size</b> <br />The quality of the thesaurus is entirely dependent on rich word sketches. A rich word sketch is defined by a large number of collocations in all grammatical relations. A rich word sketch must exist for the search word but also for all other words with the same part of speech so that they can be compared. This requirement can only be met if the word has a high %[frequency]% in the corpus, ideally thousands of occurrences or more. Consequently, a very large corpus is needed so that even less frequent words can produce rich word sketches. The use of our multi-billion word corpora is recommended for any serious thesaurus work.
             </div>
         </div>
     </li>

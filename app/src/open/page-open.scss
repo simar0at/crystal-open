@@ -1,10 +1,12 @@
+@import 'app/styles/constants';
+
 .page-open{
     margin: auto;
     raw-html {
         display: inline-block;
     }
     raw-html > b {
-        color: #C52031;
+        color: $red-400;
         text-decoration: underline;
     }
     .content{
@@ -41,7 +43,7 @@
                 }
             }
             tr{
-                border-bottom: 1px solid #CFECF4;
+                border-bottom: 1px solid $blue-100;
             }
         }
     }

@@ -20,6 +20,7 @@ class PermissionsClass{
         let RO = window.config.READ_ONLY
         let corpus = AppStore.getActualCorpus()
         let canM = corpus && corpus.user_can_manage
+        let canU = corpus && corpus.user_can_upload
 
         window.permissions = {
             'wordsketch':        hasSkE,
@@ -37,11 +38,11 @@ class PermissionsClass{
             'ca-create':         isFA && !RO && hasCA,
             'ca-create-content': isFA && !RO && hasCA && canM,
             'ca-create-compile': isFA && !RO && hasCA && canM,
-            'ca-compile':        isFA && !RO && hasCA && canM,
+            'ca-compile':        isFA && !RO && hasCA && (canM || canU),
             'ca-tmx-settings':   isFA && !RO && hasCA,
             'ca-tmx-compile':    isFA && !RO && hasCA,
-            'ca-add-content':    isFA && !RO && hasCA && canM,
-            'ca-browse':         isFA && !RO && hasCA && canM,
+            'ca-add-content':    isFA && !RO && hasCA && (canM || canU),
+            'ca-browse':         isFA && !RO && hasCA && (canM || canU),
             'ca-share':          isFA && !RO && hasCA && canM,
             'ca-subcorpora':     !RO && !isA,
             'ca-logs':           isFA && !RO && hasCA && canM,

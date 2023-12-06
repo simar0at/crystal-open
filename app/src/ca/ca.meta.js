@@ -1,7 +1,7 @@
 let CAMeta = {
     links:{
         create: [{
-            href: "ca-create",
+            href: "ca-create?created=1",
             labelId: "createCorpus"
         }, {
             href: "ca-create-content",

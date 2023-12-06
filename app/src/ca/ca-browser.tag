@@ -5,6 +5,14 @@
 
         <div if={filesetsLoaded && hasFilesets} class="row">
             <div class="col l5 m12">
+                <div class="filesetsNote">
+                    <div if={data.uploadInProgress}>
+                        {_("fileUploadInProgress")}
+                    </div>
+                    <div if={!data.uploadInProgress && !allFilesetsReady}>
+                        {_("fileProcessInProgress")}
+                    </div>
+                </div>
                 <table class="table filesetsTable highlight">
                     <thead>
                         <th style="width:90%;">
@@ -36,19 +44,20 @@
                     <tbody>
                         <tr each={fileset in filesets}
                                 key={fileset.id}
+                                id="t_{window.idEscape(fileset.name)}"
                                 class="link {deleteInProgress: fileset.deleteInProgress, active: fileset.id === data.activeFilesetId}"
                                 onclick={onFilesetClick}>
                             <td class="filesetCell">
                                 <span>
-                                    <i class="folder material-icons text-lighten-1 {fileset.id === data.activeFilesetId ? 'blue-text' : 'grey-text'}">folder</i>
-                                    <span class="filesetName inlineBlock">
+                                    <i class="folder material-icons {fileset.id === data.activeFilesetId ? 'blue-text' : 'grey-text'}">folder</i>
+                                    <span class="filesetName inline-block truncate">
                                         {fileset.name}
                                     </span>
                                 </span>
                             </td>
                             <td class="progressCell" class="right-align">
                                 <virtual if={fileset.progress < 100 && fileset.progress != -1}>
-                                    <span style="text-align: center;">
+                                    <span class="t_progress" style="text-align: center;">
                                         <div class="progressTop">
                                             {fileset.progress}% &nbsp;
                                             <span class="hint" if={fileset.time_est && fileset.web_crawl}>(est. {fileset.time_est_str})</span>
@@ -63,17 +72,17 @@
                                         <i class="material-icons grey-text">close</i>
                                     </a>
                                 </virtual>
-                                <span if={(fileset.progress == -1 || fileset.progress == 100) && fileset.verticalInProgress} class="grey-text">
+                                <span if={(fileset.progress == -1 || fileset.progress == 100) && fileset.verticalInProgress} class="grey-text t_processing">
                                     {_("processing")}
                                 </span>
                                 <span if={fileset.progress == -1 && fileset.cancelling} class="grey-text">
-                                    {_("ca.canceling")}
+                                    {_("ca.cancelling")}
                                 </span>
                             </td>
                             <td class="num" style="white-space: nowrap;">
                                 <span if={fileset.error} class="left">
                                     <i class="orange-text material-icons tooltipped"
-                                            data-tooltip={_("ca.webCrawlError") + fileset.error}>warning</i>
+                                            data-tooltip={(fileset.web_crawl ? _("ca.webCrawlError") : '') + fileset.error}>warning</i>
                                 </span>
                                 <div style="margin-left: 40px;">
                                     ~{window.Formatter.num(fileset.word_count)}
@@ -105,14 +114,73 @@
             <div class="columnFiles col l7 m12">
                 <preloader-spinner if={data.filesLoading && !data.filesLoaded} overlay=1></preloader-spinner>
                 <div if={data.activeFilesetId !== null}>
-                    <virtual if={files.length}>
-                        <table class="table filesTable highlight">
+                    <virtual if={allFiles}>
+                        <span if={data.filesLoaded}
+                                class="blue-text link fileFilterToggle"
+                                onclick={onFileFilterToggleClick}>
+                            <span>
+                                {_("filesFilter")}
+                            </span>
+                            <i ref="fileFilterArrow"
+                                    class="material-icons">arrow_drop_down</i>
+                        </span>
+                        <div  if={data.filesLoaded}
+                                ref="fileFilter"
+                                class="fileFilter"
+                                style="display: none;">
+                            <ui-select options={filesFilterPnOptions}
+                                    riot-value={filesFilterPn}
+                                    inline=1
+                                    size=8
+                                    on-change={onFilesFilterPnChange}></ui-select>
+                            <ui-select options={filesFilterConditionOptions}
+                                    riot-value={filesFilterCondition}
+                                    inline=1
+                                    size=10
+                                    on-change={onFilesFilterConditionChange}></ui-select>
+                            <ui-select if={filesFilterCondition == "havingAttribute" || filesFilterCondition == "attributeValue"}
+                                    options={filesFilterAttributeOptions}
+                                    inline=1
+                                    size=9
+                                    riot-value={filesFilterAttribute}
+                                    on-change={filesFilterAttributeChange}></ui-select>
+                            <span if={filesFilterCondition == "attributeValue"}> = </span>
+                            <ui-input
+                                    if={filesFilterCondition != "havingAttribute" }
+                                    inline=1
+                                    size=8
+                                    riot-value={filesFilterQuery}
+                                    on-input={onFilesFilterQueryChange}
+                                    on-submit={filterFiles}></ui-input>
+                            <button class="btn btn-flat" onclick={filterFiles}>
+                                {_("filter")}
+                            </button>
+                            <button class="btn btn-flat" onclick={clearFilter}>
+                                {_("cancelFilter")}
+                            </button>
+                        </div>
+                        <table if={files.length} class="table filesTable highlight">
                             <thead>
                                 <tr>
                                     <th class="selectColumn">
-                                        <ui-checkbox
-                                            checked={selectedCount == files.length}
-                                            on-change={onToggleAllSelect}></ui-checkbox>
+                                        <button id="selectionBtn"
+                                                class="dropdown-trigger btn btn-flat"
+                                                data-target="selectionMenu">
+                                            <span class="ui ui-checkbox">
+                                                <label>
+                                                    <input type="checkbox"/>
+                                                    <span></span>
+                                                </label>
+                                            </span>
+                                            <i class="material-icons right" style="margin: 0">arrow_drop_down</i>
+                                        </button>
+                                        <ul id="selectionMenu" class="dropdown-content">
+                                            <li each={option in selectionOptions}>
+                                                <a href="javascript:void(0);" onclick={onSelectionMenuItemClick.bind(option)}>
+                                                    {_(option.labelId)}
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </th>
                                     <th>
                                         <table-label
@@ -151,35 +219,36 @@
                                     <th style="width: 1%;"></th>
                                 </tr>
                             </thead>
-                            <tbody each={file in files} key={file.id}>
+                            <tbody each={file, idx in files} key={file.id} id="t_{window.idEscape(file.filename_display)}">
                                 <tr class="{deleteInProgress: file.deleteInProgress} {selectedRow: file.showDetails}">
                                     <td class="chbCell">
                                         <label if={!file.inProgress}>
                                             <input type="checkbox"
-                                                checked={file.selected}
-                                                onchange={onFileSelectChange} />
+                                                    id="chb_{idx}"
+                                                    checked={file.selected}
+                                                    onclick={onFileSelectChange} />
                                             <span></span>
                                         </label>
                                     </td>
                                     <td class="link" onclick={onFileClick}>
                                         {file.filename_display}
                                         <virtual if={file.inProgress}>
-                                            <span class="fileProgress inlineBlock center-align">
+                                            <span class="fileProgress inline-block center-align">
                                                 <virtual if={!file.cancelling}>
-                                                    <span class="progressTop inlineBlock">
+                                                    <span class="progressTop inline-block">
                                                         {file.vertical_progress}% &nbsp;
                                                     </span>
-                                                    <span class="progress inlineBlock">
+                                                    <span class="progress inline-block">
                                                         <div class="indeterminate"></div>
                                                     </span>
-                                                    <a class="btnIco inlineBlock tooltipped"
+                                                    <a class="btnIco inline-block tooltipped"
                                                             onclick={onCancelFileJobClick}
                                                             data-tooltip={_("cancelFileProcessing")}>
                                                         <i class="material-icons grey-text">close</i>
                                                     </a>
                                                 </virtual>
                                                 <span if={file.cancelling} class="grey-text">
-                                                    {_("ca.canceling")}
+                                                    {_("ca.cancelling")}
                                                 </span>
                                             </span>
                                         </virtual>
@@ -226,7 +295,7 @@
                                         </div>
                                         <div if={file.isArchive}>
                                             <a href="javascript:void(0)"
-                                                class="btn btn-floating left"
+                                                class="btn btn-floating left t_expandArchive"
                                                 onclick={onExpandArchiveClick}>
                                                 <i class="material-icons">zoom_out_map</i>
                                             </a>
@@ -238,19 +307,21 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <div class="inlineBlock left">
-                            <a id="bulkActionBtn" class="dropdown-trigger btn {disabled: !selectedCountAll}" href="javascript:void(0);" data-target="bulkMenu">
-                                {_("bulkActions")}
+                        <div if={files.length} class="inline-block left bulkBtns">
+                            <button id="bulkActionBtn"
+                                    class="dropdown-trigger btn {disabled: !selectedCountAll}"
+                                    data-target="bulkMenu">
+                                {_("bulkActions", [selectedCountAll ? (' (' + selectedCountAll + ')') : ''])}
                                 <i class="material-icons right">arrow_drop_down</i>
-                            </a>
+                            </button>
                             <ul id="bulkMenu" class="dropdown-content">
-                                <li>
+                                <li class="t_bulk_metadata">
                                     <a href="javascript:void(0);" onclick={onBulkEditMetadataClick}>
                                         <i class="material-icons">edit</i>
                                         {_("editMetadata")}
                                     </a>
                                 </li>
-                                <li>
+                                <li class="t_bulk_delete">
                                     <a href="javascript:void(0);" onclick={onBulkDeleteClick}>
                                         <i class="material-icons">delete</i>
                                         {_("delete")}
@@ -260,11 +331,10 @@
                                 <li class="docCountItem">{_("selectedDocuments", [selectedCountAll])}</span></li>
                             </ul>
                         </div>
-                        <div class="inlineBlock right">
-                            <br>
+                        <div class="inline-block right">
                             <ui-pagination
-                                if={items.length > 10}
-                                count={items.length}
+                                if={filteredFiles.length > 10}
+                                count={filteredFiles.length}
                                 items-per-page={itemsPerPage}
                                 actual={page}
                                 on-change={onPageChange}
@@ -273,10 +343,12 @@
                         </div>
                         <div class="clearfix"></div>
                     </virtual>
-                    <div if={!files.length && data.filesLoaded && !activeFilesetIsInProgress} class="emptyFolder">
+                    <div if={!allFiles && data.filesLoaded && !activeFilesetIsInProgress} class="emptyFolder">
                         <h4>{_("ca.folderIsEmpty")}</h4>
                     </div>
-
+                    <div if={allFiles.length && !files.length && !activeFilesetIsInProgress} class="emptyFolder">
+                        <h4>{_("nothingFound")}</h4>
+                    </div>
                     <div if={!data.filesLoaded && this.activeFilesetIsInProgress} class="loadingFolder">
                         <h4>{_("ca.stillWorking")}</h4>
                     </div>
@@ -288,39 +360,39 @@
             <i class="material-icons">input</i>
             <h4>{_("nothingHere")}</h4>
             <div if={opts.emptyDesc}>{opts.emptyDesc}</div>
-            <div if={!opts.emptyDesc}>
-                <a href="#ca-add-content" class="btn contrast">{_("addTexts")}</a>
+            <div if={!opts.emptyDesc} class="primaryButtons">
+                <a href="#ca-add-content" class="btn btn-primary">{_("addTexts")}</a>
             </div>
         </div>
     </div>
 
 
     <ul id="caBrowserMenuDropdownList" class="dropdown-content">
-        <li if={isViewFileEnabled}>
+        <li if={isViewFileEnabled} class="t_menu_item_view">
             <a data-callback="onFileViewClick">
                 <i class="material-icons">search</i>
                 {_("viewFile")}
             </a>
         </li>
-        <li>
+        <li class="t_menu_item_settings">
             <a data-callback="onMenuFileSettingsClick">
                 <i class="material-icons">settings</i>
                 {_("documentSettings")}
             </a>
         </li>
-        <li>
+        <li class="t_menu_item_metadata">
             <a data-callback="onFileEditMetadata">
                 <i class="material-icons">edit</i>
                 {_("editMetadata")}
             </a>
         </li>
-        <li>
+        <li class="t_menu_item_download">
             <a data-callback="onFileDownloadClick">
                 <i class="material-icons">cloud_download</i>
                 {_("downloadFile")}
             </a>
         </li>
-        <li >
+        <li class="t_menu_item_delete">
             <a data-callback="onFileDeleteClick">
                 <i class="material-icons">delete</i>
                 {_("delete")}
@@ -328,24 +400,25 @@
         </li>
     </ul>
 
+    <virtual if={space.total}>
+        <i if={!space.has_space}
+                class="orange-text material-icons"
+                style="vertical-align:top; margin-right: 10px;">warning</i>
+        <span class="inline-block grey-text">
+            {_("ca.spaceUsage")}
+            {space.used_str}
+            {_("of")}
+            {space.total_str}
+            {_("wordP")}
+            (<span class={red-text: !space.has_space}>{space.percent}%</span>)
 
-    <i if={usageWarning}
-            class="orange-text material-icons"
-            style="vertical-align:top; margin-right: 10px;">warning</i>
-    <span class="inlineBlock grey-text">
-        {_("ca.spaceUsage")}
-        {space.used_str}
-        {_("of")}
-        {space.total_str}
-        {_("wordP")}
-        (<span class={red-text: usageWarning}>{space.percent}%</span>)
-
-        <br>
-        <span if={usageWarning}>
-            {_("ca.buyMoreSpace")}
-            <a href={window.config.URL_RASPI + "#account/overview"} target="_blank">{_("ca.subscriptionOverview")}</a>.
+            <br>
+            <span if={!space.has_space}>
+                {_("ca.buyMoreSpace")}
+                <a href={window.config.URL_RASPI + "#account/overview"} target="_blank">{_("ca.subscriptionOverview")}</a>.
+            </span>
         </span>
-    </span>
+    </virtual>
 
     <script>
         require("./ca-browser.scss")
@@ -365,7 +438,9 @@
         this.page = 1
         this.showResultsFrom = 1
         this.filesetsLoaded = false
+        this.allFiles = []
         this.files = []
+
         this.sorts = {
             "filesets":{
                 orderBy :null,
@@ -377,6 +452,48 @@
             }
         }
         this.isViewFileEnabled = this.opts.corpus.progress != 0
+        this.lastSelectedLineIdx = null
+        this.filesFilterCondition = "containing"
+        this.filesFilterConditionOptions = ["startingWith", "endingWith", "containing", "matchingRegex", "havingAttribute", "attributeValue"].map(key => ({
+            label: _(key),
+            value: key
+        }))
+        this.filesFilterPnOptions = [{
+            label: _("showFiles"),
+            value: "p"
+        }, {
+            label: _("hideFiles"),
+            value: "n"
+        }]
+        this.filesFilterPn = "p"
+        this.filesFilterQuery = ""
+        this.selectionOptions = [{
+            labelId:"selectAll",
+            scope: "all",
+            select: true
+        }, {
+            labelId:"deselectAll",
+            scope: "all",
+            select: false
+        }, {
+            labelId:"selectPage",
+            scope: "page",
+            select: true
+        }, {
+            labelId:"deselectPage",
+            scope: "page",
+            select: false
+        }, {
+            labelId:"invertAll",
+            scope: "all",
+            select: "invert"
+        }, {
+            labelId:"invertPage",
+            scope: "page",
+            select: "invert"
+        }]
+        this.filesFilterAttribute = "==select=="
+        this.fileFilterExpanded = false
 
 
         _sort(what, data){
@@ -407,23 +524,51 @@
 
         updateSpace(){
             this.space = Auth.getSpace()
-            this.usageWarning = this.space.total < this.space.used
+        }
+
+        _filterItems(){
+            if(this.filesFilterCondition == "havingAttribute"){
+                if(this.filesFilterAttribute != "==select=="){
+                    return this.data.files.filter(file => {
+                        return (this.filesFilterPn == "p") == this.filesFilterAttribute in file.metadata
+                    }, this)
+                }
+            } else if(this.filesFilterCondition == "attributeValue"){
+                if(this.filesFilterAttribute != "==select==" && this.filesFilterQuery != ""){
+                    return this.data.files.filter(file => {
+                        return (this.filesFilterPn == "p") == (file.metadata[this.filesFilterAttribute] == this.filesFilterQuery)
+                    }, this)
+                }
+            } else if(this.filesFilterQuery !== ""){
+                let re = window.getFilterRegEx(this.filesFilterQuery, this.filesFilterCondition)
+                return this.data.files.filter(file => {
+                    return (this.filesFilterPn == "p") == (file.filename_display.match(re) != null)
+                }, this)
+            }
+            return this.data.files
         }
 
         updateAttributes(){
-            this.items = this.data.files
+            this.allFiles = this.data.files
             this.filesets = this.data.filesets
             this.hasFilesets = !!this.filesets.length
             this.filesetsLoaded = this.data.filesetsLoaded && this.data.filesWithoutfFolderLoaded
             this.showResultsFrom = (this.page - 1) * this.itemsPerPage
+            this.filteredFiles = this._filterItems()
             this._sort("filesets", this.filesets)
-            this._sort("files", this.items)
-            this.files = this.items.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage)
+            this._sort("files", this.filteredFiles)
+            this.files = this.filteredFiles.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage)
+            this.allFilesetsReady = CAStore.allFilesetsReady()
             this.activeFileset = this.filesets[this.data.activeFilesetId]
             this.activeFilesetIsInProgress = this.activeFileset ? (this.activeFileset.progress > 0 && this.activeFileset.progress < 100) : false
             this.total = CAStore.getTotalWordCount()
             this.selectedCountAll = this.getSelectedFiles(true).length
             this.selectedCount = this.getSelectedFiles().length
+            this.filesFilterAttributeOptions = CAStore.getAttributeList()
+            this.filesFilterAttributeOptions.unshift({
+                label: _("selectValue"),
+                value: "==select=="
+            })
             this.updateSpace()
         }
         this.updateAttributes()
@@ -435,7 +580,15 @@
 
         onFileSelectChange(evt){
             evt.stopPropagation()
-            evt.item.file.selected = evt.target.checked
+            let idx = evt.item.idx
+            let selected = !evt.item.file.selected
+            let fromIdx = evt.shiftKey ? Math.min(idx, this.lastSelectedLineIdx) : idx
+            let toIdx = evt.shiftKey ? Math.max(idx, this.lastSelectedLineIdx) : idx
+            for(let i = fromIdx; i <= toIdx; i++){
+                $("#chb_" + i).prop("checked", selected)
+                this.data.files[(this.page - 1) * this.itemsPerPage + i].selected = selected
+            }
+            this.lastSelectedLineIdx = idx
             this.update()
         }
 
@@ -473,7 +626,7 @@
                 small: 1,
                 buttons: [{
                     label: _("delete"),
-                    class: "contrast",
+                    class: "btn-primary",
                     onClick: () => {
                         evt.item.fileset.deleteInProgress = true
                         this.update()
@@ -501,7 +654,7 @@
 
         onFileDownloadClick(evt){
             evt.stopPropagation()
-            let url = window.config.URL_CA + "/corpora/" + this.opts.corpus.id + "/documents/" + this.dropdownMenuFile.id + "/original"
+            let url = window.config.URL_CA + "corpora/" + this.opts.corpus.id + "/documents/" + this.dropdownMenuFile.id + "/original"
             window.open(url, "_blank")
         }
 
@@ -514,7 +667,7 @@
                 small: 1,
                 buttons: [{
                     label: _("delete"),
-                    class: "contrast",
+                    class: "btn-primary",
                     onClick: () => {
                         file.deleteInProgress = true
                         this.update()
@@ -527,7 +680,7 @@
 
         onStopWebSearchClick(evt){
             evt.stopPropagation()
-            CAStore.cancelWebBootCaT(this.opts.corpus.id, evt.item.fileset.id)
+            CAStore.cancelFilesetProcess(this.opts.corpus.id, evt.item.fileset.id)
             this.update()
         }
 
@@ -634,9 +787,10 @@
                 buttons: [{
                     id: "fileSaveBtn",
                     label: _("save"),
-                    class: "contrast",
+                    class: "btn-primary",
                     onClick: function(dialog, modal){
                         dialog.contentTag.save()
+                        this.update()
                     }.bind(this)
                 }]
             })
@@ -652,6 +806,7 @@
                 tag: "ca-bulk-metadata-dialog",
                 fixedFooter: true,
                 dismissible: false,
+                large: true,
                 opts: {
                     corpus_id: this.opts.corpus.id,
                     file_ids: file_ids
@@ -659,9 +814,10 @@
                 buttons: [{
                     label: _("save"),
                     id: "bulkSaveBtn",
-                    class: "contrast disabled",
+                    class: "btn-primary disabled",
                     onClick: function(dialog, modal){
                         dialog.contentTag.save()
+                        this.update()
                     }.bind(this)
                 }]
             })
@@ -674,7 +830,7 @@
                 content: _("confirmFilesDelete", [this.selectedCountAll]),
                 buttons: [{
                     label: _("delete"),
-                    class: "contrast",
+                    class: "btn-primary",
                     onClick: function(dialog, modal){
                         let file_ids = [];
                         this.getSelectedFiles().forEach(file => {
@@ -686,6 +842,17 @@
                         this.update()
                     }.bind(this)
                 }]
+            })
+        }
+
+        onSelectionMenuItemClick(evt){
+            let items = evt.item.option.scope == "all" ? this.filteredFiles : this.files
+            items.forEach(item => {
+                if(evt.item.option.select == "invert"){
+                    item.selected = !item.selected
+                } else {
+                    item.selected = evt.item.option.select
+                }
             })
         }
 
@@ -722,6 +889,49 @@
             }
         }
 
+        onFileFilterToggleClick(evt){
+            evt.preventUpdate = true
+            this.fileFilterExpanded = !this.fileFilterExpanded
+            $(this.refs.fileFilter).slideToggle()
+            $(this.refs.fileFilterArrow).html(this.fileFilterExpanded ? "arrow_drop_up" : "arrow_drop_down")
+        }
+
+        onFilesFilterPnChange(value){
+            this.filesFilterPn = value
+            this.update()
+        }
+
+        onFilesFilterConditionChange(value){
+            if(value == "havingAttribute" || value == "attributeValue"){
+                this.filesFilterQuery = ""
+            } else {
+                if(this.filesFilterCondition != "havingAttribute" && this.filesFilterCondition != "attributeValue"){
+                    this.filesFilterAttribute = "==select=="
+                }
+            }
+            this.filesFilterCondition = value
+            this.update()
+        }
+
+        onFilesFilterQueryChange(value){
+            this.filesFilterQuery = value
+        }
+
+        filesFilterAttributeChange(value){
+            this.filesFilterAttribute = value
+            this.update()
+        }
+
+        filterFiles(){
+            this.page = 1
+            this.update()
+        }
+
+        clearFilter(){
+            this.filesFilterQuery = ""
+            this.filesFilterAttribute = "==select=="
+        }
+
         getFile(file_id){
             return this.files.find(f => {
                 return f.id == file_id
@@ -731,6 +941,10 @@
         initDropdown(){
             $("#bulkActionBtn").dropdown({
                 constrainWidth: false
+            })
+            $("#selectionBtn").dropdown({
+                constrainWidth: false,
+                coverTrigger: false
             })
         }
 

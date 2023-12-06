@@ -1,4 +1,3 @@
-@import 'app/styles/base';
 @import 'app/styles/constants';
 
 .concordance-breadcrumbs{
@@ -7,17 +6,16 @@
     & > *{
         vertical-align: top;
         margin-bottom: 5px;
-        line-height: 32px;
         margin-right: 5px;
     }
     breadcrumb-chip{
-        background-color: $new_lightBlue;
-        color: $new_darkBlue;
+        background-color: $blue-100;
+        color: $blue-800;
         font-size: 14px;
         white-space: nowrap;
-        &:not(.disabled){
-            cursor: pointer;
-        }
+        padding: 3px 30px 3px 10px;
+        position: relative;
+        border-radius: 15px;
         &:not(.active){
             opacity: 0.5;
         }
@@ -27,9 +25,38 @@
         & > span:first-child {
             text-transform: lowercase;
         }
-        .close{
+        >div{
+            line-height: 20px;
+            min-height: 20px;
+        }
+        .closeBtn{
+            position: absolute;
+            right: -10px;
+            top: -10px;
+            background-color: #ffffff;
+            width: 25px;
+            height: 25px;
+            line-height: 25px;
+            text-align: center;
+            i{
+                width: 25px;
+                height: 25px;
+                line-height: 25px;
+                color: $blue-800;
+                font-size: 18px;
+                &:hover{
+                    color: $gray-800;
+                }
+
+            }
+        }
+        .infoBtn{
+            opacity: .7;
+            position: absolute;
+            right: 3px;
+            bottom: 3px;
             &:hover{
-                color: $darkGray;
+                opacity: 1
             }
         }
         .size{
@@ -40,23 +67,73 @@
         cursor: pointer;
     }
     .pipe{
-        color: $lightGray;
+        color: $gray-500;
     }
     .delimiter{
-        color: $lightGray;
+        color: $gray-500;
         position: relative;
         left: -10px;
         max-width: 5px;
+        line-height: 48px;
     }
     .params{
-        color: red;
+        color: $red-200;
         max-width: 350px;
         display: inline-block;
-        height: 34px;
-        vertical-align: middle;
-        unicode-bidi: plaintext;
+        vertical-align: top;
     }
     .relsize{
         font-size: 0.8em;
     }
+    .slowWarning{
+        font-size: 35px;
+        margin-right: 5px;
+    }
+    .tooltipped{
+        cursor: help;
+    }
+}
+
+.breadcrumb-info{
+    concordance-distribution{
+        min-width: 400px;
+        max-height: 150px;
+    }
+    .params{
+        color: $red-200;
+    }
+    .delimiter{
+        color: $gray-500;
+    }
+    .operation{
+        vertical-align: top;
+        & > * {
+            vertical-align: top;
+        }
+    }
+    .flexWrapper{
+        flex-wrap: wrap;
+    }
+    table{
+        flex: 1;
+        min-width: 450px;
+        max-width: 550px;
+        td:last-child{
+            width: 1%;
+            font-weight: bold;
+        }
+    }
+    .concDist{
+        width: 100%;
+    }
+    .concDistHeader{
+        font-size: 18px;
+        color: $gray-600;
+    }
+}
+
+.breadcrumbIcon{
+    line-height: 18px;
+    vertical-align: text-bottom;
+    font-size: 18px;
 }

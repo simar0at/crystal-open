@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-beng ._t{
-    font-family: 'Noto Bengali'
+.script-beng ._t,
+body .script-beng ._t,
+body .script-beng._t{
+    font-family: 'Noto Bengali', 'Noto Sans', sans-serif;
 }

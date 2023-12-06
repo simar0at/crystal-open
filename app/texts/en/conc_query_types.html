@@ -1,7 +1,7 @@
 <h4>Query type</h4>
 <h5>Simple</h5>
 <p>This option is identical to the simple search on the BASIC tab.</p>
-<p>Finds words which match the search word(s) or whose <a href="https://www.sketchengine.eu/my_keywords/lemma/" target="_blank" rel="noopener">lemma</a> (base form) matches the search word. It is not case sensitive.</p>
+<p>Finds words which match the search word(s) or whose %[lemma]% (base form) matches the search word. It is not case sensitive.</p>
 <p>Type a word or phrase. Use an asterisk (*) for any number of unspecified characters. Use a question mark (?) for exactly one unspecified character. Use the pipe (|) to include more than one word or phrase. Use two hyphens (--) to search for a word that can be hyphenated, non-hyphenated or spelt as two separate words.</p>
 <h6>Examples</h6>
 <table width="100%">
@@ -34,7 +34,7 @@
         </tr>
         <tr>
             <td><b>multi--billion</b></td>
-            <td>find <em>multi-billion</em> or <em>multi-billion</em> or <em>multi billion</em></td>
+            <td>find <em>multi-billion</em> or <em>multibillion</em> or <em>multi billion</em></td>
         </tr>
         <tr>
             <td><b>return|go back</b></td>
@@ -44,7 +44,7 @@
 </table>
 <br>
 <h5>Lemma</h5>
-<p>Type a lemma to find all <a href="https://www.sketchengine.eu/my_keywords/word-form/" target="_blank" rel="noopener">word forms</a> of the lemma.&nbsp;<a href="https://www.sketchengine.eu/user-guide/user-manual/concordance-introduction/regular-expressions/" target="_blank" rel="noopener">Regular expressions</a> are supported.&nbsp;</p>
+<p>Type a lemma to find all %[wordForm|word forms]% of the lemma. %[regex|Regular expressions]% are supported. </p>
 <h6>Example</h6>
 <table width="100%">
     <thead>
@@ -60,16 +60,16 @@
         </tr>
         <tr>
             <td><b>b.*</b></td>
-            <td>be, was, beaches, big, bigger (words whose lemma begins&nbsp;b-)</td>
+            <td>be, was, beaches, big, bigger (words whose lemma begins b-)</td>
         </tr>
     </tbody>
 </table>
 <br>
 <h5>Phrase</h5>
-<p>Finds a multi-word phrase exactly as typed.&nbsp;&nbsp;<a href="https://www.sketchengine.eu/user-guide/user-manual/concordance-introduction/regular-expressions/" target="_blank" rel="noopener">Regular expressions</a> are supported.&nbsp;</p>
+<p>Finds a multi-word phrase exactly as typed. %[regex|Regular expressions]% are supported. </p>
 <br>
 <h5>Word</h5>
-<p>Finds a specific <a href="https://www.sketchengine.eu/my_keywords/word-form/">word form</a> exactly as typed.&nbsp;&nbsp;<a href="https://www.sketchengine.eu/user-guide/user-manual/concordance-introduction/regular-expressions/" target="_blank" rel="noopener">Regular expressions</a> are supported.&nbsp;</p>
+<p>Finds a specific %[wordForm|word form]% exactly as typed. %[regex|Regular expressions]% are supported. </p>
 <h6>Example</h6>
 <table width="100%">
     <thead>
@@ -91,7 +91,7 @@
 </table>
 <br>
 <h5>Character</h5>
-<p>Finds <a href="https://www.sketchengine.eu/my_keywords/token/" target="_blank" rel="noopener">tokens</a> containing a specific character or a string of characters.</p>
+<p>Finds %[token|tokens]% containing a specific character or a string of characters.</p>
 <h6>Example</h6>
 <table width="100%">
     <thead>
@@ -103,10 +103,10 @@
     <tbody>
         <tr>
             <td><b>ck</b></td>
-            <td>flicks trafficking quick ...</td>
+            <td>flicks trafficking quick …</td>
         </tr>
     </tbody>
 </table>
 <br>
 <h5>CQL</h5>
-<p>The Corpus Query Language is used for complex searches of lexical and grammatical structures and for searches with unspecific criteria. <a href="http://ske.li/cql" target="_blank" rel="noopener">more&raquo;</a></p>
+<p>The Corpus Query Language is used for complex searches of lexical and grammatical structures and for searches with unspecific criteria. %[cqlManual|more»]%</p>

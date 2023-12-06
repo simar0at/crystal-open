@@ -1,27 +1,41 @@
 <result-list class="result-list">
-    <div if={list.length}>
-        <a class="link clear hide-on-small-only"
-                if={opts.section != "annotations"}
-                onclick={onClearListClick}>{_("deleteAll")}</a>
-        <ui-filtering-list
+      <div>
+        <div class="right hide-on-small-only">
+          <ui-switch label-id="searchHistory"
+              riot-value="{historyValue}"
+              class="right"
+              name="historyValue"
+              on-change={toggleSwitch}>
+          </ui-switch>
+          <ui-switch label-id="db.favouritesResults"
+              riot-value="{favouritesChecked}"
+              class="right"
+              name="favouritesChecked"
+              on-change={toggleSwitch}>
+          </ui-switch>
+        </div>
+        <ui-filtering-list if={list.length}
             name="resultList"
+            ref="resultList"
             size=20
             disable-tooltips=true
-            options={options}></ui-filtering-list>
+            options={options}>
+        </ui-filtering-list>
+        <div class="right hide-on-small-only">
+            <a if={list.length}
+                class="link clear"
+                onclick={onClearListClick}>{_("deleteAll")}
+            </a>
+        </div>
     </div>
     <span if={!list.length}>
-        <span if={opts.section == "annotations"}>
-            {_("nothingHere")}
-        </span>
-        <span if={!opts.section == "annotations"}>
-            {_("nothingHere")}
-        </span>
+        <span>{_("nothingHere")}</span>
     </span>
 
     <script>
         require("./result-list.scss")
         const {UserDataStore} = require("core/UserDataStore.js")
-        const {ConcordanceStore} = require("concordance/ConcordanceStore.js")
+        this.LABEL_SIZE = UserDataStore.PAGES_LABEL_SIZE
 
         getTime(page){
             return window.Formatter.dateTime(new Date(page.timestamp * 1))
@@ -54,52 +68,110 @@
         }
 
         itemGenerator(option){
-            return `<a href="${this.getResultUrl(option.page)}">
-                        <span class='corpus'>${option.page.corpus}</span>
-                        <span class='date hide-on-med-and-down'>${this.getTime(option.page)}</span>
-                        <span class='featureIco'><i class='ske-icons ${getFeatureIcon(option.page.feature)} small'></i></span>
-                        <span class='feature hide-on-small-only'>${getFeatureLabel(option.page.feature)}</span>
-                        <span class='opts'>${this.getFeatureOptions(option.page)}</span>` + // wierd parsing bug workaround...
-                    "</a> \
-                    <a class='delete btn-flat btn-floating hide-on-small-only'>\
-                        <i class='material-icons'>delete</i>\
-                    </a>"
+            return `<div class='result-row'>
+                      <a class='favourite btn btn-flat btn-floating tooltipped' data-tooltip="` +
+                      (option.page.favourite ? _("removeFromFavourite") + '"> <i class=\'material-icons favourited\'>star</i>' : _("addToFavourite") + '"> <i class=\'material-icons\'>star_border</i>')
+                      + `</a>
+                      <a href="${this.getResultUrl(option.page)}" class='result-data'>
+                          <span class='line'>
+                              <span class='corpus'>${option.page.corpus}</span>
+                              <span class='chip ${!option.page.label?'hidden':''}'><i class='material-icons tiny'>label</i> ${option.page.label}</span>
+                          </span>
+                          <span class='featureIco'><i class='ske-icons ${getFeatureIcon(option.page.feature)} small'></i></span>
+                          <span class='feature hide-on-small-only'>${getFeatureLabel(option.page.feature)}</span>
+                          <span class='opts'>${this.getFeatureOptions(option.page)}</span>
+                      </a>
+                      <div class='date hide-on-med-and-down'>
+                        ${this.getTime(option.page)}
+                      </div>
+                      <button class='btn btn-flat btn-floating hide-on-small-only dropdown-trigger tooltipped' data-target=${option.value} data-tooltip="` +
+                      _("labelActions") +`" data-position="top">
+                          <i class="material-icons menuIcon">label${!option.page.label?'_outline': ''}</i>
+                      </button>
+                      <button class='delete btn btn-flat btn-floating hide-on-small-only tooltipped' data-tooltip="` +
+                              (option.page.favourite ? _("removeFromFavourite") : _("removeFromHistory"))
+                              + `">
+                          <i class='material-icons'>delete</i>
+                      </button>
+                      <ul id='${option.value}' class='dropdown-content' data-value='${option.value}'>
+                          <li class="serviceNode"><a class="labelAdd ${option.page.label?'disabled': ''}" href="javascript:void(0);"><i class="material-icons">add_circle</i>`
+                          +_("addLabel")+`</a></li>
+                          <li class="serviceNode"><a class="labelEdit ${!option.page.favourite||!option.page.label?'disabled': ''}" href="javascript:void(0);"><i class="material-icons">edit</i>`
+                          +_("editLabel")+`</a></li>
+                          <li class="serviceNode"><a class="labelDelete ${!option.page.favourite||!option.page.label?'disabled': ''}" href="javascript:void(0);"><i class="material-icons">delete</i>`
+                          +_("removeLabel")+`</a></li>
+                      </ul>
+                    </div>`
+        }
+
+        initData(){
+            this.favourites = []
+            this.history = []
+            this.list = []
+            this.options = []
+
+            this.favouritesChecked = false;
+            this.historyValue = false;
         }
 
         refreshAttributes(){
-            if (this.opts.section == "annotations") {
-                this.list = ConcordanceStore.get('storedconcs')
-                this.options = []
-                this.list.forEach((conc, idx) => {
-                    this.options.push({
-                        value: conc,
-                        page: {
-                            feature: "concordance",
-                            corpname: ConcordanceStore.corpus.corpname,
-                            data: {annotconc: conc}
-                        },
-                        label: conc,
-                        generator: this.itemGeneratorAnnot
-                    })
-                })
+            this.list = []
+            this.options = []
+            this.favourites = UserDataStore.get(`pages_favourites`).map(page => ({ ...page, favourite: 'true' }))
+            this.history = UserDataStore.get(`pages_history`)
+
+            if(!this.favouritesChecked && !this.historyValue){
+              this.list = this.history.filter((page) => !UserDataStore.isPageInFavourite(page))
+                          .concat(this.favourites)
+                          .sort((a, b) => a.timestamp - b.timestamp)
             }
-            else {
-                this.list = UserDataStore.get(`pages.${this.opts.section}`)
-                this.options = []
-                this.list.forEach((page, idx) => {
-                    this.options.unshift({ // oldest to bottom
-                        value: idx,
-                        page: page,
-                        label: this.getTime(page) + " " + page.corpus + " " + page.feature + this.getFeatureOptions(page),
-                        generator: this.itemGenerator
-                    })
-                })
+            else if(this.favouritesChecked){
+              this.list = this.favourites;
             }
+            else if(this.historyValue){
+              this.list = this.history;
+            }
+
+            this.list.forEach((page, idx) => {
+                this.options.unshift({ // oldest to bottom
+                    value: idx,
+                    page: page,
+                    label: this.getTime(page) + " " + page.corpus + " " + page.feature + this.getFeatureOptions(page) + " " + page.label,
+                    generator: this.itemGenerator,
+                    class: "resultItem"
+                })
+            })
         }
+
+        toggleSwitch(value, name){
+          this[name] = value
+
+          // Only one switch can be on
+          if (value){
+              (name == "favouritesChecked") ? this.historyValue = false : this.favouritesChecked = false
+          }
+
+          this.update()
+        }
+
+        this.initData()
         this.refreshAttributes()
 
         onClearListClick(evt){
-            UserDataStore.clearUserData(`pages_${opts.section}`)
+          Dispatcher.trigger("openDialog", {
+              small: true,
+              showCloseButton: true,
+              content: this.favouritesChecked ? _("removeAllFavouriteConfirmation") : _("removeAllHistoryConfirmation"),
+              buttons: [{
+                  label: _("an.remove"),
+                  class: "btn-primary",
+                  onClick: function(dialog, modal){
+                      !this.favouritesChecked && UserDataStore.clearData('pages_history')
+                      !this.historyValue && UserDataStore.clearData('pages_favourites')
+                      modal.close()
+                  }.bind(this)
+              }]
+          })
         }
 
         getResultUrl(page){
@@ -113,33 +185,163 @@
                 evt.stopPropagation()
                 let idx = $(evt.target).closest("li").data("value")
                 let page = this.list[idx]
-                if(this.opts.section == "history"){
-                    UserDataStore.removePageFromHistory(page)
-                } else{
-                    UserDataStore.togglePageFavourites(false, page)
+                if (page.favourite){
+                  Dispatcher.trigger("openDialog", {
+                      small: true,
+                      showCloseButton: true,
+                      content: _("removeFromFavouriteConfirmation"),
+                      buttons: [{
+                          label: _("an.remove"),
+                          class: "btn-primary",
+                          onClick: function(dialog, modal){
+                              UserDataStore.togglePageFavourites(false, page)
+                              modal.close()
+                          }.bind(this)
+                      }]
+                  })
+                }
+                else{
+                  Dispatcher.trigger("openDialog", {
+                      small: true,
+                      showCloseButton: true,
+                      content: _("removeFromHistoryConfirmation"),
+                      buttons: [{
+                          label: _("an.remove"),
+                          class: "btn-primary",
+                          onClick: function(dialog, modal){
+                              UserDataStore.removePageFromHistory(page)
+                              modal.close()
+                          }.bind(this)
+                      }]
+                  })
                 }
             }.bind(this))
+        }
+
+        bindFavouriteToggle(){
+            $(".favourite", this.root).click(function(evt){
+                evt.stopPropagation()
+                let idx = $(evt.target).closest("li").data("value")
+                let page = this.list[idx]
+                page && UserDataStore.togglePageFavourites(!page.favourite, page)
+            }.bind(this))
+        }
+
+        initDropdown(){
+            $('.dropdown-trigger').click(function(evt){
+               evt.stopPropagation()
+               let elem = $(evt.currentTarget).dropdown({
+                  constrainWidth: false,
+                  alignment: "right",
+                  coverTrigger: false
+               })
+               M.Dropdown.getInstance(elem).open()
+            })
+        }
+
+        bindLabelActions(){
+            $(".dropdown-content .labelAdd", this.root).off().click(function(evt){
+                evt.stopPropagation()
+                let idx = $(evt.target).closest(".dropdown-content").data("value")
+                let page = this.list[idx]
+                Dispatcher.trigger("openDialog", {
+                    title: _("addLabel"),
+                    small: true,
+                    showCloseButton: true,
+                    tag: "ui-input",
+                    buttons: [{
+                        label: _("save"),
+                        class: "btn-primary",
+                        onClick: function(dialog, modal){
+                            this.setLabel(dialog.contentTag.getValue().trim(), page)
+                            modal.close()
+                        }.bind(this)
+                    }],
+                    opts: {
+                        type: "text",
+                        maxlength: this.LABEL_SIZE,
+                        placeholder: _("addFavouriteLabel")
+                    }
+                })
+            }.bind(this))
+
+            $(".dropdown-content .labelEdit", this.root).off().click(function(evt){
+                evt.stopPropagation()
+                let idx = $(evt.target).closest(".dropdown-content").data("value")
+                let page = this.list[idx]
+                Dispatcher.trigger("openDialog", {
+                    title: _("editLabel"),
+                    small: true,
+                    showCloseButton: true,
+                    tag: "ui-input",
+                    buttons: [{
+                        label: _("save"),
+                        class: "btn-primary",
+                        onClick: function(dialog, modal){
+                            this.setLabel(dialog.contentTag.getValue().trim(), page)
+                            modal.close()
+                        }.bind(this)
+                    }],
+                    opts: {
+                        type: "text",
+                        maxlength: this.LABEL_SIZE,
+                        riotValue: page.label
+                    }
+                })
+            }.bind(this))
+
+            $(".dropdown-content .labelDelete", this.root).off().click(function(evt){
+                evt.stopPropagation()
+                let idx = $(evt.target).closest(".dropdown-content").data("value")
+                let page = this.list[idx]
+                Dispatcher.trigger("openDialog", {
+                    small: true,
+                    showCloseButton: true,
+                    content: _("removeLabelConfirmation"),
+                    buttons: [{
+                        label: _("an.remove"),
+                        class: "btn-primary",
+                        onClick: function(dialog, modal){
+                            this.setLabel(null, page)
+                            modal.close()
+                        }.bind(this)
+                    }]
+                })
+            }.bind(this))
+        }
+
+        setLabel(value, page){
+            if (value && value.length > this.LABEL_SIZE){
+                value = value.substring(0, this.LABEL_SIZE)
+            }
+            UserDataStore.saveLabel(page, value)
+            this.update()
+        }
+
+        initBindings(){
+            this.bindDeleteClick()
+            this.bindFavouriteToggle()
+            this.initDropdown()
+            this.bindLabelActions()
         }
 
         this.on("update", this.refreshAttributes)
 
         this.on("updated", () => {
-            this.bindDeleteClick()
+            this.initBindings()
         })
 
         this.on("mount", () => {
-            this.bindDeleteClick()
-            UserDataStore.on("pagesChange", this.update)
-            ConcordanceStore.on("ANNOTATIONS_UPDATED", this.update)
-            ConcordanceStore.on("ANNOTATION_REMOVED", this.update)
-            ConcordanceStore.on("ANNOTATION_CREATED", this.update)
+            this.initBindings()
+            UserDataStore.on("pages_historyChange", this.update)
+            UserDataStore.on("pages_favouritesChange", this.update)
+            this.refs.resultList && this.refs.resultList.on("updated", this.initBindings)
         })
 
-        this.on("unmount", () => {
-            UserDataStore.off("pagesChange", this.update)
-            ConcordanceStore.off("ANNOTATIONS_UPDATED", this.update)
-            ConcordanceStore.off("ANNOTATION_REMOVED", this.update)
-            ConcordanceStore.off("ANNOTATION_CREATED", this.update)
+        this.on("before-unmount", () => {
+            UserDataStore.off("pages_historyChange", this.update)
+            UserDataStore.off("pages_favouritesChange", this.update)
+            this.refs.resultList && this.refs.resultList.off("updated", this.initBindings)
         })
     </script>
 </result-list>

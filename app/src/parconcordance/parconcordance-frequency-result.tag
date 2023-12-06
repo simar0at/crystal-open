@@ -1,10 +1,10 @@
-<pcfreq-result-block class="pcfreq-result-block dividerTop">
-    <div class="inlineBlock freq-block-div">
+<pcfreq-result-block class="pcfreq-result-block dividerTop block_{opts.idx + 1}">
+    <div class="inline-block freq-block-div">
         <table class="material-table frequency-block">
             <thead>
                 <tr>
                     <th></th>
-                    <th each={h in opts.head} class="freq-th">
+                    <th each={h in opts.head} class="frq-th">
                         <table-label label={h.n}
                                 order-by={h.s}
                                 actual-order-by={data.freqSort}
@@ -13,13 +13,13 @@
                                 on-sort={parent.parent.sortBy.bind(this, String(h.s))}>
                         </table-label>
                     </th>
-                    <th if={data.freqShowRel} class="freq-th">
+                    <th if={data.freqShowRel} class="frq-th">
                         <table-label label={_("freqPerMillion")}
-                                order-by="freq"
+                                order-by="frq"
                                 actual-order-by={data.freqSort}
                                 actual-sort="desc"
                                 desc-allowed={true}
-                                on-sort={parent.sortBy.bind(this, "freq")}>
+                                on-sort={parent.sortBy.bind(this, "frq")}>
                         </table-label>
                     </th>
                     <th></th>
@@ -28,14 +28,17 @@
             </thead>
             <tbody>
                 <tr each={item, idx in opts.items}
-                        if={(idx >= fromline) && (idx <= toline)}>
+                        if={(idx >= fromline) && (idx <= toline)}
+                        class="itm_{idx + 1}">
                     <td class="col-tab-num">{window.Formatter.num(idx + 1)}</td>
-                    <td each={w in item.Word}>{w.n}</td>
-                    <td class="tab-num">{window.Formatter.num(item.freq)}</td>
+                    <td each={w, w_idx in item.Word} class="word_{w_idx + 1}">{w.n}</td>
+                    <td class="tab-num freqColumn">{window.Formatter.num(item.frq)}</td>
                     <td if={item.rel} class="tab-num">
-                            {window.Formatter.num(item.rel, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
+                        {window.valueFormatter(item.rel, 2)}
+                    </td>
                     <td if={data.freqShowRel} class="tab-num">
-                            {window.Formatter.num(item.freq * 1000000 / corpsize, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
+                        {window.valueFormatter(item.frq * 1000000 / corpsize, 2)}
+                    </td>
                     <td class="freqBar">
                         <div class="progress"
                                 style={"height: " + (item.freqbar ? (item.freqbar + 1) : 6) +"px;"}>
@@ -44,8 +47,8 @@
                             </div>
                         </div>
                     </td>
-                    <td>
-                        <a class="waves-effect waves-light btn btn-flat btn-floating {small: opts.details}"
+                    <td class="menuColumn">
+                        <a class="btn btn-flat btn-floating {small: opts.details}"
                                 onclick={onOpenMenuClick}>
                             <i class="material-icons menuIcon">more_horiz</i>
                         </a>
@@ -112,14 +115,12 @@
             let operations = copy(this.data.operations)
             rowData.Word.forEach((w, i) => {
                 operations.push({
-                    id: Math.floor((Math.random() * 10000)),
                     name: "filter",
                     arg: (featureParams.pn == "n" ? "not, " : "") + " " + w.n, // TODO add context
                     corpname: this.data.alignedCorpname,
                     query: {
                         q: featureParams.pn + rowData.pfilter_list[i].substring(1)
-                    },
-                    active: true
+                    }
                 })
             }, this)
 
@@ -140,10 +141,17 @@
     </script>
 </pcfreq-result-block>
 
-<parconcordance-frequency-result class="frequency-result">
+<parconcordance-frequency-result class="frequency-result t_m-{corpIdx}">
     <div class="content card">
         <div class="card-content">
-            <div if={!data.freq_error}>
+            <bgjob-card if={data.jobid}
+                    is-loading={data.isBgJobLoading}
+                    desc={data.raw.desc}
+                    progress={data.raw.processing}></bgjob-card>
+            <div if={!data.freq_error && !data.jobid}>
+                <div ref="tabs" class="optsContent background-color-blue-100 z-depth-3" style="display: none">
+                    <parconcordance-result-options-freq corpname={corpname}></parconcordance-result-options-freq>
+                </div>
                 <h4 class="header">
                     {_("frequency")}
                     <span style="font-size: 17px" class="grey-text"
@@ -155,13 +163,17 @@
                     </span>
                     <span class="headerButtons">
                         &nbsp;
-                        <a id="btnBackToConcordance" class="btn contrast" onclick={store.goBackToTheConcordance.bind(store)}>
+                        <a id="btnNewSearch" class="btn btn-primary" onclick={onToggleShowFormClick}>
+                            {_("newSearch")}
+                        </a>
+                        <a id="btnBackToConcordance" class="btn btn-primary" onclick={store.goBackToTheConcordance.bind(store)}>
                             {_("backToConcordance")}
                         </a>
                     </span>
                 </h4>
-                <pcfreq-result-block each={block in data.f_items}
+                <pcfreq-result-block each={block, idx in data.f_items}
                         if={!data.isLoading}
+                        idx={idx}
                         items={block.Items}
                         head={block.Head}>
                 </pcfreq-result-block>
@@ -175,7 +187,21 @@
     </div>
 
     <script>
+        require("./parconcordance-result-options-freq.tag")
         this.mixin("feature-child")
+
+        // for testing purpose
+        this.corpIdx = this.data.alignedCorpname ? (this.data.formparts.findIndex(c => c.corpname == this.data.alignedCorpname) + 2) : 1
+        this.corpname = this.data.alignedCorpname || this.store.corpus.corpname.split('/').pop()
+
+        onToggleShowFormClick(evt){
+            evt.preventUpdate = true
+            $(this.refs.tabs).slideToggle()
+        }
+
+        hideForm(){
+            $(this.refs.tabs).hide()
+        }
 
         sortBy(key) {
             this.data.freqSort = key
@@ -186,6 +212,11 @@
             if(!this.data.f_hasBeenLoaded){
                 this.store.f_search()
             }
+            this.store.on("f_dataLoaded", this.hideForm)
+        })
+
+        this.on("unmount", () => {
+            this.store.off("f_dataLoaded", this.hideForm)
         })
     </script>
 </parconcordance-frequency-result>

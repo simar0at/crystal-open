@@ -49,6 +49,12 @@ let HotkeysMeta = {
             args: "keywords"
         },
         {
+            key: "g a",
+            help: "hp.goToTextTypeAnalysis",
+            event: "ROUTER_GO_TO",
+            args: ["text-type-analysis"]
+        },
+        {
             key: "d 1",
             help: "hp.densityLow",
             event: "CHANGE_SETTINGS",
@@ -82,6 +88,16 @@ let HotkeysMeta = {
             key: "c c",
             help: "hp.changeCriteria",
             event: "CHANGE_CRITERIA"
+        },
+        {
+            key: "c v",
+            help: "hp.changeView",
+            event: "FEATURE_TOOLBAR_SHOW_OPTIONS",
+            args: 'view'
+        }, {
+            key: "q",
+            help: "hp.quitFeatureToolbar",
+            event: "FEATURE_TOOLBAR_HIDE_OPTIONS"
         }]
     },
     concordance: {
@@ -121,6 +137,11 @@ let HotkeysMeta = {
             help: "hp.viewmodeSen",
             event: "FEATURE_HOTKEY",
             args: {method: 'searchAndAddToHistory', params: [{'viewmode': 'sen'}]}
+        }, {
+            key: "s g",
+            help: "hp.sortGdex",
+            event: "FEATURE_HOTKEY",
+            args: {method: 'searchAndAddToHistory', params: [{page: 1, sort: [], gdex_enabled: true, viewmode: "sen"}]}
         }]
     }
 }

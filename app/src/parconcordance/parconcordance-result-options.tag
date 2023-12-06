@@ -3,14 +3,19 @@
         feature-page="parconcordance"
         options={optionsList}
         active={data.act_opts}
-        formats={["csv", "xls", "xml", "txt"]}
-        pulse-id={store.isConc && isEmpty ? (wasOperation ? "undo": "settings") : ""}
+        formats={["csv", "xlsx", "xml", "txt", "tmx"]}
+        download-limit={data.raw && data.raw.concordance_size_limit}
+        show-limit=1
+        limit-name={limitName}
+        pulse-id={store.isConc && isEmpty && !wasOperation ? "settings" : ""}
         settings-tag="parconcordance-tabs"
         on-open={onOptionsOpen}
         on-close={onOptionsClose}>
     </feature-toolbar>
 
     <script>
+        require("concordance/concordance-result-options-info.tag")
+
         this.mixin("feature-child")
 
         onViewChange(view){
@@ -19,21 +24,16 @@
             })
         }
 
-        onUndoClick(){
-            this.store.removeOperation(this.data.operations[this.data.operations.length - 1])
-        }
-
         updateAttributes(){
             this.wasOperation = this.data.operations.length > 1
             this.isEmpty = this.data.isEmpty
+            this.limitName = "pagesize"
+            if(this.store.isFreq){
+                this.limitName = "fmaxitems"
+            } else if(this.store.isColl){
+                this.limitName = "cmaxitems"
+            }
             this.optionsList = [{
-                    id: "undo",
-                    labelId: "undo",
-                    icon: "undo",
-                    iconClass: "material-icons",
-                    onclick: this.onUndoClick,
-                    disabled: this.isLoading || !this.wasOperation
-                }, {
                     id: "view",
                     icon: "visibility",
                     iconClass: "material-icons",
@@ -64,10 +64,16 @@
                         sel: this.data.viewmode,
                         onClick: this.onViewChange
                     }
+                }, {
+                    id: "info",
+                    contentTag: 'concordance-result-options-info',
+                    iconClass: "material-icons",
+                    icon: "info_outline",
+                    labelId: 'concordanceDescription'
                 }
             ]
              this.optionsList.forEach(option => {
-                if(option.id != "undo" && this.isEmpty){
+                if(this.isEmpty){
                     option.disabled = true
                 }
                 if(!this.store.isConc){

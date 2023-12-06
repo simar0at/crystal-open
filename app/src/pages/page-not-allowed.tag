@@ -6,11 +6,11 @@
                 {_(notLogged ? "na.notLogged" : "na.logged")}
             </div>
             <br>
-            <div class="center-align">
-                <a href="{window.config.URL_RASPI}" if={notLogged} class="btn contrast">
+            <div class="primaryButtons">
+                <a href="{window.config.URL_RASPI}" if={notLogged} class="btn btn-primary">
                     {_("login")}
                 </a>
-                <a href="#dashboard" class="btn contrast">
+                <a href="#dashboard" class="btn btn-primary">
                     {_("goToDashboard")}
                 </a>
             </div>

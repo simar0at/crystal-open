@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-mymr ._t{
-    font-family: 'Noto Myanmar'
+.script-mymr ._t,
+body .script-mymr ._t,
+body .script-mymr._t{
+    font-family: 'Noto Myanmar', 'Noto Sans', sans-serif;
 }

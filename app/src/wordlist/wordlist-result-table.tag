@@ -1,31 +1,23 @@
 <wordlist-result-table class="wordlist-result-table">
-    <div class={oneColumn: data.onecolumn}>
+    <div if={!data.isEmpty && !data.isEmptySearch}
+            class={oneColumn: data.onecolumn}>
         <column-table ref="table"
             show-line-nums={data.showLineNumbers}
             items={data.showItems}
             col-meta={colMeta}
-            max-column-count={data.onecolumn ? 1 : 0}
-            start-index={data.showResultsFrom}
-            order-by={data.wlsort}
             sort="desc"
-            on-sort={onSort}></column-table>
+            order-by={data.wlsort}
+            on-sort={onSort}
+            max-column-count={data.onecolumn ? 1 : 0}
+            start-index={data.showResultsFrom}></column-table>
 
             <div class="row">
-                <div if={data.tab != "attribute"} class="inlineBlock left">
-                    <div style="margin-bottom: 10px;">
-                        <div if={data.wllimit} class="align-left text-hint">
-                            {_( data.wllimit > data.wlmaxitems ? "wl.limit2" : "wl.limit", {limit: window.Formatter.num(data.wllimit), screenlimit: window.Formatter.num(data.wlmaxitems)})}
-                            <a href={externalLink("wl_download_limits")} target="_blank">{_("links.wl_download_limits")}</a>
-                        </div>
-                        <div if={!data.wllimit && data.raw.total > 20000} class="align-left text-hint">
-                            {_("wl.limit3", [window.Formatter.num(data.wllimit || 20000)])}
-                            <a class="btn btn-flat btn-floating" onclick={onDownloadWordlistClick}>
-                                <i class="material-icons blue-text">file_download</i>
-                            </a>
-                        </div>
-                    </div>
+                <div class="inline-block left">
+                    <user-limit wllimit={data.wllimit}
+                            total={data.raw.total}
+                            screen-limit={data.wlmaxitems}></user-limit>
                 </div>
-                <div class="inlineBlock right">
+                <div class="inline-block right">
                     <ui-pagination
                         if={data.items.length > 10}
                         count={data.items.length}
@@ -47,51 +39,15 @@
         require("./wordlist-result-table.scss")
         const Meta = require("./Wordlist.meta.js")
         const {AppStore} = require("core/AppStore.js")
+        const {UserDataStore} = require("core/UserDataStore.js")
 
         this.mixin("feature-child")
 
-        this.interfeatureMenuFeatures = window.config.NO_SKE ? ["concordance"] : ["concordance", "ngrams", "wordsketch", "thesaurus"]
-
-        onSort(sort){
-            this.store.searchAndAddToHistory({
-                wlsort: sort.orderBy,
-                page: 1
-            })
-        }
+        this.interfeatureMenuFeatures = window.config.NO_SKE ? ["concordance", "concordanceMacro"] : ["concordance", "concordanceMacro", "ngrams", "wordsketch", "thesaurus"]
 
         onDownloadWordlistClick(){
             window.scrollTo(0, 0)
             Dispatcher.trigger("FEATURE_TOOLBAR_SHOW_OPTIONS", "download")
-        }
-
-        addRelFreqColumn(){
-            if(this.data.relfreq){
-                let totalSize
-                if(this.data.usesubcorp){
-                    totalSize = this.corpus.subcorpora.find(s => {return s.n == this.data.usesubcorp}, this).tokens
-                } else{
-                    totalSize = this.corpus.sizes ? this.corpus.sizes.tokencount : 0
-                }
-
-                let col = {
-                    id: "relfreq",
-                    labelId: "perMillion",
-                    num: true,
-                    "generator": function(item, colMeta) {
-                        let relfreq = (item.freq / totalSize) * 1000000
-                        return window.Formatter.num(relfreq, {maximumFractionDigits: 5})
-                    }.bind(this),
-                }
-                if(!this.data.values){
-                    // absolut frequencies are not shown -> add sorting on relative frequencies
-                    col.sort = {
-                        orderBy: "f",
-                        descAllowed: true,
-                        ascAllowed: false
-                    }
-                }
-                this.colMeta.push(col)
-            }
         }
 
         addMenuColumn(){
@@ -100,7 +56,7 @@
                 "class": "menuColumn col-tab-menu",
                 label: "",
                 generator: () => {
-                    return "<a class=\"iconButton waves-effect waves-light btn btn-flat btn-floating\"><i class=\"material-icons menuIcon\" >more_horiz</i></a>"
+                    return "<a class=\"iconButton btn btn-flat btn-floating\"><i class=\"material-icons menuIcon\" >more_horiz</i></a>"
                 },
                 onclick: function(item, colMeta, evt){
                     this.refs.interfeatureMenu.onOpenMenuButtonClick(evt, item)
@@ -108,7 +64,7 @@
             })
         }
 
-        getFeatureLinkParams(feature, item){
+        getFeatureLinkParams(feature, item, evt, linkObj){
             let options = this.data
             let attr = options.viewAs == 1 ? options.find : options.wlstruct_attr1
             let lpos = this.data.lpos ? this.data.lpos : ""
@@ -124,25 +80,24 @@
             if(feature == "concordance"){
                 let cql = ""
                 let attrs = ""
-                if(this.data.tab == "attribute"){
-                    cql = `<${this.data.wlattr.replace(".", " ")}=="${item.str}">[]`
-                } else{
-                    if(item.Word){
-                        if(options.wlstruct_attr1 != options.wlattr
-                                    && options.wlstruct_attr2 != options.wlattr
-                                    && options.wlstruct_attr3 != options.wlattr){
-                            // add wlattr if its not in showed columns
-                            attrs = `${options.wlattr}="${this.store.getWlpat()}"`
-                        }
-                        item.Word.forEach((w, i) => {
-                            attrs += attrs ? " & " : ""
-                            attrs += `${options["wlstruct_attr" + (i + 1)]}=="${w.n}"`
-                        })
-                    } else{
-                        attrs = `${options.wlattr}=="${item.str}${options.lpos}"`
+                let esc = window.escapeCharacters
+                let specChars = '"\\'
+                if(item.Word){
+                    if(options.wlstruct_attr1 != options.wlattr
+                                && options.wlstruct_attr2 != options.wlattr
+                                && options.wlstruct_attr3 != options.wlattr){
+                        // add wlattr if its not in showed columns
+                        attrs = `${options.wlattr}="${this.store.getWlpat()}"`
                     }
-                    cql = `[${attrs}]`
+                    item.Word.forEach((w, i) => {
+                        attrs += attrs ? " & " : ""
+                        attrs += `${options["wlstruct_attr" + (i + 1)]}=="${esc(w.n,specChars)}"`
+                    })
+                } else{
+                    attrs = `${options.wlattr}=="${esc(item.str,specChars)}${esc(options.lpos,specChars)}"`
                 }
+                cql = `[${attrs}]`
+
                 return {
                     tab: 'advanced',
                     queryselector: "cql",
@@ -154,6 +109,7 @@
             } else if(feature == "ngrams"){
                 return {
                     tab: 'advanced',
+                    find: attr,
                     ngrams_n: 2,
                     ngrams_max_n: 6,
                     usesubcorp: options.usesubcorp,
@@ -180,11 +136,21 @@
             }
         }
 
+        getCountLabel(attr){
+            if(attr == "str"){
+                if(AppStore.getLposByValue(this.data.find)){
+                    label = _(this.store.getDefaultPosAttribute())
+                } else {
+                    label = this.store.getFindLabel(this.data.find)
+                }
+            }  else {
+                return attr
+            }
+        }
+
         setColMetaSimple(){
             let label = ""
-            if(this.data.tab == "attribute"){
-                label = _("wl.attrValue")
-            } else if(AppStore.getLposByValue(this.data.find)){
+            if(AppStore.getLposByValue(this.data.find)){
                 label = _("lemma")
             }  else {
                 label = this.store.getFindLabel(this.data.find)
@@ -192,30 +158,28 @@
             this.colMeta = [{
                 id: "str",
                 label: label,
-                "class": "_t word",
-                sort: {
-                    orderBy: "",
-                    descAllowed: true,
-                    ascAllowed: false
-                }
+                "class": "_t word"
             }]
-            if(this.data.values){
+            this.data.cols.forEach(attr => {
+                let labelId = AppStore.getWlsortLabelId(attr)
+                let orderBy = attr.startsWith("rel") ? attr.substr(3) : attr
+                if(orderBy == "freq"){
+                    orderBy = "frq"
+                }
                 this.colMeta.push({
-                    id: "freq",
-                    class: "freq",
-                    label: this.countLabel,
+                    id: attr,
+                    class: attr,
+                    labelId: labelId,
                     num: true,
-                    formatter: window.Formatter.num.bind(Formatter),
-                    tooltip: "t_id:wl_r_" + this.data.wlnums,
                     sort: {
-                        orderBy: "f",
-                        descAllowed: true,
-                        ascAllowed: false
-                    }
+                        orderBy: orderBy,
+                        ascAllowed: true,
+                        descAllowed: false
+                    },
+                    formatter: window.attrFormatter.bind(this, attr),
+                    tooltip: "t_id:" + labelId
                 })
-            }
-
-            this.addRelFreqColumn()
+            })
             this.addMenuColumn()
         }
 
@@ -228,15 +192,13 @@
                 label: this.data.raw && this.data.raw.wsattr ? _(this.data.raw.wsattr.split("_")[0]) : "",
                 "class": "_t word"
             }]
-            if(this.data.values){
-                this.colMeta.push({
-                    id: "freq",
-                    class: "freq",
-                    label: _("freq"),
-                    num: true,
-                    formatter: window.Formatter.num.bind(Formatter)
-                })
-            }
+            this.colMeta.push({
+                id: "frq",
+                class: "frq",
+                label: _("frequency"),
+                num: true,
+                formatter: window.Formatter.num.bind(Formatter)
+            })
             if(this.data.showratio){
                 this.colMeta.push({
                     id: "ratio",
@@ -258,8 +220,7 @@
         }
 
         setColMetaStructWordlist(){
-            const cols = this.data.cols
-            // user selected columns - wlattrs
+            const cols = stores.wordlist.data.raw.Blocks ? stores.wordlist.data.raw.Blocks[0].Head : []
             cols.forEach((col) => {
                 if(typeof col.s == "number"){
                     this.colMeta.push({
@@ -273,10 +234,10 @@
                 }
             })
             // column with frequencies
-            if(this.data.values){
+            if(this.data.cols.includes("frq")){
                 this.colMeta.push({
-                    id: "freq",
-                    class: "freq",
+                    id: "frq",
+                    class: "frq",
                     label: this.countLabel,
                     num: true,
                     formatter: window.Formatter.num.bind(Formatter)
@@ -286,7 +247,7 @@
             // column with bars
             if(this.data.bars){
                 this.colMeta.push({
-                    "id": "freq",
+                    "id": "frq",
                     "label": "",
                     "class": "barsColumn",
                     "generator": function(item, colMeta) {
@@ -295,23 +256,26 @@
                 })
             }
 
-            if (this.data.raw.concsize == this.data.raw.fullsize) {
-                this.addRelFreqColumn()
+            if (this.data.raw.concsize == this.data.raw.fullsize && this.data.cols.includes("relfreq")) {
+                this.colMeta.push({
+                    id: "fpm",
+                    labelId: "relfreq",
+                    class: "fpm",
+                    formatter: window.Formatter.num.bind(Formatter),
+                    num: true
+                })
             }
             this.addMenuColumn()
         }
 
         setColMeta(){
             this.colMeta = []
-            if(this.data.tab == "attribute"){
-                this.countLabel = _(this.data.wlnums == "frq" ? "tokens" : "wl.docf")
-                this.setColMetaSimple()
-            } else if (this.data.histid){
+            if (this.data.histid){
                 this.countLabel = this.data.raw.hist_desc
                 this.setColMetaFindx()
             } else {
                 this.countLabel = getLabel(Meta.wlnumsList.find(w => {
-                    return w.value == this.data.wlnums
+                    return w.value == this.data.wlsort
                 }))
                 if(this.data.wlstruct_attr1){
                     this.setColMetaStructWordlist()
@@ -321,6 +285,12 @@
             }
         }
         this.setColMeta()
+
+        onSort(sort){
+            this.store.searchAndAddToHistory({
+                wlsort: sort.orderBy
+            })
+        }
 
         isFeatureLinkActive(feature){
             let attr = this.data.viewAs == 1 ? this.data.wlattr : this.data.wlstruct_attr1

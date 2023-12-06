@@ -1,9 +1,12 @@
 <login-as-dialog class="login-as-dialog">
     <div class="center">
         <br>
-        <user-list on-change={onUserChange} on-input={onUserInput} on-submit={onLoginAsClick}></user-list>
+        <user-list ref="list"
+                on-change={onUserChange}
+                on-input={onUserInput}
+                on-submit={onLoginAsClick}></user-list>
         <a id="btnDialogLoginAs"
-            class="waves-effect waves-light btn white-text"
+            class="btn white-text"
             ref="btn"
             href="javascript:void(0);"
             onclick={onLoginAsClick}
@@ -25,6 +28,7 @@
         }
 
         onLoginAsClick(){
+            this.refs.list.cancelRequest()
             Auth.loginAs(this.username)
         }
 

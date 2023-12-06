@@ -13,7 +13,7 @@
                     <source src={link.url}>
                     Your browser does not support playing video files.
                 </video>
-                <img if={link.mediatype == "image"} ref="image" src="{link.url}"></img>
+                <img if={link.mediatype == "image"} ref="image" src="{link.url}" loading="lazy">
             </div>
             <div class="fileInfo dividerTop grey-text">
                 {_("file")}: {fileName}

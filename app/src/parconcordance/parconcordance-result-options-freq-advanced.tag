@@ -1,21 +1,26 @@
 <parconcordance-result-options-freq-advanced class="parconcordance-result-options-freq">
     <div class="card-content">
-        <div class="row">
-            <div class="col s12">
+        <a onclick={onResetClick} class="resetOptions btn btn-floating btn-flat">
+            <i class="material-icons color-blue-800">settings_backup_restore</i>
+        </a>
+        <div class="columns">
+            <div class="freqmlContainer inline-block leftColumn">
                 <div each={freq, idx in freqml} class="card">
                     <div class="card-content">
                         <i class="close material-icons grey-text material-clickable"
                                 if={idx != 0}
                                 onclick={onRemoveClick.bind(this, idx)}>close</i>
-                        <ui-filtering-list inline={true}
-                                riot-value={freq.attr}
-                                name="attr"
-                                floating-dropdown=1
-                                value-in-search=1
-                                open-on-focus=1
-                                options={attrList}
-                                on-change={onAttrChange.bind(this, idx)}>
-                        </ui-filtering-list>
+                        <div>
+                            <ui-filtering-list inline={true}
+                                    riot-value={freq.attr}
+                                    name="attr"
+                                    floating-dropdown=1
+                                    value-in-search=1
+                                    open-on-focus=1
+                                    options={attrList}
+                                    on-change={onAttrChange.bind(this, idx)}>
+                            </ui-filtering-list>
+                        </div>
                         <context-selector range=6
                                 min-wdith=700
                                 data-idx={idx}
@@ -25,23 +30,19 @@
                                 kwic-label={getContextKwicLabel(freq.base)}
                                 label-id="position"
                                 on-change={onCtxChange.bind(this, idx)}></context-selector>
-
                         <ul id='dd_freqBase_{idx}' class='dropdown-content'>
                             <li each={item in baseList} onclick={onBaseChange.bind(this, idx, item.value)}>
                                 <span>{item.label}</span>
                             </li>
                         </ul>
-                        </context-selector>
                     </div>
                 </div>
-            </div>
-            <div class="col s12">
                 <div class="center-align">
                     <a if={freqml.length < 4}
                             id="btnAddFrequency"
-                            class="waves-effect waves-light btn btn-floating btn-small"
+                            class="btn btn-floating btn-small"
                             onclick={onAddClick}>
-                        <i class="material-icons dark">add</i>
+                        <i class="material-icons color-blue-800">add</i>
                     </a>
                 </div>
                 <div if={freqml.length == 4}>{_("frq.freqmlLimit")}</div>
@@ -52,18 +53,22 @@
                         label-id="groupByFirstCol"
                         disabled={freqml.length < 2}
                         on-change={onGroupChange}></ui-checkbox>
-                <div class="buttonGo center-align">
-                    <a id="btnGoFreqAdv" class="btn ordinaryBtn contrast"
-                            onclick={onGoClick}>{_("go")}</a>
+                <div class="primaryButtons">
+                    <button id="btnGoFreqAdv"
+                            class="btn btn-primary"
+                            onclick={onGoClick}>{_("go")}
+                    </button>
                 </div>
                 <br />
-                <div class="frequency-quick-list pcfr-links">
-                    <frequency-links-column column={presetLinksColumn}></frequency-links-column>
-                </div>
+            </div>
+            <div class="frequency-quick-list pcfr-links">
+                <frequency-links-column column={presetLinksColumn}></frequency-links-column>
             </div>
         </div>
     </div>
-    <floating-button onclick={onGoClick} name="btnGoFloat" periodic=1
+    <floating-button on-click={onGoClick}
+            name="btnGoFloat"
+            periodic=1
             refnodeid="btnGoFreqAdv">
     </floating-button>
 
@@ -102,6 +107,11 @@
 
         this.attrList = this.store.attrList.concat(this.store.refList)
 
+        onResetClick(evt){
+            this.freqml = copy(this.store.defaults.freqml)
+            this.f_group = this.store.defaults.f_group
+        }
+
         onGoClick() {
             let freqDesc = this.freqml.map(freq => {
                 return freq.attr + " " + freq.ctx
@@ -110,27 +120,27 @@
             this.store.f_searchAndAddToHistory({
                 f_mode: "multilevel",
                 freqml: this.freqml,
-                alignedCorpname: this.parent.parent.parent.parent.opts.corpname
+                alignedCorpname: this.alignedCorpname
             })
         }
 
-        let alignedCorpname = this.parent.parent.parent.parent.opts.corpname
+        this.alignedCorpname = this.parent.parent.opts.corpname
         let textTypes = this.store.getAllTextTypes()
         let links = [{
             id: "words_kwic",
             labelId: "frq.kwicForms",
             tooltip: "t_id:conc_r_freq_words_kwic",
-            href: this.store.f_getContextLink(0, "kwic", "word", alignedCorpname, "advanced")
+            href: this.store.f_getContextLink(0, "kwic", "word", this.alignedCorpname, "advanced")
         }, {
             id: "tags_kwic",
             labelId: "frq.kwicTags",
             tooltip: "t_id:conc_r_freq_tags_kwic",
-            href: this.store.f_getContextLink(0, "kwic", "tag", alignedCorpname, "advanced")
+            href: this.store.f_getContextLink(0, "kwic", "tag", this.alignedCorpname, "advanced")
         }, {
             id: "lemmas_kwic",
             labelId: "kwicLemmas",
             tooltip: "t_id:conc_r_freq_lemmas_kwic",
-            href: this.store.f_getContextLink(0, "kwic", "lemma", alignedCorpname, "advanced")
+            href: this.store.f_getContextLink(0, "kwic", "lemma", this.alignedCorpname, "advanced")
         }]
         textTypes.length && links.push({
             id: "words_kwic",
@@ -138,7 +148,7 @@
             tooltip: "t_id:conc_r_freq_text_types",
             href: this.store.f_getLink({
                 f_texttypes: textTypes,
-                alignedCorpname: alignedCorpname
+                alignedCorpname: this.alignedCorpname
             }, "texttypes", "advanced")
         })
         let lineDetails = this.store.f_getLineDetailsTextTypes()
@@ -147,7 +157,7 @@
             labelId: "lineDetails",
             disabled: !lineDetails.length,
             href: this.store.f_getLink({
-                alignedCorpname: alignedCorpname,
+                alignedCorpname: this.alignedCorpname,
                 f_texttypes: lineDetails
             }, "texttypes", "advanced")
         })
@@ -196,7 +206,7 @@
             $("context-selector", this.root).each(function(idx, contextElem){
                 if(!$(contextElem).find(".dropdown-trigger").length){
                     let rowIdx = $(contextElem).data("idx")
-                    let btn = $("<a href=\"\" class=\"dropdown-trigger\" data-target=\"dd_freqBase_" + rowIdx + "\"> <i class=\"material-icons\" >arrow_drop_down</i></a>")
+                    let btn = $("<a href=\"\" class=\"dropdown-trigger kwicBaseDropdown\" data-target=\"dd_freqBase_" + rowIdx + "\"> <i class=\"material-icons\" >arrow_drop_down</i></a>")
                     btn.insertAfter($(contextElem).find(".kwicBtn"))
                     btn.dropdown({
                         alignment: 'right',

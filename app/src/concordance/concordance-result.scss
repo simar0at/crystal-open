@@ -1,10 +1,65 @@
+@import 'app/styles/constants';
+
 .concordance-result{
     display: block;
     padding: 0 4px;
-    &.fullContext{
-        .displayKwic concordance-result-context{
-            position: relative;
+    &.hasAttributes .kwicWrapper,
+    &.hasContextAttributes{
+        .itm{
+            display: inline-flex;
+            flex-direction: column;
+            &::after{
+                content: attr(attr);
+                font-weight: normal;
+                font-size: 12px;
+                color: #afafaf;
+                display: block;
+                margin-top: -5px;
+                text-align: center;
+                padding: 0 2px;
+                top: 20px;
+            }
         }
+    }
+    &.hasAttributes{
+        .tr:hover{
+            .itm::after{
+                color: grey;
+            }
+            /* hack to show kwic underline on hover but not on kwic attribute. Style "text-decoration"
+            is applied on pseudo elements ::after,::before, unless they are positioned absolute*/
+            .kwicWrapper .itm{
+                &::after{
+                    /* to make span.itm wider, if needed (if attributes are wider than kwic) */
+                    visibility: hidden;
+                }
+                &::before{
+                    content: attr(attr);
+                    font-weight: normal;
+                    font-size: 12px;
+                    color: #afafaf;
+                    display: block;
+                    text-align: center;
+                    padding: 0 2px;
+                    top: 19px;
+                    left: 0;
+                    right: 0;
+                    position: absolute;
+                }
+            }
+        }
+    }
+    &.viewKwic{
+        concordance-result-items{
+            position: absolute;
+            white-space: nowrap;
+        }
+    }
+    &.fullContext.viewKwic concordance-result-items{
+        position: relative;
+    }
+    concordance-result-items{
+        display: inline;
     }
     .table.result-table{
         margin-bottom: 15px;
@@ -46,17 +101,16 @@
             &.selected{
                 background-color: #ddf0f7;
                 .copyCell i{
-                    color: #C52031;
+                    color: $red-400;
                     opacity: 0.8;
                 }
             }
             &.kwicDetailDisplayed{
-                outline: 2px solid #9e9e9e;
-                background-color: #f2f2f2;
+                outline: 2px solid $gray-500;
+                background-color: $gray-100;
             }
             &:hover{
-                .ref span span,
-                .kwic{
+                .kwicWrapper .itm{
                     text-decoration: underline;
                 }
                 .copyCell i{
@@ -81,6 +135,10 @@
                 }
             }
         }
+        .gdexTh{
+            white-space: nowrap;
+        }
+
         .leftpad {
             padding-left: 1em;
         }
@@ -102,22 +160,23 @@
             span{
                 display: flex;
                 overflow: hidden;
-                color: #757575;
+                color: $gray-600;
                 i{
                     display: inline-block;
                     font-size: 21px;
                     vertical-align: middle;
-                    padding-right: 10px;
                 }
-                span{
-                    display: inline-block;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
+            }
+            .ref-label{
+                display: inline-block;
+                white-space: nowrap;
+                &:hover{
+                  text-decoration: underline;
                 }
             }
         }
         .mediaCell i{
-            color: #F44336;
+            color: $red-200;
             cursor: pointer;
         }
         .copyCell{
@@ -138,14 +197,12 @@
         }
     }
     .itm{
-        display: inline-block;
-        vertical-align: top;
         padding: 0 2px;
-        >div{
-            text-align: center;
-        }
-        .coll{
-            color: red;
+        text-align: center;
+        position: relative;
+        &.coll,
+        &.kwic{
+            color: $red-200;
             font-weight: bold;
         }
     }
@@ -154,36 +211,19 @@
     }
     .middle{
         white-space: nowrap;
-        vertical-align: top;
     }
     .kwicWrapper{
         cursor: pointer;
-        display: inline-block;
-        text-align: center;
-        vertical-align: top;
-        .kwic {
-            margin: 0 3px;
+        position: relative!important;
+        .itm{
+            color: $red-200;
+            font-weight: bold;
         }
     }
-    .kwic{
-        font-weight: bold;
-        color: red;
-        display: inline-block;
-    }
-    .attr{
-        font-size: 12px;
-        color: #afafaf;
-        display: block;
-        margin-top: -5px;
-        text-align: center;
-        padding: 0 2px;
-    }
-    .tr:hover{
-        .attr{
-            color: grey;
-        }
-    }
-    .leftCol, .rightCol{
+
+    .leftCol,
+    .rightCol{
+        position: relative;
         width: 50%;
     }
     a.lineDetail{
@@ -205,7 +245,7 @@
     .gdex{
         .badge{
             margin-left: 0px;
-            background-color: #9e9e9e;
+            background-color: $gray-500;
         }
     }
 
@@ -216,13 +256,6 @@
             .th,
             .td{
                 padding: 4px 2px;
-            }
-        }
-    }
-    .result-table{
-        &.displaySen{
-            .itm{
-                text-align: center;
             }
         }
     }
@@ -239,20 +272,13 @@
             font-size: 0.8em;
         }
     }
-
-    .displayKwic{
-        concordance-result-context{
-            position: absolute;
-            white-space: nowrap;
-        }
-    }
     .leftCol{
-        concordance-result-context{
+        concordance-result-items{
             right: 0;
         }
     }
     .rightCol{
-        concordance-result-context{
+        concordance-result-items{
             left: 0;
         }
     }
@@ -284,13 +310,13 @@
             text-align: left;
         }
         .right-align{
-            text-align: left;
+            text-align: right;
         }
-        .leftCol concordance-result-context{
+        .leftCol concordance-result-items{
             left: initial;
             right: 0
         }
-        .rightCol concordance-result-context{
+        .rightCol concordance-result-items{
             left: 0;
             right: initial;
         }

@@ -1,3 +1,5 @@
+@import 'app/styles/constants';
+
 .preloader-spinner{
     direction: ltr;
     .preloader-wrapper{
@@ -8,10 +10,11 @@
     }
     &.overlay{
         .preloader-container {
-            color: #fff;
+            color: $white;
             position: absolute;
             left: 50%;
             top: 33%;
+            top: unquote("min(33%, 33vh)"); // scss compiler bug workaround
             transform: translateX(-50%);
         }
         &.fixed{
@@ -21,7 +24,7 @@
         }
         .message,
         .cancel{
-            color: #9e9e9e;
+            color: $gray-500;
             cursor: pointer;
             font-size: 18px;
             vertical-align: middle;
@@ -42,6 +45,15 @@
                 font-size: 21px;
                 vertical-align: middle;
             }
+        }
+    }
+    .academicWarning span{
+        padding: 5px 15px;
+        border: 2px solid #26a69a;
+        color: #fff;
+        background-color: #26a69a;
+        i{
+            font-size: 16px;
         }
     }
 }

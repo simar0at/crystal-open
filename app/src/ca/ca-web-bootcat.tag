@@ -2,12 +2,13 @@
     <div>
         <div class="card-panel columnForm">
             <div class="row">
-                <label for="input_type" class="col m4 s12">
+                <label for="input_type" class="col m3 s12">
                     {_("ca.input_type")}
                 </label>
-                <span class="col m8 s12 inputTypeOptions">
+                <span class="col m9 s12 inputTypeOptions">
                     <div each={option, idx in inputTypeList}>
-                        <label for={"ito_" + idx}>
+                        <label for={"ito_" + idx}
+                                class="rb_{(option.value + "").replace(/\W/g,'_')}">
                             <input type="radio"
                                 id={"ito_" + idx}
                                 name="input_type"
@@ -18,26 +19,34 @@
                                 {getLabel(option)}
                             </span>
                         </label>
-                        <i class="material-icons tooltipped help small-help" data-tooltip={_("ca." + option.value +  "Help")}>help_outline</i>
+                        <i class="material-icons tooltipped help small-help" data-tooltip="t_id:ca_{option.value}_help">help_outline</i>
                    </div>
 
                      <span if={inputType == "seeds"}>
-                        <ui-chips name="seeds"
-                            riot-value={seedWords}
-                            on-add={onSeedsChange}
-                            on-delete={onSeedsChange}
-                            placeholder={_("ca.seedsPlaceholder")}
-                            secondary-placeholder=" "
-                            ref="seeds"
-                            ></ui-chips>
-                            <i class="material-icons tooltipped help inlineHelp" data-tooltip={_("ca.seedsHelp")}>help_outline</i>
-                        <div class="hint">
-                            <div ref="seedsHint"></div>
-                        </div>
-                        <div if={!opts.corpus.status.isEmpty && hasKeywords}>
-                            <a href="javascript:void(0);" class="btn kwBtn" onclick={onUseKeywordsClick}>
-                                {_("getSeedWords")}
-                            </a>
+                        <div class="flex">
+                            <div class="nowrap seedsContainer">
+                                <ui-chips name="seeds"
+                                        riot-value={seedChips}
+                                        class="mb-0"
+                                        on-add={onSeedsChange}
+                                        on-delete={onSeedsChange}
+                                        on-input={onSeedsChange}
+                                        placeholder={_("ca.seedsPlaceholder")}
+                                        secondary-placeholder=" "
+                                        ref="seeds"></ui-chips>
+                                <div class="hint seedsHint">
+                                    <span ref="seedsHint"></span>
+                                    {_("ca.seedsHintEnter")}
+                                </div>
+                            </div>
+                            <div if={!opts.corpus.isEmpty && hasKeywords}>
+                                <a href="javascript:void(0);"
+                                        id="btnUseKeywords"
+                                        class="btn kwBtn"
+                                        onclick={onUseKeywordsClick}>
+                                    {_("suggestions")}
+                                </a>
+                            </div>
                         </div>
                     </span>
                     <span if={inputType == "urls"}>
@@ -49,7 +58,6 @@
                             validate=1
                             on-input={refreshGoDisabled}
                             ref="urls"></ui-textarea>
-                        <i class="material-icons tooltipped help" data-tooltip={_("ca.urlsHelp")}>help_outline</i>
                     </span>
                     <span if={inputType == "site"}>
                         <ui-input name="site"
@@ -59,17 +67,16 @@
                             required=1
                             validate=1
                             ref="site"></ui-input>
-                        <i class="material-icons tooltipped help" data-tooltip={_("ca.siteHelp")}>help_outline</i>
                     </span>
                 </span>
             </div>
 
             <div class="row">
-                <label for="fileset_name" class="col m4 s12 withHelp">
+                <label for="fileset_name" class="col m3 s12 withHelp">
                     {_("ca.fileset_name")}
                     <i class="material-icons tooltipped help" data-tooltip={_("ca.fileset_nameHelp")}>help_outline</i>
                 </label>
-                <span class="col m8 s12" style="max-width: 250px;">
+                <span class="col m9 s12" style="max-width: 250px;">
                     <ui-input ref="fileset_name"
                         placeholder={_("ca.fileset_namePlaceholder")}
                         riot-value={fileset_name}
@@ -81,22 +88,49 @@
             </div>
 
             <virtual if={inputType == "seeds"}>
-                <div  class="center-align">
-                    <a class="btn btn-flat btn-waves" onclick={onSettingsToggle.bind(this, "showWebSearchSettings")} style="text-transform: none;">
+                <div class="center-align">
+                    <a id="btnToggleWebSearch"
+                            class="btn btn-flat noCapitalization"
+                            onclick={onSettingsToggle.bind(this, "showWebSearchSettings")}>
                         {_("ca.webSearchSettings")}
                         <i class="material-icons right">{showWebSearchSettings ? "arrow_drop_up" : "arrow_drop_down"}</i>
                     </a>
                 </div>
-                <div ref="showWebSearchSettings" class="columnForm bootcat-settings" style="display: none;">
+                <div ref="showWebSearchSettings" class="columnForm bootcat-settings t_webSearch" style="display: none;">
                     <div class="row">
-                        <label for="max_urls_per_query" class="col m4 s12 withHelp"}>
+                        <label for="max_urls_per_query" class="col m3 s12 withHelp">
+                            {_("sizeAndRelevance")}
+                            <i class="material-icons tooltipped help" data-tooltip="t_id:ca_size_and_relevance">help_outline</i>
+                        </label>
+                        <span class="col m9 s12" style="max-width: 100%;">
+                            <ui-slider min=0
+                                    max=2
+                                    step=1
+                                    name=""
+                                    disabled={customSettings}
+                                    label=""
+                                    left-label={_("preferRelevant")}
+                                    right-label={_("preferLarge")}
+                                    labels={sliderLabels}
+                                    disableinput=1
+                                    on-change={onSliderChange}></ui-slider>
+                            <div>
+                                <ui-switch label-id="customSettings"
+                                    riot-value={customSettings}
+                                    on-change={onCustomSettingsChange}></ui-checkbox>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="row">
+                        <label for="max_urls_per_query" class="col m3 s12 withHelp">
                             {_("ca.max_urls_per_query")}
                             <i class="material-icons tooltipped help" data-tooltip={_("ca.max_urls_per_queryHelp")}>help_outline</i>
                         </label>
-                        <span class="col m8 s12" style="max-width: 100px;">
+                        <span class="col m9 s12" style="max-width: 100px;">
                             <ui-input ref="max_urls_per_query"
                                 name="max_urls_per_query"
                                 type="number"
+                                disabled={!customSettings}
                                 size=3
                                 inline=1
                                 validate=1
@@ -108,11 +142,31 @@
                         </span>
                     </div>
                     <div class="row">
-                        <label for="sites_list" class="col m4 s12 withHelp">
+                        <label for="tuple_size" class="col m3 s12 withHelp">
+                            {_("seedsInSearch")}
+                            <i class="material-icons tooltipped help" data-tooltip={_("ca.tuple_sizeHelp")}>help_outline</i>
+                        </label>
+                        <span class="col m9 s12" style="max-width: 100px;">
+                            <ui-input ref="tuple_size"
+                                name="tuple_size"
+                                type="number"
+                                disabled={!customSettings}
+                                size=3
+                                inline=1
+                                validate=1
+                                max=5
+                                min=1
+                                on-input={refreshGoDisabled}
+                                on-change={onOptionChange}
+                                riot-value={options.tuple_size}></ui-input>
+                        </span>
+                    </div>
+                    <div class="row">
+                        <label for="sites_list" class="col m3 s12 withHelp">
                             {_("ca.sites_list")}
                             <i class="material-icons tooltipped help" data-tooltip={_("ca.sites_listHelp")}>help_outline</i>
                         </label>
-                        <span class="col m8 s12">
+                        <span class="col m9 s12">
                             <ui-textarea ref="sites_list"
                                 name="sites_list"
                                 on-change={onOptionChange}
@@ -123,42 +177,54 @@
             </virtual>
 
             <div  class="center-align">
-                <a class="btn btn-flat btn-waves" onclick={onSettingsToggle.bind(this, "showBlacklistSettings")} style="text-transform: none;">
+                <a btnToggleBlackList
+                        class="btn btn-flat noCapitalization t_blacklist"
+                        onclick={onSettingsToggle.bind(this, "showBlacklistSettings")}>
                     {_("ca.blackList")}
                     <i class="material-icons right">{showBlacklistSettings ? "arrow_drop_up" : "arrow_drop_down"}</i>
                 </a>
             </div>
-            <div ref="showBlacklistSettings" class="columnForm bootcat-settings" style="display: none;">
+            <div ref="showBlacklistSettings"
+                    class="columnForm bootcat-settings t_blackList"
+                    style="display: none;">
                 <div class="row">
-                    <label for="bl_max_total_kw" class="col m4 s12 withHelp"}>
+                    <label for="bl_max_total_kw" class="col m3 s12 withHelp">
                         {_("ca.bl_max_total_kw")}
                         <i class="material-icons tooltipped help" data-tooltip={_("ca.bl_max_total_kwHelp")}>help_outline</i>
                     </label>
-                    <span class="col m8 s12">
+                    <span class="col m9 s12">
                         <ui-input ref="bl_max_total_kw"
                             name="bl_max_total_kw"
                             inline=1
-                            riot-value={settings.bl_max_total_kw}></ui-input>
+                            riot-value={settings.bl_max_total_kw}
+                            validate=1
+                            type="number"
+                            max=1000000000
+                            min=0></ui-input>
                     </span>
                 </div>
                 <div class="row">
-                    <label for="bl_max_unique_kw" class="col m4 s12 withHelp"}>
+                    <label for="bl_max_unique_kw" class="col m3 s12 withHelp">
                         {_("ca.bl_max_unique_kw")}
                         <i class="material-icons tooltipped help" data-tooltip={_("ca.bl_max_unique_kwHelp")}>help_outline</i>
                     </label>
-                    <span class="col m8 s12">
+                    <span class="col m9 s12">
                         <ui-input ref="bl_max_unique_kw"
                             name="bl_max_unique_kw"
                             inline=1
-                            riot-value={settings.bl_max_unique_kw}></ui-input>
+                            riot-value={settings.bl_max_unique_kw}
+                            validate=1
+                            type="number"
+                            max=1000000000
+                            min=0>></ui-input>
                     </span>
                 </div>
                 <div class="row">
-                    <label for="black_list" class="col m4 s12 withHelp"}>
+                    <label for="black_list" class="col m3 s12 withHelp">
                         {_("blacklist")}
                         <i class="material-icons tooltipped help" data-tooltip={_("blWlListHelp")}>help_outline</i>
                     </label>
-                    <span class="col m8 s12">
+                    <span class="col m9 s12">
                         <ui-textarea ref="black_list"
                             name="black_list"
                             inline=1
@@ -169,54 +235,72 @@
 
 
             <div  class="center-align">
-                <a class="btn btn-flat btn-waves" onclick={onSettingsToggle.bind(this, "whitelistSettings")} style="text-transform: none;">
+                <a id="btnToggleWhiteList"
+                        class="btn btn-flat noCapitalization"
+                        onclick={onSettingsToggle.bind(this, "whitelistSettings")}>
                     {_("ca.whiteList")}
                     <i class="material-icons right">{whitelistSettings ? "arrow_drop_up" : "arrow_drop_down"}</i>
                 </a>
             </div>
-            <div ref="whitelistSettings" class="columnForm bootcat-settings" style="display: none;">
+            <div ref="whitelistSettings"
+                    class="columnForm bootcat-settings t_whiteList"
+                    style="display: none;">
                 <div class="row">
-                    <label for="wl_min_total_kw" class="col m4 s12 withHelp"}>
+                    <label for="wl_min_total_kw" class="col m3 s12 withHelp">
                         {_("ca.wl_min_total_kw")}
                         <i class="material-icons tooltipped help" data-tooltip={_("ca.wl_min_total_kwHelp")}>help_outline</i>
                     </label>
-                    <span class="col m8 s12">
+                    <span class="col m9 s12">
                         <ui-input ref="wl_min_total_kw"
                             name="wl_min_total_kw"
                             inline=1
-                            riot-value={settings.wl_min_total_kw}></ui-input>
+                            riot-value={settings.wl_min_total_kw}
+                            validate=1
+                            type="number"
+                            max=1000000000
+                            min=0></ui-input>
                     </span>
                 </div>
                 <div class="row">
-                    <label for="wl_min_unique_kw" class="col m4 s12 withHelp"}>
+                    <label for="wl_min_unique_kw" class="col m3 s12 withHelp">
                         {_("ca.wl_min_unique_kw")}
                         <i class="material-icons tooltipped help" data-tooltip={_("ca.wl_min_unique_kwHelp")}>help_outline</i>
                     </label>
-                    <span class="col m8 s12">
+                    <span class="col m9 s12">
                         <ui-input ref="wl_min_unique_kw"
                             name="wl_min_unique_kw"
                             inline=1
-                            riot-value={settings.wl_min_unique_kw}></ui-input>
+                            riot-value={settings.wl_min_unique_kw}
+                            validate=1
+                            type="number"
+                            max=1000000000
+                            min=0></ui-input>
                     </span>
                 </div>
                 <div class="row">
-                    <label for="wl_min_kw_ratio" class="col m4 s12 withHelp"}>
+                    <label for="wl_min_kw_ratio" class="col m3 s12 withHelp">
                         {_("ca.wl_min_kw_ratio")}
                         <i class="material-icons tooltipped help" data-tooltip={_("ca.wl_min_kw_ratioHelp")}>help_outline</i>
                     </label>
-                    <span class="col m8 s12">
+                    <span class="col m9 s12">
                         <ui-input ref="wl_min_kw_ratio"
                             name="wl_min_kw_ratio"
                             inline=1
-                            riot-value={settings.wl_min_kw_ratio}></ui-input>
+                            riot-value={settings.wl_min_kw_ratio*100}
+                            validate=1
+                            type="number"
+                            max=100
+                            min=0
+                            step=0.01></ui-input>
+                        <span class="hint">%</span>
                     </span>
                 </div>
                 <div class="row">
-                    <label for="white_list" class="col m4 s12 withHelp"}>
+                    <label for="white_list" class="col m3 s12 withHelp">
                         {_("whitelist")}
                         <i class="material-icons tooltipped help" data-tooltip={_("blWlListHelp")}>help_outline</i>
                     </label>
-                    <span class="col m8 s12">
+                    <span class="col m9 s12">
                         <ui-textarea ref="white_list"
                             name="white_list"
                             inline=1
@@ -226,18 +310,22 @@
             </div>
 
             <div  class="center-align">
-                <a class="btn btn-flat btn-waves" onclick={onSettingsToggle.bind(this, "showRestrictionsSettings")} style="text-transform: none;">
+                <a id="btnToggleSizeRestrictions"
+                        class="btn btn-flat noCapitalization"
+                        onclick={onSettingsToggle.bind(this, "showRestrictionsSettings")}>
                     {_("ca.sizeRestrictions")}
                     <i class="material-icons right">{showRestrictionsSettings ? "arrow_drop_up" : "arrow_drop_down"}</i>
                 </a>
             </div>
-            <div ref="showRestrictionsSettings" class="columnForm bootcat-settings" style="display: none;">
+            <div ref="showRestrictionsSettings"
+                    class="columnForm bootcat-settings t_sizeRestrictions"
+                    style="display: none;">
                 <div class="row">
-                    <label for="min_file_size" class="col m4 s12 withHelp"}>
+                    <label for="min_file_size" class="col m3 s12 withHelp">
                         {_("ca.min_file_size")}
                         <i class="material-icons tooltipped help" data-tooltip={_("ca.min_file_sizeHelp")}>help_outline</i>
                     </label>
-                    <span class="col m8 s12">
+                    <span class="col m9 s12">
                         <ui-input ref="min_file_size"
                             name="min_file_size"
                             inline=1
@@ -251,11 +339,11 @@
                     </span>
                 </div>
                 <div class="row">
-                    <label for="max_file_size" class="col m4 s12 withHelp"}>
+                    <label for="max_file_size" class="col m3 s12 withHelp">
                         {_("ca.max_file_size")}
                         <i class="material-icons tooltipped help" data-tooltip={_("ca.max_file_sizeHelp")}>help_outline</i>
                     </label>
-                    <span class="col m8 s12">
+                    <span class="col m9 s12">
                         <ui-input ref="max_file_size"
                             name="max_file_size"
                             inline=1
@@ -269,11 +357,11 @@
                     </span>
                 </div>
                 <div class="row">
-                    <label for="min_cleaned_file_size" class="col m4 s12 withHelp"}>
+                    <label for="min_cleaned_file_size" class="col m3 s12 withHelp">
                         {_("ca.min_cleaned_file_size")}
                         <i class="material-icons tooltipped help" data-tooltip={_("ca.min_cleaned_file_sizeHelp")}>help_outline</i>
                     </label>
-                    <span class="col m8 s12">
+                    <span class="col m9 s12">
                         <ui-input ref="min_cleaned_file_size"
                             name="min_cleaned_file_size"
                             inline=1
@@ -287,11 +375,11 @@
                     </span>
                 </div>
                 <div class="row">
-                    <label for="max_cleaned_file_size" class="col m4 s12 withHelp"}>
+                    <label for="max_cleaned_file_size" class="col m3 s12 withHelp">
                         {_("ca.max_cleaned_file_size")}
                         <i class="material-icons tooltipped help" data-tooltip={_("ca.max_file_sizeHelp")}>help_outline</i>
                     </label>
-                    <span class="col m8 s12">
+                    <span class="col m9 s12">
                         <ui-input ref="max_cleaned_file_size"
                             name="max_cleaned_file_size"
                             inline=1
@@ -311,18 +399,21 @@
             <div class="center-align">
                 <br>
                 <ui-checkbox on-change={onCompileWhenFinishedChange}
+                        name="compilewhenfinished"
                         inline=1
                         checked=1
                         label={_("compileWhenFinished")}
                         style="margin-right: 0;"></ui-checkbox>
                 <i class="material-icons tooltipped help" data-tooltip={_("compileWhenFinishedHelp")} style="font-size: 18px; vertical-align: top;">help_outline</i>
                 <br>
-                <a id="btnWebBootCaTCancel" class="btn btn-flat" onclick={opts.onCancel}>
-                    {_("cancel")}
-                </a>
-                <a id="btnWebBootCaTGo" class="btn contrast disabled" onclick={onGoClick}>
-                    {_("go")}
-                </a>
+                <div class="primaryButtons">
+                    <a id="btnWebBootCaTCancel" class="btn btn-flat" onclick={opts.onCancel}>
+                        {_("cancel")}
+                    </a>
+                    <a id="btnWebBootCaTGo" class="btn btn-primary disabled" onclick={onGoClick}>
+                        {_("go")}
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -340,14 +431,30 @@
         this.data = CAStore.data
         this.options = this.data.bootcat
         this.inputType = this.options.inputType || "seeds"
-        this.seedWords = []
-        this.showSettings = false
+        this.seedChips = []  // only seed words in chips
+        this.seedWords = []  // seed words in chips and in input (plain text)
+        this.customSettings = false
         this.showWebSearchSettings = false
         this.showshowBlacklistSettings = false
         this.whitelistSettings = false
         this.showRestrictionsSettings = false
         this.compileWhenFinished = true
         this.hasKeywords = AppStore.hasCorpusFeature("keywords")
+        // not big languages -> https://en.wikipedia.org/wiki/Languages_used_on_the_Internet#Content_languages_for_websites
+        // -> more then 0.1 percentage of all websites
+        this.isLanguageSmall = ["ar", "bg", "cs", "da", "de", "el", "en", "es",
+                "et", "fa", "fi", "fr", "he", "hi", "hr", "hu", "id", "it", "ja",
+                "ko", "lt", "lv", "nb", "nl", "nn", "no", "pl", "pt", "ro", "ru",
+                "sk", "sl", "sr", "sv", "th", "tr", "uk", "vi", "zh-Hans",
+                "zh-Hant"].indexOf(this.opts.corpus.language_id) == -1
+        if(this.isLanguageSmall){
+            this.options.tuple_size -= 1
+        }
+
+        this.sliderLabels = [{
+            text: _("standardSettings"),
+            value: 1
+        }]
 
         this.inputTypeList = [{
             value: "seeds",
@@ -368,7 +475,7 @@
 
             "wl_min_total_kw": 30,
             "wl_min_unique_kw": 10,
-            "wl_min_kw_ratio": 0.1,
+            "wl_min_kw_ratio": 0.01,
             "white_list": "",
 
             "bl_max_total_kw": 10,
@@ -391,28 +498,32 @@
         }
 
         onSeedsChange(value){
-            if(value && value.indexOf(" ") != -1){
-                // split by space, respect phrases in quotes
-                let wordsFromValue = value.match(/"(?:\\"|[^"])+"|([^\s\\])+/g).map(word => {
-                    return word.trim().replace(/\"/g, "")
-                })
-                this.seedWords = this.seedWords.concat(wordsFromValue)
-                this.seedWords = [...new Set(this.seedWords)] // remove duplicities
-                this.refs.seeds.update()
-                $("input", this.refs.seeds.root).focus()
-            } else {
-                let chips = M.Chips.getInstance($(".chips", this.root));
-                this.seedWords = chips.chipsData.map(c => {
-                    return c.tag.trim()
-                })
-            }
-
-            this.refreshSeedsHelp()
+            this.refreshSeedWords()
+            this.refreshSeedsHint()
             this.refreshGoDisabled()
         }
 
         onOptionChange(value, name){
             CAStore.set("bootcat." + name, value)
+        }
+
+        onSliderChange(value){
+            let settings = [
+                [4, 20],
+                [3, 30],
+                [3, 50]
+            ][value];
+            this.options.tuple_size = settings[0]
+            this.options.max_urls_per_query = settings[1]
+            if(this.isLanguageSmall){
+                this.options.tuple_size -= 1
+            }
+            this.update()
+        }
+
+        onCustomSettingsChange(customSettings){
+            this.customSettings = customSettings
+            this.update()
         }
 
         onUseKeywordsClick(evt){
@@ -422,12 +533,11 @@
                 fixedFooter: true,
                 buttons: [{
                     label: _("use"),
-                    class: "contrast",
+                    class: "btn-primary",
                     onClick: function(dialog, modal){
                         this.seedWords = this.seedWords.concat(dialog.contentTag.selection)
                         this.seedWords = [...new Set(this.seedWords)] // remove duplicities
                         this.refs.seeds.update()
-                        this.refreshSeedsHelp()
                         this.refreshGoDisabled()
                         modal.close()
                     }.bind(this)
@@ -440,11 +550,17 @@
         onGoClick(evt){
             let settings = {}
             for(let key in this.settings){
-                settings[key] = this.refs[key].getValue()
+                if(key == "wl_min_kw_ratio"){
+                    settings[key] = parseInt(this.refs[key].getValue()) / 100
+                } else if(key == "black_list" || key == "white_list"){
+                    settings[key] = this.refs[key].getValue()
+                } else {
+                    settings[key] = parseInt(this.refs[key].getValue())
+                }
             }
             CAStore.set("compileWhenFinished", this.compileWhenFinished)
-
             if(this.inputType == "seeds"){
+                let tuple_size = Math.min(this.refs.tuple_size.getValue() * 1, this.seedWords.length)
                 Dispatcher.trigger("openDialog", {
                     title: _("selectUrls"),
                     fullScreen: true,
@@ -453,6 +569,7 @@
                         corpus_id: this.opts.corpus.id,
                         seed_words: this.seedWords,
                         max_urls_per_query: this.refs.max_urls_per_query.getValue(),
+                        tuple_size: tuple_size,
                         sites_list: this.refs.sites_list.getValue(),
                         name: this.refs.fileset_name.getValue() || "",
                         settings: settings
@@ -495,10 +612,25 @@
             this.update()
         }
 
-        refreshSeedsHelp(){
+        refreshSeedWords(){
+            this.seedChips = this.refs.seeds.getValue()
+            let value = this.refs.seeds.getInputValue()
+            let inputSeeds = []
+            if(value){
+                inputSeeds = value.match(/[^\s]+/g).map(word => {
+                    return word.trim().replace(/\"/g, "")
+                })
+            }
+            this.seedWords = [...new Set(this.seedChips.concat(inputSeeds))] // remove duplicities
+        }
+
+        refreshSeedsHint(){
             if(this.refs.seedsHint){
-                let searchNumber = Math.round(factorial(this.seedWords.length) / (6 * factorial(this.seedWords.length - 3)))
-                this.refs.seedsHint.innerHTML = (this.seedWords.length < 3) ? _("ca.seedsHint") : _("ca.seedsSearches", [searchNumber])
+                if(this.seedWords.length < 3){
+                    this.refs.seedsHint.innerHTML = _("ca.seedsHint" + (3 - this.seedWords.length))
+                } else {
+                    this.refs.seedsHint.innerHTML = _("ca.seedsHintMore")
+                }
             }
         }
 
@@ -533,12 +665,10 @@
             return url
         }
 
-        this.on("updated", this.refreshSeedsHelp)
-
         this.on("mount", () => {
             $(".ui-chips input, input[type=text], textarea", this.root).first().focus()
             this.refreshFilesetName()
-            this.refreshSeedsHelp()
+            this.refreshSeedsHint()
             Dispatcher.on("toggleSettings", this.onSettingsToggle)
         })
         this.on("unmount", () => {

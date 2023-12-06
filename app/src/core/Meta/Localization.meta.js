@@ -17,6 +17,10 @@ const LocalizationMeta = {
         label: 'čeština',
         labelEn: 'Czech'
     }, {
+        id: 'crh',
+        label: 'къырымтатар тили',
+        labelEn: 'Crimean Tatar'
+    }, {
         id: 'ar',
         label: 'العربية',
         labelEn: 'Arabic',
@@ -30,6 +34,10 @@ const LocalizationMeta = {
         label: 'Italiano',
         labelEn: 'Italian'
     }, {
+        id: 'ga',
+        label: 'Gaeilge',
+        labelEn: 'Irish'
+    }, {
         id: 'nko',
         label: 'ߒߞߏ',
         labelEn: 'Nko',
@@ -39,7 +47,7 @@ const LocalizationMeta = {
 
 const GetLangMeta = function(langId){
     let lang = LocalizationMeta.langs.find(function(lang) {
-        return lang.id ==  langId
+        return lang.id == langId.toLowerCase()
     })
     return lang || null;
 }

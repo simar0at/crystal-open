@@ -1,5 +1,5 @@
 <parconcordance-result-options-filter>
-    <ui-tabs ref="tabs" tabs={tabs} active={tab} on-tab-change={this.onTabChange}>
+    <ui-tabs ref="tabs" tabs={tabs} active={data.filterTab} on-tab-change={onTabChange}>
     </ui-tabs>
 
     <script>

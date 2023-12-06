@@ -3,7 +3,6 @@ require('./column-table/column-table.tag')
 require('./raw-html/raw-html.tag')
 require('./dynamic-container/dynamic-container.tag')
 require('./screen-overlay/screen-overlay.tag')
-require('./sortable-list/sortable-list.tag')
 require('./notification-bar/notification-bar.tag')
 require('./preloader-spinner/preloader-spinner.tag')
 require('./floating-button/floating-button.tag')
@@ -25,19 +24,38 @@ require('./workindicator.js')
 require('./textloader.js')
 require('./lazy-dialog/lazy-dialog.tag')
 require('./subcorpus-chip/subcorpus-chip.tag')
+require('./text-types-chip/text-types-chip.tag')
 require('./external-text/external-text.tag')
-require('./text-types/text-types-collapsible.tag')
+require('./text-types/text-types.tag')
 require('./cql-builder/cql-builder.tag')
 require('./swap-corpora/swap-corpora.tag')
+require('./simple-math-slider/simple-math-slider.tag')
+require('./error-dialog/error-dialog.tag')
+require('./cql-textarea/cql-textarea.tag')
+require('./filter-input/filter-input.tag')
+require('./user-limit/user-limit.tag')
+require('./vis-download/vis-download.tag')
+require('../dashboard/oct-langs.tag')
+require('./result-filter/result-filter.tag')
+require('./result-filter-chip/result-filter-chip.tag')
+require('./frequency-distribution/frequency-distribution.tag')
+require('./result-preloader-spinner/result-preloader-spinner.tag')
+require('./expandable-textarea/expandable-textarea.tag')
+require('./manage-macros/manage-macros-icon.tag')
+require('./manage-macros/macro-select.tag')
 
 window.SkE = {
-    showError: (message, title) => {
+    showError: (message, detail, dialogParams) => {
         //displays standard dialog with error
-        Dispatcher.trigger('openDialog', {
+        Dispatcher.trigger('openDialog', Object.assign({
             type: "warning",
-            content: message,
-            title: title || _("somethingWentWrong")
-        });
+            tag: "error-dialog",
+            opts: {
+                message: message,
+                detail: detail
+            },
+            title: _("somethingWentWrong")
+        }, dialogParams));
     },
 
     showToast: (html, options) => {

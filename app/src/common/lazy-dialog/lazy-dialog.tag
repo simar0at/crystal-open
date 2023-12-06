@@ -16,7 +16,7 @@
                 opts: {center: 1},
                 onOpen: (dialog, modal) => {
                     $(modal).find(".preloader-container").addClass("centerSpinner")
-                    window.TextLoader.loadAndInsert(this.opts.file, modal.refs.content)
+                    window.TextLoader.loadAndInsert(this.opts.file, dialog.contentNode[0].parentNode)
                 }
             })
         }

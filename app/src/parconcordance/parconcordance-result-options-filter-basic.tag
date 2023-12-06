@@ -1,6 +1,6 @@
 <parconcordance-result-options-filter-basic class="parconcordance-result-options-filter-basic">
     <div class="center-align">
-        <span class="inlineBlock">
+        <span class="inline-block">
             <ui-input placeholder={_("abc")}
                     value=""
                     name="keyword"
@@ -10,12 +10,14 @@
                     style="max-width: 200px;">
             </ui-input>
         </span>
-        <div class="center-align" id="ctb_searchButton">
-            <a class="waves-effect waves-light btn" disabled={isSearchDisabled}
+        <div class="primaryButtons" id="ctb_searchButton">
+            <a class="btn btn-primary" disabled={isSearchDisabled}
                 onclick={onSubmit}>{_("go")}</a>
         </div>
-        <floating-button disabled={isSearchDisabled} onclick={onSubmit}
-                refnodeid="ctb_searchButton" periodic="1">
+        <floating-button disabled={isSearchDisabled}
+                on-click={onSubmit}
+                refnodeid="ctb_searchButton"
+                periodic="1">
         </floating-button>
     </div>
 
@@ -39,15 +41,15 @@
                 filfpos: "-1:s",
                 filtpos: "1:s"
             }
-            let corpname = this.parent.parent.opts.opts.corpname
-            if (this.parent.parent.opts.opts.has_no_kwic) {
+            let corpname = this.parent.parent.opts.corpname
+            if (this.parent.parent.opts.has_no_kwic) {
                 query.within = 1
                 query.maincorp = corpname
             }
             this.store.addOperationAndSearch({
                 name: "filter",
                 corpname: corpname,
-                arg: this.keyword,
+                arg: "(" + this.store.getAlignedLangName(corpname) + ") " + this.keyword,
                 query: query
             })
         }

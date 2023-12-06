@@ -14,17 +14,25 @@
             </tr>
         </thead>
         <tbody>
-            <tr each={item, idx in metadata}>
+            <tr each={item, idx in metadata} class="t_{item.name}">
                 <td>
-                    <ui-input ref="name_{idx}"
+                    <ui-filtering-list ref="name_{idx}"
                             name="name"
+                            options={attributeList}
                             inline=1
+                            riot-value={item.name}
+                            floating-dropdown=1
+                            clear-on-focus={false}
+                            open-on-focus=1
+                            add-not-found=1
+                            not-found-label={_("attribute")}
+                            validate=1
                             pattern="[a-zA-Z0-9_]+"
                             pattern-mismatch-message={_("alphanumAndUnderscoreAllowed")}
-                            validate=1
-                            value={item.name}
-                            on-input={onNameChanged}
-                            style="margin-right: 20px;"></ui-input>
+                            list-size=3
+                            on-input={onNameInput.bind(this, idx)}
+                            on-change={onNameChanged.bind(this, idx)}
+                            style="margin-right: 20px;"></ui-filtering-input>
                 </td>
                 <td>
                     <ui-input name="value"
@@ -33,14 +41,17 @@
                             value={item.value}></ui-input>
                 </td>
                 <td>
-                    <i class="material-icons material-clickable" onclick={onRemoveRowClick}>delete_forever</i>
+                    <i class="material-icons material-clickable t_removeAttribute" onclick={onRemoveRowClick}>delete_forever</i>
                 </td>
             </tr>
         </tbody>
     </table>
     <br>
     <div class="center">
-        <a href="javascript:void(0);" class="btn btn-floating" onclick={onAddRow}>
+        <a href="javascript:void(0);"
+                id="btnAddAttribute"
+                class="btn btn-floating"
+                onclick={onAddRow}>
             <i class="material-icons">add</i>
         </a>
     </div>
@@ -50,6 +61,7 @@
         const {CAStore} = require("./castore.js")
 
         this.isSaving = false
+        this.attributeList = CAStore.getAttributeList()
 
         save(){
             CAStore.saveFilesMetadata(this.opts.corpus_id, this._getDataToSave()).xhr
@@ -72,9 +84,15 @@
             })
         }
 
-        onNameChanged(value, name, evt){
-            this.metadata[evt.item.idx].name = value
+        onNameInput(idx, value){
+            this.metadata[idx].name = value
             this._refreshBtnDisabled()
+        }
+
+        onNameChanged(idx, value, name, label, option, evt){
+            this.metadata[idx].name = value
+            this._refreshBtnDisabled()
+            $(evt.target).closest(".ui-filtering-list").find("input").val(value)
         }
 
         onValueChanged(value, name, evt){
@@ -84,7 +102,7 @@
 
         _refreshBtnDisabled(){
             let disabled = this.metadata.some((m, idx) => {
-                let input = this.refs["name_" + idx]
+                let input = this.refs["name_" + idx].refs.input
                 input.validate()
                 return m.name === "" || m.value === "" || !input.isValid
             }, this)

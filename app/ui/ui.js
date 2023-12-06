@@ -14,6 +14,7 @@ require('./ui-uploader.tag')
 require('./ui-chips.tag')
 require('./ui-range.tag')
 require('./ui-input-file.tag')
+require('./ui-switch.tag')
 
 class IdGeneratorClass {
     constructor(){
@@ -39,11 +40,11 @@ riot.mixin('ui-mixin', {
             debouncedUppdateTextFields()
         })
 
-        this.on("unmount", () => {
-            if(this.opts.tooltip){
+        if(this.opts.tooltip){
+            this.on("before-unmount", () => {
                 destroyTooltips(".tooltipped", this.root)
-            }
-        })
+            })
+        }
         if(this.opts.validate){
             this.on("updated", this.ui_validate)
         }

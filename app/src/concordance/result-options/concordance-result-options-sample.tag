@@ -1,6 +1,6 @@
 <concordance-result-options-sample class="concordance-result-options-sample">
     <external-text text="conc_r_sample"></external-text>
-    <div class="center">
+    <div class="primaryButtons">
         <ui-input ref="sampleCount"
             name="sample"
             type="number"
@@ -11,9 +11,9 @@
             riot-value=200
             required={true}
             on-submit={onRandomSampleSubmit}
-            size=4></ui-input>
+            size=8></ui-input>
         &nbsp;
-        <a id="btnGoSample" class="btn contrast waves-efffect waves-light" onclick={onRandomSampleSubmit}>{_("go")}</a>
+        <a id="btnGoSample" class="btn btn-primary" onclick={onRandomSampleSubmit}>{_("go")}</a>
     </div>
 
     <script>

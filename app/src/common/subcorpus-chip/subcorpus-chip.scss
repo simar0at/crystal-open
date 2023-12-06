@@ -2,9 +2,10 @@
     display: inline-block;
     max-height: 32px;
     vertical-align: bottom;
-    & > span{
+    .chip{
         margin-bottom: 0px;
-        span{
+        display: flex;
+        .chipLabel{
             max-width: 150px;
             display: inline-block;
             vertical-align: middle;
@@ -13,6 +14,7 @@
     .dd_arrow{
         min-height: 32px;
         vertical-align: bottom;
+        line-height: 32px;
     }
     .selected{
         font-weight: bold;

@@ -1,10 +1,10 @@
-<p>The options with <b>...letters </b>work at character level, they check if he sequence of characters appears anywhere in the n-gram including inside the %[token|tokens]%. The options with <b>…words</b> work at %[token]% level, they check if the whole word appears between spaces in the n-gram.</p>
-<p><b>all</b><br />no additional filtering will be applied</p>
-<p><b>starting with letters</b><br />type a sequence of letters which each n-gram should have at the beginning, spaces can be included&nbsp;</p>
-<p><b>ending with letters</b><br />type a sequence of letters which each n-gram should have at the end, spaces can be included</p>
-<p><b>containing letters</b><br />type a sequence of letters which each n-gram should have at the beginning, in the middle or at the end, spaces can be included</p>
-<p><b>starting with word</b><br />type a word that should be the first word (or token) of each n-gram, typing <em>cat</em> will include n-grams with <em>cat</em> but not with <em>catalogue</em></p>
-<p><b>containing word</b><br />type a word that should appear anywhere in the n-gram including the first and last postitions</p>
-<p><b>ending with word</b><br />type a word that should appear as the last word of the n-gram</p>
-<p><b>matching regular expressions</b><br />use <a href="https://www.sketchengine.eu/user-guide/user-manual/concordance-introduction/regular-expressions/" target="_blank">regular expressions</a> for detailed filtering, the whole n-gram is treated as a continuous sequence of characters</p>
-<p><b>from this list</b><br />type the n-grams to find out how frequently they appear in the currently selected corpus, the n-gram size must match the size selected above, a space must appear between all tokens, e.g. <em>I do n't know</em> or <em>he 'll go</em></p>
+<p>Las opciones con <b>…letras </b>funcionan a nivel de carácter. Se comprueba si la cadena de caracteres aparece en cualquier lugar dentro del n-grama incluso dentro de los %[token|tokens]%. Las opciones con <b>…palabras</b> funcionan a nivel de %[token]%. Se comprueba si los n-gramas contienen el token.</p>
+<p><b>todo</b><br />sin filtrar, devuelve todos los resultados</p>
+<p><b>que empiezan con letras</b><br />introduce una cadena de caracteres que deberían encontrarse en el principio de los n-gramas, se pueden incluir espacios </p>
+<p><b>que terminan letras</b><br />introduce caracteres que deberían encontrarse en el fin de los n-gramas incluso espacios</p>
+<p><b>que contienen letras</b><br />introduce caracteres que deberían encontrarse en cualquier posición dentro de los n-gramas, incluso espacios</p>
+<p><b>que empiezan con palabra</b><br />introduce un token que debería encontrarse en la posición inicial del n-grama, e.g. introduce <em>la</em> para encontrar n-gramas con el artículo femenino en el principio pero no los que empiecen con <em>las</em></p>
+<p><b>containing word</b><br />type a word that should appear anywhere in the n-gram including the first and last positions</p>
+<p><b>que terminan con palabra</b><br />introduce un token que debería encontrarse en la posición final del n-grama,</p>
+<p><b>matching regular expressions</b><br />use %[regex|regular expressions]% for detailed filtering, the whole n-gram is treated as a continuous sequence of characters</p>
+<p><b>de esta lista</b><br />introduce n-gramas a encontrar y establecer su frecuencia en el corpus, su tamaño debería coincidir con el criterio arriba, los tokens deberían separarse por espacios, e.g. <em>I do n't know</em> o <em>he 'll go</em></p>

@@ -1,13 +1,12 @@
-@import 'app/styles/base';
 @import 'app/styles/constants';
 
 .page-corpus{
     margin: auto;
     raw-html {
-        display: inline-block;
+        display: flex;
     }
     raw-html > b {
-        color: #C52031;
+        color: $red-400;
         text-decoration: underline;
     }
     .content{
@@ -18,12 +17,12 @@
         min-width: 189px;
     }
     .corpus-tab-basic{
-        max-width: 1180px;
+        max-width: 1250px;
         margin: auto;
         .corpusLeftCol{
             max-width: 440px;
             @media screen and(min-width: 1405px){
-                border-right: 1px solid #fff;
+                border-right: 1px solid $white;
                 margin-right: 2em;
             }
         }
@@ -76,7 +75,7 @@
         .plainField{
             input{
                 background-color: initial;
-                border-bottom: 1px solid $new_darkBlue;
+                border-bottom: 1px solid $blue-800;
             }
         }
         #catDropdown-button {
@@ -109,18 +108,18 @@
                 }
                 &.active {
                     background-color: #A7CADC;
-                    color: #004b69;
+                    color: $blue-800;
                     &:hover {
                         background-color: #A7CADC;
                     }
                 }
                 &:hover {
-                    background-color: $new_mediumBlue;
+                    background-color: $blue-200;
                 }
                 >a {
                     border-bottom: none;
                     opacity: 1.0;
-                    color: $new_darkBlue;
+                    color: $blue-800;
                     font-size: 100%;
                     > i.material-icons {
                         font-size: 110%;
@@ -173,24 +172,23 @@
         }
     }
     .dropdown-content {
-        padding: 0 0.5em;
         overflow: hidden;
         li[data-item] {
             width: 2.5em;
             height: 2em;
             display: inline-block;
-            color: $new_darkBlue;
+            color: $blue-800;
             text-align: center;
             &.disabled {
                 cursor: default;
-                color: $new_mediumBlue;
+                color: $blue-200;
             }
             &.disabled:hover {
-                color: $new_mediumBlue;
+                color: $blue-200;
             }
             &:hover {
                 background-color: transparent !important;
-                color: $skeBlue;
+                color: $blue-700;
             }
             i {
                 padding: .5em;

@@ -1,0 +1,80 @@
+Learn CQL on <a href="https://www.sketchengine.eu/documentation/corpus-querying/" target="_blank">our web</a> or <a href="https://www.youtube.com/playlist?list=PLPVgp0Xm6hWBLZzD7haCVbhC9pSfWZk1S" target="_blank">YouTube channel</a>.
+<br><br>
+
+<h5>Esempi</h5>
+<table class="material-table">
+    <tr>
+        <td>
+            un nome ad una certa distanza da un verbo
+        </td>
+        <td class="monospace">
+            [tag="N.*"] [ ]{0,3} [tag="V.*"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            un nome e un verbo con esattamente un token nel mezzo
+        </td>
+        <td class="monospace">
+            [tag="N.*"] [ ] [tag="V.*"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            un nome ad una certa distanza da un verbo all'interno della stessa frase
+        </td>
+        <td class="monospace">
+            [tag="N.*"] [ ]{0,3} [tag="V.*"] within <s />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            grande cane o lupo
+        </td>
+        <td class="monospace">
+            ([lc="grande"] [lc="cane"])|[lc="lupo"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            grande cane o grande lupo
+        </td>
+        <td class="monospace">
+            [lc="grande"] [lc="cane|lupo"]
+        </td>
+    </tr>
+</table>
+<br><br>
+
+
+<h5>Errori frequenti</h5>
+<table class="material-table">
+    <thead>
+        <tr>
+            <th>errore</th>
+            <th>correzione</th>
+            <th>spiegazione</th>
+        </tr>
+    </thead>
+
+    <tr>
+        <td class="monospace">[lemma="bambini"]</td>
+        <td class="monospace">[lemma="bambino"]</td>
+        <td>bambini non è un lemma</td>
+    </tr>
+    <tr>
+        <td class="monospace">[word="Ciao!"]</td>
+        <td class="monospace">[word="Ciao"] [word="\!"]</td>
+        <td>la punteggiatura è un token separato e deve essere segnalata tramite il carattere di escape</td>
+    </tr>
+    <tr>
+        <td class="monospace">[word="Ciao "]</td>
+        <td class="monospace">[word="Ciao"]</td>
+        <td>i token non possono contenere spazi</td>
+    </tr>
+    <tr>
+        <td class="monospace">[tag="V.*"] [] [lc="gatto"] within &lt;s&gt;</td>
+        <td class="monospace">[tag="V.*"] [] [lc="gatto"] within &lt;s/&gt;</td>
+        <td>una struttura necessita dell'"intera" opzione per funzionare con within e containing</td>
+    </tr>
+</table>

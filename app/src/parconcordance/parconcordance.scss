@@ -1,8 +1,65 @@
-@import 'app/styles/base';
 @import 'app/styles/constants';
 
 .page-parconcordance {
     position: relative;
+    .tabContent > div{
+        position: relative;
+    }
+    .hasAttributes .td:not(.noKWIC) .kwicWrapper,
+    .hasContextAttributes .td:not(.noKWIC){
+        .itm{
+            display: inline-flex;
+            flex-direction: column;
+            &::after{
+                content: attr(attr);
+                font-weight: normal;
+                font-size: 12px;
+                color: #afafaf;
+                display: block;
+                margin-top: -5px;
+                text-align: center;
+                padding: 0 2px;
+                top: 20px;
+            }
+        }
+    }
+    .hasAttributes{
+        .tr .td:not(.noKWIC):hover{
+            .itm::after{
+                color: grey;
+            }
+            /* hack to show kwic underline on hover but not on kwic attribute. Style "text-decoration"
+            is applied on pseudo elements ::after,::before, unless they are positioned absolute*/
+            .kwicWrapper .itm{
+                &::after{
+                    /* to make span.itm wider, if needed (if attributes are wider than kwic) */
+                    visibility: hidden;
+                }
+                &::before{
+                    content: attr(attr);
+                    font-weight: normal;
+                    font-size: 12px;
+                    color: #afafaf;
+                    display: block;
+                    text-align: center;
+                    padding: 0 2px;
+                    top: 19px;
+                    left: 0;
+                    right: 0;
+                    position: absolute;
+                }
+            }
+        }
+    }
+    .viewKwic{
+        parconcordance-result-items{
+            position: absolute;
+            white-space: nowrap;
+        }
+    }
+    parconcordance-result-items{
+        display: inline;
+    }
     .bar {
         >ul>li>div>.ui-select{
             margin-top: -6px;
@@ -22,6 +79,8 @@
     }
 
     .parconcordance-result-options-part{
+        display: block;
+        min-width: 400px;
         .ui-collapsible{
             display: none;
             &:last-child{
@@ -43,11 +102,7 @@
             padding: 5px;
             line-height: 20px;
             height: 27px;
-            background-color: $new_mediumBlue;
             margin-bottom: 2em;
-            &:hover {
-                backgrdounc-color: $new_mediumBlue;
-            }
         }
     }
     .parconcordance-result-options-sort,
@@ -69,9 +124,6 @@
             padding-left: 0;
         }
     }
-    .ordinaryBtn {
-        margin-bottom: 0.5em;
-    }
     .nothingFound,
     .error {
       padding-top: 50px;
@@ -89,12 +141,18 @@
         .col {
             margin-bottom: 30px;
             &.posrel {
-                position: relative !important;
-                border: solid 1px #AAA;
-                border-width: 0 0 0 1px;
-                a {
+                position: relative;
+                &:not(.sortable-chosen){
+                    border: solid 1px #AAA;
+                    border-width: 0 0 0 1px;
+                }
+                &.sortable-drag{
+                    background-color: $gray-100;
+                }
+                .langButtons {
                     position: absolute;
                     right: 1rem;
+                    z-index: 500;
                 }
             }
             @media only screen and (max-width: 600px){
@@ -162,10 +220,10 @@
                 vertical-align: middle;
                 align-items: center;
                 margin-top: 4px;
-                color: $new_darkBlue;
+                color: $blue-800;
                 box-sizing: content-box;
                 &:focus {
-                    background-color: $new_mediumBlue;
+                    background-color: $blue-200;
                 }
             }
             >a {
@@ -190,7 +248,7 @@
                     .subtdc{
                         position: absolute;
                     }
-                    .kwic{
+                    .itm{
                         color: initial;
                         font-weight: normal;
                     }
@@ -206,12 +264,12 @@
                 overflow: hidden;
             }
             .subtdl {
-                parconcordance-result-context {
+                parconcordance-result-items {
                     right: 0;
                 }
             }
             .subtdr {
-                parconcordance-result-context {
+                parconcordance-result-items {
                     left: 0;
                 }
             }
@@ -235,31 +293,39 @@
                 position: relative;
                 cursor: pointer;
                 vertical-align: middle;
-                span {
-                    display: block;
-                    white-space: nowrap;
+                span{
+                    display: flex;
                     overflow: hidden;
-                    text-overflow: ellipsis;
+                    color: $gray-600;
+                    i{
+                        display: inline-block;
+                        font-size: 21px;
+                        vertical-align: middle;
+                    }
+                }
+                .ref-label{
+                    display: inline-block;
+                    white-space: nowrap;
+                    &:hover{
+                        text-decoration: underline;
+                    }
                 }
             }
         }
         .itm{
-            display: inline-block;
-            vertical-align: top;
-            >div{
-                text-align: center;
-            }
-            .str{
-                margin-left: 0.15em;
-                margin-right: 0.15em;
-            }
-            .coll{
-                color: #C52031;
+            padding: 0 2px;
+            position: relative;
+            &.coll,
+            &.kwic{
+                color: $red-200;
                 font-weight: bold;
             }
         }
+        .td:not(.noKWIC) .itm{
+            text-align: center;
+        }
         .strc{
-            color: #AAA;
+            color: blue;
         }
         .middle{
             white-space: nowrap;
@@ -267,35 +333,22 @@
         }
         .kwicWrapper{
             cursor: pointer;
-            display: inline-block;
-            text-align: center;
+            position: relative!important;
+            .itm{
+                color: $red-200;
+                font-weight: bold;
+            }
         }
         .kwic{
             font-weight: bold;
-            color: #C52031;
-            margin-left: 0.15em;
-            margin-right: 0.15em;
+            color: $red-400;
         }
         .latentkwic{
             margin-left: 0.15em;
             margin-right: 0.15em;
         }
-        .latentkwic.hl {
-            background-color: #FF9;
-        }
-        .attr{
-            font-size: 10px;
-            color: #afafaf;
-            display: block;
-            margin-top: -5px;
-        }
-        .tr:hover{
-            .attr{
-                color: grey;
-            }
-        }
-        .leftCol, .rightCol{
-            width: 50%;
+        .hl {
+            background-color: #FF9!important;
         }
         @media only screen and (max-width: 700px){
             margin-left: -5px;
@@ -307,26 +360,28 @@
                 }
             }
         }
-        .result-table{
-            &.displaySen{
-                .itm{
-                    text-align: center;
-                }
-            }
-        }
         .refsUpRow{
             .td{
+                position: relative;
                 border-bottom: 0!important;
                 font-size: 90%;
                 color: #AAA;
+                padding: 0px 10px;
+                height: 22px;
             }
         }
         .refsUp{
             position: absolute;
+            top: 0;
             white-space: nowrap;
-            width: calc(100% - 90px);
+            max-width: calc(100vw - 170px);
+            min-width: calc(100vw - 170px);
             overflow: hidden;
             text-overflow: ellipsis;
+            .refsUpValues{
+                color: #898989;
+                font-size: 0.8em;
+            }
         }
         .alcorpname {
             position: absolute;
@@ -334,26 +389,6 @@
             right: .7rem;
             font-size: 80%;
             margin-right: 2rem;
-        }
-        .displayKwic{
-            &.table.result-table .td.ctd{
-                padding-left: 25px;
-                padding-right: 0;
-            }
-            parconcordance-result-context{
-                position: absolute;
-                white-space: nowrap;
-            }
-        }
-        .leftCol{
-            parconcordance-result-context{
-                right: 0;
-            }
-        }
-        .rightCol{
-            parconcordance-result-context{
-                left: 0;
-            }
         }
         .parconcordance-result-options-view {
             .columns {
@@ -415,7 +450,7 @@
     .frequency-result {
         .pcfreq-result-block {
             display: block;
-            .freq-th {
+            .frq-th {
                 padding-right: 0;
             }
             .col-tab-num {
@@ -431,7 +466,7 @@
                 margin-bottom: 0.4em;
                 margin-top: 20px;
                 thead{
-                    background-color: #CFECF4;
+                    background-color: $blue-100;
                 }
                 > tbody > tr > td {
                     padding: 0px 15px;
@@ -450,15 +485,6 @@
             width: 100%;
         }
     }
-    .pcfr-links{
-        .quickLinkColumn{
-            display: block;
-        }
-        .quickLink{
-            display: inline-block;
-            margin-right: 15px;
-        }
-    }
     .parconcordance-result-options-freq{
         .card-content{
             i.close{
@@ -470,7 +496,7 @@
     }
     .gdex .badge{
         margin-left: 0px;
-        background-color: #9e9e9e;
+        background-color: $gray-500;
     }
 }
 
@@ -480,4 +506,19 @@
     line-height: 34px;
     vertical-align: top;
     display:inline-block;
+}
+
+.parconcordance-result-options-view{
+    label.label{
+      font-size: 1.1rem;
+    }
+    .ui-input .input-field input{
+      font-size: 1rem;
+    }
+    .ui-list{
+      font-size: 1rem;
+    }
+    .detailsBtn{
+      margin-bottom: 1rem;
+    }
 }

@@ -1,5 +1,5 @@
 <add-subcorpus-dialog>
-    <h4 class="inlineBlock">{_("createSubcorpus")}</h4>
+    <h4 class="inline-block">{_("createSubcorpus")}</h4>
     <a if={opts.showManageBtn}
             href="#ca-subcorpora"
             class="btn right"
@@ -7,19 +7,44 @@
             style="margin-right: 60px;">{_("manageMySubcorpora")}</a>
     <div>
         <ui-input
-            size="15"
-            class="subcname"
-            ref="subcname"
-            validate=1
-            required=1
-            on-input={refreshCreateSubcorpusButtonDisabled}
-            label={_("subcname")}></ui-input>
-        <br>
-        <text-types ref="texttypes"></text-types>
-
-        <span id="subcCreateBtnWrapper" ref="createBtnWrapper" class="fixed-action-btn {hidden: isDetailOpen}" style="z-index: 1200;">
+                size="15"
+                inline=1
+                class="subcname"
+                ref="subcname"
+                name="subcname"
+                validate=1
+                required={inputType == 'tts'}
+                on-input={refreshCreateSubcorpusButtonDisabled}
+                label={_("subcname")}></ui-input>
+        <span class="inline-block ml-6">
+            <ui-radio riot-value={inputType}
+                    on-change={onInputTypeChange}
+                    options={inputOptions}></ui-radio>
+        </span>
+    </div>
+    <div class="mt-10 pt-10 dividerTop">
+        <div if={inputType == 'concordance'}>
+            <div class="center-align">
+                <a href="#concordance?tab=advanced&queryselector=cql"
+                        class="btn btn-primary">
+                    {_("ca.goToConcordance")}
+                </a>
+            </div>
+            <div class="card-panel align-left mt-10" style="max-width: 660px; margin: 0 auto;">
+                <external-text text="create_subc_help"></external-text>
+            </div>
+        </div>
+        <text-types if={inputType == 'tts'}
+                ref="texttypes"
+                disable-structure-mixing=1
+                on-change={onTtsChange}
+                on-detail-toggle={onTextTypesDetailToggle}></text-types>
+        <span id="subcCreateBtnWrapper"
+                ref="createBtnWrapper"
+                class="fixed-action-btn {hidden: isDetailOpen}"
+                style="z-index: 1200;">
             <a ref="createBtn" href="javascript:void(0);"
-                    class="btn btn-large btn-floating contrast disabled tooltipped"
+                    class="btn btn-primary btn-large btn-floating disabled tooltipped"
                     data-tooltip={_("createSubcorpus")}
                     onclick={onCreateClick}>
                 <i class="material-icons">save</i>
@@ -29,30 +54,35 @@
 
     <script>
         require("common/text-types/text-types.tag")
-        const {TextTypesStore} = require("common/text-types/TextTypesStore.js")
         const {AppStore} = require("core/AppStore.js")
+        const {TextTypesStore} = require('common/text-types/TextTypesStore.js')
 
         this.tooltipPosition = "left"
         this.mixin("tooltip-mixin")
         this.isDetailOpen = false
+        this.inputOptions = [{
+            label: _("subcFromTT"),
+            value: 'tts'
+        }, {
+            label: _("subcFromConc"),
+            value: 'concordance'
+        }]
+        this.inputType = 'tts'
 
         refreshCreateSubcorpusButtonDisabled(){
-            let disabled = this.refs.subcname.getValue() === "" || $.isEmptyObject(TextTypesStore.get("selection"))
+            let disabled = this.inputType != 'tts' || this.refs.subcname.getValue() === '' || $.isEmptyObject(this.tts)
             $(this.refs.createBtn).toggleClass("disabled", disabled).toggleClass("pulse", !disabled)
         }
 
-        onSelectionChange(){
+        onTtsChange(tts){
+            this.tts = tts
             this.refreshCreateSubcorpusButtonDisabled()
-            let wasDisabled = false
-            let selected = null
-            for(selected in TextTypesStore.get("selection")){
-                break
-            }
-            TextTypesStore.data.textTypes.forEach(textType => {
-                wasDisabled = wasDisabled || textType.disabled
-                textType.disabled = selected && (textType.name.split(".")[0] != selected.split(".")[0])
-            })
-            !wasDisabled != !selected && this.refs.texttypes.update()
+        }
+
+        onInputTypeChange(inputType){
+            this.inputType = inputType
+            this.update()
+            this.refreshCreateSubcorpusButtonDisabled()
         }
 
         onClick(){
@@ -61,37 +91,27 @@
 
         onCreateClick(){
             let subcname = this.refs.subcname.getValue()
-            let textTypes = TextTypesStore.getSelectionQuery()
+            let textTypes = TextTypesStore.getQueryFromTextTypes(this.tts)
             if(AppStore.getSubcorpus(subcname)){
                 SkE.showToast(_("msg.subcorpAlreadyExists"))
             } else{
                 Dispatcher.trigger("closeDialog", "createSubcorpus")
-                AppStore.createSubcorpus(subcname, {
-                    textTypes: textTypes
-                })
-                TextTypesStore.reset()
             }
+            AppStore.createSubcorpus(subcname, textTypes)
         }
 
-        onTextTypeChange(){
-            let isDetailOpen = TextTypesStore.data.detail
-            if(isDetailOpen != this.isDetailOpen){
-                this.isDetailOpen = isDetailOpen
-                this.update()
-            }
+        onTextTypesDetailToggle(isDetailOpen){
+            this.isDetailOpen = isDetailOpen
+            this.update()
         }
 
         this.on("mount", () => {
             document.body.appendChild(this.refs.createBtnWrapper)
-            TextTypesStore.on("selectionChange", this.onSelectionChange)
-            TextTypesStore.on("change", this.onTextTypeChange)
             delay(() => {$(this.refs.subcname.refs.input).focus()})
             this.refreshCreateSubcorpusButtonDisabled()
         })
 
-        this.on("unmount", () => {
-            TextTypesStore.off("selectionChange", this.onSelectionChange)
-            TextTypesStore.off("change", this.onTextTypeChange)
+        this.on("before-unmount", () => {
             document.getElementById("subcCreateBtnWrapper").remove()
         })
     </script>

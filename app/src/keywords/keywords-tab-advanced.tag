@@ -1,7 +1,3 @@
-<confirm-filter-alnum>
-    <p>{_("kw.confirmAlnumText")}</p>
-</confirm-filter-alnum>
-
 <keywords-tab-advanced class="keywords-tab-advanced">
     <a onclick={onResetClick.bind(this, 'advanced')}
             data-tooltip={_("kw.resetOptionsTip")}
@@ -10,215 +6,260 @@
     </a>
     <div class="card-content">
         <div class="mainForm">
-            <div class="row">
-                <div class="col s12 m6">
-                    <subcorpus-select
-                            label-id="subcorpus"
-                            on-change={onUsesubcorpChange}
-                            riot-value={options.usesubcorp}
-                            tooltip="t_id:kw_a_usesubcorp"
-                            disabled={!$.isEmptyObject(options.tts)}
-                            name="usesubcorp">
-                    </subcorpus-select>
-                </div>
-                <div class="col s12 m6">
-                    <ui-slider name="simple_n"
-                            hfill={true}
-                            label-id="focusOn"
-                            left-label={_("rare")}
-                            right-label={_("common")}
-                            on-change={onOptionChange}
-                            slider-to-input={sliderToInput}
-                            input-to-slider={inputToSlider}
-                            type="number"
-                            step=1
-                            slider-min=1
-                            slider-max={sliderValues.length}
-                            input-min=0.00001
-                            input.max=1000000000
-                            tooltip="t_id:kw_a_simple_n"
-                            riot-value={options.simple_n}>
-                    </ui-slider>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col s6 m3">
-                    <ui-input name="minfreq"
-                            validate=1
-                            label-id="minFreq"
-                            size=8
-                            on-change={onOptionChange}
-                            min="0"
-                            type="number"
-                            tooltip="t_id:kw_a_minfreq"
-                            riot-value={options.minfreq}>
-                    </ui-input>
-                </div>
-                <div class="col s6 m5">
-                    <ui-checkbox name="onealpha"
-                            label-id='kw.onealpha'
-                            class="inlineBlock"
-                            on-change={onOptionChange}
-                            tooltip="t_id:kw_a_onealpha"
-                            checked={options.onealpha}>
-                    </ui-checkbox>
-                </div>
-                <div class="col s6 m4">
-                    <ui-checkbox name="alnum"
-                            label-id='kw.alnum'
-                            class="inlineBlock"
-                            on-change={onOptionChange}
-                            tooltip="t_id:kw_a_alnum"
-                            checked={options.alnum}>
-                    </ui-checkbox>
-                </div>
-            </div>
-            <div class="row kwTermsRow">
-                <div class="col s12 {m6: !window.config.NO_SKE}">
-                    <div class="card-panel">
-                        <h6>{_("kw.keywordsSettings")}</h6>
-                        <div class="row">
-                            <div class="col s12">
-                                <ui-filtering-list
-                                        options={compKeywordsCorpList}
-                                        name="k_ref_corpname"
-                                        label-id="refCorpus"
-                                        close-on-select={true}
-                                        value-in-search={true}
-                                        open-on-focus={true}
-                                        on-change={onChangeKeyRefCorp}
-                                        floating-dropdown={true}
-                                        loading={!compKeywordsCorpList.length}
-                                        tooltip="t_id:kw_a_k_ref_corpname"
-                                        riot-value={options.k_ref_corpname}
-                                        deselect-on-click={false}>
-                                </ui-filtering-list>
-                            </div>
+            <div class="fixedWidthForm">
+                <div class="row">
+                    <div class="col m12 l4">
+                        <subcorpus-select
+                                label-id="focusSubcorpus"
+                                on-change={onUsesubcorpChange}
+                                riot-value={options.usesubcorp}
+                                tooltip="t_id:kw_a_usesubcorp"
+                                disabled={!$.isEmptyObject(options.tts)}
+                                name="usesubcorp">
+                        </subcorpus-select>
+                        <br>
+                        <ui-filtering-list
+                                ref="ref_corpname"
+                                options={refCorpnameList}
+                                name="ref_corpname"
+                                label-id="refCorpus"
+                                close-on-select={true}
+                                value-in-search={true}
+                                open-on-focus={true}
+                                on-change={onChangeRefCorp}
+                                floating-dropdown={true}
+                                loading={!refCorpnameList.length}
+                                tooltip="t_id:kw_a_ref_corpname"
+                                riot-value={options.ref_corpname}>
+                        </ui-filtering-list>
+                        <br>
+                        <ui-filtering-list
+                                options={refSubcorpora}
+                                disabled={subcLoading || !refSubcorpora.length}
+                                name="ref_usesubcorp"
+                                label-id="kw.refSubcorpus"
+                                value-in-search={true}
+                                close-on-select={true}
+                                open-on-focus={true}
+                                on-change={onOptionChange}
+                                floating-dropdown={true}
+                                tooltip="t_id:kw_a_ref_usesubcorp"
+                                riot-value={options.ref_usesubcorp}>
+                        </ui-filtering-list>
+                        <br>
+                    </div>
+                    <div class="col m12 l4 dividerLeft dividerRight hideDividersMedDown">
+                        <simple-math-slider riot-value={options.simple_n} on-change={onOptionChange}></simple-math-slider>
+                        <ui-input name="minfreq"
+                                inline=1
+                                validate=1
+                                label-id="minFreq"
+                                size=8
+                                on-change={onOptionChange}
+                                min="0"
+                                type="number"
+                                tooltip="t_id:kw_a_minfreq"
+                                riot-value={options.minfreq}>
+                        </ui-input>
+                        &nbsp;
+                        <ui-input name="maxfreq"
+                                inline=1
+                                validate=1
+                                label-id="maxFreq"
+                                size=8
+                                on-change={onOptionChange}
+                                min="0"
+                                type="number"
+                                tooltip="t_id:kw_a_maxfreq"
+                                riot-value={options.maxfreq}>
+                        </ui-input>
+                        <br>
+                        <ui-input
+                                validate=1
+                                name="max_items"
+                                label-id="maxItems"
+                                on-change={onOptionChange}
+                                size=7
+                                type="number"
+                                min="0"
+                                tooltip="t_id:kw_a_max_keywords"
+                                riot-value={options.max_items}>
+                        </ui-input>
+                        <br>
+                    </div>
+                    <div class="col m12 l4">
+                        <ui-checkbox name="icase"
+                                label-id="ignoreCase"
+                                class="inline-block"
+                                on-change={onOptionChange}
+                                tooltip="t_id:wlicase"
+                                checked={options.icase}>
+                        </ui-checkbox>
+                        <br>
+                        <ui-checkbox name="onealpha"
+                                label-id="kw.onealpha"
+                                class="inline-block"
+                                on-change={onOptionChange}
+                                tooltip="t_id:kw_a_onealpha"
+                                checked={options.onealpha}>
+                        </ui-checkbox>
+                        <br>
+                        <ui-checkbox name="alnum"
+                                label-id="kw.alnum"
+                                class="inline-block"
+                                on-change={onOptionChange}
+                                tooltip="t_id:kw_a_alnum"
+                                checked={options.alnum}>
+                        </ui-checkbox>
+                        <br>
+                        <ui-checkbox name="include_nonwords"
+                                label-id="includeNonwords"
+                                class="inline-block"
+                                on-change={onOptionChange}
+                                tooltip="t_id:include_nonwords"
+                                checked={options.include_nonwords}>
+                        </ui-checkbox>
+                        <br>
+                        <ui-checkbox
+                                label-id="wl.excludeWords"
+                                name="exclude"
+                                checked={options.exclude}
+                                tooltip="t_id:kw_a_exclude"
+                                on-change={onExcludeWordsClicked}>
+                        </ui-checkbox>
+                        <div class="pl-5">
+                            <expandable-textarea
+                                    if={options.exclude}
+                                    ref="wlblacklist"
+                                    required="required"
+                                    validate="1"
+                                    name="wlblacklist"
+                                    value={typeof options.wlblacklist === "string" ?
+                                            options.wlblacklist :
+                                            options.wlblacklist.join("\n")}
+                                    rows="1"
+                                    label-id={options.exclude ? "ng.pasteListHere" : ""}
+                                    on-change={onOptionChange}
+                                    dialog-title={_("wl.excludeWords")}
+                                    style="max-width: 250px;">
+                            </expandable-textarea>
                         </div>
-                        <div class="row">
-                            <div class="col s12">
-                                <ui-filtering-list
-                                        options={refKeySubcorpora}
-                                        disabled={refKeySubcLoading || !refKeySubcorpora.length}
-                                        name="k_ref_subcorp"
-                                        label-id="kw.refSubcorpus"
-                                        value-in-search={true}
-                                        close-on-select={true}
-                                        open-on-focus={true}
-                                        on-change={onOptionChange}
-                                        floating-dropdown={true}
-                                        tooltip="t_id:kw_a_k_ref_subcorp"
-                                        riot-value={options.k_ref_subcorp}
-                                        deselect-on-click={false}>
-                                </ui-filtering-list>
-                            </div>
+                        <ui-checkbox
+                                label-id="ng.fromList"
+                                name="fromList"
+                                checked={options.fromList}
+                                on-change={onFromListClicked}>
+                        </ui-checkbox>
+                        <div class="pl-5">
+                            <expandable-textarea
+                                    if={options.fromList}
+                                    ref="wlfile"
+                                    required="required"
+                                    validate="1"
+                                    name="wlfile"
+                                    value={typeof options.wlfile === "string" ?
+                                            options.wlfile :
+                                            options.wlfile.join("\n")}
+                                    rows="1"
+                                    label-id={options.fromList ? "ng.pasteListHere" : ""}
+                                    on-change={onOptionChange}
+                                    dialog-title={_("ng.fromList")}
+                                    style="max-width: 250px;">
+                            </expandable-textarea>
                         </div>
-                        <div class="row">
-                            <div class="col s5">
-                                <ui-input
-                                        validate=1
-                                        name="max_keywords"
-                                        label-id="maxItems"
-                                        on-change={onOptionChange}
-                                        size=7
-                                        type="number"
-                                        min="0"
-                                        tooltip="t_id:kw_a_max_keywords"
-                                        riot-value={options.max_keywords}>
-                                </ui-input>
-                            </div>
-                            <div class="col s7">
-                                <ui-select
-                                        label-id="kw.attr"
-                                        options={attributes}
-                                        name="attr"
-                                        on-change={onOptionChange}
-                                        tooltip="t_id:kw_a_attr"
-                                        riot-value={options.attr}>
-                                </ui-select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col s12">
-                                <ui-input name="k_wlpat"
-                                        label-id="matchingRegex"
-                                        on-change={onOptionChange}
-                                        type="text"
-                                        tooltip="t_id:kw_a_k_wlpat"
-                                        riot-value={options.k_wlpat}>
-                                </ui-input>
-                            </div>
-                        </div>
+                        <br>
                     </div>
                 </div>
-                <div if={!window.config.NO_SKE} class="col s12 m6">
-                    <div class="card-panel">
-                        <div if={options.t_notAvailable || !compTermsCorpList.length}>
-                            <h5 class="termsNA">{_("kw.termsNA")}</h5>
+
+                <div class="featureSettingsRow row dividerTop">
+                    <div class="col s12 m7 l4">
+                        <br>
+                        <ui-checkbox name="usekeywords"
+                                label-id="useKeywords"
+                                class="inline-block mb-0"
+                                on-change={onUseFeatureChange.bind(this, "keywords")}
+                                checked={options.usekeywords}>
+                        </ui-checkbox>
+                        <div class="card-panel" style="{options.usekeywords ? '' : 'opacity: 0.3;'}"
+                                ref="keywords_settings">
+                            <h6 class="mb-8">Keywords settings</h6>
+                            <ui-select
+                                    label-id="attribute"
+                                    options={attributes}
+                                    name="k_attr"
+                                    on-change={onOptionChange}
+                                    tooltip="t_id:kw_a_attr"
+                                    riot-value={options.k_attr}>
+                            </ui-select>
+                            <br>
+                            <ui-input name="k_wlpat"
+                                    label-id="matchingRegex"
+                                    on-change={onOptionChange}
+                                    type="text"
+                                    tooltip="t_id:kw_a_wlpat"
+                                    riot-value={options.k_wlpat}>
+                            </ui-input>
                         </div>
-                        <div if={!options.t_notAvailable && compTermsCorpList.length}>
-                            <h6>{_("kw.termsSettings")}</h6>
-                            <div class="row">
-                                <div class="col s12">
-                                    <ui-filtering-list
-                                            options={compTermsCorpList}
-                                            name="t_ref_corpname"
-                                            label-id="refCorpus"
-                                            close-on-select={true}
-                                            value-in-search={true}
-                                            open-on-focus={true}
-                                            on-change={onChangeTermsRefCorp}
-                                            floating-dropdown={true}
-                                            loading={!compTermsCorpList.length}
-                                            tooltip="t_id:kw_a_t_ref_corpname"
-                                            riot-value={options.t_ref_corpname}
-                                            deselect-on-click={false}>
-                                    </ui-filtering-list>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col s12">
-                                    <ui-filtering-list
-                                            options={refTermsSubcorpora}
-                                            disabled={refTermsSubcLoading || !refTermsSubcorpora.length}
-                                            name="t_ref_subcorp"
-                                            label-id="kw.refSubcorpus"
-                                            on-change={onOptionChange}
-                                            close-on-select={true}
-                                            value-in-search={true}
-                                            floating-dropdown={true}
-                                            open-on-focus={true}
-                                            tooltip="t_id:kw_a_t_ref_subcorp"
-                                            riot-value={options.t_ref_subcorp}
-                                            deselect-on-click={false}>
-                                    </ui-filtering-list>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col s6">
-                                    <ui-input
-                                            validate=1
-                                            name="max_terms"
-                                            label-id="maxItems"
-                                            on-change={onOptionChange}
-                                            size=8
-                                            type="number"
-                                            min="0"
-                                            tooltip="t_id:kw_a_max_terms"
-                                            riot-value={options.max_terms}>
-                                    </ui-input>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col s12">
-                                    <ui-input name="t_wlpat"
-                                            label-id="matchingRegex"
-                                            on-change={onOptionChange}
-                                            type="text"
-                                            tooltip="t_id:kw_a_t_wlpat"
-                                            riot-value={options.t_wlpat}>
-                                    </ui-input>
-                                </div>
+                    </div>
+                    <div class="col s12 m7 l4">
+                        <br>
+                        <ui-checkbox name="useterms"
+                                label-id="useTerms"
+                                disabled={!termsAvailable}
+                                class="inline-block mb-0"
+                                on-change={onUseFeatureChange.bind(this, "terms")}
+                                checked={options.useterms && termsAvailable}>
+                        </ui-checkbox>
+                        <div class="card-panel" style="{options.useterms && termsAvailable ? '' : 'opacity: 0.3;'}"
+                                ref="terms_settings">
+                            <h6 class="mb-8">Terms settings</h6>
+                            <ui-input name="t_wlpat"
+                                    label-id="matchingRegex"
+                                    on-change={onOptionChange}
+                                    type="text"
+                                    tooltip="t_id:kw_a_wlpat"
+                                    riot-value={options.t_wlpat}>
+                            </ui-input>
+                        </div>
+                    </div>
+                    <div class="col s12 m7 l4">
+                        <br>
+                        <ui-checkbox name="usengrams"
+                                label-id="useNgrams"
+                                class="inline-block mb-0"
+                                on-change={onUseFeatureChange.bind(this, "ngrams")}
+                                checked={options.usengrams}>
+                        </ui-checkbox>
+                        <div class="card-panel" style="{options.usengrams ? '' : 'opacity: 0.3;'}"
+                                ref="ngrams_settings">
+                            <h6 class="mb-8">N-grams settings</h6>
+                            <ui-select
+                                    label-id="attribute"
+                                    options={attributes}
+                                    name="n_attr"
+                                    on-change={onOptionChange}
+                                    tooltip="t_id:kw_a_attr"
+                                    riot-value={options.n_attr}>
+                            </ui-select>
+                            <br>
+                            <ui-input name="n_wlpat"
+                                    label-id="matchingRegex"
+                                    on-change={onOptionChange}
+                                    type="text"
+                                    tooltip="t_id:kw_a_wlpat"
+                                    riot-value={options.n_wlpat}>
+                            </ui-input>
+                            <div>
+                                <label>
+                                    {_("ng.ngramLength")}
+                                </label>
+                                <ui-range min={2} max={6}
+                                        riot-value={{
+                                            from: options.n_ngrams_n,
+                                            to: options.n_ngrams_max_n
+                                        }}
+                                        on-change={onRangeChange}>
+                                </ui-range>
                             </div>
                         </div>
                     </div>
@@ -226,11 +267,18 @@
             </div>
         </div>
 
-        <text-types-collapsible opts={options.usesubcorp ? {note: _("subcorpusAndTTWarning")} : null}></text-types-collapsible>
+        <text-types if={!isAnonymous}
+                ref="texttypes"
+                disabled={options.usesubcorp !== ""}
+                collapsible=1
+                disable-structure-mixing=1
+                selection={options.tts}
+                on-change={onTtsChange}
+                note={options.usesubcorp ?_("subcorpusAndTTWarning") : ""}></text-types>
 
-        <div class="searchBtn center-align">
+        <div class="primaryButtons searchBtn">
             <a id="btnGoAdv"
-                    class="waves-effect waves-light btn contrast"
+                    class="btn btn-primary"
                     disabled={isSearchDisabled}
                     onclick={onAdvSearch}>{_("go")}</a>
         </div>
@@ -239,40 +287,53 @@
     <script>
         const {Connection} = require('core/Connection.js')
         const {AppStore} = require("core/AppStore.js")
-        const {TextTypesStore} = require("common/text-types/TextTypesStore.js")
         const {Auth} = require('core/Auth.js')
 
         this.mixin("feature-child")
+        this.isAnonymous = Auth.isAnonymous()
         this.attributes = AppStore.getActualCorpus().attributes
-        this.compKeywordsCorpList = AppStore.data.compKeywordsCorpList
-        this.compTermsCorpList = AppStore.data.compTermsCorpList
-        this.sliderValues = [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000, 1000000]
+        this.subcorpList = []
 
-        sliderToInput(value){
-            return this.sliderValues[value - 1]
+        this.compTooltips = {
+            // kw_0 - kw incompatible are not in the list
+            'kw_1': 't_id:kw_part_comp',
+            'kw_2': 't_id:kw_full_comp',
+            'terms_0': 't_id:terms_na',
+            'terms_1': 't_id:terms_part_comp',
+            'terms_2': 't_id:terms_full_comp'
         }
 
-        inputToSlider(value){
-            let ret = 0
-            let max = this.sliderValues[this.sliderValues.length - 1]
-            if(value >= max){
-                return max
-            }
-            while(ret < this.sliderValues.length && ((this.sliderValues[ret] + this.sliderValues[ret + 1]) / 2) < value){
-                ret ++
-            }
-            return ret
+        _refreshSubcorpusList(){
+            let scl = this.subcorpList.slice()
 
+            if(this.options.ref_corpname == this.store.corpus.corpname && this.options.usesubcorp){
+                scl.unshift({labelId: "restOfCorpus", value: "== the rest of the corpus =="})
+            }
+            scl.unshift({
+                label: _('fullCorpus'),
+                value: ''
+            })
+            this.refSubcorpora = scl
         }
 
         updateAttributes(){
             this.options = {};
-            ["usesubcorp", "attr", "minfreq", "simple_n", "onealpha", "alnum",
-                "max_terms", "max_keywords", "k_ref_subcorp", "t_ref_subcorp",
-                "t_notAvailable",
-                "t_wlpat", "k_wlpat", "k_ref_corpname", "t_ref_corpname"].forEach(name => {
+            ["usesubcorp", "k_attr", "minfreq", "maxfreq", "simple_n", "onealpha",
+                "alnum", "max_items",
+                "t_notAvailable", "t_wlpat", "k_wlpat", "n_wlpat",
+                "n_ngrams_n", "n_ngrams_max_n", "icase", "exclude",
+                "wlblacklist", "fromList", "wlfile", "n_attr", "usekeywords", "useterms", "usengrams",
+                "ref_corpname", "ref_usesubcorp", "include_nonwords"].forEach(name => {
                 this.options[name] = this.store.data[name]
             })
+            this.termsAvailable = false
+            if(this.options.ref_corpname){
+                let refCorpus = AppStore.getCorpusByCorpname(this.options.ref_corpname)
+                this.termsAvailable = refCorpus && !!refCorpus.termdef && !!this.corpus.termdef
+            }
+            if(!this.termsAvailable){
+                this.options.useterms = false
+            }
             this.options.tts = copy(this.store.data.tts)
         }
         this.updateAttributes()
@@ -280,108 +341,83 @@
         onAdvSearch() {
             this.store.data.do_wipo = Auth.isWIPO()
             // check if attr is available
-            if (!AppStore.getAttributeByName(this.options.attr)) {
+            if (!AppStore.getAttributeByName(this.options.k_attr)) {
                 // TODO: use DEFAULTATTR
-                this.options.attr = "word"
+                this.options.k_attr = "word"
                 this.store.updateUrl()
             }
-            Dispatcher.trigger("FEATURE_TOOLBAR_SHOW_OPTIONS", null)
             this.store.resetSearchAndAddToHistory(Object.assign(this.options, {
+                onlywipo: false,
+                useterms: this.options.useterms && this.termsAvailable,
                 t_page: 1,
                 k_page: 1
             }))
+            Dispatcher.trigger("FEATURE_TOOLBAR_SHOW_OPTIONS", null)
         }
 
-        getRefSubc(corpname, type) {
-            // TODO: do not run twice if key and term ref corpora are the same
-            if (!corpname || (type == "t" && this.options.t_notAvailable)) {
-                return
-            }
-            if (type == 'k') {
-                this.refKeySubcLoading = true
-            }
-            if (type == 't') {
-                this.refTermsSubcLoading = true
-            }
-            let self = this
+        getRefSubc(corpname) {
+            this.subcLoading = true
             Connection.get({
                 url: window.config.URL_BONITO + "subcorp",
                 skipDefaultCallbacks: true,
-                query: { corpname: corpname },
+                data: { corpname: corpname },
                 done: (data) => {
-                    let scl = data.SubcorpList
-                    for (let i=0; i<scl.length; i++) {
-                        scl[i]['label'] = scl[i].n
-                        scl[i]['value'] = scl[i].n
+                    if(this.data.error){
+                        this.refSubcorpora = []
+                        SkE.showError(getPayloadError(data))
+                    } else {
+                        this.subcorpList = data.SubcorpList.map(c => {
+                            return {
+                                label: c.n,
+                                value: c.n
+                            }
+                        })
+                        this._refreshSubcorpusList()
                     }
-                    scl.unshift({
-                        label: _('fullCorpus'),
-                        value: ''
-                    })
-                    if (type == 'k') {
-                        self.refKeySubcorpora = scl
-                        self.refKeySubcLoading = false
-                    }
-                    if (type == 't') {
-                        self.refTermsSubcorpora = scl
-                        self.refTermsSubcLoading = false
-                    }
-                    self.update()
+                    this.subcLoading = false
+                    this.update()
                 },
                 fail: (data) => {
-                    if (type == "k") self.refKeySubcorpora = []
-                    if (type == "t") self.refTermsSubcorpora = []
-                    data.error && SkE.showError(data.error)
+                    this.refSubcorpora = []
+                    data.error && SkE.showError(getPayloadError(data))
                 }
             })
         }
 
-        this.refKeySubcorpora = [{value: "", label: _("fullCorpus")}]
-        if (this.options.k_ref_corpname) {
-            this.getRefSubc(this.options.k_ref_corpname, 'k')
-        }
-        this.refTermsSubcorpora = [{value: "", label: _("fullCorpus")}]
-        if (this.options.t_ref_corpname) {
-            this.getRefSubc(this.options.t_ref_corpname, 't')
-        }
+        this.refSubcorpora = [{value: "", label: _("fullCorpus")}]
+        this.options.ref_corpname && this.getRefSubc(this.options.ref_corpname)
 
-        onChangeKeyRefCorp(value, name, label) {
-            this.options.k_ref_corpname = value
+        onChangeRefCorp(value, name, label, option){
+            this.termsAvailable = !!option.termsComp && !!this.corpus.termdef
+            this.options.useterms = this.termsAvailable
+            this.options.ref_corpname = value
+            this.options.ref_usesubcorp = ""
             this.store.updateUrl()
             this.refreshSearchBtnDisabled()
             this.update()
-            this.getRefSubc(value, 'k')
-        }
-
-        onChangeTermsRefCorp(value, name, label) {
-            this.options.t_ref_corpname = value
-            this.store.updateUrl()
-            this.refreshSearchBtnDisabled()
-            this.update()
-            this.getRefSubc(value, 't')
+            this.getRefSubc(value)
         }
 
         onResetClick() {
-            TextTypesStore.reset()
-            let t_changed = this.options.t_ref_corpname != AppStore.data.corpus.refTermsCorpname
-            let k_changed = this.options.k_ref_corpname != AppStore.data.corpus.refKeywordsCorpname
+            let changed = this.options.ref_corpname != AppStore.data.corpus.refKeywordsCorpname
             this.store.resetGivenOptions(this.options)
-            this.options.k_ref_corpname = AppStore.data.corpus.refKeywordsCorpname
-            this.options.t_ref_corpname = AppStore.data.corpus.refTermsCorpname
-            k_changed && this.getRefSubc(this.options.k_ref_corpname, 'k')
-            t_changed && this.getRefSubc(this.options.t_ref_corpname, 't')
+            this.options.ref_corpname = AppStore.data.corpus.refKeywordsCorpname
+            changed && this.getRefSubc(this.options.ref_corpname)
 
+            this.refs.texttypes && this.refs.texttypes.reset()
             this.store.updateUrl()
-            this.update()
         }
 
         onOptionChange(value, name) {
             this.options[name] = value
-            if (name == "attr" && value.indexOf('lempos') == 0 && this.options["alnum"]) {
+            if ((name == "k_attr" || name == "alnum") && this.options.k_attr.indexOf('lempos') == 0 && this.options["alnum"]) {
                 Dispatcher.trigger("openDialog", {
                     small: true,
                     title: _("kw.confirmWarning"),
-                    tag: "confirm-filter-alnum",
+                    tag: "raw-html",
+                    opts:{
+                        content: _("kw.confirmAlnumText")
+                    },
                     showCloseButton: false,
                     buttons: [{
                         id: "filterAlnum",
@@ -398,28 +434,71 @@
 
         onUsesubcorpChange(usesubcorp){
             this.options.usesubcorp = usesubcorp
-            TextTypesStore.setDisabled(usesubcorp !== "")
+            if(this.options.ref_usesubcorp == "== the rest of the corpus =="){
+                this.options.ref_usesubcorp = ""
+            }
+            this._refreshSubcorpusList()
+            this.refs.texttypes && this.refs.texttypes.setDisabled(usesubcorp !== "")
+            this.update()
         }
 
-        setCompatibleCorpora(o) {
-            this.compKeywordsCorpList = o.k
-            this.compTermsCorpList = o.t
-            if (!o.t.length) {
-                this.data.t_notAvailable = true
+        onExcludeWordsClicked(checked) {
+            this.onOptionChange(checked, 'exclude')
+            if(!checked){
+                this.options.wlblacklist = ""
             }
-            this.options.k_ref_corpname = AppStore.data.corpus.refKeywordsCorpname
-                    || (o.k.length && o.k[0].value)
-            this.options.t_ref_corpname = AppStore.data.corpus.refTermsCorpname
-                    || (o.t.length && o.t[0].value)
+            checked && $("textarea[name=\"wlblacklist\"]").focus()
+        }
+
+        onFromListClicked(checked){
+            this.onOptionChange(checked, 'fromList')
+            if(!checked){
+                this.options.wlfile = ""
+            }
+            checked && $("textarea[name=\"wlfile\"]").focus()
+        }
+
+        onRangeChange(range){
+            this.options.n_ngrams_n = range.from
+            this.options.n_ngrams_max_n = range.to
+        }
+
+        onUseFeatureChange(feature, checked){
+            this.options["use" + feature] = checked
+            this.refreshSearchBtnDisabled()
+            this.update()
+        }
+
+        setCompatibleCorpora(refCorpList) {
+            this.refreshRefCorpnameList()
+            this.options.ref_corpname = AppStore.data.corpus.refKeywordsCorpname
+                    || (refCorpList.length && refCorpList[0].value)
             this.store.updateUrl()
             this.update()
-            this.getRefSubc(this.options.k_ref_corpname, 'k')
-            this.getRefSubc(this.options.t_ref_corpname, 't')
+            this.getRefSubc(this.options.ref_corpname)
         }
 
+        generator(option){
+            return  `<span class="refCorpOption">
+                <span class="t_sc">
+                    ${option.label}
+                </span>
+                <span class="compLevels">
+                    <span class="compLevel comp_${option.kwComp}" data-tooltip-id="kw_${option.kwComp}">KW</span>
+                    <span class="compLevel comp_${option.termsComp}" data-tooltip-id="terms_${option.termsComp}">T</span>
+                </span>
+            </span>`
+        }
+
+        refreshRefCorpnameList(){
+            this.refCorpnameList = copy(AppStore.data.compRefCorpList)
+            this.refCorpnameList.forEach(o => o.generator = this.generator)
+        }
+        this.refreshRefCorpnameList()
+
         refreshSearchBtnDisabled(){
-            this.isSearchDisabled = !this.options.k_ref_corpname
-                    || (this.compTermsCorpList.length && (this.data.t_notAvailable || !this.options.t_ref_corpname))
+            this.isSearchDisabled = !this.options.ref_corpname
+                    || (!this.options.usekeywords && !this.options.useterms && !this.options.usengrams)
         }
         this.refreshSearchBtnDisabled()
 
@@ -428,22 +507,47 @@
             this.update()
         }
 
-       onTextTypesSelectionChange(selection){
-            this.options.tts = selection
+        onTtsChange(tts){
+            this.options.tts = tts
             this.update()
+        }
+
+        showTooltip(evt){
+            let path = evt.path || evt.composedPath()
+            let el = path.find(node => node.classList && node.classList.contains("compLevel"))
+            if(el){
+                this.actualTooltip = showTooltip(el, this.compTooltips[$(el).data("tooltipId")], 500)
+            }
+        }
+
+        hideTooltip(){
+            this.actualTooltip && this.actualTooltip.close()
+            this.actualTooltip = null
+        }
+
+        onRefCorpnameListOpen(){
+            this.refs.ref_corpname.refs.list.root.addEventListener("mouseover", this.showTooltip)
+            this.refs.ref_corpname.refs.list.root.addEventListener("mouselave", this.hideTooltip)
+        }
+
+        onRefCorpnameListClose(){
+            this.refs.ref_corpname.refs.list.root.removeEventListener("mouseover", this.showTooltip)
+            this.refs.ref_corpname.refs.list.root.removeEventListener("mouselave", this.hideTooltip)
         }
 
         this.on("mount", () => {
             AppStore.on("compatibleCorporaListChanged", this.setCompatibleCorpora)
             AppStore.on('subcorporaChanged', this.update)
-            TextTypesStore.on("selectionChange", this.onTextTypesSelectionChange)
             this.store.on("change", this.dataChanged)
+            this.refs.ref_corpname.on("open", this.onRefCorpnameListOpen)
+            this.refs.ref_corpname.on("close", this.onRefCorpnameListClose)
         })
+
+        this.on("update", this.hideTooltip)
 
         this.on("unmount", () => {
             AppStore.off("compatibleCorporaListChanged", this.setCompatibleCorpora)
             AppStore.off('subcorporaChanged', this.update)
-            TextTypesStore.off("selectionChange", this.onTextTypesSelectionChange)
             this.store.off("change", this.dataChanged)
         })
     </script>

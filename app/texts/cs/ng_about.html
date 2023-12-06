@@ -1,0 +1,43 @@
+<div>Nástroj pro n-gramy vytváří %[frequency|frekvenční]% seznamy sekvencí %[token|tokenů]%. N-gramy jsou také nazývány jako víceslovné výrazy nebo MWE. Uživatel má na výběr z několika možností filtrování, včetně %[regex|regulárních výrazů]%, které podrobně specifikují, u kterých n-gramů se má generovat jejich frekvence. N-gramy lze generovat na základě libovolného %[attribute|atributu]%, přičemž nejčastěji používané jsou %[wordForm|slovní tvar]% a %[lemma]%.
+</div>
+<div class="center">
+    <br>
+    <img src="https://www.sketchengine.eu/wp-content/uploads/Ngrams1.png" loading="lazy">
+    <br><br>
+</div>
+<ul class="collapsible">
+    <li>
+        <div class="collapsible-header">Jak n-gramy fungují?</div>
+        <div class="collapsible-body">
+            <div>N-gramy se skládají z %[token|tokenů]%, proto se trigram anglických slov <em>don't like</em> zobrazí jako <em>do n't like</em>. (V konkordanci se <em>don't</em> zobrazí bez mezery, ale také se s ním zachází jako se dvěma tokeny.)					</div>
+            <br>
+            <div>Výsledek lze omezit minimální a maximální frekvencí. Ve výchozím nastavení jsou vyloučeny n-gramy s nízkou frekvencí. Pomocí záložky Upřesnit to můžete změnit.</div>
+            <br>
+            <div>
+                %[regex|Regulární výrazy]% lze použít k definování složitých kritérií pro n-gramy, které mají být zahrnuty do frekvenčního seznamu. Při použití regulárních výrazů se celý n-gram považuje za jednu souvislou posloupnost znaků včetně mezer.
+            </div>
+            <br>
+            <div>Existují dvě verze počátečního, koncového a obsahujícího filtru. Jedna pro filtrování podle znaků (písmen) vyskytujících se kdekoli uvnitř n-gramu a druhá pro filtrování podle celých slov, tj. podle toho, co se nachází mezi dvěma mezerami.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Omezení</div>
+        <div class="collapsible-body">
+            <div>Pro vytvoření seznamu n-gramů se použije pouze první 1 miliarda tokenů z korpusu. Pokud je korpus větší, zbytek korpusu se do výsledků nepromítne. Jedná se o technické omezení, které nelze změnit. Seznam n-gramů vygenerovaný z celého korpusu lze vytvořit za poplatek. Kontaktujte <a href="https://www.sketchengine.eu/contact-us/" rel="noopener" target="_blank">Sketch Engine</a>.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Požadavky pro správnou funkci n-gramů</div>
+        <div class="collapsible-body">
+            <div>N-gramy budou fungovat v jakémkoli korpusu, pokud je %[token|tokenizovaný]%. Lemmatizované nebo značkované n-gramy budou k dispozici pouze pro lemmatizované a značkované korpusy. Tokenizace, lemmatizace a značkování se provádí automaticky při nahrávání souborů do Sketch Engine za předpokladu, že je jazyk <a href="https://www.sketchengine.eu/user-guide/user-manual/corpora/by-language/" rel="noopener" target="_blank">podporován</a>.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Rychlost a velikost korpusu</div>
+        <div class="collapsible-body">
+            <div>Sketch Engine je navržen speciálně pro rychlé zpracování velmi rozsáhlých korpusů. Vygenerování seznamu n-gramů je otázkou jedné nebo dvou sekund. Sestavení n-gramů z velkých korpusů o několika miliardách slov může trvat desítky sekund. Použití velmi složitých regulárních výrazů může proces výrazně zpomalit.</div>
+        </div>
+    </li>
+</ul>

@@ -2,15 +2,26 @@
     .inputTypeOptions{
         margin-top: 8px;
         .ui-textarea{
-            width: calc(100% - 30px);
             textarea{
                 margin-bottom: 0;
             }
         }
     }
     .ui-textarea, .ui-input, .ui-chips{
-        width: calc(100% - 30px);
+        width: 100%;
         display: inline-block;
+    }
+    .ui.ui-slider{
+        margin-bottom: 0;
+    }
+
+    .seedsContainer {
+        flex: 1;
+        font-size: 0;
+    }
+
+    .seedsHint{
+        white-space: normal;
     }
 
     .inlineHelp{
@@ -26,6 +37,6 @@
     }
 
     .kwBtn{
-        margin: 10px 0 20px;
+        margin: 10px 0 20px 20px;
     }
 }

@@ -1,8 +1,10 @@
-<ui-tabs class="ui ui-tabs">
+<ui-tabs class="ui ui-tabs {opts.class}">
     <div>
-        <ul class="tabs">
+        <ul ref="tabs"
+                class="tabs">
             <li class="tab" each={tab, idx in tabs}>
                 <a href="javascript:void(0);"
+                class={active: tab.tabId == parent.tab}
                     id="tab-link-{tab.tabId}"
                     ref={"link-" + tab.tabId}
                     onclick={onTabClick}>
@@ -13,16 +15,20 @@
         </ul>
     </div>
     <div class="tabContent">
-        <div each={tab, idx in tabs}
-            ref={"content-" + tab.tabId}
-            id="tab-{tab.tabId}"
-            data-is={tab.tag}></div>
+        <div each={t, idx in tabs}
+            ref={"content-" + t.tabId}
+            id="tab-{t.tabId}"
+            data-is={t.tag}></div>
     </div>
 
     <script>
         this.mixin('ui-mixin')
-        this.tabs = opts.tabs
-        this.tab = this.opts.active ? this.opts.active : this.opts.tabs[0].tabId
+
+        updateAttributes(){
+            this.tabs = opts.tabs
+            this.tab = isDef(this.opts.active) ? this.opts.active : this.opts.tabs[0].tabId
+        }
+        this.updateAttributes()
 
         setTab(tab){
             this.tab = tab
@@ -44,12 +50,34 @@
             }.bind(this))
         }
 
-        this.on("update", () => {
-            this.tab = isDef(this.opts.active) ? this.opts.active : this.opts.tabs[0].tabId
-        })
-        this.on("updated", () => {
+        onResizeDebounced(){
+            this.timer && clearTimeout(this.timer)
+            this.timer = setTimeout(() => {
+                clearTimeout(this.timer)
+                this.fixScrollBar()
+            }, 200)
+        }
+
+        fixScrollBar(){
+            if(this.refs.tabs){
+                if(this.refs.tabs.scrollWidth > this.refs.tabs.clientWidth){
+                    this.refs.tabs.classList.add("hasScrollbar")
+                } else {
+                    this.refs.tabs.classList.remove("hasScrollbar")
+                }
+            }
+        }
+
+        this.on("update", this.updateAttributes)
+        this.on("updated", this.refreshDisplay)
+        this.on("mount", () => {
             this.refreshDisplay()
+            window.addEventListener('resize', this.onResizeDebounced)
+            delay(this.fixScrollBar, 500) // if tab is in modal we need to wait for animation
         })
-        this.on("mount", this.refreshDisplay)
+
+        this.on("unmount", () => {
+            window.removeEventListener('resize', this.onResizeDebounced)
+        })
     </script>
 </ui-tabs>

@@ -1,3 +1,5 @@
+@import 'app/styles/constants';
+
 .lazy-dialog{
     vertical-align: text-bottom;
     display: inline-block;
@@ -5,7 +7,7 @@
     width: 1em;
     margin: 0;
     i.material-icons.material-clickable{ // stronger rule to override ui- styles
-        color: #004B69;
+        color: $blue-800;
         font-size: 19px;
         width: 1em;
     }
@@ -19,10 +21,10 @@
         }
     }
     table{
-        border: 1px solid #CFECF4;
+        border: 1px solid $blue-100;
         background-color: #f7f7f7;
         thead{
-            background-color: #CFECF4;
+            background-color: $blue-100;
         }
         th, td{
             padding: 5px

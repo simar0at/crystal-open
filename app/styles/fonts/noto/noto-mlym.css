@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-mlym ._t{
-    font-family: 'Noto Malayalam'
+.script-mlym ._t,
+body .script-mlym ._t,
+body .script-mlym._t{
+    font-family: 'Noto Malayalam', 'Noto Sans', sans-serif
 }

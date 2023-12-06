@@ -18,13 +18,18 @@
                     ref="{idx}_r"
                     class={notAvailable: !corpus.user_can_read, actual: corpus.corpname == actualCorpname, old: corpus.new_version}
                     onclick={onRowClick}>
-                <i class="material-icons left">
-                    {corpus.icon}
-                </i>
-                <span class="cLang" ref="{idx}_l">{corpus.language_name}</span>
-                <span if={showCorpname} class="cCorpname" ref="{idx}_c">{corpus.corpname}&nbsp;●&nbsp;</span>
-                <span class="cLabel" ref="{idx}_n">{corpus.name}</span>
-                <span class="clSize">{corpus.sizes ? window.Formatter.num(corpus.sizes.wordcount) : ""}</span>
+                <div>
+                    <i class="material-icons left">
+                        {corpus.icon}
+                    </i>
+                    <span class="cLang" ref="{idx}_l">{corpus.language_name}</span>
+                    <span if={showCorpname} class="cCorpname" ref="{idx}_c">{corpus.corpname}&nbsp;●&nbsp;</span>
+                    <span class="cLabel" ref="{idx}_n">{corpus.name}</span>
+                    <span class="clSize">{corpus.sizes ? window.Formatter.num(corpus.sizes.wordcount) : ""}</span>
+                </div>
+                <div if={showInfo} class="cInfo" ref="{idx}_i">
+                    {corpus.info}
+                </div>
             </li>
         </ul>
         <div if={!corpusListLoaded} class="listLoading">
@@ -53,29 +58,38 @@
                 {_("thesaurus")}
             </a>
         </div>
-        <div if={corpusListLoaded} ref="buttons" class="buttons right-align">
-            <span class="foundCount hide-on-small-only">
+        <div if={corpusListLoaded} ref="buttons" class="buttons">
+            <div class="foundCount hide-on-small-only">
                 {_("corpCount", [window.Formatter.num(visibleCorpora.length)])}
-            </span>
-            <a href="#corpus?tab=advanced"
-                    id="btnManageCorpora"
-                    class="btn btn-flat teal-text"
-                    onclick={closeList}>{_("advancedSearch")}</a>
-            <a if={window.permissions["ca-create"]}
-                    href="#ca-create"
-                    id="btnCreateCorpus"
-                    class="btn btn-flat teal-text"
-                    onclick={closeList}>{_("createCorpus")}</a>
+            </div>
+            <div class="buttonsControls">
+                <span class="corpusDescCheckbox">
+                    <ui-checkbox label={"Show description"}
+                            checked={showInfo}
+                            on-change={onShowInfoChange}></ui-checkbox>
+                </span>
+                <a href="#corpus?tab=advanced"
+                        id="btnManageCorpora"
+                        class="btn btn-flat teal-text"
+                        style="margin-left: auto;"
+                        onclick={closeList}>{_("advancedSearch")}</a>
+                <a if={window.permissions["ca-create"]}
+                        href="#ca-create"
+                        id="btnCreateCorpus"
+                        class="btn btn-flat teal-text"
+                        onclick={closeList}>{_("createCorpus")}</a>
+
+            </div>
         </div>
     </div>
 
     <a if={ready}
             id="btnShowCorpusInfo"
-            class="btn btn-floating btn-flat medium corpusInfoBtn"
+            class="btn btn-floating btn-flat color-blue-200 corpusInfoBtn"
             onclick={onShowCorpusInfoClick}>
         <i class="material-icons">info_outline</i>
     </a>
-    <a href="#ca-compile" if={window.permissions["ca-compile"] && !corpus.isEmpty && corpus.needs_recompiling}>
+    <a href="#ca-compile" if={window.permissions["ca-compile"] && corpus.hasDocuments && corpus.needs_recompiling}>
         <i class="material-icons tooltipped orange-text hide-on-small-only corpusFlagIcon"}
                 data-tooltip={_("msg.corpusNeedsCompile")}>warning</i>
     </a>
@@ -97,6 +111,7 @@
         require('./header-corpus.scss')
         require('dialogs/corpus-info-dialog/corpus-info-dialog.tag')
         const {AppStore} = require("core/AppStore.js")
+        const {UserDataStore} = require("core/UserDataStore.js")
         const {Auth} = require("core/Auth.js")
         const {Router} = require("core/Router.js")
         const FuzzySort = require('libs/fuzzysort/fuzzysort.js')
@@ -107,6 +122,7 @@
         this.cursorPosition = null
         this.showCorpname = false
         this.corpusListLoaded = AppStore.get("corpusListLoaded")
+        this.showInfo = UserDataStore.getOtherData("showInfoInCorpusSearch") || false
 
         compareCorporaFun(a, b){
             if(a.sort_to_end && !b.sort_to_end) return 1
@@ -233,6 +249,16 @@
             Auth.logoutAs()
         }
 
+        onShowInfoChange(showInfo){
+            this.showInfo = showInfo
+            UserDataStore.saveOtherData({showInfoInCorpusSearch: showInfo})
+            if(this.query){
+                this.filterCorpora()
+            } else {
+                this.update()
+            }
+        }
+
         filterCorpora(query){
             this.cursorPosition = 0
             this.showCorpname = this.query[0] == "#"
@@ -240,22 +266,27 @@
                 delete c.h_cname
                 delete c.h_lang
                 delete c.h_name
+                delete c.h_info
             })
             if(this.query !== "" && this.query !== "#"){
                 this.visibleCorpora = []
                 let fuzzySorted
+                let query = this.query
+                let keys
                 if(this.showCorpname){
-                    fuzzySorted = FuzzySort.go(this.query.substr(1, this.query.length - 1), this.allCorpora, {
-                        key: "corpname",
-                        keys: ["corpname"]
-                    })
+                    query = this.query.substr(1, this.query.length - 1)
+                    keys = ["corpname"]
                 } else {
-                    fuzzySorted = FuzzySort.go(this.query, this.allCorpora, {
-                        //threshold: -10000,
-                        key: "corpname",
-                        keys: ["language_name", "name"]
-                    })
+                    keys = ["language_name", "name"]
+                    if(this.showInfo){
+                        keys.push("info")
+                    }
                 }
+                fuzzySorted = FuzzySort.go(query, this.allCorpora, {
+                        key: "corpname",
+                        keys: keys,
+                        fullMatchKeys: ["info"]
+                    })
                 this.maxScore = -Infinity
                 this.visibleCorpora = fuzzySorted.map(fs => {
                     if(fs.score > -Infinity){
@@ -276,6 +307,9 @@
                         } else{
                             c.h_lang = FuzzySort.highlight(fs[0], '<b class="red-text">', "</b>")
                             c.h_name = FuzzySort.highlight(fs[1], '<b class="red-text">', "</b>")
+                            if(this.showInfo){
+                                c.h_info = FuzzySort.highlight(fs[2], '<b class="red-text">', "</b>")
+                            }
                         }
                         return c
                     }
@@ -392,6 +426,10 @@
 
                             el = this.refs[idx + "_n"];
                             el.innerHTML = c.h_name ? c.h_name : el.innerHTML.replace(/<b class="red-text">|<\/b>/g, '')
+                            if(this.showInfo){
+                                el = this.refs[idx + "_i"];
+                                el.innerHTML = c.h_info ? c.h_info : el.innerHTML.replace(/<b class="red-text">|<\/b>/g, '')
+                            }
                         }
                     }
                 }.bind(this))
@@ -515,6 +553,11 @@
             this.updateListPosition()
         })
 
+        onUserDataLoaded(){
+            this.showInfo = UserDataStore.getOtherData("showInfoInCorpusSearch") || false
+            this.showList && this.update()
+        }
+
         this.on("mount", () => {
             this.handle = window.addEventListener('resize', this.onResizeDebounced)
             this.refreshInputWidth()
@@ -522,6 +565,7 @@
             AppStore.on("corpusListChanged", this.onCorpusListChanged)
             Dispatcher.on("AUTH_LOGIN", this.onLogin)
             Dispatcher.on("SELECT_CORPUS_FOCUS", this.focusInput)
+            UserDataStore.on("otherChange", this.onUserDataLoaded)
         })
 
         this.on("unmount", () => {
@@ -529,6 +573,7 @@
             AppStore.off("corpusListChanged", this.onCorpusListChanged)
             Dispatcher.off("AUTH_LOGIN", this.onLogin)
             Dispatcher.off("SELECT_CORPUS_FOCUS", this.focusInput)
+            UserDataStore.off("otherChange", this.onUserDataLoaded)
         })
     </script>
 </header-corpus>

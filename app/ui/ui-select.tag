@@ -6,18 +6,24 @@
         disabled={opts.disabled}
         multiple={opts.multiple}>
         <optgroup each={optgroup, ogIdx in opts.optgroups || []}
+            no-reorder
             label={optgroup.label}>
             <option each={option, idx in optgroup.options || []}
+                no-reorder
                 value={option.value}
                 ogi={ogIdx}
                 i={idx}
+                disabled={option.disabled}
                 selected={parent.parent.opts.riotValue !== undefined && parent.parent.isOptionSelected(option)}>
                 {parent.getLabel(option)}
             </option>
         </optgroup>
-        <option if={!opts.optgroups} each={option, idx in opts.options || []}
+        <option if={!opts.optgroups}
+            each={option, idx in opts.options || []}
+            no-reorder
             value={option.value}
             i={idx}
+            disabled={option.disabled}
             selected={parent.opts.riotValue !== undefined && parent.isOptionSelected(option)}>
             {getLabel(option)}
         </option>
@@ -43,7 +49,7 @@
             evt && evt.stopPropagation()
             this.value = this._getValueFromSelect()
             if(isFun(this.opts.onChange)){
-                this.opts.onChange(this.value, this.opts.name, this.node, this.opts.multiple ? null : this.getLabelByValue(this.value), evt)
+                this.opts.onChange(this.value, this.opts.name, this.opts.multiple ? null : this.getLabelByValue(this.value), evt, this)
             }
         }
 
@@ -105,40 +111,27 @@
         }
 
         _startupSelect(){
-            if($.contains(document.documentElement, this.node[0])){ // fix riot vs materialize bug
-                this.selectOpts = copy(this.opts)
-                delete this.selectOpts.riotValue
-                this.node.formSelect({
-                    dropdownOptions: {
-                        constrainWidth: false
-                    }
-                }).on("change", this.onChange)
+            if(this.refs.select && $.contains(document.documentElement, this.refs.select)){ // fix riot vs materialize bug
+                $(this.refs.select).off("change")
+                        .formSelect({
+                            dropdownOptions: {
+                                constrainWidth: false
+                            }
+                        })
+                        .on("change", this.onChange)
                 this.ui_refreshWidth()
             }
-        }
-
-        _refreshSelect(){
-            this.value = this.refs.select ? this.refs.select.value : ""
-            if(this.refs.select && this.refs.select.M_FormSelect){
-                let actualOpts = copy(this.opts)
-                delete actualOpts.riotValue
-                if(!window.objectEquals(actualOpts, this.selectOpts)){
-                    // some options were changed from outside -> list must be reinitialized
-                    this._startupSelect()
-                } else{
-                    this.refs.select.M_FormSelect._setValueToInput()
-                }
+            if(this.opts.width){
+                // materialize remove style when initializing select
+                $(this.root).css({width: this.opts.width + "px"})
             }
         }
 
         this.on("mount", () => {
-            $(document).ready(function() {
-                this.node = $('select', this.root)
-                this._startupSelect()
-            }.bind(this));
+            $(document).ready(this._startupSelect.bind(this));
         })
         this.on("updated", () => {
-            this._refreshSelect()
+            this._startupSelect()
         })
     </script>
 </ui-select>

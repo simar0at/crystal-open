@@ -1,4 +1,3 @@
-@import 'app/styles/base';
 @import 'app/styles/constants';
 $small: 58px;
 
@@ -12,13 +11,13 @@ $small: 58px;
     }
     .card{
         &.dashboardCard{
-            background-color: $new_lightBlue;
-            .material-icons, .card.inactive {
-                color: $new_darkBlue;
+            background-color: $blue-100;
+            .card.inactive {
+                color: $blue-800;
             }
             input, input::placeholder {
-                color: $new_darkBlue;
-                border-bottom-color: $new_darkBlue;
+                color: $blue-800;
+                border-bottom-color: $blue-800;
             }
             .card{
                 .card-content{
@@ -44,7 +43,7 @@ $small: 58px;
             font-size: 1.2em;
             font-weight: 500;
             text-transform: uppercase;
-            color: $new_darkBlue;
+            color: $blue-800;
         }
         &.corpusCard{
             .card-content .card-title {
@@ -52,7 +51,7 @@ $small: 58px;
             }
             min-height: 500px;
             .active{
-                color: $darkGray;
+                color: $gray-800;
                 cursor: pointer;
             }
             .inactive{
@@ -97,6 +96,7 @@ $small: 58px;
     .banner{
         padding: 15px;
         background-color: whitesmoke;
+        overflow: auto;
         img{
             max-width: 100%;
         }
@@ -117,7 +117,17 @@ $small: 58px;
             display: none;
         }
     }
+    &.noBanner .card.recentCorpora{
+        height: 547px;
+    }
     &:not(.bannerExpanded) .bigBanner{
         display: none;
     }
+    .history i {
+      color: $blue-800;
+    }
+}
+.langSelect{
+    width: auto !important;
+    display: inline-block !important;
 }

@@ -1,6 +1,6 @@
 <parconcordance-result-options-view class="parconcordance-result-options-view">
     <div class="columns">
-        <div class="inlineBlock">
+        <div class="inline-block">
             <ui-filtering-list label-id="showAttributes"
                     ref="attrs"
                     inline={true}
@@ -21,7 +21,7 @@
                 </ui-radio>
             </div>
         </div>
-        <div class="inlineBlock">
+        <div class="inline-block">
             <ui-filtering-list
                     label-id="cc.showStructures"
                     inline=1
@@ -33,33 +33,36 @@
                     options={structList}>
             </ui-filtering-list>
         </div>
-        <div class="inlineBlock">
-            <ui-checkbox
-                    checked={data.linenumbers}
+        <div class="inline-block">
+            <ui-switch
+                    riot-value={data.linenumbers}
                     label-id="showLineNumbers"
                     name="linenumbers"
                     tooltip="t_id:conc_r_view_line_numbers"
-                    on-change={onChangeValue}>
-            </ui-checkbox>
-            <ui-checkbox
-                    checked={glue}
+                    on-change={onChangeValue}
+                    class="lever-right">
+            </ui-switch>
+            <ui-switch
+                    riot-value={options.glue}
                     label-id="cc.glue"
                     name="glue"
                     tooltip="t_id:conc_r_view_glue"
-                    on-change={onDataChange}>
-            </ui-checkbox>
+                    on-change={onDataChange}
+                    class="lever-right">
+            </ui-switch>
             <br>
-            <button class="btn" onclick={onLineDetailsClick}>
+            <button class="btn detailsBtn" onclick={onLineDetailsClick}>
                 <i class="material-icons right">settings</i>
                 {_("lineDetails")}
             </button>
         </div>
     </div>
-    <div class="center-align">
-        <a class="btn contrast" id="btnViewSave" onclick={onSaveClick}>{_("save")}</a>
+    <div class="primaryButtons">
+        <a class="btn btn-primary" id="btnViewSave" onclick={onSaveClick}>{_("save")}</a>
     </div>
-    <floating-button onclick={onSaveClick} periodic=1 refnodeid="btnViewSave">
-    </floating-button>
+    <floating-button on-click={onSaveClick}
+            periodic=1
+            refnodeid="btnViewSave"></floating-button>
 
     <script>
         require("concordance/concordance-line-detail-dialog.tag")
@@ -79,8 +82,6 @@
 
         updateAttributes(){
             this.options = {
-                refs: jQuery.isArray(this.data.refs) ? this.data.refs : this.data.refs.split(","),
-                refs_up: this.data.refs_up,
                 glue: this.data.glue,
                 attrs: this.data.attrs.split(","),
                 structs: this.data.structs.split(",").filter((e) => {
@@ -97,10 +98,7 @@
                 attrs: attrs,
                 glue: this.options.glue,
                 attr_allpos: this.options.attr_allpos,
-                ctxattrs: this.options.attr_allpos == "all" ? attrs : "word",
-                structs: this.options.structs.join(","),
-                refs: this.options.refs,
-                refs_up: this.options.refs_up
+                structs: this.options.structs.join(",")
             })
         }
 
@@ -129,6 +127,7 @@
                 },
                 buttons: [{
                     label: _("save"),
+                    class: "btn-primary",
                     onClick: (dialog) => {
                         dialog.contentTag.save()
                     }

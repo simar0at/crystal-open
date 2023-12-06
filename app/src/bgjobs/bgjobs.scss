@@ -1,9 +1,35 @@
+@import 'app/styles/constants';
+
 .background-jobs {
     .card-panel{
-        background-color: #f4f4f4;
+        background-color: $gray-100;
         position: relative;
     }
     table{
+        tbody{
+            transition: background-color .25s ease;
+            &:nth-child(odd){
+                background-color: rgba(242, 242, 242, 0.5);
+            }
+            &:hover{
+                background-color: $blue-100;
+            }
+            tr:not(:last-child) td{
+                padding-bottom: 0;
+            }
+            .feature{
+                font-weight: bold;
+                &::after{
+                    content: " | "
+                }
+            }
+            .featureOptions{
+                font-size: 14px;
+                padding-top: 0;
+                color: $gray-400;
+                padding-left: 30px;
+            }
+        }
         tr :nth-child(3),
         tr :nth-child(4),
         tr :nth-child(5),
@@ -27,17 +53,14 @@
         display: inline-block;
         padding: 0 6px;
     }
-    .status_R{
-        color: #fff;
-        background-color: #4CAF50;
+    .status_R,
+    .status_D {
+        color: $white;
+        background-color: $green-500;
     }
     .status_T{
-        color: #fff;
-        background-color: #F44336;
-    }
-    .status_D{
-        color: black;
-        background-color: #BBB;
+        color: $white;
+        background-color: $red-200;
     }
     .empty{
         opacity: 0.4;
@@ -47,5 +70,8 @@
             font-size: 3em;
             display:block;
         }
+    }
+    .jobDetail{
+        vertical-align: middle;
     }
 }

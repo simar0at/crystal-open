@@ -1,0 +1,233 @@
+@import 'constants.scss';
+
+$text:
+  left,
+  right,
+  center,
+  justify;
+
+@each $value in $text {
+  .text-#{$value} {
+    text-align: $value;
+  }
+}
+
+
+$spacing: (
+  'px': 1px,
+  '0': 0,
+  '1': .25rem,
+  '2': .5rem,
+  '3': .75rem,
+  '4': 1rem,
+  '5': 1.25rem,
+  '6': 1.5rem,
+  '8': 2rem,
+  '10': 2.5rem,
+  '12': 3rem,
+  '16': 4rem,
+  '20': 5rem,
+  '24': 6rem,
+  '32': 8rem,
+  // '40': 10rem,
+  // '48': 12rem,
+  // '56': 14rem,
+  // '64': 16rem,
+);
+
+@each $name, $value in $spacing {
+  .p-#{$name} {
+    padding: $value;
+  }
+  .px-#{$name} {
+    padding-left: $value !important;
+    padding-right: $value !important;
+  }
+  .py-#{$name} {
+    padding-top: $value;
+    padding-bottom: $value;
+  }
+  .pt-#{$name} {
+    padding-top: $value;
+  }
+  .pr-#{$name} {
+    padding-right: $value;
+  }
+  .pb-#{$name} {
+    padding-bottom: $value !important;
+  }
+  .pl-#{$name} {
+    padding-left: $value;
+  }
+
+  .m-#{$name} {
+    margin: $value;
+  }
+  .mx-#{$name} {
+    margin-left: $value;
+    margin-right: $value;
+  }
+  .my-#{$name} {
+    margin-top: $value;
+    margin-bottom: $value;
+  }
+  .mt-#{$name} {
+    margin-top: $value !important;
+  }
+  .mr-#{$name} {
+    margin-right: $value !important;
+  }
+  .mb-#{$name} {
+    margin-bottom: $value !important;
+  }
+  .ml-#{$name} {
+    margin-left: $value;
+  }
+
+  // Line height
+  .lh-#{$name} {
+    line-height: $value !important;
+  }
+}
+
+
+$display:
+  block,
+  inline-block,
+  inline,
+  flex,
+  inline-flex,
+  grid,
+  inline-grid,
+  table,
+  none;
+
+@each $value in $display {
+  .#{$value} {
+    display: $value;
+  }
+}
+
+
+.hidden{
+  display: none !important;
+}
+.visibilityHidden{
+  visibility: hidden;
+}
+.rtl {
+    direction: rtl;
+}
+.ltr {
+    direction: ltr;
+}
+.monospace{
+    font-family: monospace;
+}
+.pre{
+    white-space: pre;
+    margin: 0;
+}
+.center-table {
+    display: table;
+    margin: 0 auto;
+}
+.serif {
+    font-family: serif;
+}
+
+.dividerTop{
+    border-top: 1px solid $gray-300;
+}
+.dividerBottom {
+    border-bottom: 1px solid $gray-300;
+}
+.dividerRight {
+    border-right: 1px solid $gray-300;
+}
+.dividerLeft {
+    border-left: 1px solid $gray-300;
+}
+.dividerTopDotted {
+    border-top: dotted 1px $gray-600;
+}
+.dividerBottomDotted {
+    border-bottom: dotted 1px $gray-600;
+}
+.dividerRightDotted {
+    border-right: dotted 1px $gray-600;
+}
+.dividerLeftDotted {
+    border-left: dotted 1px $gray-600;
+}
+
+.rotate90CW {
+    transform: rotate(90deg);
+}
+.rotate180 {
+    transform: rotate(180deg);
+}
+.flipHorizontal {
+    transform: scale(-1, 1);
+}
+.flipVertical {
+    transform: scale(1, -1);
+}
+
+.vertical-top{
+    vertical-align: top;
+}
+.vertical-middle{
+    vertical-align: middle;
+}
+
+.nowrap{
+    white-space: nowrap;
+}
+
+.disabled {
+    color: $disabled;
+}
+
+.sentenceCapitals {
+    &::first-letter {
+        text-transform: capitalize;
+    }
+}
+.titleCapitals {
+    text-transform: capitalize;
+}
+.noCapitalization {
+    text-transform: none !important;
+}
+
+.relative {
+    position: relative;
+}
+
+.cursor-pointer{
+    cursor: pointer;
+}
+
+.flex-column{
+    flex-direction: column;
+}
+
+$blueColors:(
+    800: $blue-800,
+    750: $blue-750,
+    710: $blue-710,
+    700: $blue-700,
+    600: $blue-600,
+    200: $blue-200,
+    100: $blue-100);
+
+@each $name, $value in $blueColors {
+    .color-blue-#{$name} {
+        color: #{$value};
+    }
+    .background-color-blue-#{$name} {
+        background-color: #{$value};
+    }
+}
+

@@ -47,15 +47,27 @@ const Meta = {
     wlnumsList: [{
         labelId: "frequency",
         value: "frq",
-        tooltip: "t_id:wl_r_view_frequency"
+        tooltip: "t_id:frequency"
+    },{
+        labelId: "relfreq",
+        value: "relfreq",
+        tooltip: "t_id:relfreq"
     }, {
         labelId: "wl.docf",
         value: "docf",
-        tooltip: "t_id:wl_r_view_docf"
+        tooltip: "t_id:docf"
+    }, {
+        labelId: "reldocf",
+        value: "reldocf",
+        tooltip: "t_id:reldocf"
     }, {
         label: "ARF",
         value: "arf",
-        tooltip: "t_id:wl_r_view_arf"
+        tooltip: "t_id:arf"
+    }, {
+        label: "ALDF",
+        value: "aldf",
+        tooltip: "t_id:aldf"
     }],
 
     viewAsOptions: [{

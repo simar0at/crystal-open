@@ -1,4 +1,4 @@
-@import 'app/styles/base';
+@import 'app/styles/constants';
 
 .corpus-info-dialog{
     .titleWithButton{
@@ -135,7 +135,7 @@
         font-weight: bold;
         .collapsible-header span,
         .collapsible-body{
-            span{
+            * {
                 font-weight: normal;
             }
             .attr{
@@ -153,7 +153,9 @@
             position: relative;
             font-size: 14px;
             line-height: 1.5em;
-            padding-bottom: 10px;
+            &:not(:last-child){
+                padding-bottom: 10px;
+            }
         }
         a{
             position: absolute;
@@ -180,10 +182,16 @@
             i{
                 font-size: 21px;
                 vertical-align: text-bottom;
-                color: $lightGray;
+                color: $gray-500;
                 cursor: help;
             }
         }
+    }
+
+    .counts{
+      td{
+        text-transform: capitalize;
+      }
     }
 }
 

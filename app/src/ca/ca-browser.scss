@@ -1,4 +1,4 @@
-@import 'app/styles/base';
+@import 'app/styles/constants';
 
 .ca-browser{
     display: block;
@@ -23,14 +23,27 @@
         .selectColumn{
             width: 1px;
             margin: 0;
+            font-weight: normal;
+            .btn{
+                padding: 0;
+                display: flex;
+            }
             .ui-checkbox{
                 margin: 0;
+                padding-left: 0px;
                 span{
-                    padding-left: 30px;
+                    padding-left: 20px;
                     height: 17px;
                     line-height: 17px;
                 }
             }
+        }
+    }
+    .filesetsNote{
+        min-height: 24px;
+        div {
+            background-color: $blue-100;
+            padding: 2px 5px;
         }
     }
 
@@ -45,7 +58,16 @@
             margin: 0 0 5px 0;
         }
     }
+    .fileFilterToggle > *{
+        vertical-align: text-bottom;
+    }
+    .fileFilter{
+        background-color: #e8e8e8;
+        padding: 0 0 0 15px;
+        margin-bottom: 10px;
+    }
     .filesTable{
+        margin-bottom: 20px;
         tr{
             height: 42px;
         }
@@ -58,6 +80,9 @@
             .progress{
                 width: 60px;
             }
+        }
+        td.link{
+            word-break: break-all;
         }
     }
     .table {
@@ -102,7 +127,6 @@
                         cursor: pointer;
                     }
                     .filesetName{
-                        padding-left: 34px;
                         display: block;
                     }
                 }
@@ -123,6 +147,9 @@
                         background-color: rgba(0, 0, 0, 0.05);
                     }
                     .filesetCell{
+                        @media screen and (max-width: 1200px) and (min-width: 962px) {
+                            max-width: 17vw;
+                        }
                          >span{
                             color: black;
                             font-weight: bold;
@@ -149,7 +176,7 @@
             text-align: right;
         }
         td.num{
-            color: $lightGray;
+            color: $gray-500;
         }
     }
     .emptyFolder,
@@ -187,8 +214,8 @@
         text-transform: capitalize;
     }
 
-    #bulkActionBtn{
-        margin: 15px 0 10px;
+    .bulkBtns{
+        margin: 5px 0 10px;
     }
     .docCountItem{
         padding: 10px 16px;

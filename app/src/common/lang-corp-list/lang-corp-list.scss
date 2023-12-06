@@ -1,66 +1,22 @@
+@import 'app/styles/constants';
+
 .lang-corp-list{
-    /*.ui-list, .ui-list-list li{
-        white-space: normal;
-    }*/
     li{
         line-height: initial;
         height: initial;
         position: relative;
         i.material-icons{
-            display: inline-block;
-            height: 1em;
-            line-height: 1em;
-            float: left;
             margin-right: 15px;
         }
-        .raw-html{
-            display: flex;
-        }
         .cLabel{
-            padding-left: 39px;
-            padding-right: 210px;
+            padding-right: 20px;
         }
-        .clSize{
-            position: absolute;
-            right: 20px;
-            opacity: 0.6;
-            font-size: 12px;
-        }
-        .cLang{
-            text-align: left;
-            position: absolute;
-            right: 105px;
-            opacity: 0.6;
-            font-size: 12px;
-            display: inline-block;
-            width: 105px;
-        }
-        &.notAvailable raw-html *{
-            opacity: 0.3;
-        }
-
-        @media only screen and (max-width: 900px){
-            .cLang{
-                display: none;
-            }
-            .cLabel{
-                padding-right: 115px;
-            }
+        .cAutonym{
+            font-size: 14px;
+            color: $gray-400;
         }
         @media only screen and (max-width: 750px){
             padding: 7px 15px  0px!important;
-            .raw-html{
-                display: block;
-            }
-            .clSize{
-                padding-left: 60px;
-                position: relative;
-                top: -5px;
-            }
-            .cLabel{
-                display: block;
-                padding-right: 0px;
-            }
         }
     }
 }

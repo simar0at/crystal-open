@@ -10,6 +10,7 @@ class SettingsStoreClass extends StoreMixin {
             default: {
                 density: "medium",
                 language: "en",
+                highcontrast: false,
                 lexonomyEmail: "",
                 lexonomyApiKey: ""
             },
@@ -26,7 +27,7 @@ class SettingsStoreClass extends StoreMixin {
     }
 
     getAll(){
-        return Object.assign(this._copy(this.data.default), this._copy(this.data.user))
+        return Object.assign(window.copy(this.data.default), window.copy(this.data.user))
     }
 
     getSettingsList(){
@@ -100,6 +101,9 @@ class SettingsStoreClass extends StoreMixin {
 
     _onLoaded(payload){
         this.data.user = payload.user
+        if(isDef(payload.user.highcontrast)){
+            this.data.user.highcontrast = payload.user.highcontrast.toLowerCase() == "true"
+        }
         this.trigger("loaded")
         this.trigger("change")
     }

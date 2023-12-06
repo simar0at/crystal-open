@@ -5,7 +5,7 @@
         size={opts.size}
         on-input={onInputChangedDebounced}
         suffix-icon={isLoading ? "access_time" : "alternate_email"}></ui-input>
-    <div style="position: relative; top:-20px;">
+    <div style="position: relative; top:-16px;">
         <span if={!isLoading && query}>
             <span if={found} class="green-text">{_("emailValid")}</span>
             <span if={!found && isEmail} class="red-text">{_("emailNotFound")}</span>
@@ -56,7 +56,7 @@
             if(this.isEmail){
                 this.request && Connection.abortRequest(this.request)
                 this.request = Connection.get({
-                    url: window.config.URL_CA + "/users?email=" + this.query,
+                    url: window.config.URL_CA + "users?email=" + this.query,
                     done: function(payload){
                         if(!payload.error){
                             this.users = payload.data.map(user => {
@@ -69,6 +69,9 @@
                         this.callValidChange()
                         this.update()
                     }.bind(this),
+                    fail: payload => {
+                        SkE.showError("Could not load user list", getPayloadError(payload))
+                    },
                     always: function(){
                         this.request = null
                         this.isLoading = false

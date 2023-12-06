@@ -20,12 +20,12 @@
             </div>
         </div>
         <div if={!showForm} class="center-align">
-            <a id="btnAddSortShow" class="waves-effect waves-light btn btn-smalltext" onclick={onAddClick}>
+            <a id="btnAddSortShow" class="btn btn-smalltext" onclick={onAddClick}>
                 {_("cc.addNextCriterion")}
             </a>
         </div>
 
-        <div if={showForm} class="sortForm">
+        <div if={showForm} class="sortForm white">
             <context-selector range=3
                 name="spos"
                 on-change={onOptionChange}
@@ -41,7 +41,6 @@
                     options={attrList}
                     on-change={onAttrChange}
                     open-on-focus={true}
-                    deselect-on-click={false}
                     value-in-search={true}
                     tooltip="t_id:conc_r_sort_attribute"
                     floating-dropdown={true}></ui-filtering-list>
@@ -59,7 +58,7 @@
             </div>
 
             <div class="center-align">
-                <a id="btnAddSortSubmit" class="waves-effect waves-light btn btn-smalltext tooltipped"
+                <a id="btnAddSortSubmit" class="btn btn-smalltext tooltipped"
                     disabled={!isValid}
                     onclick={onAddSubmitClick}
                     data-tooltip="t_id:conc_r_sort_addcrit">
@@ -69,8 +68,8 @@
         </div>
     </div>
 
-    <div class="buttonGo">
-        <a id="btnGoSort" class="{disabled: !data.sort.length && !isValid} btn contrast" onclick={onSortClick}>{_("go")}</a>
+    <div class="primaryButtons buttonGo">
+        <a id="btnGoSort" class="{disabled: !data.sort.length && !isValid} btn btn-primary" onclick={onSortClick}>{_("go")}</a>
     </div>
 
     <script>
@@ -83,7 +82,7 @@
         this.mixin("tooltip-mixin")
 
         this.attr = "word"
-        this.attrList = [].concat(this.store.attrList, this.store.refList)
+        this.attrList = [].concat(this.store.attrList, this.store.refList).filter(attr => !attr.isLc)
         this.spos = "0"
         this.bward = false
         this.icase = false
@@ -136,6 +135,7 @@
                 if(this.showForm){
                     this.data.sort.push(this.getValue())
                 }
+                this.data.closeFeatureToolbar = true
                 this.store.searchAndAddToHistory({
                     sort: this.data.sort,
                     page: 1

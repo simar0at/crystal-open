@@ -1,17 +1,9 @@
 <screen-overlay class="screen-overlay">
-    <div if={isLoading || opts.isLoading} class="overlay">
-        <div class="preloader-wrapper big active">
-            <div class="spinner-layer spinner-blue-only">
-                <div class="circle-clipper left" style="float: left!important;">
-                    <div class="circle"></div>
-                    </div><div class="gap-patch">
-                    <div class="circle"></div>
-                    </div><div class="circle-clipper right" style="float: right!important;">
-                    <div class="circle"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <preloader-spinner if={isLoading || opts.isLoading}
+            show-academic-warning={opts.showAcademicWarning}
+            center=1
+            overlay=1
+            big=1>
 
     <script>
         require("./screen-overlay.scss")

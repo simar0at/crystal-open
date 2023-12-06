@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-laoo ._t{
-    font-family: 'Noto Lao'
+.script-laoo ._t,
+body .script-laoo ._t,
+body .script-laoo._t{
+    font-family: 'Noto Lao', 'Noto Sans', sans-serif;
 }

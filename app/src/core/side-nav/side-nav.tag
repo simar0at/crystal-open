@@ -1,12 +1,26 @@
 <side-nav onmouseenter={onmouseenter} onmouseleave={onmouseleave}>
     <ul id="side-nav" class="sidenav fixed no-autoinit {right-aligned: isRTL}">
         <li id="navMain">
-            <a href={isAnonymous && !corpus ? "#open" : "#dashboard"}>
-                <span></span>
+            <a href={isAnonymous && !corpus ? "#open" : "#dashboard"} class="{noSkeLogo: window.config.NO_SKE}">
+                <span class="logo"></span>
             </a>
         </li>
-        <li each="{link in menuLinks}" class="{disabled: link.disabled}" data-page="{link.page}">
-            <a href="#{link.href}" id="side_nav_btn{link.page}" class="waves-effect sidenav-close" onclick={parent.onLinkClick}>
+        <li if={isAcademic}
+            class="academicUseOnly mb-4">
+            <div class="academicUseOnly text-center nowrap">
+                {_("academicUseOnly")}
+                <a href={externalLink("academicSubscription")}
+                        target="_blank"
+                        class="inlineBlock white-text">
+                    <i class="material-icons material-clickable">open_in_new</i>
+                </a>
+            </div>
+        </li>
+        <li each="{link in menuLinks}"
+                class="feature {'disabled tooltipped': link.disabled}"
+                data-page="{link.page}"
+                data-tooltip={link.disabled ? (link.tooltip ? link.tooltip : _("db.featureNotAvailable")) : null}>
+            <a href="#{link.href}" id="side_nav_btn{link.page}" class="sidenav-close" onclick={parent.onLinkClick}>
                 <i class="small {link.class}">{link.icon}</i>
                 <span class="linkText">{getLabel(link)}</span>
             </a>
@@ -20,6 +34,7 @@
         const {AppStore} = require("core/AppStore.js")
         const {Auth} = require("core/Auth.js")
         const {Localization} = require("core/Localization.js")
+        this.mixin("tooltip-mixin")
 
 
         this.allowShow = true
@@ -69,6 +84,7 @@
                     page: "parconcordance",
                     labelId: "parconcordance",
                     class: "ske-icons skeico_parallel_concordance",
+                    tooltip: "t_id:d_parconc_inactive",
                     disabled: !this.features.parconcordance || !p.parconcordance
                 },
                 {
@@ -97,7 +113,7 @@
                 }
             ].map(obj => {
                 obj.href = obj.page
-                if(this.corpus && obj.page == "dashboard" || this.features[obj.page]){
+                if(this.corpus && (obj.page == "dashboard" || this.features[obj.page])){
                     obj.href +=  "?corpname=" + this.corpus.corpname
                 }
                 return obj
@@ -106,6 +122,7 @@
 
         updateAttributes(){
             this.isAnonymous = Auth.isAnonymous()
+            this.isAcademic = Auth.isAcademic()
             this.actualPage = Router.getActualPage()
             this.actualFeature = Router.getActualFeature()
             this.corpus = AppStore.get('corpus')
@@ -175,7 +192,6 @@
             $('.sidenav').sidenav({
                 edge: this.isRTL ? "right" : "left",
                 menuWidth: 250,
-                draggable: false,
                 onOpenStart: () => {$("#side-nav").addClass("open")},
                 onCloseEnd: () => {$("#side-nav").removeClass("open")}
             })

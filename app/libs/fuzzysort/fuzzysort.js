@@ -41,9 +41,9 @@ USAGE:
       // return result
     },
 
-    go: function(search, targets, options) {
-      if(!search) return noResults
-      search = fuzzysort.prepareSearch(search)
+    go: function(search_in, targets, options) {
+      if(!search_in) return noResults
+      var search = fuzzysort.prepareSearch(search_in)
       var searchLowerCode = search[0]
 
       var threshold = options && options.threshold || instanceOptions && instanceOptions.threshold || -9007199254740991
@@ -69,8 +69,24 @@ USAGE:
             var target = getValue(obj, key)
             if(!target) { objResults[keyI] = null; continue }
             if(!isObj(target)) target = fuzzysort.getPrepared(target)
-
-            objResults[keyI] = algorithm(search, target, searchLowerCode)
+            if(options.fullMatchKeys && options.fullMatchKeys.includes(key)){
+              objResults[keyI] = fuzzysort.algorithmNoTypo(search, target, searchLowerCode)
+              if(objResults[keyI]){
+                objResults[keyI].score = objResults[keyI].score * 2
+                if(search.length > 1){
+                  var indexes = objResults[keyI].indexes
+                  // consecutive match
+                  for(k = 1; k < indexes.length; k++){
+                    if(indexes[k] - 1 != indexes[k-1]){
+                      objResults[keyI] = null
+                      break;
+                    }
+                  }
+                }
+              }
+            } else {
+              objResults[keyI] = algorithm(search, target, searchLowerCode)
+            }
           }
           objResults.obj = obj // before scoreFn so scoreFn can use it
           var score = scoreFn(objResults)
@@ -429,6 +445,10 @@ USAGE:
         prepared.score = score
         prepared.indexes = new Array(matchesBestLen); for(var i = matchesBestLen - 1; i >= 0; --i) prepared.indexes[i] = matchesBest[i]
 
+        // the whole string match (no spaces between indexes) -> move up in results
+        if(!(prepared.indexes[0] +  prepared.indexes.length - 1 - prepared.indexes[prepared.indexes.length - 1])){
+          score *= 0.25
+        }
         // modified to prefer first letters match
         for(var i = 0; i < prepared.indexes.length; i++){
           if(prepared.indexes[i] == 0 || prepared.indexes[i-1] == 32){

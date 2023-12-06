@@ -15,15 +15,15 @@
                     suffix-icon={data.query !== "" ? "close" : ""}
                     on-suffix-icon-click={onSuffixIconClick}>
             </ui-input>
-            <ui-checkbox
+            <ui-switch
                     if={data.cat != 'parallel' && !window.config.NO_SKE}
-                    class="hide-on-med-and-down tighter inlineBlock"
+                    class="hide-on-med-and-down tighter inline-block sketches"
                     label-id="cp.hasSketches"
                     name="sketches"
                     disabled={!visibleCorpora.length || !someHasSketches}
                     on-change={onOnlySketchesChange}
-                    checked={data.sketches == "1" ? true : false}>
-            </ui-checkbox>
+                    riot-value={data.sketches == "1" ? true : false}>
+            </ui-switch>
             <div class="chip catchip" if={data.cat != 'all'}>
                 {_("cp." + (data.cat || "all"))}
                 <i class="material-icons" onclick={onRemoveSelCat}>close</i>
@@ -73,7 +73,8 @@
                     on-change={onLang2Change}>
             </ui-filtering-list>
             <a href="#ca-create" if={window.permissions["ca-create"]}
-                    class="btn contrast tooltipped right"
+                    id="btnAdvCreateCorpus"
+                    class="btn btn-primary tooltipped right"
                     data-tooltip={_("ca.newCorpusDesc")}>
                 {_("newCorpus")}
             </a>
@@ -151,7 +152,7 @@
                             <td onclick={onSelectCorpus}>
                                 <i class="material-icons shared tooltipped" data-tooltip={_("iShareCorpus")} if={corpus.is_shared}>group</i>
                                 <span ref="a_{idx}_n">{corpus.name}</span>
-                                <span class="badge new skeblue hide-on-small-and-down"
+                                <span class="badge new background-color-blue-100 hide-on-small-and-down"
                                     if={corpus.owner_id}
                                     data-badge-caption="">
                                     {corpus.owner_id == userid ? _("cp.myCorpus") : corpus.owner_name}
@@ -200,7 +201,7 @@
                             </td>
                             <td onclick={onSelectCorpus}>
                                 <span ref="{o_idx}_n">{corpus.name}</span>
-                                <span class="badge new skeblue hide-on-small-and-down"
+                                <span class="badge new background-color-blue-100 hide-on-small-and-down"
                                     if={corpus.owner_id}>
                                     {corpus.owner_id == userid ? _("cp.myCorpus") : corpus.owner_name}
                                 </span>
@@ -257,7 +258,7 @@
     <script>
         require("./corpus-tab-advanced.scss")
         const {Connection} = require('core/Connection.js')
-        const {Router} = require('core/Router.js')
+        const {Url} = require('core/url.js')
         const {AppStore} = require('core/AppStore.js')
         const {CorpusStore} = require("corpus/CorpusStore.js")
         const {UserDataStore} = require("core/UserDataStore.js")
@@ -284,8 +285,8 @@
         this.catSizes = {}
         this.oldCatSizes = {}
         this.sort = {
-            sort: 'asc',
-            orderBy: 'name'
+            sort: UserDataStore.getOtherData("corpus_select_sort") || 'asc',
+            orderBy: UserDataStore.getOtherData("corpus_select_order_by") || 'name'
         }
 
         sortCorpora(){
@@ -348,6 +349,10 @@
             this.sort = sort
             this.sortCorpora()
             this.update()
+            UserDataStore.saveOtherData({
+                    'corpus_select_sort': sort.sort,
+                    'corpus_select_order_by': sort.orderBy
+                })
         }
 
         onClickShowOldCorpora() {
@@ -372,6 +377,7 @@
                 this.oldCatSizes[cat] = 0
             })
 
+            let lowestScore = 0
             if(this.data.query !== ""){
                 let fuzzySorted = FuzzySort.go(this.data.query, copy(this.corpusList), {
                     key: "corpname",
@@ -385,6 +391,9 @@
                         score *= 2
                     } else if(fs.obj.id || fs.obj.is_featured){
                         score *= 0.5
+                    }
+                    if(score < lowestScore){
+                        lowestScore = score
                     }
                     let obj = {score: score}
                     obj.h_lang = FuzzySort.highlight(fs[0], '<b class="red-text">', "</b>")
@@ -427,6 +436,9 @@
                     h_lang: "",
                     h_corp: ""
                 })
+                if(lowestScore && !corpus.user_can_read){
+                    updatedCorp.score += lowestScore
+                }
                 if(updatedCorp.new_version){
                     this.visibleCorporaOld.push(updatedCorp)
                 } else{
@@ -443,7 +455,7 @@
                 this.sortCorpora()
             }
 
-            Router.updateUrlQuery(this.data, true, true)
+            Url.setQuery(this.data, true, true)
             this.update()
             this.highlightOccurrences(this)
         }
@@ -514,8 +526,10 @@
                     return {
                         label: lang.name,
                         value: lang.id,
+                        search: [lang.id, lang.autonym || ""],
                         generator: (item) => {
-                            return '<i class="material-icons">language</i><span class="llab">' + lang.name + " (" + langCount[lang.id] + ")" + '</span>'
+                            return `<span class="lAut">${lang.autonym ? lang.autonym + ' (' + lang.name + ')' : lang.name}<span class="lCnt background-color-blue-100">${langCount[lang.id]}</span></span>`
+                                + (lang.id != lang.name ? `<span class="lId"> ${lang.id}</span>` : '')
                         }
                     }
                 }, )

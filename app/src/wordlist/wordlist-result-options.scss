@@ -6,43 +6,37 @@
     }
     .totalItems{
         font-size: 0.8em;
-        color: $new_mediumBlue;
         margin-right: 20px;
+        top: 5px;
+        position: relative;
     }
     .ro-title{
         margin: 0;
-    }
-    .ro-chips{
-        .chip{
-            background-color: #f4f4f4;
-        }
-    }
-    .headerSelect{
-        margin-right: 20px;
-        padding-right: 35px;
-        .select-wrapper {
-            .caret{
-                right: -30px;
-            }
-            input.select-dropdown{
-                font-size: 30px;
-                padding-right: 25px;
-                min-width: calc(100% + 35px);
-                padding-bottom: 5px;
-            }
-        }
+        vertical-align: middle;
     }
     .wordlist-result-options-view{
-        &>div{
-            display: inline-block;
-            padding: 0 .75rem;
-            vertical-align: top;
-        }
         .ui-radio label span:first-letter{
             text-transform: uppercase;
         }
+        .col{
+            max-width: 350px;
+        }
+        .dividerRight{
+            @media only screen and(max-width: 600px){
+              border: none;
+            }
+        }
     }
     .randomBtn{
-        vertical-align: top;
+        i{
+            color: $blue-800;
+            vertical-align: bottom;
+            font-size: 35px;
+        }
+    }
+    .colFreqNum{
+        @media #{$large-and-up}{
+            margin-top: 1.4rem;
+        }
     }
 }

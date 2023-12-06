@@ -1,4 +1,4 @@
-@import 'app/styles/base';
+@import 'app/styles/constants';
 
 .collocations-result{
     .raw-html{
@@ -17,7 +17,7 @@
             width: 40px;
         }
         i{
-            color: $mediumGray;
+            color: $gray-600;
         }
     }
 

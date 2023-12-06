@@ -1,39 +1,183 @@
-<breadcrumb-chip class="bc-{(opts.idx * 1) + 1} {bcLast: isLast} chip z-depth-1 {active: opts.active} {disabled: disabled}"
-        onclick={!disabled ? onOperationClick : null}>
-    <span>{_(opts.name, {_ : opts.name})}</span>
-    <span class="params truncate" if={opts.arg} onmouseover={showTooltip}>{opts.arg}</span>
-    <span if={opts.contextStr}>
-        |
-        <span>{_(data.showcontext == "pos" ? "posContext" : "lemmaContext")}</span>
-        <span class="params truncate" onmouseover={showTooltip}>
-            {opts.contextStr}
-        </span>
-    </span>
+<breadcrumb-info class="breadcrumb-info">
+    <h5>{_("resultDetails")}</h5>
+    <b>
 
-    <span if={desc && (!data.isLoading || isLast || isLastActive)} class="size">
-        {isNaN(size) || size == -1 ? "" : window.Formatter.num(size)}
-        <span if={data.isCountLoading} class="dotsAnimation">
-            <span>...</span>
+    <span each={operation, opIdx in data.operations}
+            if={opIdx <= idx}
+            class="operation inline-block">
+        <i if={opIdx != 0} class="material-icons delimiter">chevron_right</i>
+        {_(operation.name, {_: operation.name})}
+        <span class="params" if={operation.arg}>{operation.arg}</span>
+        <span if={operation.contextStr}>
+            |
+            <!--span>{_(parent.data.showcontext == "pos" ? "posContext" : "lemmaContext")}</span>
+            <span class="params">
+                {parent.opts.contextStr}
+            </span-->
         </span>
     </span>
-    <span if={!data.isLoading && (isLast || isLastActive)} class="relsize">
-        {getRelSize()}
+    </b>
+    <div class="flex flexWrapper">
+        <table class="material-table mt-4 mb-4">
+            <tr>
+                <td>{_("numOfHits")}</td>
+                <td>{window.Formatter.num(desc.size)}</td>
+            </tr>
+            <tr>
+                <td>{_("relNumOfHits")}</td>
+                <td>{window.Formatter.num(desc.rel)}</td>
+            </tr>
+            <tr>
+                <td>{_("percentOfCorpus")}</td>
+                <td>{percentOfCorpus.toPrecision(4)}%</td>
+            </tr>
+            <tr if={idx != 0}>
+                <td>{_("percentOfFirst")}</td>
+                <td>{Number(percentOfFirst).toPrecision(4)}%</td>
+            </tr>
+            <tr if={idx >= 2}>
+                <td>{_("percentOfPrevious")}</td>
+                <td>{Number(percentOfPrevious).toPrecision(4)}%</td>
+            </tr>
+            <tr if={data.raw.star}>
+                <td>{_("averageRating")}</td>
+                <td>
+                    {Math.round(data.raw.star * 10) / 10}
+                    <i class="breadcrumbIcon material-icons amber-text">star</i>
+                </td>
+            </tr>
+            <tr if={data.raw.docf}>
+                <td>{_(parent.corpus.hasStarAttr ? "mr" : "wl.docf")}</td>
+                <td>
+                    {window.Formatter.num(data.raw.docf)}
+                    <i class="breadcrumbIcon material-icons grey-text">description</i>
+                </td>
+            </tr>
+            <tr if={data.raw.reldocf}>
+                <td>{_(parent.corpus.hasStarAttr ? "relmr" : "reldocf")}</td>
+                <td>
+                    {window.Formatter.num(data.raw.reldocf)}%
+                    <i class="breadcrumbIcon material-icons grey-text">description</i>
+                </td>
+            </tr>
+            <tr>
+                <td>{_("corpusSize")} ({_("tokens").toLowerCase()})</td>
+                <td>{window.Formatter.num(parent.corpus.sizes.tokencount)}</td>
+            </tr>
+        </table>
+        <div ref="chartContainer"
+                class="concDist">
+            <div class="mt-2 pl-8 concDistHeader">{_("cc.freqDistrib")}</div>
+            <concordance-distribution if={showChart}
+                    just-chart=1
+                    concordance-query={query}
+                    page-tag={opts.pageTag}
+                    granularity={chartGranularity}
+                    height={chartHeight}
+                    width={chartWidth}
+                    on-click={Dispatcher.trigger.bind(null, "closeDialog")}></concordance-distribution>
+        </div>
+    </div>
+
+    <script>
+        require("concordance/concordance-distribution.tag")
+        this.store = this.opts.pageTag.store
+        this.idx = this.parent.opts.idx * 1
+        this.query = this.store.getConcordanceQuery().splice(0, this.idx + 1)
+        this.parent = this.opts.parent
+        this.data = this.parent.data
+        this.desc = this.parent.desc
+        this.percentOfCorpus = this.desc.size / (this.parent.corpus.sizes.tokencount / 100)
+        if(this.idx != 0){
+            this.percentOfFirst = this.desc.size / (this.parent.parent.desc[0].size / 100)
+        }
+        if(this.idx >= 2){
+            this.percentOfPrevious = this.desc.size / (this.parent.parent.desc[this.idx - 1].size / 100)
+        }
+        this.on("mount", ()=>{
+            // wait for dialog to open
+            setTimeout(() => {
+                this.chartWidth = Math.round(this.refs.chartContainer.offsetWidth) - 12 //scrollbar
+                this.chartHeight = Math.min(this.chartWidth / 2.5, 300)
+                this.chartGranularity = Math.round((this.chartWidth - 90) / 5)
+                this.showChart = true
+                this.update()
+            }, 400)
+        })
+    </script>
+</breadcrumb-info>
+
+
+<breadcrumb-chip class="bc-{idx + 1} {bcLast: isLast} z-depth-1 {active: opts.active} {cursor-pointer: operations.length > 1}"
+        onclick={onOperationClick}>
+    <div class="firstRow">
+        <span>{_(opts.operation.name, {_ : opts.operation.name})}</span>
+        <span if={showOf10M()}
+            class="grey-text tooltipped"
+            data-tooltip="{_(data.random ? 'breadcrumbsFilterRandom10MTip' : 'breadcrumbsFilterFirst10MTip')}">
+            ({_(data.random ? "breadcrumbsFilterRandom10M" : "breadcrumbsFilterFirst10M")})
+        </span>
+        <span class="params truncate" if={opts.arg} onmouseover={showTooltip}>{opts.arg}</span>
+        <!--span if={opts.contextStr}>
+            |
+            <span>{_(data.showcontext == "pos" ? "posContext" : "lemmaContext")}</span>
+            <span class="params truncate" onmouseover={showTooltip}>
+                {opts.contextStr}
+            </span>
+        </span-->
+        ●
+        <span if={desc && (!data.isLoading || isLast || isLastActive)}
+                class="size tooltipped"
+                data-tooltip={_("numOfHits")}>
+            {isNaN(size) || size == -1 ? "" : window.Formatter.num(size)}
+            <span if={data.isCountLoading}
+                    class="dotsAnimation">
+                <span>...</span>
+            </span>
+        </span>
+        <span if={!data.isLoading && (isLast || isLastActive) && data.raw.star}
+                class="tooltipped"
+                data-tooltip={_("averageRating")}>
+            ●
+            <i class="breadcrumbIcon material-icons amber-text">star</i>
+            {Math.round(data.raw.star * 10) / 10}
+        </span>
     </span>
-    <i if={!disabled && (opts.idx != 0 || opts.contextStr)}
-            class="close material-icons"
-            onclick={onCloseClick}>close</i>
+    <span if={idx != 0 || opts.contextStr}
+            class="closeBtn btn btn-floating grey lighten-4">
+        <i class="close material-icons"
+                onclick={onCloseClick}>close</i>
+    </span>
+    </div>
+    <div class="secondRow">
+        <span if={!data.isLoading} class="relsize">
+            {getRelSize()}
+            ●
+            <span class="tooltipped" data-tooltip={_("percentOfCorpus")}>
+                {Number((this.size / this.store.corpus.sizes.tokencount * 100).toPrecision(2))}%
+            </span>
+            <span if={data.raw.reldocf} class="tooltipped" data-tooltip={parent.corpus.hasStarAttr ? "t_id:relmr" : _("reldocf")}>
+                ●
+                <i class="breadcrumbIcon material-icons grey-text">description</i>
+                {window.Formatter.num(data.raw.reldocf)}%
+            </span>
+        </span>
+
+        <i class="infoBtn material-icons material-clickable" onclick={showInfo}>info</i>
+    </div>
 
     <script>
         this.mixin("feature-child")
+        this.mixin("tooltip-mixin")
 
 
         updateAttributes(){
-            this.disabled = !this.store.isConc
-            this.desc = this.parent.desc ? this.parent.desc[this.opts.idx] : null
+            this.idx = this.opts.idx * 1
+            this.desc = this.parent.desc ? this.parent.desc[this.idx] : null
             this.size = this.desc ? this.desc.size : ""
             this.operations = this.parent.operations
-            this.isLastActive = this.parent.desc ? this.parent.desc.length == this.opts.idx + 1 : false
-            this.isLast = this.operations.length ==  this.opts.idx + 1
+            this.isLast = this.operations.length ==  this.idx + 1
+            this.isLastActive = this.isLast && this.opts.active//this.parent.desc ? this.parent.desc.length == this.opts.idx + 1 : false
         }
         this.updateAttributes()
 
@@ -42,22 +186,37 @@
             return this.opts.active || nextOpts.active
         }
 
+        showOf10M(evt){
+            // breadcrumb is the first filter operation and previous operation has more than 10M results
+            return this.data.total < this.data.fullsize
+                    && this.opts.operation.name == "filter"
+                    && this.parent.operations.findIndex(o => o.name == "filter") == this.idx // is the first filter
+                    && this.parent.desc[this.idx - 1]
+                            && this.parent.desc[this.idx - 1].size
+                            && this.parent.desc[this.idx - 1].size >= 10000000
+        }
+
         getRelSize(){
             if(!this.desc || isNaN(this.desc.rel)){
                 return ""
             }
             if(this.desc.rel){
-                return "(" + window.Formatter.num(this.desc.rel) + " " + _("perMillion") + ")"
+                return window.Formatter.num(this.desc.rel) + " " + _("freqPerMillion").toLowerCase()
             } else if(this.desc.size){
                 return  _("cc.lessThan001")
             }
         }
 
-        onOperationClick(idx){
-            if(this.operations.length == 0){
-                return // there is only initial operation -> no reason to allow click on it
+        onOperationClick(evt){
+            if(evt.target.nodeName != "I"){
+                if(this.operations.length == 0){
+                    return // there is only initial operation -> no reason to allow click on it
+                }
+                if(this.isLastActive){
+                    return
+                }
+                this.store.goToOperation(this.operations[this.idx])
             }
-            this.store.goToOperation(this.operations[opts.idx])
         }
 
         onCloseClick(evt){
@@ -65,14 +224,24 @@
             evt.preventDefault()
             evt.preventUpdate = true
             evt.item.operation.name == "context" && this.store.resetContext()
-            this.store.removeOperation(this.operations[evt.item.idx])
+            this.store.removeOperation(evt.item.operation)
+        }
+
+        showInfo(evt){
+            Dispatcher.trigger("openDialog", {
+                tag: "breadcrumb-info",
+                opts: {
+                    pageTag: this.pageTag,
+                    parent: this
+                }
+            })
         }
 
         showTooltip(evt){
             evt.preventUpdate = true
             let node = evt.currentTarget
             if(node.clientWidth < node.scrollWidth){
-                window.showTooltip(node, node.innerHTML, 600)
+                window.showTooltip(node, node.innerHTML)
                 evt.stopPropagation()
             }
         }
@@ -85,29 +254,37 @@
 <concordance-breadcrumbs class="concordance-breadcrumbs">
     <a href="javascript:void(0);"
             if={showShuffle}
-            class="cbttp"
-            data-tooltip={_(data.random ? "cc.usingRandomTip" : "cc.usingFirst10MTip")}
-            onclick={onRandomClick}
-            style="margin-right: 5px;">
-        <i class="material-icons {red-text: !data.random}" style="font-size: 35px;">
-            error
+            id="breadcrumbsWarning"
+            class="cbttp warningBtn btn btn-floating {red: !data.random}"
+            data-tooltip={_(data.random ? "concRandom10M" : "concFirst10M", [Formatter.num(data.total)])}
+            onclick={onRandomClick}>
+        <i class="material-icons">
+            priority_high
         </i>
     </a>
 
-     <virtual if={desc}>
+    <i if={showSlowWarning}
+        class="slowWarning cbttp material-icons red-text flipHorizontal"
+        data-tooltip={_("slowConcordanceWarning")}>
+        speed
+    </i>
+
+    <virtual if={desc}>
         <subcorpus-chip on-change={onSubcorpusChange}></subcorpus-chip>
+        <text-types-chip on-change={onTextTypesChange}
+                disable-structure-mixing={false}></text-types-chip>
         <breadcrumb-chip idx=0
-                active={!isDisabled}
-                name={_(firstOp.name)}
-                arg={firstOp.arg + tts}
+                active={true}
+                arg={firstOp.arg}
+                operation={firstOp}
                 context-str={contextStr}></breadcrumb-chip>
 
         <virtual each={operation, idx in operations}>
             <i if={idx !=0} class="material-icons delimiter">chevron_right</i>
             <breadcrumb-chip if={idx !=0}
                     idx={idx}
-                    active={operation.active && !isDisabled}
-                    name={operation.name}
+                    active={!operation.inactive}
+                    operation={operation}
                     arg={operation.arg}></breadcrumb-chip>
         </virtual>
 
@@ -137,7 +314,6 @@
 
     <script>
         require("./concordance-breadcrumbs.scss")
-        require("./concordance-10m-dialog.tag")
 
         this.tooltipClass = ".cbttp"
         this.mixin("feature-child")
@@ -148,34 +324,20 @@
             this.firstOp = this.operations[0]
             this.lastOp = this.operations[this.operations.length - 1]
             this.sort = this.data.sort.reduce((str, sort) => {
-                return str + (str ? ", " : "") + sort.attr
+                return str + (str ? ", " : "") + (sort.label || sort.attr)
             }, "")
-            this.tts = ""
-            for(let textTypeName in this.store.data.selection){
-                this.tts += this.tts ? ";" : ""
-                this.tts += textTypeName + ":" + this.store.data.selection[textTypeName].join(",")
-            }
-            if(this.tts){
-                this.tts = ", " + this.tts
+            if(this.data.sort[0] && this.data.sort[0].corpname){
+                this.sort = "(" + this.store.getAlignedLangName(this.data.sort[0].corpname) + ") "  + this.sort
             }
 
-            //this.contextStr = this.store.getContextStr()
-            this.desc = this.data.raw ? this.data.raw.Desc : null
+            this.desc = this.data.breadcrumbsDesc || (this.data.raw ? this.data.raw.Desc : null)
             this.showShuffle = this.data.total < this.data.fullsize
-            this.isDisabled = !this.store.isConc
+            this.showSlowWarning = this.data.itemsPerPage > 200 || (this.data.itemsPerPage > 50 && this.data.attrs.split(",").length > 1 && this.data.attr_allpos == "all")
         }
         this.updateAttributes()
 
         onRandomClick(){
-            Dispatcher.trigger("openDialog", {
-                id: "concordance10M",
-                tag: "concordance-10m-dialog",
-                small: true,
-                opts:{
-                    parent: this,
-                    random: this.data.random
-                }
-            })
+            this.store.toggleRandom()
         }
 
         onSortClick(){
@@ -197,7 +359,7 @@
             evt.stopPropagation()
             this.store.searchAndAddToHistory({
                 gdexconf: "",
-                gdex_enabled: 0
+                gdex_enabled: false
             })
         }
 
@@ -206,8 +368,12 @@
             Dispatcher.trigger("concordanceOpenJumpTo")
         }
 
-        onSubcorpusChange(subcorpus){
-            this.store.onSubcorpusChange && this.store.onSubcorpusChange(subcorpus)
+        onSubcorpusChange(usesubcorp){
+            this.store.reloadActualResults && this.store.reloadActualResults({usesubcorp: usesubcorp})
+        }
+
+        onTextTypesChange(tts){
+            this.store.reloadActualResults && this.store.reloadActualResults({tts: tts})
         }
 
         this.on("update", this.updateAttributes)

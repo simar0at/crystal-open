@@ -1,8 +1,13 @@
+@import 'app/styles/constants';
+
 .help-dialog {
     .cardBtnContainer{
         a{
             display: inline-block;
             margin-bottom: 20px;
+            .cardBtn{
+                min-width: 280px;
+            }
         }
     }
     .key {
@@ -17,7 +22,7 @@
     .action{
         display: inline-block;
         b{
-            color: #C52031;
+            color: $red-400;
             font-weight: bold;
         }
     }
@@ -35,7 +40,7 @@
     }
 
     .help-youtube-st1 {
-        fill: #FFFFFF;
+        fill: $white;
     }
 
     .help-youtube-st2 {
@@ -61,17 +66,19 @@
     }
 
     .socials{
-        border-top: 1px solid #9e9e9e;
+        border-top: 1px solid $gray-500;
         position: relative;
         top: 66px;
         padding-top: 20px;
         display: flex;
         align-items: flex-end;
+        pointer-events: none;
         a{
             width: 26px;
             height: 26px;
             display: inline-block;
             margin: 0 7px;
+            pointer-events: auto;
         }
         @media only screen and (max-width: 550px){
             top: 5px;

@@ -1,4 +1,4 @@
-@import 'app/styles/base';
+@import 'app/styles/constants';
 
 .ca-compiler{
     min-height: 200px;
@@ -35,7 +35,7 @@
         }
         .statusDesc{
             font-size: 0.8em;
-            color: $lightGray;
+            color: $gray-500;
             min-height: 76px;
         }
     }
@@ -80,7 +80,7 @@
         }
     }
 
-    .ca-compile-log{
+    .ca-compiler-log{
         max-width: 800px;
         margin: auto;
     }

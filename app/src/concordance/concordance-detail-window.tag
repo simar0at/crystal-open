@@ -11,7 +11,7 @@
                 </a>
             </div>
             <span each={item in data.content}
-                    class="str {item.class} {coll: item.coll}"
+                    class="str {item.class} {coll: item.coll} _t"
                     style={item.color ? "color: " + item.color : ""}>
                 {item.str}
             </span>
@@ -84,7 +84,7 @@
         loadData(){
             Connection.get({
                 url: window.config.URL_BONITO + "widectx",
-                query: {
+                data: {
                     pos: this.showArgs.toknum,
                     corpname: this.showArgs.corpname || AppStore.getActualCorpname(),
                     hitlen: this.showArgs.hitlen || 1,
@@ -92,7 +92,10 @@
                     detail_left_ctx: this.leftCtx,
                     detail_right_ctx: this.rightCtx
                 },
-                done: this.onDataLoaded.bind(this)
+                done: this.onDataLoaded.bind(this),
+                fail: payload => {
+                    SkE.showError("Could not load concordance data.", getPayloadError(payload))
+                }
             })
         }
 
@@ -101,12 +104,15 @@
             this.showPrevNext = false
             Connection.get({
                 url: window.config.URL_BONITO + "structctx",
-                query: {
+                data: {
                     pos: this.showArgs.toknum,
                     corpname: this.showArgs.corpname || AppStore.getActualCorpname(),
                     struct: this.opts.structctx
                 },
-                done: this.onDataLoaded.bind(this)
+                done: this.onDataLoaded.bind(this),
+                fail: payload => {
+                    SkE.showError("Could not load structure.", getPayloadError(payload))
+                }
             })
         }
 
@@ -122,9 +128,11 @@
 
         this.on("mount", () => {
             Dispatcher.on("concordanceShowDetail", this.onShow)
+            Dispatcher.on("ESCAPE_TAG", this.close)
         })
         this.on("unmount", () => {
             Dispatcher.off("concordanceShowDetail", this.onShow)
+            Dispatcher.off("ESCAPE_TAG", this.close)
         })
     </script>
 </concordance-detail-window>

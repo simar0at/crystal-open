@@ -1,0 +1,44 @@
+<div>o strumento n-grammi produce liste %[frequency|frequenza]% di sequenze di %[token|token]%. Gli n-grammi sono anche chiamati espressioni multi-parola o MWE (multi-word expressions). L'utente ha una scelta di opzioni di filtraggio tra cui le %[regex|espressioni regolari]% per specificare in dettaglio per quali n-grammi dovrebbe essere generata la loro frequenza. Gli n-grammi possono essere generati su qualsiasi %[attribute|attributo]% con %[wordForm|parola]% e %[lemma]%, essendo i più usati.
+</div>
+<div class="center">
+    <br>
+    <img src="https://www.sketchengine.eu/wp-content/uploads/Ngrams1.png" loading="lazy">
+    <br><br>
+</div>
+<ul class="collapsible">
+    <li>
+        <div class="collapsible-header">Come funzionano gli n-grammi?</div>
+        <div class="collapsible-body">
+            <div>Gli n-grammi sono composti da %[token|token]%, ecco perché <em>don't like</em> è un trigramma e sarà visualizzato come <em>do n't like</em>. (In una concordanza, <em>don't</em> sarà visualizzato senza spazio in mezzo ma anche trattato come due token.)
+            </div>
+            <br>
+            <div>Il risultato può essere limitato per frequenza minima e massima. Di default, gli n-grammi a bassa frequenza sono esclusi. Usa la scheda avanzata per cambiare questo.</div>
+            <br>
+            <div>
+                Le %[regex|espressioni regolari]% possono essere usate per definire criteri complessi per gli n-grammi che dovrebbero essere inclusi nella lista delle frequenze. Quando si usano le espressioni regolari, l'intero n-gramma è trattato come una sequenza continua di caratteri, spazi inclusi.
+            </div>
+            <br>
+            <div>Ci sono due versioni dei filtri "iniziante per", "terminante per" e "contenente". Una per filtrare i caratteri (lettere) che appaiono ovunque all'interno di un n-gramma e una per filtrare le parole complete, cioè ciò che si trova tra due spazi.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Limitazioni</div>
+        <div class="collapsible-body">
+            <div>Solo il primo miliardo di token del corpus è usato per generare la lista di n-grammi. Se il corpus è più grande, il resto del corpus non si rifletterà nei risultati. Questa è una limitazione tecnica che non può essere superata. Una lista di n-grammi generata dall'intero corpus può essere prodotta a pagamento. Contatta <a href="https://www.sketchengine.eu/contact-us/" rel="noopener" target="_blank">Sketch Engine</a>.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Requisiti per il buon funzionamento degli n-grammi</div>
+        <div class="collapsible-body">
+            <div>Gli n-grammi funzioneranno con qualsiasi corpus, purché sia %[token|tokenizzato]%. Gli n-grammi per lemma o tag saranno disponibili solo per corpora lemmatizzati e taggati. Tokenizzazione, lemmatizzazione e tagging sono eseguiti automaticamente quando si caricano i file su Sketch Engine, purché la lingua sia <a href="https://www.sketchengine.eu/user-guide/user-manual/corpora/by-language/" rel="noopener" target="_blank">supportata</a>.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Velocità e dimensione del corpus</div>
+        <div class="collapsible-body">
+            <div>Sketch Engine è progettato specificamente per gestire corpora molto grandi con velocità. La generazione di una lista di n-grammi è una questione di un secondo o due. Gli n-grammi da grandi corpora di molti miliardi di parole possono richiedere diversi secondi per essere completati. L'uso di espressioni regolari molto complesse può rallentare notevolmente il processo.</div>
+        </div>
+    </li>
+</ul>

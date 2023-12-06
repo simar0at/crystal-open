@@ -1,0 +1,33 @@
+@import 'app/styles/constants';
+
+.annotation-box {
+    text-align: center;
+    z-index: 496;
+    width: 100%;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    .annotationBoxWrapper {
+        background-color: $blue-100;
+        padding: 10px 20px;
+        display: inline-block;
+    }
+    .annotationBoxLabel{
+        padding-right: 10px;
+        font-weight: bold;
+        color: $red-200;
+    }
+    &.sticky {
+        margin-top: 0;
+    }
+    &.boxHidden {
+        visibility: hidden;
+        height: 0;
+    }
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+  padding-right: 92px;
+}

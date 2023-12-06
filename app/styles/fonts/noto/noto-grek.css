@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-grek ._t{
-    font-family: 'Noto Sans'
+.script-grek ._t,
+body .script-grek ._t,
+body .script-grek._t{
+    font-family: 'Noto Sans', sans-serif;
 }

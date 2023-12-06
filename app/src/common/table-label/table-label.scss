@@ -1,5 +1,7 @@
+@import 'app/styles/constants';
+
 .table-label{
-    color: #757575;
+    color: $gray-600;
     font-weight: 400;
     white-space: nowrap;
     position: relative;
@@ -15,7 +17,7 @@
     }
     .selected,
     &.active:hover > span{
-        color: #000;
+        color: $black;
         i{
             visibility: initial;
         }

@@ -1,72 +1,50 @@
 <h4>Tipo de consulta</h4>
 <h5>Simple</h5>
-<p>Encuentra palabras que conciden con la(s) palabra(s) clave o cuyo %[lemma|lema]% (la forma básica) conicide con la palabra clave. No distingue minísculas y mayúsculas. Introduce una palabra o frase. Usa el asterisco (*) en lugar de una cadena de caracteres sin especificación. Usa el signo de interrogación (?) en lugar de exacto un caracter. Usa la pleca (|) para inlcuir más de una palabra o frase. Usa dos guiones (--) para encontrar una palabra con ortografía variada: una palbra, con guion y como dos palabras.</p>
+<p>This option is identical to the simple search on the BASIC tab.</p>
+<p>Finds words which match the search word(s) or whose %[lemma]% (base form) matches the search word. It is not case sensitive.</p>
+<p>Introduce una palabra o frase. Usa el asterisco (*) en lugar de una cadena de caracteres sin especificación. Usa el signo de interrogación (?) en lugar de exacto un caracter. Usa la pleca (|) para inlcuir más de una palabra o frase. Usa dos guiones (--) para encontrar una palabra con ortografía variada: una palbra, con guion y como dos palabras.</p>
 <h6>Ejemplos</h6>
-<table width="100%">
-<tbody>
-<tr>
-<th><b>introduce</b></th>
-<th>para encontrar</th>
-</tr>
-<tr>
-<td><b>m*</b></td>
-<td>formas o lemas que empiezan con <em>m-</em></td>
-</tr>
-<tr>
-<td><b>*ing</b></td>
-<td>formas o lemas que terminan con <em>-ing</em></td>
-</tr>
-<tr>
-<td><b>tener una  * idea</b></td>
-<td>forma o lema sin especificación</td>
-</tr>
-<tr>
-<td><b>tener * * * idea</b></td>
-<td>tres formas o lemas sin especificación</td>
-</tr>
-<tr>
-<td><b>???t</b></td>
-<td>formas o lemas de 4 letras que terminan con <em>-t</em></td>
-</tr>
-<tr>
-<td><b>hispano--romano</b></td>
-<td>find <em>hispano-romano</em> or <em>hispanoromano</em> or <em>hispano romano</em></td>
-</tr>
-<tr>
-<td><b>notar|dar cuenta</b></td>
-<td>econtrará tanto <em>notar</em> como <em>dar cuenta</em></td>
-</tr>
-</tbody>
-</table>
-
-<br>
-<h5>Lema</h5>
-<p>Introduce un lema para encontrar todas las <a href="https://www.sketchengine.eu/my_keywords/word-form/" target="_blank" rel="noopener">formas</a> del lema. Se puede incluir <a href="https://www.sketchengine.eu/user-guide/user-manual/concordance-introduction/regular-expressions/" target="_blank" rel="noopener">expresión regular</a>.</p>
-<h6>Example</h6>
 <table width="100%">
     <thead>
         <tr>
-            <th style="width: 25%">introduce</th>
-            <th><b>para encontrar</b></th>
+            <th style="width: 25%"><b>introduce</b></th>
+            <th>para encontrar</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td><b>ir</b></td>
-            <td>ir voy vas iba vaya fuimos etc.</td>
+            <td><b>m*</b></td>
+            <td>formas o lemas que empiezan con <em>m-</em></td>
         </tr>
         <tr>
-            <td><b>c.*</b></td>
-            <td>color, contará, cuero, quepa (palabras con un lema que empieza con &nbsp;c-)</td>
+            <td><b>*ing</b></td>
+            <td>formas o lemas que terminan con <em>-ing</em></td>
+        </tr>
+        <tr>
+            <td><b>tener una * idea</b></td>
+            <td>forma o lema sin especificación</td>
+        </tr>
+        <tr>
+            <td><b>tener * * * idea</b></td>
+            <td>tres formas o lemas sin especificación</td>
+        </tr>
+        <tr>
+            <td><b>???t</b></td>
+            <td>formas o lemas de 4 letras que terminan con <em>-t</em></td>
+        </tr>
+        <tr>
+            <td><b>hispano--romano</b></td>
+            <td>encontrará <em>hispano-romano</em> o <em>hispanoromano</em> o <em>hispano romano</em></td>
+        </tr>
+        <tr>
+            <td><b>notar|dar cuenta</b></td>
+            <td>encontrará tanto <em>notar</em> como <em>dar cuenta</em></td>
         </tr>
     </tbody>
 </table>
 <br>
-<h5>Frase</h5>
-<p>Encuentra una frase mulitipalabra que concide exactamente con lo que se introduce en la búsqueda. Se puede incluir <a href="https://www.sketchengine.eu/user-guide/user-manual/concordance-introduction/regular-expressions/" target="_blank" rel="noopener">expresión regular</a>.</p>
-<br>
-<h5>Forma</h5>
-<p>Encuentra una <a href="https://www.sketchengine.eu/my_keywords/word-form/">forma</a> específíca de palabra que coincide exactamente con lo que se introduce en la búsqueda. Se puede incluir <a href="https://www.sketchengine.eu/user-guide/user-manual/concordance-introduction/regular-expressions/" target="_blank" rel="noopener">expresión regular</a>.</p>
+<h5>Lema</h5>
+<p>Type a lemma to find all %[wordForm|word forms]% of the lemma. %[regex|Regular expressions]% are supported. </p>
 <h6>Ejemplo</h6>
 <table width="100%">
     <thead>
@@ -77,8 +55,33 @@
     </thead>
     <tbody>
         <tr>
-            <td><b>ir</b></td>
-            <td>ir</td>
+            <td><b>fuimos</b></td>
+            <td>c.*</td>
+        </tr>
+        <tr>
+            <td><b>c.*</b></td>
+            <td>color, contará, cuero, quepa (palabras con un lema que empieza con c-)</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<h5>Forma</h5>
+<p>Finds a multi-word phrase exactly as typed. %[regex|Regular expressions]% are supported. </p>
+<br>
+<h5>Forma</h5>
+<p>Finds a specific %[wordForm|word forms]% exactly as typed. %[regex|Regular expressions]% are supported. </p>
+<h6>Ejemplo</h6>
+<table width="100%">
+    <thead>
+        <tr>
+            <th style="width: 25%">introduce</th>
+            <th><b>para encontrar</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>fuimos</b></td>
+            <td>fuimos</td>
         </tr>
         <tr>
             <td><b>fuimos</b></td>
@@ -88,7 +91,7 @@
 </table>
 <br>
 <h5>Caracter</h5>
-<p>Encuentra <a href="https://www.sketchengine.eu/my_keywords/token/" target="_blank" rel="noopener">tokens</a> que contienen el caracter o la cadena de caracteres.</p>
+<p>Finds %[token|tokens]% containing a specific character or a string of characters.</p>
 <h6>Ejemplo</h6>
 <table width="100%">
     <thead>
@@ -100,10 +103,10 @@
     <tbody>
         <tr>
             <td><b>que</b></td>
-            <td>que querer aunque toques ...</td>
+            <td>flicks trafficking quick …</td>
         </tr>
     </tbody>
 </table>
 <br>
 <h5>CQL</h5>
-<p>La Corpus Query Language (Lenguaje de consulta de corpus) sirve para búsquedas complejas que pueden explotar todos los datos de corpus (texto, metadatos, etiqetas, estructuras etc.) para encontrar estructuras léxicas o gramaticales incluso búsquedas sin criterios concretos. <a href="http://ske.li/cql" target="_blank" rel="noopener">más&raquo; (en inglés)</a></p>
+<p>The Corpus Query Language is used for complex searches of lexical and grammatical structures and for searches with unspecific criteria. %[cqlManual|more»]%</p>

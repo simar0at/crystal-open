@@ -34,7 +34,20 @@
             "thesaurus":  "t",
             "wordsketch": "w"
         }
+        this.tokenEscapeChars = "\\#|&"
+        this.defaultAttribute = AppStore.getAttributeByName("lemma")
+                ? "lemma"
+                : AppStore.get("corpus.attributes")[0].name
 
+        this.structOptions = AppStore.getActualCorpus().structures.filter(s => {
+            return s.value != "g"
+        }).map(s => {
+            return {
+                value: s.name,
+                label: s.label || s.name
+            }
+        })
+        this.hasStructureS = this.structOptions.findIndex(s => s.value == "s")
 
         reset(){
             this.tokens = []
@@ -99,8 +112,8 @@
                 type: type
             }
             if(type == "attribute"){
-                condition.attr1 = "lemma"
-                condition.attr2 = "lemma"
+                condition.attr1 = this.defaultAttribute
+                condition.attr2 = this.defaultAttribute
                 condition.label1 = "1"
                 condition.label2 = "2"
                 condition.equals = "="
@@ -108,7 +121,7 @@
                 condition.label = "1"
                 condition.frequency = "1000"
                 condition.gtlt = ">"
-                condition.attr = "lemma"
+                condition.attr = this.defaultAttribute
             }
             this.condition.parts.push(condition)
             this.condition.edit = true
@@ -296,7 +309,7 @@
                         if(idx > 0){
                             partsStr += `${part.andOr}`
                         }
-                        partsStr += `${part.attr}${part.equals}"${esc(part.value, "#|&")}"`
+                        partsStr += `${part.attr}${part.equals}"${esc(part.value, this.tokenEscapeChars)}"`
                         return partsStr
                     }, "")
                 } else if(t.type == "structure"){
@@ -388,7 +401,8 @@
                 }
                 // parse repeat
                 let i = part.length - 1
-                for(; i >= 1 && (part.charAt(i - 1) == "," || !isNaN(part.charAt(i - 1))); i--){}
+                // looking for begining of the repeat string (NUM,NUM | NUM, | ,NUM). "," should not be escaped
+                for(; i >= 1 && ((part.charAt(i - 1) == "," && part.charAt(i - 2) != "\\") || !isNaN(part.charAt(i - 1))); i--){}
                 if(i < part.length - 1 && part.lastIndexOf(",") >= i){ // meet ends with number too
                     i = Math.max(0, i)
                     tmp = part.substr(i).split(",")
@@ -408,7 +422,7 @@
                         obj = this._parseAttrValue(p)
                         token.parts.push({
                             attr: obj.attr,
-                            value: unesc(obj.value, "#|&"),
+                            value: unesc(obj.value, this.tokenEscapeChars),
                             andOr: idx > 0 ? part.charAt(idx) : "&",
                             equals: obj.equals
                         })
@@ -583,7 +597,7 @@
             let links = window.config.links
             if(type == "standard"){
                 defaultToken.parts = [{
-                    attr: "lemma",
+                    attr: this.defaultAttribute,
                     value: "",
                     andOr: "&",
                     equals: "=",
@@ -592,7 +606,7 @@
                 defaultToken.helpUrl = links.cb_basics
             } else if(type == "structure"){
                 defaultToken.structure = {
-                    name: null,
+                    name: this.hasStructureS ? "s" : this.structOptions[0].value,
                     range: "whole",
                 }
                 defaultToken.helpUrl = links.cb_structures
@@ -611,10 +625,10 @@
                 defaultToken.helpUrl = links.cb_basics
             } else if(type == "meet"){
                 defaultToken.meet = {
-                    attr1: "lemma",
+                    attr1: this.defaultAttribute,
                     equals1: "=",
                     value1: "",
-                    attr2: "lemma",
+                    attr2: this.defaultAttribute,
                     equals2: "=",
                     value2: "",
                     left: 5,

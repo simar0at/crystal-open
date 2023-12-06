@@ -3,7 +3,10 @@
 </parconcordance-tab-about>
 
 <parconcordance-tabs>
-    <ui-tabs ref="tabs" tabs={tabs} active={this.data.tab}
+    <ui-tabs ref="tabs"
+            class="searchTabs"
+            tabs={tabs}
+            active={data.tab}
             on-tab-change={onTabChange}>
     </ui-tabs>
 

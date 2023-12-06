@@ -1,13 +1,14 @@
 const {AppStore} = require('core/AppStore.js')
 const {StoreMixin} = require("core/StoreMixin.js")
-const {Router} = require("core/Router.js")
+const {UserDataStore} = require("core/UserDataStore.js")
+const {Url} = require("core/url.js")
 
 class CorpusStoreClass extends StoreMixin {
 
     constructor(){
         super()
         this.data = {
-            tab: "basic",
+            tab: UserDataStore.getOtherData("pageCorpusTab") || "basic",
             cat: "all",
             sketches: "0",
             lang: "",
@@ -28,11 +29,22 @@ class CorpusStoreClass extends StoreMixin {
                 { type: "info",     icon: "info",           labelId: "cp.info"}
             ]
         }
+        UserDataStore.on("otherChange", this.onUserDataLoaded.bind(this))
+    }
+
+    onUserDataLoaded(){
+        let tab = UserDataStore.getOtherData("pageCorpusTab")
+        if(tab){
+            this.data.tab = tab
+        }
     }
 
     changeTab(tab) {
         this.data.tab = tab
-        Router.updateUrlQuery(this.data)
+        Url.updateQuery({tab: tab})
+        UserDataStore.saveOtherData({
+            pageCorpusTab: tab
+        })
     }
 
     sortByName(a, b) {
@@ -59,10 +71,15 @@ class CorpusStoreClass extends StoreMixin {
             name: this.sortByName,
             lang: this.sortByLang
         }[sort.orderBy]
-        data.sort(sortFun)
-        if (sort.sort == "desc") {
-            data.reverse()
-        }
+        data.sort((a, b) => {
+            // unavailable corpora always lower
+            if(a.user_can_read && !b.user_can_read){
+                return -1
+            } else if(!a.user_can_read && b.user_can_read){
+                return 1
+            }
+            return sort.sort == "desc" ? sortFun(a, b) * -1 : sortFun(a, b)
+        })
         return data
     }
 
@@ -149,7 +166,7 @@ class CorpusStoreClass extends StoreMixin {
             for (let key in query) {
                 this.data[key] = query[key] || this.data[key]
             }
-            Router.updateUrlQuery(this.data)
+            Url.setQuery(this.data)
         }
     }
 }

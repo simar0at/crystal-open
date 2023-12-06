@@ -135,7 +135,7 @@
             <span class="cb-modifier">
                 &
             </span>
-            <span class="cb-part canHighlight">
+            <span class="cb-part cb-condition-part-{idx + 1} canHighlight">
                 <span class="cb-part-content">
                     <div data-is="cql-builder-condition-{part.type}" condition={part} builder={builder}></div>
                     <button class="cb-part-remove-btn btn btn-floating btn-small"
@@ -155,7 +155,7 @@
         this.builder = this.opts.builder
         this.condition = this.builder.condition
 
-        onConditionChange(){
+        onChange(){
             this.parent.onChange()
         }
 

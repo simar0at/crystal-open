@@ -1,0 +1,112 @@
+<h4>Typ dotazu</h4>
+<h5>Základní</h5>
+<p>Toto nastavení je identické k jednoduchému hledání na kartě ZÁKLADNÍ.</p>
+<p>Najde slova, která odpovídají hledanému slovu (slovům) nebo jejichž %[lemma]% (základní tvar) odpovídá hledanému slovu. Nerozlišuje velká a malá písmena.</p>
+<p>Zadejte slovo nebo frázi. Pro libovolný počet neurčených znaků použijte hvězdičku (*). Otazník (?) použijte pro přesně jeden neurčený znak. Použijte svislou čáru (|) pro vložení více než jednoho slova nebo fráze. Použijte dvě pomlčky (--) pro vyhledání slova, které může být spojeno pomlčkou, nespojeno pomlčkou nebo napsáno jako dvě samostatná slova.</p>
+<h6>Příklady</h6>
+<table width="100%">
+    <thead>
+        <tr>
+            <th style="width: 25%"><b>použijte</b></th>
+            <th>najde</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>m*</b></td>
+            <td>slova nebo lemmata začínající na <em>m-</em></td>
+        </tr>
+        <tr>
+            <td><b>*ící</b></td>
+            <td>slova nebo lemmata končící na <em>-ing</em></td>
+        </tr>
+        <tr>
+            <td><b>mít nějaký * představa</b></td>
+            <td>nespecifikované slovo nebo lemma</td>
+        </tr>
+        <tr>
+            <td><b>mít * * * představa</b></td>
+            <td>tři nespecifikovaná slova nebo lemmata</td>
+        </tr>
+        <tr>
+            <td><b>???t</b></td>
+            <td>4písmenná slova nebo lemmata končící na <em>-t</em></td>
+        </tr>
+        <tr>
+            <td><b>žluto--zelený</b></td>
+            <td>najde <em>žluto-zelený</em> nebo <em>žlutozelený</em> i <em>žluto zelený</em></td>
+        </tr>
+        <tr>
+            <td><b>vrátit|jít zpět</b></td>
+            <td>najde <em>vrátit</em> nebo <em>jít zpět</em></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<h5>Lemma</h5>
+<p>Napište lemma pro nalezení všech %[wordForm|slovních tvarů]% daného lemmatu. %[regex|Regulární výrazy]% jsou podporovány. </p>
+<h6>Příklad</h6>
+<table width="100%">
+    <thead>
+        <tr>
+            <th style="width: 25%">použijte</th>
+            <th><b>najde</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>jít</b></td>
+            <td>jít jde šel jdeme jdouce</td>
+        </tr>
+        <tr>
+            <td><b>b.*</b></td>
+            <td>být, jsem, bonus, Brno, bohužel (slova jejichž lemma začíná na b-)</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<h5>Fráze</h5>
+<p>Najde víceslovnou frázi přesně podle zadání. %[regex|Regulární výrazy]% jsou podporovány. </p>
+<br>
+<h5>Slovo</h5>
+<p>Finds a specific %[wordForm|word form]% exactly as typed. %[regex|Regular expressions]% are supported. </p>
+<h6>Příklad</h6>
+<table width="100%">
+    <thead>
+        <tr>
+            <th style="width: 25%">použijte</th>
+            <th><b>najde</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>jít</b></td>
+            <td>jít</td>
+        </tr>
+        <tr>
+            <td><b>jde</b></td>
+            <td>jde</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<h5>Znak</h5>
+<p>Najde %[token|tokeny]% obsahující konkrétní znak nebo řetězec znaků.</p>
+<h6>Příklad</h6>
+<table width="100%">
+    <thead>
+        <tr>
+            <th style="width: 25%">použijte</th>
+            <th><b>najde</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>hr</b></td>
+            <td>flicks trafficking quick …</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<h5>CQL</h5>
+<p>Korpusový dotazovací jazyk (CQL, Corpus Query Language) se používá pro komplexní vyhledávání lexikálních a gramatických struktur a pro vyhledávání s nespecifickými kritérii. %[cqlManual|další»]%</p>

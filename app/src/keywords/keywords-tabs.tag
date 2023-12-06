@@ -1,8 +1,8 @@
 <keywords-tab-wipo class="keywords-tab-wipo">
     <div class="card-content" style="padding-top: 1em;">
         <div class="row">
-            <div class="col s12 center-align">
-                <button class="btn btn-primary contrast"
+            <div class="col s12 primaryButtons">
+                <button class="btn btn-primary"
                         onclick={onWipoSearch}>{_("kw.wipoExtraction")}</button>
             </div>
         </div>
@@ -13,9 +13,13 @@
 
         onWipoSearch() {
             Dispatcher.trigger("FEATURE_TOOLBAR_SHOW_OPTIONS", null)
-            this.store.data.do_wipo = 1
+            this.store.data.do_wipo = true
             this.store.data.ktab = "wipo"
-            this.store.resetSearchAndAddToHistory({w_page: 1})
+            this.store.resetSearchAndAddToHistory({
+                w_page: 1,
+                onlywipo: true,
+                ref_corpname: this.data.ref_corpname
+            })
         }
     </script>
 </keywords-tab-wipo>
@@ -25,7 +29,11 @@
 </keywords-tab-about>
 
 <keywords-tabs>
-    <ui-tabs ref="tabs" tabs={tabs} active={store.data.tab} on-tab-change={onTabChange}>
+    <ui-tabs ref="tabs"
+            class="searchTabs"
+            tabs={tabs}
+            active={store.data.tab}
+            on-tab-change={onTabChange}>
     </ui-tabs>
 
     <script>
@@ -57,7 +65,7 @@
             })
         }
         let corpus = AppStore.getActualCorpus()
-        if (window.config.NO_CA || AppStore.data.compTermsCorpList.length == 1 || AppStore.data.compKeywordsCorpList.length == 1) {
+        if (window.config.NO_CA || AppStore.data.compRefCorpList.length == 1) {
             this.tabs.splice(0, 1)
             this.store.data.tab = "advanced"
         }

@@ -1,5 +1,7 @@
 const {Connection} = require('core/Connection.js')
 const {StoreMixin} = require("core/StoreMixin.js")
+const {Auth} = require("core/Auth.js")
+const {Url} = require("core/url.js")
 
 class AppStoreClass extends StoreMixin {
     constructor(){
@@ -15,10 +17,16 @@ class AppStoreClass extends StoreMixin {
         this.TO_BE_COMPILED = "TO_BE_COMPILED"
         this.COMPILATION_FAILED = "COMPILATION_FAILED"
 
+        // refrenece corpora compatibility level
+        this.FEATURE_NA = 0
+        this.FEATURE_PART_COMPATIBILITY = 1
+        this.FEATURE_FULL_COMPATIBILITY = 2
+
         this._reset()
 
         Dispatcher.on("CA_CORPUS_PROGRESS", this._onCorpusProgressChange.bind(this))
         Dispatcher.on("ON_LOGIN_AS_DONE", this._onLoginAsDone.bind(this))
+        Dispatcher.on("LOCALIZATION_CHANGE", this._onLocalizationChange.bind(this))
     }
 
     getActualFeatureStore(){
@@ -40,9 +48,12 @@ class AppStoreClass extends StoreMixin {
     }
 
     getCorpusById(corpus_id){
-        return this.data.corpusList.find((corpus) => {
-            return corpus.id == corpus_id
-        })
+        // admins does not have user corpora in this.data.corpusList -> use active this.data.corpus
+        return (this.data.corpus && this.data.corpus.id == corpus_id)
+                ? this.data.corpus
+                : this.data.corpusList.find((corpus) => {
+                    return corpus.id == corpus_id
+                })
     }
 
     getSubcorpus(subcname){
@@ -52,11 +63,11 @@ class AppStoreClass extends StoreMixin {
     }
 
     getLatestCorpusVersion(corpus){
-        let latest = typeof corpus == "object" ? corpus : this.getCorpusByCorpname(corpus)
-        while(latest.new_version){
+        let latest = corpus
+        while(latest && latest.new_version){
             latest = this.getCorpusByCorpname(latest.new_version)
         }
-        return latest
+        return latest || corpus
     }
 
     getAttributeByName(name) {
@@ -87,8 +98,35 @@ class AppStoreClass extends StoreMixin {
         })
     }
 
-    getScript(){
-        return this.data.corpus ? this.data.scripts[this.data.corpus.language_id] : null
+    getWlsortLabelId(attr){
+        attr = attr.split(":")[0]
+        if(this.data.corpus && this.data.corpus.hasStarAttr){
+            if(attr == "docf"){
+                return "mr"
+            } else if(attr == "reldocf"){
+                return "relmr"
+            } else if(attr == "star"){
+                return "asr"
+            }
+        }
+        if(attr == "frq"){
+            return "frequency"
+        }
+        return attr
+    }
+
+    getFirstWlattr(){
+        let wlattr = AppStore.get("corpus.subcorpattrs.0") || null
+        if(!wlattr && this.data.corpus && this.data.corpus.structures){
+            for(let i = 0; i < this.data.corpus.structures.length; i++){
+                let structure = this.data.corpus.structures[i]
+                let attributes = structure.attributes
+                if(attributes && attributes.length){
+                    return `${structure.name}.${attributes[0].name}`
+                }
+            }
+        }
+        return wlattr
     }
 
     hasCorpusFeature(feature){
@@ -96,11 +134,19 @@ class AppStoreClass extends StoreMixin {
     }
 
     loadBgJobs() {
+        if(Auth.isAnonymous()){
+            return
+        }
         let self = this
         this.data.bgJobsRequest && this.data.bgJobsRequest.xhr.abort()
+        clearTimeout(this.data.bgJobsTimer)
+        this.data.bgJobsTimer = null
         this.data.bgJobsRequest = Connection.get({
             url: window.config.URL_BONITO + 'jobs?format=json&finished=true',
             done: (payload) => {
+                let isOnBGJobPage = Url.getPage() == "bgjobs"
+                self.data.bgJobsTimer = null
+                clearTimeout(this.data.bgJobsTimer)
                 self.data.bgJobs = payload.jobs || []
                 self.data.bgJobs.sort((a, b) => {
                     return new Date(b.starttime) - new Date(a.starttime)
@@ -110,28 +156,38 @@ class AppStoreClass extends StoreMixin {
                     let stat = self.data.bgJobs[i].status[0]
                     let jid = self.data.bgJobs[i].jobid
                     let previ = self.data.bgJobsPrev.indexOf(jid)
+                    let isJobRunnig = ["R", "D", "S"].includes(stat)
                     if (previ >= 0) {
-                        if (stat != "R" && stat != "D" && stat != "S") {
-                            self.data.bgJobsNotify = true
+                        if (!isJobRunnig) {
+                            self.data.bgJobsNotify = !isOnBGJobPage
                             SkE.showToast(_("bj.notifyFinish"), 10000)
                             self.data.bgJobsPrev.splice(previ, 1)
                         }
-                    }
-                    else if (stat == "R" || stat == "D" || stat == "S") {
-                        someRunning = true
+                    } else if (isJobRunnig) {
                         self.data.bgJobsPrev.push(jid)
+                    }
+                    someRunning = someRunning || isJobRunnig
+                    self.data.bgJobs[i].options = []
+                    let feature = Url.getPage(self.data.bgJobs[i].url)
+                    let store = window.stores[feature]
+                    if(store){
+                        self.data.bgJobs[i].feature = feature
+                        let options = Url.getQuery(self.data.bgJobs[i].url)
+                        store.searchOptions.forEach(o => {
+                            if(isDef(options[o[0]]) && !store.isOptionDefault(o[0], options[o[0]])){
+                                self.data.bgJobs[i].options.push([o[1], options[o[0]]])
+                            }
+                        })
                     }
                 }
                 self.data.bgJobsRequest = null
                 Dispatcher.trigger('BGJOBS_UPDATED', self.data.bgJobs)
-                if (someRunning) {
-                    if (!self.data.bgJobsPeriodic) {
-                        self.data.bgJobsPeriodic = setInterval(self.loadBgJobs.bind(self), 60*1000)
-                    }
+                if (someRunning || isOnBGJobPage) {
+                    self.data.bgJobsTimer = setTimeout(self.loadBgJobs.bind(self), (isOnBGJobPage  ? 10 : 60) * 1000)
                 }
-                else {
-                    self.data.bgJobsPeriodic && clearInterval(self.data.bgJobsPeriodic)
-                }
+            },
+            fail: payload => {
+                SkE.showError("Could not load computations.", getPayloadError(payload))
             }
         })
     }
@@ -139,12 +195,15 @@ class AppStoreClass extends StoreMixin {
     loadAnyCorpus(corpname) {
         Connection.get({
             url: window.config.URL_BONITO + "corp_info",
-            query: {
+            data: {
                 subcorpora: 1,
                 corpname: corpname
             },
             done: (payload) => {
                 Dispatcher.trigger('ANY_CORPUS_LOADED', this._processCorpusBonitoData(payload))
+            },
+            fail: payload => {
+                SkE.showError("Could not load corpus.", getPayloadError(payload))
             }
         })
     }
@@ -154,7 +213,7 @@ class AppStoreClass extends StoreMixin {
             console.log("AppStore: Tried to load corpus info with undefined corpname.")
             return
         }
-        this.data.corpus = {}
+        this.data.corpus = null
         this.data.canBeCompiledLoaded = false
         !window.config.NO_CA && this._loadCorpusCA(corpname)
         this._loadCorpusBonito(corpname)
@@ -163,7 +222,7 @@ class AppStoreClass extends StoreMixin {
     loadCorpusList(){
         this.data.corpusListLoaded = false
         Connection.get({
-            url: window.config.URL_CA + "/corpora",
+            url: window.config.URL_CA + "corpora",
             query: null,
             done: this._onCorpusListLoaded.bind(this),
             fail: this._defaultOnFail.bind(this)
@@ -172,7 +231,7 @@ class AppStoreClass extends StoreMixin {
 
     loadLanguageList(){
         Connection.get({
-            url: window.config.URL_CA + "/languages",
+            url: window.config.URL_CA + "languages",
             query: null,
             done: this._onLanguageListLoaded.bind(this),
             fail: this._defaultOnFail.bind(this)
@@ -181,8 +240,8 @@ class AppStoreClass extends StoreMixin {
 
 
     loadCanBeCompiled(){
-        Connection.get({
-            url: window.config.URL_CA + "/corpora/" + this.data.corpus.id + "/can_be_compiled",
+        this.data.corpus.id && Connection.get({
+            url: window.config.URL_CA + "corpora/" + this.data.corpus.id + "/can_be_compiled",
             xhrParams: {
                 method: "POST",
                 contentType: "application/json",
@@ -204,13 +263,16 @@ class AppStoreClass extends StoreMixin {
                         }.bind(this), 5000)
                     }
                 }
-            }.bind(this)
+            }.bind(this),
+            fail: payload => {
+                SkE.showError("Could not load corpus status.", getPayloadError(payload))
+            }
         })
     }
 
     loadGDEXConfs(){
         !this.data.gdexConfsLoaded && Connection.get({
-            url: window.config.URL_CA + "/gdexconfs",
+            url: window.config.URL_CA + "gdexconfs",
             done: function (payload) {
                 if (payload.data) {
                     this.data.gdexConfs = [{'label': _("cc.gdexDefault"), 'value': '__default__'}]
@@ -234,6 +296,9 @@ class AppStoreClass extends StoreMixin {
         let actualCorpname = this.getActualCorpname()
         if(!actualCorpname || actualCorpname != corpname){
             let corpus = this.getCorpusByCorpname(corpname)
+            if(this._checkCovid19Corpus(corpus.corpname)){
+                return false
+            }
             if(!corpus.user_can_read){
                 if(corpus.access_on_demand) {
                     if(corpus.terms_of_use) {
@@ -244,16 +309,19 @@ class AppStoreClass extends StoreMixin {
                                 label: _("agree"),
                                 onClick: function(corpus){
                                     Connection.get({
+                                        url: window.config.URL_CA + "corpora/" + corpus.corpname + "/agree_to_terms",
                                         xhrParams: {
                                             method: "POST",
                                             data: JSON.stringify({}),
                                             contentType: "application/json"
                                         },
-                                        url: window.config.URL_CA + "/corpora/" + corpus.corpname + "/agree_to_terms",
                                         done: function(corpus){
                                             this.loadCorpusList()
                                             this.loadCorpus(corpus.corpname)
-                                        }.bind(this, corpus)
+                                        }.bind(this, corpus),
+                                        fail: payload => {
+                                            SkE.showError("Could not save the data.", getPayloadError(payload))
+                                        }
                                     })
                                     Dispatcher.trigger("closeAllDialogs")
                                 }.bind(this, corpus)
@@ -287,7 +355,9 @@ class AppStoreClass extends StoreMixin {
         let actualCorpname = this.getActualCorpname()
         if(!actualCorpname || actualCorpname != corpname){
             if(corpname){
-                this.loadCorpus(corpname)
+                if(!this._checkCovid19Corpus(corpname)){
+                    this.loadCorpus(corpname)
+                }
             } else{
                 this._onUnsetCorpus()
             }
@@ -314,7 +384,7 @@ class AppStoreClass extends StoreMixin {
                 label: _("delete"),
                 onClick: function (corpus) {
                     Connection.get({
-                        url: window.config.URL_CA + "/corpora/" + corpus_id,
+                        url: window.config.URL_CA + "corpora/" + corpus_id,
                         xhrParams: {
                             method: 'DELETE',
                         },
@@ -341,7 +411,7 @@ class AppStoreClass extends StoreMixin {
 
     updateCorpus(corpus_id, corpus){
         Connection.get({
-            url: window.config.URL_CA + "/corpora/" + corpus_id,
+            url: window.config.URL_CA + "corpora/" + corpus_id,
             xhrParams: {
                 method: "PUT",
                 contentType: "application/json",
@@ -356,35 +426,39 @@ class AppStoreClass extends StoreMixin {
         })
     }
 
-    createSubcorpus(subcname, params) {
-        let ttQuery = ""
-        let struct = ""
+    createSubcorpus(subcname, params, corpname) {
         let q = ""
-
-        for(let ttName in params.textTypes){
-            let ttValue = params.textTypes[ttName]
-            ttValue = Array.isArray(ttValue) ? ttValue : [ttValue]
-            ttQuery = ttValue.reduce((query, val) => { return query += `&${ttName}=${encodeURIComponent(val)}`}, ttQuery)
-        }
-        if(params.struct){
-            struct = "&struct=" + params.struct
-        }
         if(params.q){
-            q = "&" + params.q
+            q = "?q=" + params.q.map(p => encodeURIComponent(p)) .join("&q=")
+        }
+        delete params.q
+        let data = Object.assign({
+            corpname: this.getActualCorpname(),
+            create: true,
+            format: "json",
+            subcname: subcname
+        }, params)
+        if(corpname){
+            data.create_subcorp_under = corpname
         }
 
         let request = Connection.get({
-            url: `${window.config.URL_BONITO}subcorp?corpname=${this.getActualCorpname()}`,
-            query: `&create=True&format=json&subcname=${subcname}${q}${struct}${ttQuery}`,
+            url: `${window.config.URL_BONITO}subcorp${q}`,
+            data: data,
             skipDefaultCallbacks: true,
-            done: function(subcname, payload){
+            done: function(subcname, corpname, payload){
                 if(payload.error){
                     SkE.showToast(_("subcorpusCreateFail", [payload.error]), {duration: 10000})
                 } else{
                     SkE.showToast(_("subcorpusCreated", [subcname]))
-                    this._loadCorpusBonito(this.getActualCorpname())
+                    if(!corpname || corpname == this.getActualCorpname()){
+                        this._loadCorpusBonito(this.getActualCorpname())
+                    }
                 }
-            }.bind(this, subcname)
+            }.bind(this, subcname, corpname),
+            fail: payload => {
+                SkE.showError("Could not create subcorpus.", getPayloadError(payload))
+            }
         })
 
         delay(function(request){
@@ -394,11 +468,10 @@ class AppStoreClass extends StoreMixin {
         }.bind(this, request), 1500)
     }
 
-
     deleteSubcorpus(subcname){
         Connection.get({
             url: window.config.URL_BONITO + "subcorp",
-            query: {
+            data: {
                 corpname: this.getActualCorpname(),
                 delete: true,
                 subcname: subcname
@@ -417,11 +490,45 @@ class AppStoreClass extends StoreMixin {
         this.data.actualFeatureStore = store
     }
 
+    _checkCovid19Corpus(corpname){
+        if(corpname == "preloaded/covid19" && LocalStorage.get("covid19_agreed") == null){
+            Dispatcher.trigger("openDialog", {
+                id: "covid19Agreement",
+                title: "Terms of use",
+                tag: "external-text",
+                showCloseButton: false,
+                dismissible: false,
+                onTop: true,
+                opts: {
+                    text: "covid19.html"
+                },
+                buttons: [{
+                    label: _("cancel"),
+                    onClick: function(){
+                        Dispatcher.trigger("closeDialog")
+                        this.changeCorpus(null)
+                    }.bind(this)
+                }, {
+                    label: _("agree"),
+                    class: "btn-primary",
+                    onClick: function(corpname){
+                        LocalStorage.set("covid19_agreed", 1)
+                        this.loadCorpus(corpname)
+                        Dispatcher.trigger("closeDialog")
+                    }.bind(this, corpname)
+                }]
+            })
+            return true
+        }
+        return false
+    }
+
     _loadCorpusCA(corpname){
+        this.data.corpus = this.data.corpus || {}
         this.data.corpusCALoaded = false
         Connection.get({
             loadingId: "corpus",
-            url: window.config.URL_CA + "/corpora/" + corpname,
+            url: window.config.URL_CA + "corpora/" + corpname,
             done: this._onCorpusCALoaded.bind(this),
             fail: (payload, request) => {
                 this._onUnsetCorpus()
@@ -439,12 +546,14 @@ class AppStoreClass extends StoreMixin {
             console.log('AppStore: Tried to load corp_info info with undefined corpname.')
             return
         }
+        this.data.corpus = this.data.corpus || {}
         this.data.corpusBonitoLoaded = false
         Connection.get({
             loadingId: "corp_info",
             url: window.config.URL_BONITO + "corp_info",
-            query: {
+            data: {
                 subcorpora: 1,
+                struct_attr_stats: 1,
                 corpname: corpname
             },
             done: this._onCorpusBonitoLoaded.bind(this),
@@ -467,21 +576,22 @@ class AppStoreClass extends StoreMixin {
             corpusList: [],
             subcorpora: [{label: _("fullCorpus"), value: ''}],
             languageList: [],
-            scripts: {},
             availableLanguageList: [], // languages with at least one corpus actually loaded
-            compTermsCorpList: [],
-            compKeywordsCorpList: [],
+            compRefCorpList: [],
             actualFeatureStore: null,
             refKeywordsCorpname: '',
-            refTermsCorpname: '',
             bgJobs: [],
             bgJobsPrev: [],
             bgJobsNotify: false,
-            bgJobsPeriodic: null,
+            bgJobsTimer: null,
             features: {},
             wattrs: ['word', 'lc', 'lemma', 'lemma_lc'],
             gdexConfs: [],
-            gdfexConfsLoaded: false
+            gdfexConfsLoaded: false,
+            raw: {
+                bonito: null,
+                ca: null
+            }
         }
     }
 
@@ -492,23 +602,45 @@ class AppStoreClass extends StoreMixin {
         }
         var l = []
         if (wsposlist.length) {
-            l.push({value: '', label: 'auto'})
+            l.push({value: '', origLabel: 'auto'})
         }
-        for (let i=0; i<wsposlist.length; i++) {
-            l.push({value: wsposlist[i][1], label: wsposlist[i][0]})
-        }
-        return l
+
+        wsposlist.forEach(w => {
+            let escaped = window.escapeCharacters(w[0], "\"\\")
+            l.push({
+                value: w[1],
+                origLabel: w[0]
+            })
+        })
+        return this._translatePosList(l, "wsl_")
     }
 
-    _formatPoslist(poslist) {
-        return poslist.map(w => {
-            let label = _(w[0], {_: w[0]})
+    _formatPoslist(poslist, prefix) {
+        poslist = poslist.map(w => {
             return {
                 value: w[1],
-                label: label,
-                labelP: _(w[0] + "P", {_: label})
+                origLabel: w[0]
             }
-        }).sort(this._sortByList.bind(this, ["noun", "verb", "adjective", "adverb", "pronoun", "conjunction", "preposition"]))
+        })
+        poslist.sort(this._sortByList.bind(this, ["noun", "verb", "adjective", "adverb", "pronoun", "conjunction", "preposition"]))
+        return this._translatePosList(poslist, prefix)
+    }
+
+    _translatePosList(poslist, prefix){
+        poslist.forEach(item => {
+            let escaped = window.escapeCharacters(item.origLabel, "\"\\")
+            item.label = _(prefix + escaped, {_: item.origLabel}), //try to translate or use original label
+            item.labelP = _(prefix + escaped + "P", {_: item.origLabel})
+        })
+        return poslist
+    }
+
+    _translateStructuresAndAttributes(structures){
+        structures.forEach(s => {
+            s.attributes.forEach(a => {
+                a.label = _(`sa_${s.name}_${a.name}`, {_: a.origLabel})
+            })
+        })
     }
 
     _formatPeriods(data) {
@@ -548,10 +680,8 @@ class AppStoreClass extends StoreMixin {
         // put featured first, then by size
         if (a.is_featured && !b.is_featured) return -1
         if (b.is_featured && !a.is_featured) return 1
-        if (!a.sizes) return 1
-        if (!b.sizes) return -1
-        if (a.sizes.tokens > b.sizes.tokens) return -1
-        if (a.sizes.tokens < b.sizes.tokens) return 1
+        if (a.tokens > b.tokens) return -1
+        if (a.tokens < b.tokens) return 1
         return 0
     }
 
@@ -580,43 +710,54 @@ class AppStoreClass extends StoreMixin {
     }
 
     _processCorpusBonitoData(data){
+        data.structures.forEach(s => {
+            s.attributes.forEach(a => {
+                a.origLabel = a.label
+            })
+        })
+        this._translateStructuresAndAttributes(data.structures)
         return Object.assign(data, {
             corpname: data.request.corpname,
             language_name: data.lang, // temporary, reading lang from bonito instead language_name form CA
             attributes: this._attributesComputeValues(data),
-            wposlist: this._formatPoslist(data.wposlist),
-            lposlist: this._formatPoslist(data.lposlist),
+            wposlist: this._formatPoslist(data.wposlist, "wpl_"),
+            lposlist: this._formatPoslist(data.lposlist, "lpl_"),
             diachronic: this._formatPeriods(data),
             references: this._getReferences(data),
             wsattr: data.wsattr || "word",
             preloaded: data.request.corpname.indexOf('preloaded') == 0,
-            wsposlist: this._formatWsposlist(data)
+            wsposlist: this._formatWsposlist(data),
+            hasStarAttr: !!data.starattr,
+            hasDocfAttr: !!data.structures.find(s => s.name == data.docstructure)
         })
+        if(window.config.NO_CA){
+            data.language_id = data.lang
+        }
     }
 
     _onCorpusCALoaded(payload){
         SkE.hideNotification("oldCorpus")
         if(payload.error){
             // TODO: what next?
-            SkE.showError(payload.error)
+            SkE.showError(getPayloadError(payload))
             return
         }
         if (payload.data) {
+            this.data.raw.ca = payload.data
             this.data.corpusCALoaded = true;
 
             ["is_featured", "user_can_read", "language_name", "is_shared",
                     "access_on_demand", "reference_corpus", "user_can_manage",
-                    "tagset_id", "language_id", "corpname", "tags",
-                    "term_reference_corpus", "is_sgdev",
+                    "tagset_id", "language_id", "corpname", "tags", "is_sgdev",
                     "owner_id", "owner_name", "can_be_upgraded", "id",
                     "available_structures", "expert_mode","file_structure",
                     "onion_structure", "sketch_grammar_id", "term_grammar_id",
                     "docstructure", "terms_of_use", "progress", "new_version",
-                    "needs_recompiling", "document_count", "use_all_structures"].forEach(key => {
+                    "needs_recompiling", "document_count", "use_all_structures",
+                    "user_can_refer", "user_can_upload"].forEach(key => {
                 this.data.corpus[key] = payload.data[key]
             })
             this.data.corpus.refKeywordsCorpname = payload.data.reference_corpus != payload.data.corpname ? payload.data.reference_corpus : ""
-            this.data.corpus.refTermsCorpname = payload.data.term_reference_corpus != payload.data.corpname ? payload.data.term_reference_corpus : ""
             this._filterCompatibleCorporaLists()
             this.data.corpusBonitoLoaded && this._onCorpusLoadCompleted()
         }
@@ -647,8 +788,18 @@ class AppStoreClass extends StoreMixin {
         }
     }
 
+    _onLocalizationChange(){
+        if(this.data.corpusBonitoLoaded){
+            this._translatePosList(this.data.corpus.lposlist, "lpl_")
+            this._translatePosList(this.data.corpus.wposlist, "wpl_")
+            this._translatePosList(this.data.corpus.wsposlist, "wsl_")
+            this._translateStructuresAndAttributes(this.data.corpus.structures)
+        }
+    }
+
     _calculateStatus(){
         let corpus = this.data.corpus
+        let empty = !corpus.sizes || corpus.sizes.tokencount == 0
         if(corpus){
             if(!corpus.id){
                 this.status = this.COMPILED
@@ -669,7 +820,7 @@ class AppStoreClass extends StoreMixin {
                 if(this.data.canBeCompiledLoaded && corpus.compilationNotAllowedReason == this.TAGGING){
                     status = this.TAGGING
                 } else{
-                    if(corpus.document_count == 0){
+                    if(empty){
                         status = this.EMPTY
                     } else{
                         status = this.READY
@@ -680,7 +831,8 @@ class AppStoreClass extends StoreMixin {
             }
 
             corpus.status = status
-            corpus.isEmpty = corpus.document_count == 0
+            corpus.isEmpty = empty
+            corpus.hasDocuments = corpus.document_count > 0
             corpus.isReady = status == this.READY
             corpus.isCompiled = status == this.COMPILED
             corpus.isToBeCompiled = status == this.TO_BE_COMPILED
@@ -695,13 +847,15 @@ class AppStoreClass extends StoreMixin {
 
     _onCorpusBonitoLoaded(payload) {
         if (payload.error) {
-            SkE.showError(payload.error)
+            SkE.showError(getPayloadError(payload))
+            this._onCorpusBonitoLoadFail(payload)
             return
         } else {
             if(!this.data.corpus){
                 //loading corpus info from CA failed
                 return
             }
+            this.data.raw.bonito = payload
             this.data.corpusBonitoLoaded = true
             Object.assign(this.data.corpus, this._processCorpusBonitoData(payload))
 
@@ -737,11 +891,14 @@ class AppStoreClass extends StoreMixin {
         }
         this._calculateStatus()
         this._refreshFeatures()
+        Dispatcher.trigger("CORPUS_INFO_LOADED", this.data.corpus)
         this.trigger("corpusChanged")
     }
 
     _onCorpusBonitoLoadFail(payload) {
+        this.data.corpus = null
         this.data.subcorpora = [{label: _("fullCorpus"), value: ''}]
+        this.trigger("corpusChanged", null)
         this.trigger("subcorporaChanged", {})
     }
 
@@ -750,61 +907,77 @@ class AppStoreClass extends StoreMixin {
         if (!this.data.corpusList.length || $.isEmptyObject(tc)) {
             return;
         }
-        this.data.compTermsCorpList = []
-        this.data.compKeywordsCorpList = []
+        this.data.compRefCorpList = []
+
+        const addCorpIntoList = (list, corpus, kwComp, termsComp) => {
+            list.push({
+                label: corpus.name,
+                value: corpus.corpname,
+                is_featured: corpus.is_featured,
+                tokens: corpus.sizes ? corpus.sizes.tokencount : 0,
+                kwComp: kwComp,
+                termsComp: termsComp
+            })
+        }
+        const cmpFunc = (a, b) => {
+            if (a.kwComp > b.kwComp) return -1
+            if (a.kwComp < b.kwComp) return 1
+            if (a.termsComp > b.termsComp) return -1
+            if (a.termsComp < b.termsComp) return 1
+            if (a.is_featured && !b.is_featured) return -1
+            if (b.is_featured && !a.is_featured) return 1
+            if (a.tokens > b.tokens) return -1
+            if (a.tokens < b.tokens) return 1
+            return 0
+        }
         if (window.config.NO_CA) {
             this.data.corpusList.forEach(c => {
                 if (c.language_name.toUpperCase() == tc.language_name.toUpperCase()) {
-                    this.data.compKeywordsCorpList.push({
-                        label: c.name,
-                        value: c.corpname,
-                        featured: c.is_featured,
-                        tokens: c.sizes ? c.sizes.tokencount : 0
-                    })
-                }
-                if (c.language_name.toUpperCase() == tc.language_name.toUpperCase()) {
-                    this.data.compTermsCorpList.push({
-                        label: c.name,
-                        value: c.corpname,
-                        featured: c.is_featured,
-                        tokens: c.sizes ? c.sizes.tokencount : 0
-                    })
+                    addCorpIntoList(this.data.compRefCorpList, c, this.FEATURE_FULL_COMPATIBILITY, this.FEATURE_FULL_COMPATIBILITY)
                 }
             }, this)
         } else {
             let ti = tc.tagset_id
+            let td = tc.termdef
+            let kwComp
+            let termsComp
+            let sameLanguage
+            let sameTagset
+            let sameTermdef
+            let sameSuffix
             this.data.corpusList.forEach(c => {
-                if (!c.user_can_read) return
-                if ((ti && ti == c.tagset_id) || c.language_id == tc.language_id) {
-                    this.data.compKeywordsCorpList.push({
-                        label: c.name,
-                        value: c.corpname,
-                        featured: c.is_featured,
-                        tokens: c.sizes ? c.sizes.tokencount : 0
-                    })
+                if (!c.user_can_read && !c.user_can_refer) return
+                kwComp = this.FEATURE_NA
+                termsComp = this.FEATURE_NA
+                sameLanguage = c.language_id == tc.language_id
+                sameTagset = ti && ti == c.tagset_id
+                sameTermdef = c.termdef && td == c.termdef
+                sameSuffix = td && ((c.termdef.endsWith("wsdef.m4") && td.endsWith("wsdef.m4"))
+                             || (c.termdef.endsWith("termdef.m4") && td.endsWith("termdef.m4")))
+
+                if(sameLanguage && sameTermdef){
+                    termsComp = this.FEATURE_FULL_COMPATIBILITY  // same termdefs and language
+                } else if(sameTagset && sameSuffix){
+                    termsComp = this.FEATURE_PART_COMPATIBILITY // same tagset and file extension
                 }
-                if (ti && ti == c.tagset_id) {
-                    this.data.compTermsCorpList.push({
-                        label: c.name,
-                        value: c.corpname,
-                        featured: c.is_featured,
-                        tokens: c.sizes ? c.sizes.tokencount : 0
-                    })
+                if(sameTagset){
+                    kwComp = this.FEATURE_FULL_COMPATIBILITY
+                } else if(sameLanguage){
+                    kwComp = this.FEATURE_PART_COMPATIBILITY  // just same language
+                }
+                if(kwComp != this.FEATURE_NA || termsComp != this.FEATURE_NA){
+                    addCorpIntoList(this.data.compRefCorpList, c, kwComp, termsComp)
                 }
             }, this)
         }
-        this.data.compTermsCorpList.sort(this._cmpCompCorp)
-        this.data.compKeywordsCorpList.sort(this._cmpCompCorp)
-        if (!this.data.corpus.refTermsCorpname && this.data.compTermsCorpList.length) {
-            this.data.corpus.refTermsCorpname = this.data.compTermsCorpList[0].value
+
+        this.data.compRefCorpList.sort(cmpFunc)
+        let idx
+        if (!this.data.corpus.refKeywordsCorpname && this.data.compRefCorpList.length) {
+            idx = (tc.corpname == this.data.compRefCorpList[0].value && this.data.compRefCorpList.length > 1) ? 1 : 0
+            this.data.corpus.refKeywordsCorpname = this.data.compRefCorpList[idx].value
         }
-        if (!this.data.corpus.refKeywordsCorpname && this.data.compKeywordsCorpList.length) {
-            this.data.corpus.refKeywordsCorpname = this.data.compKeywordsCorpList[0].value
-        }
-        this.trigger("compatibleCorporaListChanged", {
-            t: this.data.compTermsCorpList,
-            k: this.data.compKeywordsCorpList
-        })
+        this.trigger("compatibleCorporaListChanged", this.data.compRefCorpList)
     }
 
     _onCorpusListLoaded(payload) {
@@ -820,7 +993,6 @@ class AppStoreClass extends StoreMixin {
         this.data.languageList = payload.data.sort((a, b) => {
             return a.name.localeCompare(b.name)
         })
-        this._refreshScripts()
         this._refreshAvailableLanguageList()
         this.trigger('languageListLoaded', payload.data)
     }
@@ -860,13 +1032,14 @@ class AppStoreClass extends StoreMixin {
             if(attr.isLc && attr.lcFrom){
                 label = attr.lcFrom
             }
+            attr.label_en = label
             attr.label = _(label, {_: label})
             attr.labelP = _(label + "P", {_: label}) // try to translate or keep label
             if(attr.isLc && attr.lcFrom){
-                attr.labelP += " (" + _("lowercase") + ")"
+                attr.label_en += " (" + _("lowercase") + ")"
                 attr.label += " (" + _("lowercase") + ")"
+                attr.labelP += " (" + _("lowercase") + ")"
             }
-            attr.ignoreCaseAllowed = !data.unicameral && !!attr.lc
         })
 
         attributes.sort(this._sortByList.bind(this, ["word", "lemma", "lemma_lc", "tag"]))
@@ -886,13 +1059,6 @@ class AppStoreClass extends StoreMixin {
             return 1
         }
         return 0
-    }
-
-    _refreshScripts(){
-        this.data.scripts = {}
-        this.data.languageList.forEach(l => {
-            this.data.scripts[l.id] = l.script
-        }, this)
     }
 
     _refreshAvailableLanguageList(){
@@ -922,7 +1088,8 @@ class AppStoreClass extends StoreMixin {
             ngrams: ready,
             keywords: ready,
             trends: ready && corpus.diachronic.length,
-            ocd: ready
+            ocd: ready,
+            annotation: ready
         }
     }
 
@@ -934,9 +1101,8 @@ class AppStoreClass extends StoreMixin {
     }
 
     _defaultOnFail(payload, request){
-        payload.error && SkE.showError(payload.error)
+        payload.error && SkE.showError(getPayloadError(payload))
     }
 }
 
 export let AppStore = new AppStoreClass()
-

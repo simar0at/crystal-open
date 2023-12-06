@@ -6,7 +6,7 @@
             <h5>{_("somethingWentWrong")}</h5>
             <h6>{error}</h6>
         </div>
-        <pre ref="content"></pre>
+        <pre ref="content" class="t_grammarContent"></pre>
     </div>
     <div if={isLoading} class="centerSpinner loading">
         <preloader-spinner></preloader-spinner>
@@ -36,7 +36,7 @@
             this.error = null
             let url = ""
             if(this.opts.id){
-                url = window.config.URL_CA + "/sketch_grammars/" + this.opts.id
+                url = window.config.URL_CA + "sketch_grammars/" + this.opts.id
             } else {
                 url = window.config.URL_BONITO + "wsdef?corpname=" + this.opts.corpname + (this.opts.is_term ? "&termdef=1" : "")
             }
@@ -64,7 +64,7 @@
 
                 lineType = line[0]
                 let ret = '<div class="' + (lineclass[lineType] || 'query') + '">'
-                ret += line.replace(new RegExp("<", 'g'), "&lt;").replace(new RegExp("&", 'g'), "&amp;")
+                ret += line.replace(new RegExp("&", 'g'), "&amp;").replace(new RegExp("<", 'g'), "&lt;")
                 if (!'#=*'.includes(lineType)){
                     ret = ret.replace(new RegExp("[0-9]{1}\:", 'g'), '<span class="label">$&</span>')
                 }

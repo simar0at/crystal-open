@@ -47,13 +47,13 @@
                 on-change={onChange}></ui-input>&quot;
                 <button hide={opts.attr != "tag"}
                         ref="btn"
-                        class="btn btn-floating tooltipped"
+                        class="cb-btn-add-tag btn btn-floating tooltipped"
                         data-tooltip={_("insertTag")}
                         data-target="cb-tag-menu-{menuId}">
                     <i class="material-icons">playlist_add</i>
                 </button>
 
-    <ul id="cb-tag-menu-{menuId}" class="dropdown-content">
+    <ul id="cb-tag-menu-{menuId}" class="cb-attr-dropdown dropdown-content">
         <li each={tag in builder.corpus.wposlist}>
             <a data-value={tag.value} onclick={onInsertTagClick}>
                 {tag.value + " (" + tag.label + ")"}
@@ -75,7 +75,7 @@
 
         this.mixin("tooltip-mixin")
 
-        this.attributeOptions = this.corpus.attributes
+        this.attributeOptions = this.corpus.attributes.map(a => {a.label = a.label_en; return a})
         this.equalsOptions = [{
                 value: "=",
                 label: "="
@@ -225,19 +225,19 @@
     <div class="cb-token-toolbar">
         <virtual if={token.edit}>
             <span if={!opts.hideRepeat}
-                    class="{active: token.optional} tooltipped"
+                    class="cb-token-optional-btn {active: token.optional} tooltipped"
                     data-tooltip={_("optionalTokenTip")}>
                 <span class="cb-toolbar-icon {disabled: token.repeat}"
                         style="font-size: 18px; font-weight: bold;"
                         onclick={onOptionalClick}>?</span>
             </span>
             <span if={!opts.hideOptional}
-                    class="{active: token.repeat} tooltipped"
+                    class="cb-token-repeat-btn  {active: token.repeat} tooltipped"
                     data-tooltip={_("repeatTokenTip")}>
                 <i class="cb-toolbar-icon material-icons {disabled: token.optional || token.label}"
                         onclick={onRepeatClick}>autorenew</i>
             </span>
-            <span class="{active: token.label || showLabelInput} tooltipped"
+            <span class="cb-token-label-btn  {active: token.label || showLabelInput} tooltipped"
                     data-tooltip={_("labelTokenTip")}>
                 <i class="cb-toolbar-icon material-icons {disabled: token.repeat}"
                         ref="label"
@@ -246,6 +246,7 @@
             <ui-select if={showLabelSelect}
                     ref="labelInput"
                     inline=1
+                    name="label"
                     type="number"
                     dynamic-width=1
                     riot-value={token.label}
@@ -279,6 +280,7 @@
                 return
             }
             this.token.optional = !this.token.optional
+            this.onChange()
         }
 
         onRepeatClick(){
@@ -293,6 +295,7 @@
                     max: 1
                 }
             }
+            this.onChange()
         }
 
         onLabelClick(){
@@ -301,17 +304,22 @@
             }
             this.showLabelSelect = !this.showLabelSelect
             this.token.label = this.showLabelSelect ? 1 : ""
-            this.dialog.onChange()
+            this.onChange()
         }
 
         onLabelChange(value){
             this.token.label = value
-            this.dialog.onChange()
+            this.onChange()
         }
 
         onRemoveLabelClick(evt){
             this.showLabelSelect = false
             this.token.label = ""
+            this.onChange()
+        }
+
+        onChange(){
+            this.parent.update()
             this.dialog.onChange()
         }
     </script>
@@ -327,13 +335,12 @@
         <span class="cb-bracket">[</span>
         <span if={token.edit}
                 each={part, idx in token.parts}
-                class="cb-part {canHighlight: token.parts.length > 1}">
+                class="cb-part cb-part-{idx + 1} {canHighlight: token.parts.length > 1}">
             <ui-select if={idx > 0}
                     inline=1
                     dynamic-width=1
                     name="andOr"
                     riot-value={part.andOr}
-                    class="btn btn-flat btn-floating"
                     options={andOrOptions}
                     on-change={onPartChange.bind(this, part)}></ui-select>
             <span class="cb-part-content">
@@ -353,7 +360,7 @@
             {builder.getStandardTokenString(token)}
         </span>
         <button if={token.edit}
-                class="btn btn-flat btn-floating"
+                class="cb-btn-add-part btn btn-flat btn-floating"
                 onclick={onPartAddClick}>
             <i class="material-icons">add</i>
         </button>
@@ -377,7 +384,7 @@
 
         onPartAddClick(){
             this.token.parts.push({
-                attr: "lemma",
+                attr: this.builder.defaultAttribute,
                 value: "",
                 equals: "=",
                 icase: false,
@@ -445,8 +452,7 @@
                     floating-dropdown=1
                     value-in-search=1
                     open-on-focus=1
-                    options={structOptions}
-                    deselect-on-click={false}
+                    options={builder.structOptions}
                     on-change={onOptionChange}></ui-filtering-list>
             &nbsp;
             <ui-select if={token.structure}
@@ -466,25 +472,9 @@
     <cql-builder-toolbar token={token} builder={builder}></cql-builder-toolbar>
 
     <script>
-        const {AppStore} = require("core/AppStore.js")
-
         this.builder = this.opts.builder
         this.token = this.opts.token
         this.structure = this.token.structure
-
-        this.structOptions = AppStore.getActualCorpus().structures.filter(s => {
-            return s.value != "g"
-        }).map(s => {
-            return {
-                value: s.name,
-                label: s.label || s.name
-            }
-        })
-        if(!this.structure.name){
-            let hasS = this.structOptions.findIndex(s => { return s.value == "s"})
-            this.structure.name = hasS ? "s" : this.structOptions[0].value
-        }
-
         this.structRangeOptions = ["whole", "startOf", "endOf"].map(s => {
             return {
                 label: _(s),
@@ -626,7 +616,7 @@
                     on-change={onChange}></ui-input>
             <ui-select dynamic-width=1
                     inline=1
-                    label={_("pos")}
+                    label={capitalize(_("pos"))}
                     name="lpos"
                     riot-value={thesaurus.lpos}
                     options={lposOptions}

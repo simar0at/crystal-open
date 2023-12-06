@@ -11,7 +11,7 @@
     </label>
     <div class="rangeWrapper" ref="rangeWrapper">
         <span each={item, idx in range}
-                class="btn-selector btn-flat waves-effect waves-light {item.class}"
+                class="btn-selector btn-flat {item.class}"
                 onclick={onItemClick}>
             <raw-html if={isFun(item.generator)} content={item.generator(item)}></raw-html>
             {isFun(item.generator) ? null : item.label}
@@ -121,9 +121,7 @@
 
             this.isSelecting = !this.isSelecting
 
-            if(typeof this.opts.onChange == "function"){
-                this.opts.onChange(this.getValue(), this.opts.name)
-            }
+            isFun(this.opts.onChange) && this.opts.onChange(this.getValue(), this.opts.name, evt, this)
         }
 
         markSelection(){

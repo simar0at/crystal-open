@@ -1,8 +1,10 @@
+@import 'app/styles/constants';
+
 .sortmlContainer {
     min-width: 100%;
     .card-content{
         min-width: 100%;
-        background-color: #f4f4f4;
+        background-color: $gray-100;
         > i {
             position: absolute;
             right: 5px;

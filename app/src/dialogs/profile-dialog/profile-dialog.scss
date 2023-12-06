@@ -1,4 +1,22 @@
 .profile-dialog{
+    &.isAcademic{
+        padding-top: 15px;
+    }
+    .academicWarning{
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        background-color: #26a69a;
+        text-align: center;
+        color: #fff;
+        font-weight: bold;
+        padding: 5px;
+        i{
+            font-size: 16px;
+            vertical-align: middle;
+        }
+    }
     .headerId{
         color: lightgray;
         font-size: 12px;

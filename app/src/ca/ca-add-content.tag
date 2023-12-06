@@ -1,12 +1,16 @@
 <ca-add-content class="ca-add-content">
     <screen-overlay event-name="BOOTCAT_STARTING"></screen-overlay>
     <div if={!section} class="dataSource">
-        <a id="btnWeb" class="cardBtn card-panel {disabled: isDisabled}" onclick={showSection.bind(this, "webbootcat")}>
+        <a id="btnWeb"
+                class="cardBtn card-panel {disabled: isDisabled || !data.tagset || !data.tagset.has_pipeline}"
+                onclick={showSection.bind(this, "webbootcat")}>
             <i class="material-icons">language</i>
             <div class="title">{_("ca.dataFromWeb")}</div>
             <div class="desc">{_("ca.dataFromWebDesc")}</div>
         </a>
-         <a id="btnFiles" class="cardBtn card-panel {disabled: isDisabled}" onclick={showSection.bind(this, "ownTexts")}>
+         <a id="btnFiles"
+                class="cardBtn card-panel {disabled: isDisabled}"
+                onclick={showSection.bind(this, "ownTexts")}>
             <i class="material-icons">cloud_upload</i>
             <div class="title">{_("ca.ownData")}</div>
             <div class="desc">{_("ca.ownDataDesc")}</div>
@@ -39,10 +43,10 @@
                             on-add={onFilesAdd}
                             max-files=100
                             max-file-size=500
-                            accept=".doc, .docx, .htm, .html, .ods, .pdf, .tar.bz2, .tar.gz, .tei, .tgz, .tmx, .txt, .vert, .xlf, .xliff, {corpus.aligned.length ? ".xls," : ""} .xml, .zip" style="display: block;"></ui-uploader>
+                            accept=".csv, .doc, .docx, .htm, .html, .ods, .pdf, .tar.bz2, .tar.gz, .tei, .tgz, .tmx, .txt, .vert, .xlf, .xliff, {corpus.aligned.length ? ".xls," : ""} .xml, .zip" style="display: block;"></ui-uploader>
                     <div class="caSupportedFormats">
                         {_("ca.supportedFormats")}
-                        .doc, .docx, .htm, .html, .ods, .pdf, .tar.bz2, .tar.gz, .tei, .tgz, .tmx, .txt, .vert, .xlf, .xliff, {corpus.aligned.length ? ".xls," : ""} .xml, .zip
+                        .csv, .doc, .docx, .htm, .html, .ods, .pdf, .tar.bz2, .tar.gz, .tei, .tgz, .tmx, .txt, .vert, .xlf, .xliff, {corpus.aligned.length ? ".xls," : ""} .xml, .zip
                     </div>
                     <div class="left">
                         <a onclick={showLegalDialog} class="link">
@@ -52,11 +56,12 @@
                     </div>
                 </virtual>
                 <div if={showPlainText} class="plainText card-panel">
-                    <textarea
+                    <ui-textarea
                         ref="plainText"
-                        placeholder={_("ca.pasteTextHere")}></textarea>
+                        name="plaintext"
+                        placeholder={_("ca.pasteTextHere")}></ui-textarea>
                     <div class="center-align">
-                        <a class="btn" onclick={onPlainTextUploadClick}>{_("upload")}</a>
+                        <a id="btnUpload" class="btn" onclick={onPlainTextUploadClick}>{_("upload")}</a>
                     </div>
                 </div>
                 <div class="clearfix"></div>
@@ -100,7 +105,7 @@
                         }.bind(this)
                     }, {
                         label: _("willCreateZip"),
-                        class: "contrast",
+                        class: "btn-primary",
                         onClick: function(dialog, modal){
                             this.refs.uploader.onComplete()
                             modal.close()
@@ -147,7 +152,7 @@
         }
 
         onPlainTextUploadClick(){
-            CAStore.uploadPlainText(this.corpus.id, this.refs.plainText.value)
+            CAStore.uploadPlainText(this.corpus.id, this.refs.plainText.getValue())
             this.showSection(null)
         }
 
@@ -172,11 +177,14 @@
         this.on("mount", () => {
             CAStore.on("webBotCaTStarted", this.onWBCStarted)
             CAStore.on("filesetsChanged", this.onFilesetsChanged)
+            CAStore.on("actualTagsetLoaded", this.update)
         })
 
         this.on("unmount", () => {
-            CAStore.on("webBotCaTStarted", this.onWBCStarted)
+            CAStore.off("webBotCaTStarted", this.onWBCStarted)
             CAStore.off("filesetsChanged", this.onFilesetsChanged)
+            CAStore.off("actualTagsetLoaded", this.update)
+
         })
     </script>
 </ca-add-content>

@@ -1,7 +1,7 @@
 <kwicsen class="kwicsen" data-value={sel}>
     <a id="kwicsen_chip"
             ref="link"
-            class="chip waves-effect waves-light tooltipped"
+            class="chip tooltipped {disabled: opts.disabled}"
             href="javascript:void(0);"
             data-target="kwicsen_list"
             data-tooltip={options[sel].tooltip}
@@ -17,41 +17,42 @@
         </li>
     </ul>
     <script>
-    this.tooltipExitDelay = 0
-    this.mixin("tooltip-mixin")
-    require("./kwicsen.scss")
-    this.options = {
-        "kwic": {
-            "label": "KWIC",
-            "tooltip": _("cc.kwicTooltip")
-        },
-        "sen": {
-            "label": _("sentence"),
-            "tooltip": _("cc.sentenceTooltip")
+        this.tooltipExitDelay = 0
+        this.tooltipPosition = "left"
+        this.mixin("tooltip-mixin")
+        require("./kwicsen.scss")
+        this.options = {
+            "kwic": {
+                "label": "KWIC",
+                "tooltip": _("cc.kwicTooltip")
+            },
+            "sen": {
+                "label": _("sentence"),
+                "tooltip": _("cc.sentenceTooltip")
+            }
         }
-    }
-    this.sel = this.opts.sel || "kwic"
-    this.altSel = this.sel == "kwic" && "sen" || "kwic"
-
-    onClick(event) {
-        this.sel = event.target.attributes.pos.value
+        this.sel = this.opts.sel || "kwic"
         this.altSel = this.sel == "kwic" && "sen" || "kwic"
-        if (isFun(this.opts.onClick))
-            this.opts.onClick(this.sel);
-    }
 
-    onKwicSenClick(evt){
-        evt.preventUpdate = true
-        M.Tooltip.getInstance(this.refs.link).close()
-    }
+        onClick(event) {
+            this.sel = event.target.attributes.pos.value
+            this.altSel = this.sel == "kwic" && "sen" || "kwic"
+            if (isFun(this.opts.onClick))
+                this.opts.onClick(this.sel);
+        }
 
-    initDropdown(){
-        initDropdown('#kwicsen_chip', this.root, {
-            constrainWidth: false,
-            coverTrigger: false
-        })
-    }
+        onKwicSenClick(evt){
+            evt.preventUpdate = true
+            M.Tooltip.getInstance(this.refs.link).close()
+        }
 
-    this.on("mount", this.initDropdown)
+        initDropdown(){
+            initDropdown('#kwicsen_chip', this.root, {
+                constrainWidth: false,
+                coverTrigger: false
+            })
+        }
+
+        this.on("mount", this.initDropdown)
     </script>
 </kwicsen>

@@ -1,21 +1,26 @@
 <alt-lposlist>
-    <a class="chip waves-effect waves-light al-dropdown" href="javascript:void(0);" data-target="alt_lposes">
+    <a class="chip al-dropdown" href="javascript:void(0);" data-target="alt_lposes">
         <span if={opts.lemma}>
-            <span>{opts.lemma}</span>
-            as&nbsp;
+            <span class="red-text">{opts.lemma}</span>
+            {_("as")}&nbsp;
         </span>
-        {opts.wspos_dict && opts.wspos_dict[opts.lpos] || opts.lpos} {format(opts.freq)}&times;
+        {getLpos(opts.lpos)} {format(opts.freq)}&times;
         <i if={opts.alt_lposes.length != 0} class="material-icons">arrow_drop_down</i>
     </a>
     <ul id="alt_lposes" class="dropdown-content">
         <li each={a in opts.alt_lposes} onclick={onClick}>
             <a>
-                {parent.opts.wspos_dict && parent.opts.wspos_dict[a.pos] || a.pos} {a.frq != -1 ? (format(a.frq) + "&times;") : ""}
+                {getLpos(a.pos)} {a.frq != -1 ? (format(a.frq) + "&times;") : ""}
             </a>
         </li>
     </ul>
     <script>
     require("./alt-lposlist.scss")
+
+    getLpos(lpos){
+        let str = this.opts.wspos_dict && this.opts.wspos_dict[lpos] || lpos
+        return _(str, {"_": str})
+    }
 
     onClick(event) {
         if (isFun(this.opts.onClick)){

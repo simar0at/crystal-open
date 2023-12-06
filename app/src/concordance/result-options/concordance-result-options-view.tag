@@ -1,6 +1,6 @@
 <concordance-result-options-view class="concordance-result-options-view">
     <div class="columns">
-        <span class="inlineBlock">
+        <span class="inline-block">
             <ui-filtering-list label-id="showAttributes"
                 ref="attrs"
                 inline={true}
@@ -30,7 +30,7 @@
                     on-change={onChangeValue}></ui-checkbox>
             </div>
         </span>
-        <span class="inlineBlock">
+        <span class="inline-block">
             <ui-filtering-list
                 label-id="cc.showStructures"
                 inline=1
@@ -41,37 +41,48 @@
                 tooltip="t_id:conc_r_view_structs_list"
                 options={structList}></ui-filtering-list>
         </span>
-        <span class="inlineBlock" style="vertical-align: top;">
-            <ui-checkbox
-                checked={data.fullcontext}
+        <span class="inline-block" style="vertical-align: top;">
+            <ui-switch
+                riot-value={data.fullcontext}
                 label-id="fullcontext"
                 name="fullcontext"
                 tooltip="t_id:conc_r_view_full_context"
-                on-change={onChangeValue}></ui-checkbox>
-            <ui-checkbox
-                checked={data.checkboxes}
+                on-change={onChangeValue}
+                class="lever-right"></ui-switch>
+            <ui-switch
+                riot-value={data.checkboxes}
                 label-id="cc.checkboxes"
                 name="checkboxes"
-                on-change={onChangeValue}></ui-checkbox>
-            <ui-checkbox
-                checked={data.linenumbers}
+                on-change={onChangeValue}
+                class="lever-right"></ui-switch>
+            <ui-switch
+                riot-value={data.showcopy}
+                label-id="showcopy"
+                name="showcopy"
+                on-change={onChangeValue}
+                class="lever-right"></ui-switch>
+            <ui-switch
+                riot-value={data.linenumbers}
                 label-id="showLineNumbers"
                 name="linenumbers"
                 tooltip="t_id:conc_r_view_line_numbers"
-                on-change={onChangeValue}></ui-checkbox>
-            <ui-checkbox
-                checked={data.glue}
+                on-change={onChangeValue}
+                class="lever-right"></ui-switch>
+            <ui-switch
+                riot-value={data.glue}
                 label-id="cc.glue"
                 name="glue"
                 tooltip="t_id:conc_r_view_glue"
-                on-change={onDataChange}></ui-checkbox>
-            <ui-checkbox
+                on-change={onDataChange}
+                class="lever-right"></ui-switch>
+            <ui-switch
                 if={hasTBL}
-                checked={data.showTBL}
+                riot-value={data.showTBL}
                 label-id="showTBL"
                 name="showTBL"
                 tooltip="t_id:conc_r_view_tbl"
-                on-change={onShowTBLChange}></ui-checkbox>
+                on-change={onShowTBLChange}
+                class="lever-right"></ui-switch>
             <div if={hasTBL && options.showTBL} class="TBLList">
                 <ui-select options={TBLList}
                         label-id="TBLTemplate"
@@ -80,18 +91,17 @@
                         on-change={onTbl_templateChange}></ui-select>
             </div>
             <br>
-            <button class="btn" onclick={onLineDetailsClick}>
+            <button class="btn detailsBtn" onclick={onLineDetailsClick}>
                 <i class="material-icons right">settings</i>
                 {_("lineDetails")}
             </button>
         </span>
     </div>
-    <div class="center-align">
-        <br>
-        <a class="btn contrast" id="btnViewSave" onclick={onSaveClick}>{_("save")}</a>
+    <div class="primaryButtons">
+        <a class="btn btn-primary" id="btnViewSave" onclick={onSaveClick}>{_("save")}</a>
     </div>
 
-    <floating-button onclick={onSaveClick}
+    <floating-button on-click={onSaveClick}
         periodic=1
         refnodeid="btnViewSave"></floating-button>
 
@@ -156,11 +166,11 @@
                 attrs: attrs,
                 glue: this.options.glue,
                 attr_allpos: this.options.attr_allpos,
-                ctxattrs: this.options.attr_allpos == "all" ? attrs : "word",
                 structs: this.options.structs_list.join(","),
                 showTBL: this.options.showTBL,
                 tbl_template: this.options.tbl_template
             }
+            this.data.closeFeatureToolbar = true
             this.store.searchAndAddToHistory(options)
         }
 
@@ -174,7 +184,7 @@
         }
 
         onShowTBLChange(checked){
-            this.options.showTBL = checked ? 1 : 0
+            this.options.showTBL = checked
             if(!checked){
                 this.options.tbl_template = ""
             } else {
@@ -206,6 +216,7 @@
                 },
                 buttons: [{
                     label: _("save"),
+                    class: "btn-primary",
                     onClick: (dialog) => {
                         dialog.contentTag.save()
                     }

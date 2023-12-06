@@ -57,4 +57,12 @@
             }
         }
     }
+    .switch{
+        margin-top: 1em;
+        display: inline-block;
+        label{
+            display: flex;
+            align-items: center;
+        }
+    }
 }

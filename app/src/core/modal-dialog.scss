@@ -3,11 +3,9 @@
     bottom: 0;
     left: 0;
     right: 0;
-    position: absolute;
     overflow-y: auto;
 
     .modal{
-        position: absolute;
         &.onTop{
             z-index: 999999!important;
         }
@@ -108,6 +106,11 @@
             &.modal-fixed-footer{
                 max-height: 90%;
             }
+        }
+    }
+    @media only screen and (max-height: 600px){
+        .modal.modal-fixed-footer{
+            height: 90%;
         }
     }
 

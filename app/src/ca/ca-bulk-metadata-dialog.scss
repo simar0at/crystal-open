@@ -6,8 +6,6 @@
     }
     .table{
         td, th{
-            padding: 2px 20px;
-            width: 33%;
             .subLabel{
                 font-size: 12px;
                 font-weight: normal
@@ -16,9 +14,12 @@
         th{
             height: 46px;
             vertical-align: top;
+            &:first-child{
+                width: 60%;
+            }
         }
         tbody td{
-            height: 55px;
+            word-break: break-word;
         }
         .ui-input{
             margin-bottom: 10px;

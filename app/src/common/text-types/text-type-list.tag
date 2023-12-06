@@ -1,44 +1,62 @@
 <text-type-list>
     <ui-filtering-list ref="list"
-        show-all=1
-        options={optionList}
-        name={textTypeName}
-        loading={opts.textType.isLoading}
-        filter={filterFunction}
-        on-change={onListChange}
-        deselect-on-click={false}
-        on-search-word-change={onSearchWordChange}
-        on-scroll-to-bottom={opts.textType.dynamic ? onScrolledToBottom: null}></ui-filtering-list>
+            show-all=1
+            show-filter-options=1
+            query={opts.textType.query}
+            mode={opts.textType.mode}
+            match-case={opts.textType.matchCase}
+            options={optionList}
+            name={textTypeName}
+            loading={opts.textType.isLoading}
+            filter={filterFunction}
+            on-change={onListChange}
+            on-filter-change={onFilterChange}
+            on-input={onInput}
+            on-scroll-to-bottom={opts.textType.dynamic ? onScrolledToBottom: null}></ui-filtering-list>
+    <div if={optionList.length == (hasRegexOption ? 1 : 0) && query !== "" && !opts.textType.isLoading}
+            class="emptyContent white">
+        <i class="material-icons">space_bar</i>
+        <div class="title">{_("nothingFound")}</div>
+    </div>
 
     <script>
-        const {TextTypesStore} = require("./TextTypesStore.js")
-
-        this.textTypeName = opts.textType.name
-        this.searchWord = ""
+        this.textTypesTag = this.parent.textTypesTag
+        this.textTypeName = this.opts.textType.name
+        this.query = this.opts.textType.query || ""
+        this.mode = this.opts.textType.mode || "containing"
 
         textTypeListFilter(option){
-            if(this.searchWord === "" || this.opts.textType.dynamic || option.value.startsWith("%RE%")){
+            if(this.query === "" || this.opts.textType.dynamic || option.value.startsWith("%RE%")){
                 return true
             }
-            let regex = new RegExp(".*" + this.searchWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').split(" ").join(".*") + ".*")
-            let label = option.label.toLowerCase()
-            if(label.indexOf(this.searchWord.toLowerCase()) != -1 || label.match(regex)){ //search substring or regex
-                return true
-            }
-            return false
+            let query = this.matchCase ? this.query : this.query.toLowerCase()
+            let regex = getFilterRegEx(query, this.mode)
+            let label = this.matchCase ? option.label : option.label.toLowerCase()
+            return label.match(regex)
         }
 
         updateAttributes(){
-            this.isEmpty = !TextTypesStore.getSelection(this.textTypeName).length
-            this.optionList = this.searchWord && this.isEmpty ? [{
-                generator: () => {
-                    return '<span class="useAsRegEx">'
-                        + _('useAsRegex', ['<b>' + this.searchWord + '</b>'])
-                        + '</span>'
-                },
-                value: "%RE%" + this.searchWord
-            }] : [];
-            let filteredList = TextTypesStore.getTextTypeOptionsList(this.textTypeName).filter(this.textTypeListFilter)
+            let modeLabel = {
+                'startingWith': 'useAllValuesStartingWith',
+                'endingWith': 'useAllValuesEndingWith',
+                'containing': 'useAllValuesContaining',
+                'matchingRegex': 'useAllMatchingValues'
+            }[this.mode];
+            this.isEmpty = !this.textTypesTag.getSelection(this.textTypeName).length
+            this.optionList = []
+            this.hasRegexOption = false
+            if(this.query && this.isEmpty && this.mode != "exactMatch"){
+                this.optionList = [{
+                    generator: () => {
+                        return '<span class="useAsRegEx">'
+                            + _(modeLabel, ['<b>' + this.query + '</b>'])
+                            + '</span>'
+                    },
+                    value: "%RE%" + (this.matchCase ? "" : "(?i)") + window.getFilterRegEx(this.query, this.mode, true)
+                }]
+                this.hasRegexOption = true
+            }
+            let filteredList = this.textTypesTag.getTextTypeOptionsList(this.textTypeName).filter(this.textTypeListFilter)
             this.optionList = this.optionList.concat(filteredList)
         }
         this.updateAttributes()
@@ -50,32 +68,53 @@
         }
 
         onListChange(value){
-            TextTypesStore.addTextType(this.textTypeName, value)
+            this.textTypesTag.addTextType(this.textTypeName, value)
             this.update()
         }
 
         onScrolledToBottom(textTypeName){
-            TextTypesStore.loadMoreTextType(textTypeName)
+            this.textTypesTag.loadMoreTextType(textTypeName)
         }
 
         this.debounceHandle = null
-        onSearchWordChangedDebounced(){
-            TextTypesStore.changeTextType(this.textTypeName, {
-                filter: this.refs.list.searchWord,
-                isLoading: true
-            })
+        onInputDebounced(){
             clearTimeout(window.debounceHandle)
-            window.debounceHandle = setTimeout(this.onChangedTextTypeListFilter.bind(this), 500)
+            window.debounceHandle = setTimeout(this.changeTextType.bind(this), 500)
         }
 
-        onChangedTextTypeListFilter(){
-            TextTypesStore.loadTextType(this.textTypeName)
+        changeTextType(){
+            let query = this.matchCase ? this.query : this.query.toLowerCase()
+            let valueObj = {
+                query: this.query,
+                mode: this.mode,
+                matchCase: this.matchCase,
+                filter: getFilterRegEx(query, this.mode, true)
+            }
+            if(["filter", "mode", "matchCase"].some(key => {
+                return valueObj[key] !== this.opts.textType[key]
+            })){
+                this.textTypesTag.changeTextType(this.textTypeName, valueObj)
+                this.textTypesTag.loadTextType(this.textTypeName)
+            }
         }
 
-        onSearchWordChange(searchWord){
-            this.searchWord = searchWord
+        onInput(query){
+            this.query = query
+            this.filter()
+        }
+
+        onFilterChange(query, mode, matchCase){
+            if(this.query != query || this.mode !== mode || this.matchCase != matchCase){
+                this.query = query
+                this.mode = mode
+                this.matchCase = matchCase
+                this.filter()
+            }
+        }
+
+        filter(){
             if(this.opts.textType.dynamic) {
-                this.onSearchWordChangedDebounced()
+                this.onInputDebounced()
             } else {
                 this.update()
             }

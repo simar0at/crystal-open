@@ -6,7 +6,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col s12 m6" style="position: relative; min-height: 300px;">
+        <div class="col s12 m6 relative" style="min-height: 300px;">
             <div if={!k_refCorpname}>
                 <h5 class="grey-text">{_("kw.keywordsNotAvailable")}</h5>
             </div>
@@ -19,6 +19,8 @@
                 <br>
             </div>
             <ui-filtering-list if={k_allOptions.length}
+                    name="keywords"
+                    riot-value=""
                     options={k_listOptions}
                     size=8
                     show-all=1
@@ -30,8 +32,8 @@
                 <br>
             </div>
         </div>
-        <div class="col s12 m6" style="position: relative; min-height: 300px;">
-            <div if={!t_refCorpname}>
+        <div class="col s12 m6 relative" style="min-height: 300px;">
+            <div if={!k_refCorpname}>
                 <h5 class="grey-text">{_("kw.termsNA")}</h5>
             </div>
             <div if={t_isLoading}>
@@ -43,6 +45,8 @@
                 <br>
             </div>
             <ui-filtering-list if={t_allOptions.length}
+                    name="terms"
+                    riot-value=""
                     options={t_listOptions}
                     size=8
                     show-all=1
@@ -67,9 +71,8 @@
         this.t_isError = false
         this.t_allOptions = []
         this.t_listOptions = []
-        this.t_refCorpname = CAStore.corpus.refTermsCorpname
         this.k_refCorpname = CAStore.corpus.refKeywordsCorpname
-
+        this.termsCheckInterval = 2000
         this.seed_words = []
         CAStore.get("filesets").forEach(fileset => {
             fileset.web_crawl && fileset.web_crawl.seed_words && fileset.web_crawl.seed_words.forEach(word => {
@@ -106,19 +109,20 @@
             this.k_listOptions = this.getListOptions(this.k_allOptions)
             this.t_listOptions = this.getListOptions(this.t_allOptions)
         }
-        if(this.k_refCorpname){
+
+        loadKeywords(){
             this.k_isLoading = true
             this.k_activeRequest = Connection.get({
                 url: window.config.URL_BONITO + "extract_keywords",
-                query: {
+                data: {
                     minfreq: 1,
                     max_keywords: 150,
                     simple_n: 1,
-                    alnum: 1,
-                    onealpha: 1,
+                    alnum: true,
+                    onealpha: true,
                     attr: "lemma",
                     format: "json",
-                    keywords: 1,
+                    keywords: true,
                     corpname: CAStore.corpus.corpname,
                     ref_corpname: this.k_refCorpname,
                     wlpat: ".*"
@@ -136,63 +140,81 @@
                             }
                         })
                     }
+                    this.k_isLoading = false
                 },
-                fail: () => {
+                fail: payload => {
+                    this.k_isLoading = false
                     this.k_isError = true
+                    SkE.showError("Could not load keywords.", getPayloadError(payload))
                 },
                 always: () => {
-                    this.k_isLoading = false
                     this.update()
                 }
             })
         }
 
-        if(this.t_refCorpname){
+        loadTerms(){
             this.t_isLoading = true
             this.t_activeRequest = Connection.get({
-                url: window.config.URL_BONITO + "extract_terms",
-                query: {
+                url: window.config.URL_BONITO + "extract_keywords",
+                data: {
                     minfreq: 1,
-                    max_terms: 150,
+                    max_keywords: 150,
                     simple_n: 1,
-                    alnum: 1,
-                    onealpha: 1,
-                    attr: "lemma",
-                    format: "json",
-                    terms: 1,
+                    alnum: true,
+                    onealpha: true,
+                    attr: "TERM",
+                    terms: true,
                     corpname: CAStore.corpus.corpname,
-                    ref_corpname: this.t_refCorpname,
+                    ref_corpname: this.k_refCorpname,
                     wlpat: ".*"
                 },
                 done: (payload) => {
+                    if(payload.jobid){
+                        this.chekTermsHandle = setTimeout(this.loadTerms.bind(this), this.termsCheckInterval)
+                        if(this.termsCheckInterval < 15000){
+                            this.termsCheckInterval += 2000
+                        }
+                        return
+                    } else {
+                        this.chekTermsHandle = null
+                        this.termsCheckInterval = 2000
+                        this.t_bgjob = null
+                    }
                     if(payload.error){
                         this.t_isError = true
                         return
                     }
-                    if(payload.terms){
-                        this.t_allOptions = payload.terms.map((item, idx) => {
+                    if(payload.keywords){
+                        this.t_allOptions = payload.keywords.map((item, idx) => {
                             return {
                                 value: item.item,
                                 label: item.item
                             }
                         })
                     }
+                    this.t_isLoading = false
                 },
-                fail: () => {
+                fail: payload => {
+                    this.t_isLoading = false
                     this.t_isError = true
+                    SkE.showError("Could not load terms.", getPayloadError(payload))
                 },
                 always: () => {
-                    this.t_isLoading = false
                     this.update()
                 }
             })
         }
+
+        this.k_refCorpname && this.loadKeywords()
+        this.k_refCorpname && this.loadTerms()
 
         this.on("update", this.updateOptionLists)
 
         this.on("unmount", () => {
             this.k_activeRequest && Connection.abortRequest(this.k_activeRequest)
             this.t_activeRequest && Connection.abortRequest(this.t_activeRequest)
+            this.chekTermsHandle && clearTimeout(this.chekTermsHandle)
         })
 
     </script>

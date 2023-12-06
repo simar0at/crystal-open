@@ -29,9 +29,7 @@
                 sel_aligned: [alignedCorpname],
                 "cql": d.cql,
                 "iquery": d.keyword,
-                ["queryselector_" + alignedCorpname]: d.queryselector + "row",
-                ["pcq_pos_neg_" + alignedCorpname]: "pos",
-                ["filter_nonempty_" + alignedCorpname]: "on"
+                ["queryselector_" + alignedCorpname]: d.queryselector + "row"
             })
             let query = {
                 corpname: ConcordanceStore.corpus.corpname,

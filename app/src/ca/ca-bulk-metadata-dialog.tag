@@ -6,6 +6,7 @@
     <br>
     <div class="topBar">
         <ui-filtering-list ref="attribute"
+                name="attribute"
                 options={attributeList}
                 inline=1
                 floating-dropdown=1
@@ -15,15 +16,18 @@
                 pattern-mismatch-message={_("alphanumAndUnderscoreAllowed")}
                 validate=1
                 add-not-found=1
+                not-found-label={_("attribute")}
                 on-input={onAttributeInput}
                 on-change={onAttributeChange}></ui-filtering-list>
 
         <span class="right" if={attribute}>
             <ui-checkbox on-change={onSetToAllChange}
+                    name="setToAll"
                     checked={setToAll}
                     inline=1
                     label-id="setToAll"></ui-checkbox>
             <ui-input inline=1
+                    name="setToAllValue"
                     disabled={!setToAll}
                     on-input={onValueInput}></ui-input>
         </span>
@@ -49,13 +53,15 @@
             </tr>
         </thead>
         <tbody if={files.length}>
-            <tr each={file in files}>
+            <tr each={file in files}
+                    id="t_{window.idEscape(file.name)}">
                 <td>{file.name}</td>
                 <td>
                     {file.metadata[parent.attribute] ? file.metadata[parent.attribute].oldValue: ""}
                 </td>
                 <td>
                     <ui-input riot-value={file.metadata[parent.attribute] ? file.metadata[parent.attribute].newValue: ""}
+                            name="value"
                             if={attribute}
                             inline=1
                             on-input={onFileValueInput.bind(this, file)}
@@ -73,12 +79,10 @@
 
         updateAttributes(){
             this.files = []
-            this.attributeList = []
             CAStore.get("files").forEach(file => {
                 if(file.selected){
                     let metadata = {}
                     for(let key in file.metadata){
-                        this.attributeList.push(key)
                         metadata[key] = {
                             oldValue: file.metadata[key],
                             newValue: file.metadata[key]
@@ -91,7 +95,7 @@
                     })
                 }
             }, this)
-            this.attributeList = [...new Set(this.attributeList)].map(key => {return {label: key, value: key}})
+            this.attributeList = CAStore.getAttributeList()
         }
         this.updateAttributes()
 

@@ -29,51 +29,55 @@
 
         <div class="col s12 m5">
             <div class="hide-on-small-only" style="min-height: 65px;"></div>
-            <ui-list ref="selectedList"
-                size=10
-                name={opts.textType.name}
-                options={options}
-                on-change={onRemoveTextType}></ui-list>
+            <div each={textType, idx in selection}
+                    class="chip {tooltipped: textType.length > 17 }"
+                    data-tooltip={textType}>
+                <i class="close material-icons"
+                        onclick={onRemoveTextType}>close</i>
+                {textType.startsWith("%RE%") ? (_("valuesMatching", [textType.substr(4)])) : truncate(textType, 17)}
+            </div>
+            <div if={!selection.length}
+                    class="emptyContent">
+                <i class="material-icons">space_bar</i>
+                <div class="title">
+                    {_("nothingHere")}
+                </div>
+            </div>
         </div>
     </div>
-    <div class="center">
+    <div class="center mt-10">
         <a id="btnCloseDetail" class="btn" onclick={onCloseDetail}>
             {_("close")}
         </a>
     </div>
     <script>
         require("./text-type-detail.scss")
-        const {TextTypesStore} = require("./TextTypesStore.js")
-        this.textTypeName = opts.textType.name
+        this.textTypesTag = this.parent
+        this.textTypeName = this.opts.textType.name
 
         getListOptions(){
-            return TextTypesStore.getTextTypeOptionsList(this.textTypeName)
+            return this.textTypesTag.getTextTypeOptionsList(this.textTypeName)
         }
 
-        onRemoveTextType(value, textTypeName){
-            TextTypesStore.removeTextType(textTypeName, value)
+        onRemoveTextType(evt){
+            evt.stopPropagation()
+            this.textTypesTag.removeTextType(this.opts.textType.name, evt.item.textType)
         }
 
         updateAttributes(){
-            let selection = TextTypesStore.getSelection(this.textTypeName) || []
-            this.options = []
-            selection.forEach((textType) => {
-                this.options.push({
-                    label: textType,
-                    value: textType
-                })
-            })
+            this.selection = this.textTypesTag.getSelection(this.textTypeName) || []
+            this.selection.sort()
         }
         this.updateAttributes()
 
         onSelectAll(){
             let all = this.refs.textTypeList.getAllOptions()
-            TextTypesStore.addTextType(this.textTypeName, all)
+            this.textTypesTag.addTextType(this.textTypeName, all)
         }
 
         onDeselectAll(){
-            let selected = TextTypesStore.data.selection[this.opts.textType.name]
-            TextTypesStore.removeTextType(this.textTypeName, selected)
+            let selected = this.textTypesTag.selection[this.opts.textType.name]
+            this.textTypesTag.removeTextType(this.textTypeName, selected)
         }
 
         onTextTypeChange(textType){
@@ -81,18 +85,18 @@
         }
 
         onCloseDetail(){
-            TextTypesStore.toggleDetail(null)
+            this.textTypesTag.toggleDetail(null)
         }
 
         this.on("update", this.updateAttributes)
 
         this.on("mount", () => {
-            TextTypesStore.on("textTypeChange", this.onTextTypeChange)
+            this.textTypesTag.on("textTypeChange", this.onTextTypeChange)
             $("body")[0].scrollTop = $(this.root).offset().top;
         })
 
         this.on("unmount", () => {
-            TextTypesStore.off("textTypeChange", this.onTextTypeChange)
+            this.textTypesTag.off("textTypeChange", this.onTextTypeChange)
         })
 
     </script>

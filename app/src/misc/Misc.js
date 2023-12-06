@@ -35,21 +35,9 @@ window.getFeatureIcon = (feature) => {
         "thesaurus": "skeico_thesaurus",
         "concordance": "skeico_concordance",
         "biwordsketch": "skeico_bilingual_word_sketch",
-        "ocd": "skeico_ocd"
+        "ocd": "skeico_ocd",
+        "octerms": "skeico_biterms"
     }[feature] || ""
-}
-
-window.getLangFontClass = (language_id) => {
-    if(["ja", "ko", "zh-CN", "zh-HK", "zh-TW" ,"zh-Hant", "zh-Hans", "bo"].includes(language_id)){
-        // dense font
-        return "f-cjk"
-    }
-    if(["vi", "ur", "th", "te", "ta", "si", "pa", "ne", "my", "mr", "ml", "lo", "kn", "km", "hi", "gu", "fa", "bn", "ar"].includes(language_id)){
-        // tall font
-        return "f-tall"
-    }
-    // english like
-    return "f-eng"
 }
 
 window.getFeatureLabel = (feature) => {
@@ -315,15 +303,15 @@ window.getLocaleDate = (dateString) => {
     return (new Date(dateString)).toLocaleDateString()
 }
 
-window.showTooltip = (selector, message, delay=0) => {
+window.showTooltip = (selector, message, delay=0, options) => {
     let node = $(selector)
     if(M.Tooltip.getInstance(node)) return
 
-    node.tooltip({
+    node.tooltip(Object.assign({
         enterDelay: delay,
         exitDelay: 500,
         html: message
-    })
+    }, options || {}))
     let tooltip = M.Tooltip.getInstance(node)
     setTimeout(function(node){
         if($(node).is(":hover")){
@@ -343,18 +331,32 @@ window.showTooltip = (selector, message, delay=0) => {
 window.measureData = {}
 
 window.measure = (fun, label) => {
+    let countAverageInRange = (values, start, end) => {
+        let startIndex = Math.round(values.length * start)
+        let endIndex = Math.round(values.length * end)
+        return Math.round(values.slice(startIndex, endIndex).reduce((t, m) => t + m, 0) / (endIndex - startIndex))
+    }
+
     if(!measureData[label]){
-        measureData[label] = {
-            total: 0,
-            count: 0
-        }
+        measureData[label] = []
     }
     let start = new Date().getTime()
     fun()
     let diff = new Date().getTime() - start
-    measureData[label].total += diff
-    measureData[label].count++
-    console.log((label || "") + " " + diff + " avg: " + (measureData[label].total / measureData[label].count) + " of " + measureData[label].count)
+    measureData[label].push(diff)
+    let values = measureData[label]
+    values.sort()
+    let count = values.length
+    let min = values[0]
+    let max = values[count - 1]
+    let avg = countAverageInRange(values, 0, 1)
+    let avg25 = countAverageInRange(values, 0, 0.25)
+    let avg50 = countAverageInRange(values, 0, 0.5)
+    let avg75 = countAverageInRange(values, 0, 0.75)
+    let avgMid = countAverageInRange(values, 0.25, 0.75)
+
+    console.log((label || "") + ` ${diff}, min: ${min}, max: ${max}, avg: ${avg}, avgMid: ${avgMid}, avg25: ${avg25}, avg50: ${avg50}, avg75: ${avg75}, runs ${count}` )
+
 }
 
 window.addLinksToTheText = (text) => {
@@ -364,7 +366,7 @@ window.addLinksToTheText = (text) => {
 
     ["lemma", "collocate", "subcorpus", "frequency", "wordForm", "regex", "token",
             "KWIC", "structure", "attribute", "lc", "tag", "lempos",
-            "annotating", "relfreq"].forEach(key => {
+            "annotating", "relfreq", "textType", "cqlManual"].forEach(key => {
         linkMap[key] = window.config.links["h_" + key]
     })
 
@@ -393,8 +395,8 @@ window.addLinksToTheText = (text) => {
 window.arrayToOptionList = (arr, valueKey, labelKey) => {
     return arr.map(item => {
         return {
-            value: item[valueKey],
-            label: item[labelKey]
+            value: valueKey ? item[valueKey] : item,
+            label: labelKey ? item[labelKey] : item
         }
     })
 }
@@ -426,3 +428,92 @@ window.getTooltip = (tooltip) => {
     }
 }
 
+window.getPayloadError = (payload) => {
+    if(payload && payload.error){
+        return htmlEscape(payload.error)
+    } else if(payload && payload.message){
+        return htmlEscape(payload.message)
+    } else if (typeof payload == "string"){
+        return htmlEscape(payload)
+    }
+}
+
+
+window.getFilterRegEx = (query, mode, returnString) => {
+    let re = returnString ? "" : null
+    if(query){
+        let reStr = mode == "matchingRegex"
+                ? query
+                : window.escapeRE(query)
+        if(mode == "exactMatch"){
+            reStr = "^" + reStr + "$"
+        } else {
+            reStr = reStr.trim().split(" ").join(".*")
+        }
+        if(mode == "startingWith"){
+            reStr = "^" + reStr + ".*"
+        } else if (mode == "endingWith"){
+            reStr = ".*" + reStr + "$"
+        } else if(mode == "containing"){
+            reStr = ".*" + reStr + ".*"
+        }
+        if(returnString){
+            return reStr
+        }
+        try{
+            re = new RegExp(reStr)
+        } catch(e){
+            re = new RegExp()
+            SkE.showToast(_("regexInvalid"))
+        }
+    }
+    return re
+}
+
+window.attrFormatter = (attr, value) => {
+    if(isNaN(value)){
+        return ""
+    } else {
+        if (attr.endsWith('1') || attr.endsWith('2')){
+            attr = attr.substring(0, attr.length - 1)
+        }
+        if(['docf', 'freq', 'frq', 'norm:l', 'token:l'].includes(attr)){
+            return window.Formatter.num(value)
+        } else if(['rnk:f', 'score'].includes(attr)){
+            return window.valueFormatter(value, 1)
+        } else {
+            return window.valueFormatter(value, 2)
+        }
+    }
+}
+
+window.valueFormatter = (value, digits) => {
+    if(isNaN(value)){
+        return ""
+    } else {
+        let min = 1 / Math.pow(10, digits)
+        if (value > 0 && value < min){
+            return "< " + min
+        } else {
+            return window.Formatter.num(value, digits)
+        }
+    }
+}
+
+window.columnTableValueFormatter = (digits, value) => {
+    return window.valueFormatter(value, digits)
+}
+
+window.setCharAt = (str, idx, char) => {
+    if(idx > str.length - 1 && idx > -1){
+        return str
+    }
+    return str.substring(0, idx) + char + str.substring(idx + 1)
+}
+
+
+
+window.isURL = (str) => {
+    let urlRegEx = RegExp(/(http(s)?:\/\/.)(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/)
+    return urlRegEx.test(str)
+}

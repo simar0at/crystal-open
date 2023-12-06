@@ -1,4 +1,4 @@
-@import 'app/styles/base';
+@import 'app/styles/constants';
 
 .page-concordance {
     .form {
@@ -13,5 +13,16 @@
     }
     .wideForm{
         max-width: 100%;
+    }
+    .warningBtn{
+        margin-right: 5px;
+        i{
+            font-size: 25px;
+            color: #fff!important;
+        }
+    }
+    & > .content > .manage-macros-icon{
+        margin-left: 10px;
+        vertical-align: top;
     }
 }

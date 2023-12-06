@@ -1,8 +1,8 @@
-@import 'app/styles/base';
+@import 'app/styles/constants';
 
 .page-keywords {
     #keywordsform {
-        @include maxWidthSmall;
+        @include maxWidthMedium;
         transition: max-width 0.5s ease;
         &.wideForm{
             max-width: 100%;
@@ -10,44 +10,90 @@
     }
     .keywords-tab,
     .terms-tab,
+    .ngrams-tab,
     .wipo-tab,
     .about-tab {
-        padding-top: 1em;
+        padding-top: 5px;
     }
     .keywords-tab-advanced {
         position: relative;
-        .mainForm{
-            max-width: 700px;
+        .fixedWidthForm{
+            @include maxWidthMedium;
         }
         .ui-input[name="minfreq"] {
             label {
                 white-space: nowrap;
             }
         }
-        .ui-filtering-list {
-            .floatingDropdown {
-                &.disabled {
-                    opacity: 0.5 !important;
-                }
-            }
-        }
         h6 {
             font-size: 1.2rem;
             margin: .5rem 0 1.5rem 0;
         }
-        .kwTermsRow{
-            >col{
-                padding: 0 .2rem;
-            }
+        .featureSettingsRow{
             .card-panel{
-                position: relative;
-                min-height: 250px;
+                @media screen and (min-width: 991px){
+                    min-height: 275px;
+                }
+            }
+            .col{
+                padding: 0.2em;
             }
         }
+        .hideDividersMedDown{
+            @media screen and (max-width: 992px){
+                border: none;
+            }
+        }
+        .refCorpOption{
+            display: flex;
+            justify-content: space-between;
+        }
+        .compLevels{
+            margin-left: 10px;
+            span{
+                font-weight: normal;
+                border-radius: 2px;
+                color: #fff;
+                font-size: 12px;
+                padding: 1px 4px;
+                line-height: 17px;
+                height: 17px;
+                width: 28px;
+                text-align: center;
+                margin-left: 2px;
+                display: inline-block;
+            }
+        }
+        .comp_0{
+            background-color: #F44336;
+        }
+        .comp_1{
+            background-color: #ff9800;
+        }
+        .comp_2{
+            background-color: #4CAF50;
+        }
     }
-    .keywords-result-info {
-        .chip {
-            background-color: rgba(90, 90, 90, 0.1)
+    .resultOptions{
+        & > * {
+            display: inline-block;
+            margin-right: 20px;
+            vertical-align: middle;
+        }
+    }
+    .wipo-tab{
+        .resultOptions{
+            .ui-input-file{
+                min-width: 300px;
+                margin-bottom: 0;
+                .input-field{
+                    margin-bottom: 0px;
+                    margin-top: 0px;
+                }
+            }
+            .ui-switch{
+                margin-bottom: 3px;
+            }
         }
     }
     .columns{
@@ -63,27 +109,39 @@
     h5 > span.warn > i.material-icons {
         color: orangered;
     }
-    .ui-pagination{
-        justify-content: center;
-    }
-    .termsNA{
-        position: absolute;
-        left: 15px;
-        right: 15px;
+    .resultsDataNA{
+        left: 0;
+        right: 0;
         text-align: center;
-        top: 30%;
-        color: grey;
+        margin-top: 20vh;
+        color: $gray-500;
+        font-size: 2em;
     }
     .theadMeta span {
         display: block;
-        text-align: center;
     }
-    .material-table > thead > tr > th{
-        &.frq1, &.frq2, &.rfrq1, &.rfrq2{
-            text-align: center;
-            .table-label{
-                float: none!important;
+    .keywords-result-view{
+        .wrapper{
+            display: flex;
+            flex-wrap: wrap;
+            & > *{
+                min-width: 250px;
+                @media screen and (max-width: 700px) {
+                    display: block;
+                    width: 100%;
+                    &.dividerRight{
+                        border: none;
+                        margin: 0;
+                        padding: 0
+                    }
+                }
             }
         }
+    }
+    .totalItems {
+        font-size: 0.9rem;
+    }
+    .termdefWarning{
+        background-color: $blue-100;
     }
 }

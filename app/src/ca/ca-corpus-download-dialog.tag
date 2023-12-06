@@ -10,7 +10,7 @@
 
     <virtual if={corpus.id !== null}>
         <div class="downloadBtns center-align">
-            <a href={linkPrefix + "?format=txt" + fileStructure}
+            <a href={linkPrefix + "?format=txt" + (fileStructure ? ("&file_structure=" + fileStructure) : "")}
                     class="cardBtn card-panel"
                     onclick={onLinkClick}>
                 <span class="iconContainer">
@@ -20,7 +20,7 @@
                 <div class="title">{_("plainText")}</div>
                 <div class="desc">{_("ca.downloadTxtDesc")}</div>
             </a>
-            <a href={linkPrefix + "?format=vert" + fileStructure}
+            <a href={linkPrefix + "?format=vert" + (fileStructure ? ("&file_structure=" + fileStructure) : "")}
                     class="cardBtn card-panel"
                     onclick={onLinkClick}>
                 <span class="iconContainer">
@@ -42,7 +42,7 @@
         </div>
         <div>
             <div if={!showSettings} class="center-align">
-                <a class="btn btn-flat btn-waves" onclick={onShowSettings} style="text-transform: none;">
+                <a class="btn btn-flat noCapitalization" onclick={onShowSettings}>
                     {_("moreSettings")}
                     <i class="material-icons right">arrow_drop_down</i>
                 </a>
@@ -51,6 +51,7 @@
             <div if={showSettings} class="center-align" style="width: 500px; margin: auto;">
                 <label>{_("structNameForFiles")}</label>
                 <ui-input inline=1
+                        riot-value={fileStructure}
                         on-change={onFileStructureChange}></ui-input>
                 &nbsp;
                 <i class="material-icons help tooltipped"
@@ -66,9 +67,9 @@
         const {AppStore} = require("core/AppStore.js")
 
         this.corpus = this.opts.corpus || AppStore.getActualCorpus()
-        this.linkPrefix = window.config.URL_CA + "/corpora/" + this.corpus.id + "/download"
+        this.linkPrefix = window.config.URL_CA + "corpora/" + this.corpus.id + "/download"
         this.showSettings = false
-        this.fileStructure = ""
+        this.fileStructure = this.corpus.file_structure
 
         this.mixin("tooltip-mixin")
 
@@ -81,10 +82,7 @@
         }
 
         onFileStructureChange(value){
-            this.fileStructure = ""
-            if(value){
-                this.fileStructure = "&file_structure=" + value
-            }
+            this.fileStructure = value
             this.update()
         }
     </script>

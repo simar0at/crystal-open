@@ -1,0 +1,112 @@
+<h4>Tipo di query</h4>
+<h5>Semplice</h5>
+<p>Questa opzione è identica alla ricerca semplice nella scheda BASE.</p>
+<p>Trova le parole che corrispondono alla/e parola/e ricercata/e o il cui %[lemma]% (forma base) corrisponde alla parola ricercata. Non è case-sensitive.</p>
+<p>Digita una parola o un sintagma. Usa un asterisco (*) per qualsiasi numero di caratteri non specificati. Usa un punto interrogativo (?) per esattamente un carattere non specificato. Usa la pipe (|) per includere più di una parola o sintagma. Usa due trattini (--) per cercare una parola che può essere sillabata, non sillabata o scritta come due parole separate.</p>
+<h6>Esempi</h6>
+<table width="100%">
+    <thead>
+        <tr>
+            <th style="width: 25%"><b>usa</b></th>
+            <th>per trovare</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>m*</b></td>
+            <td>parole o lemmi che iniziano per <em>m-</em></td>
+        </tr>
+        <tr>
+            <td><b>*ndo</b></td>
+            <td>parole o lemmi che terminano per <em>-ing</em></td>
+        </tr>
+        <tr>
+            <td><b>avere una * idea</b></td>
+            <td>parola o lemma non specificati</td>
+        </tr>
+        <tr>
+            <td><b>avere * * * idea</b></td>
+            <td>tre parole o lemmi non specificati</td>
+        </tr>
+        <tr>
+            <td><b>???t</b></td>
+            <td>parole o lemmi di 4 lettere che terminano per <em>-t</em></td>
+        </tr>
+        <tr>
+            <td><b>multi--miliardario</b></td>
+            <td>trova <em>multi-miliardario</em> o <em>multimiliardario</em> o <em>multi miliardario</em></td>
+        </tr>
+        <tr>
+            <td><b>ritornare|andare indietro</b></td>
+            <td>trova <em>ritornare</em> o <em>andare indietro</em></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<h5>Lemma</h5>
+<p>Digita un lemma per trovare tutte le %[wordForm|forme lessicali]% del lemma. Sono supportate le %[regex|espressioni regolari]%. </p>
+<h6>Esempio</h6>
+<table width="100%">
+    <thead>
+        <tr>
+            <th style="width: 25%">usa</th>
+            <th><b>per trovare</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>andare</b></td>
+            <td>andare va andò andando andato</td>
+        </tr>
+        <tr>
+            <td><b>e.*</b></td>
+            <td>essere, era, elica, enorme, estremamente (parole il cui lemma inizia per e-)</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<h5>Sintagma</h5>
+<p>Trova un sintagma multi-parola esattamente come digitato. Sono supportate le %[regex|espressioni regolari]%. </p>
+<br>
+<h5>Parola</h5>
+<p>Trova una specifica %[wordForm|forma lessicale]% esattamente come digitata. Sono supportate le %[regex|espressioni regolari]%. </p>
+<h6>Esempio</h6>
+<table width="100%">
+    <thead>
+        <tr>
+            <th style="width: 25%">usa</th>
+            <th><b>per trovare</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>andare</b></td>
+            <td>andare</td>
+        </tr>
+        <tr>
+            <td><b>va</b></td>
+            <td>va</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<h5>Carattere</h5>
+<p>Trova %[token|token]% contenenti un carattere specifico o una stringa di caratteri.</p>
+<h6>Esempio</h6>
+<table width="100%">
+    <thead>
+        <tr>
+            <th style="width: 25%">usa</th>
+            <th><b>per trovare</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>nt</b></td>
+            <td>dente mantello interessare …</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<h5>CQL</h5>
+<p>Il Corpus Query Language è usato per ricerche complesse di strutture lessicali e grammaticali e per ricerche con criteri non specifici. %[cqlManual|per saperne di più]</p>

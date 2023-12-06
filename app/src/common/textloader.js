@@ -1,11 +1,11 @@
 const {Connection} = require("core/Connection.js")
-const {Router} = require("core/Router.js")
+const {Url} = require("core/url.js")
 const {Localization} = require("core/Localization.js")
 
 class TextLoaderClass {
     constructor(){
         this.FOLDER = "texts"
-        this.base = Router._getUrlBase()
+        this.origin = Url.getOrigin()
         this._cache = {}
     }
 
@@ -33,7 +33,7 @@ class TextLoaderClass {
             return
         }
         Connection.get({
-            url: `${this.base}${this.FOLDER}/${lang}/${file}`,
+            url: `${this.origin}${this.FOLDER}/${lang}/${file}?v=${window.version}`,
             always: function(file, lang, callback, payload){
                 if(typeof payload == "string"){
                     payload = window.addLinksToTheText(payload)

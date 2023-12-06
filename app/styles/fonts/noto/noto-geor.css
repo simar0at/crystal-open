@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-geor ._t{
-    font-family: 'Noto Georgian'
+.script-geor ._t,
+body .script-geor ._t,
+body .script-geor._t{
+    font-family: 'Noto Georgian', 'Noto Sans', sans-serif;
 }

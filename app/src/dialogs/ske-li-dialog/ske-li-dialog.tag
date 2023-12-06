@@ -15,24 +15,27 @@
                         on-input={onNameInput}></ui-input>
             </div>
             <div class="col s12 m9">
-                <ui-textarea
+                <ui-textarea class="desc"
                     label={_("descriptionOpts")}
                     ref="desc"
-                    riot-value={desc}></ui-textarea>
+                    riot-value={desc}
+                    rows=2></ui-textarea>
             </div>
         </div>
 
-        <a href="javascript:void(0);"
-                ref="createLinkBtn"
-                class="btn contrast"
-                onclick={onCreateLinkClick}>
-            {_("createLink")}
-        </a>
+        <div class="primaryButtons">
+            <a href="javascript:void(0);"
+                    ref="createLinkBtn"
+                    class="btn btn-primary"
+                    onclick={onCreateLinkClick}>
+                {_("createLink")}
+            </a>
+        </div>
     </div>
     <div if={newLink} class="center-align" style="min-height: 150px;">
         <br><br>
         <a href="https://ske.li/{newLink.name || newLink.hash}" target="_blank">
-            <h3 class="inlineBlock">ske.li/{newLink.name || newLink.hash}</h3>
+            <h3 class="inline-block">ske.li/{newLink.name || newLink.hash}</h3>
         </a>
         <br>
         <span onclick={onCopyClick} class="btn copyLink">{_("copyAndClose")}</span>
@@ -40,9 +43,8 @@
 
     <br>
     <div class="center-align">
-        <a class="btn btn-flat btn-waves"
-                onclick={onShowLInksToggle}
-                style="text-transform: none;">
+        <a class="btn btn-flat noCapitalization"
+                onclick={onShowLInksToggle}>
             {_("olderLinks")}
             <i class="material-icons right">{showLinks ? "arrow_drop_up" : "arrow_drop_down"}</i>
         </a>
@@ -77,6 +79,7 @@
     <script>
         require("./ske-li-dialog.scss")
         const {Auth} = require("core/Auth.js")
+        const {Url} = require("core/url.js")
         const {Router} = require("core/Router.js")
         const {AppStore} = require("core/AppStore.js")
         this.isShortening = false
@@ -96,9 +99,9 @@
                 optionsStr += _(options[key].labelId) + "='" + options[key].value + "'"
             }
         } else {
-            let corpname = Router.getUrlQuery().corpname
+            let corpname = Url.getQuery().corpname
             if(corpname){
-                optionsStr = "corpus='" + AppStore.getCorpusByCorpname(corpname).name + "'"
+                optionsStr = "corpus='" + AppStore.get("corpus.name") + "'"
             }
         }
         if(optionsStr){
@@ -141,7 +144,7 @@
         onCreateLinkClick(){
             $.ajax({
                 url: window.config.URL_SKE_LI + "store",
-                type: "POST",
+                method: "POST",
                 data: {
                     username: Auth.getUsername(),
                     url: encodeURI(window.location.href),

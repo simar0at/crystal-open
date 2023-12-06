@@ -9,6 +9,9 @@
     font-style: normal;
 }
 
-.script-ethi ._t{
-    font-family: 'Noto Ethiopic'
+.script-ethi ._t,
+body .script-ethi ._t,
+body .script-ethi._t{
+    font-family: 'Noto Ethiopic', 'Noto Sans', sans-serif;
+    font-family: 'Noto Ethiopic', 'Noto Sans', sans-serif;
 }

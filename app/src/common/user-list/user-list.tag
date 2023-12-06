@@ -7,12 +7,11 @@
         size={20}
         name="users"
         on-change={opts.onChange}
-        on-input={opts.onInput}
+        on-input={onInput}
         on-submit={opts.onSubmit}
         filter={userListFilter}
         value-in-search=1
-        deselect-on-click={false}
-        on-search-word-change={onSearchWordChangedDebounced}
+        on-input={onInput}
         footer-content={userListFooter}></ui-filtering-list>
 
     <script>
@@ -27,19 +26,20 @@
         }
 
         this.debounceHandle = null
-        onSearchWordChangedDebounced(){
+        onInput(value){
             clearTimeout(window.debounceHandle)
             window.debounceHandle = setTimeout(this.loadUsers.bind(this), 300)
+            isFun(this.opts.onInput) && this.opts.onInput(value)
         }
 
         loadUsers(){
-            let query = this.refs.users ? this.refs.users.searchWord : ""
+            let query = this.refs.users ? this.refs.users.inputValue : ""
             if(query === ""){
                 return
             }
             this.userListRequest && Connection.abortRequest(this.userListRequest)
             this.userListRequest = Connection.get({
-                url: window.config.URL_CA + "/users?q=" + query,
+                url: window.config.URL_CA + "users?q=" + query,
                 done: function(payload, request){
                     let total = request.xhr.getResponseHeader("X-Total-Count") * 1
                     this.userList = payload.data.map(u => {
@@ -56,12 +56,19 @@
                     this.loadingUserList = false
                     this.update()
                 }.bind(this),
+                fail: payload => {
+                    SkE.showError("Could not load user list", getPayloadError(payload))
+                },
                 always: function(){
                     this.userListRequest = null
                 }.bind(this)
             })
             this.loadingUserList = true
             this.update()
+        }
+
+        cancelRequest(){
+            this.userListRequest && Connection.abortRequest(this.userListRequest)
         }
     </script>
 </user-list>

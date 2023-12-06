@@ -1,8 +1,11 @@
 const {FeatureStoreMixin} = require("core/FeatureStoreMixin.js")
 const {AppStore} = require("core/AppStore.js")
 const {Connection} = require('core/Connection.js')
-const {Router} = require("core/Router.js")
+const {Url} = require("core/url.js")
 const {TextTypesStore} = require('common/text-types/TextTypesStore.js')
+const {AppStyle} = require('core/AppStyle.js')
+const {Auth} = require('core/Auth.js')
+const {UserDataStore} = require("core/UserDataStore.js")
 
 class ParconcordanceStoreClass extends FeatureStoreMixin {
     constructor(){
@@ -10,26 +13,26 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         this.feature = "parconcordance"
         this.data = $.extend(this.data, {
             attrs: "word",
-            ctxattrs: "word",
             structs: "g",
             refs: "",
-            glue: 1,
-            refs_up: 0,
+            glue: true,
+            refs_up: false,
             attr_allpos: "all",
             itemsPerPage: 10,
-            linenumbers: 0,
+            linenumbers: false,
             viewmode: "align",
             usesubcorp: '',
-            gdex_enabled: 0,
+            gdex_enabled: false,
             gdexcnt: 300,
             gdexconf: "",
+            maxhitlen: 3, // max # of KWIC tokens for candidate translation
             formValue: {
                 queryselector: 'iquery',
                 keyword: '',
                 lpos: '',
                 wpos: '',
                 default_attr: '',
-                qmcase: '',
+                qmcase: false,
                 cql: ''
             },
             formparts: [{
@@ -40,10 +43,10 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
                     lpos: '',
                     wpos: '',
                     default_attr: '',
-                    qmcase: '',
+                    qmcase: false,
                     cql: '',
                     filter_nonempty: true,
-                    pcq_pos_neg: true
+                    pcq_pos_neg: "pos"
                 }
             }],
             operations: [], // breadcrumbs
@@ -91,17 +94,17 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
             c_customrange: false,
             c_cbgrfns: ["t", "m", "d"],
             c_csortfn: "d",
-            c_onecolumn: 0,
+            c_onecolumn: false,
             c_itemsPerPage: 20,
             c_page: 1,
             c_isEmpty: false,
             c_isError: false,
-            sortml: [{attr:"word", ctx:"0"}],
+            c_selection: []
         })
         this.isConc = true
         this.isFreq = false
         this.c_hasBeenLoaded = false
-        this.defaults = this._copy(this.data)
+        this.defaults = window.copy(this.data)
         this.translations = {
             isLoading: false,
             loaded: false,
@@ -111,22 +114,21 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         this.preloadedData = {}
         this.validEmptyOptions = ["refs"]
 
-        this.urlOptions = ["formValue", "attrs", "ctxattrs", "structs", "refs",
+        this.urlOptions = ["formValue", "attrs", "structs", "refs",
                 "page", "itemsPerPage", "linenumbers", "viewmode", "formparts",
                 "attr_allpos", "tab", "operations", "f_texttypes", "freqSort",
                 "freqDesc", "showresults", "f_itemsPerPage", "glue","results_screen",
                 "alignedCorpname", "refs_up", "freqml", "f_mode", "f_group", "f_texttypes",
-                "gdex_enabled", "gdexcnt", "show_gdex_scores", "usesubcorp"]
+                "gdex_enabled", "gdexcnt", "show_gdex_scores", "usesubcorp", "sort", "tts"]
 
-        this.xhrOptions = ["attrs", "structs", "refs", "ctxattrs", "viewmode", "usesubcorp", "freqml"]
+        this.xhrOptions = ["attrs", "structs", "refs", "attr_allpos",
+                "viewmode", "usesubcorp", "freqml", "glue"]
 
         this.c_xhrOptions = ["c_cattr", "c_cfromw", "c_ctow", "c_cbgrfns", "c_cminfreq",
                 "c_cminbgr", "c_csortfn"]
 
         this.searchOptions = [
             ["formValue", "pc.formValue"],
-            ["refs", "pc.refs"],
-            ["page", "pc.page"],
             ["formparts", "pc.formparts"],
             ["viewmode", "pc.viewmode"],
             ["f_texttypes", "textTypes"],
@@ -138,15 +140,16 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         ]
 
         this.userOptionsToSave = ["tab", "attrs", "attr_allpos",
-                "structs", "glue", "itemsPerPage", "refs", "refs_up"]
+                "structs", "glue", "itemsPerPage", "refs", "refs_up",
+                "formparts.0.corpname"]
     }
 
     initResetAndSearch(options){
         this.setDefaultSearchOptions()
+        this._setResultScreen("concordance")
         Object.assign(this.data, {
             sort: [],
-            page: 1,
-            results_screen: "concordance"
+            page: 1
         }, options)
         this.operationsInit()
         this.searchAndAddToHistory()
@@ -156,10 +159,11 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         this.data.alignedCorpname = ""
         super.search()
         this._initPreloadedDataIfNeeded()
-        this.updateRequestData(this.request[0], {
+        Object.assign(this.request[0].data, {
             pagesize: this.corpus.preloaded ? 10000 : 10000000,
             fromp: 1
         })
+        this._loadAlignedCorporaScripts()
     }
 
     cancelPreviousRequest(){ // overriden
@@ -168,7 +172,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
     }
 
     getRequestUrl(){ // overriden
-        return window.config.URL_BONITO + "concordance?corpname=" + this.corpus.corpname
+        return window.config.URL_BONITO + "concordance"
     }
 
     getRequestData(){ // overriden
@@ -177,8 +181,10 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         data.pagesize = this.data.itemsPerPage
         data.concordance_query = this.getParconcordanceQuery()
         data.structs = this.getStructs()
-
-        return "json=" + encodeURIComponent(JSON.stringify(data))
+        if(Auth.isAnonymous()){
+            delete data.instantSubCorp
+        }
+        return data
     }
 
     onDataLoaded(payload){ // overriden
@@ -197,6 +203,12 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         this.data.gdex_scores = payload.gdex_scores
         this.data.aligned_rtl = payload.Aligned_rtl
         this.data.aligned_corpora = payload.Aligned
+        let lastFilterOp = copy(this.data.raw.Desc).reverse().find(d => d.op == "Filter by aligned corpus")
+        if(lastFilterOp){
+            this.data.breadcrumbsDesc = copy(this.data.raw.Desc).filter(d => d.op != "Filter by aligned corpus")
+            this.data.breadcrumbsDesc[0].size = lastFilterOp.size
+            this.data.breadcrumbsDesc[0].rel = lastFilterOp.rel
+        }
         this.data.items.forEach(item => {
             item.ref = item.Tbl_refs.join(" ● ")
             item.Align.length && item.Align.forEach((al, idx) => {
@@ -205,15 +217,11 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
                     al.Left = al.Right
                     al.Right = tmp
                 }
-                al.hasKwic = this.data.formparts[idx].formValue.keyword !== ""
             }, this)
         })
     }
 
-    onSubcorpusChange(subcorpus){
-        let params = {
-            usesubcorp: subcorpus
-        }
+    reloadActualResults(params){
         this.isConc && this.searchAndAddToHistory(params)
         this.isFreq && this.f_searchAndAddToHistory(params)
         this.isColl && this.c_searchAndAddToHistory(params)
@@ -226,20 +234,17 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
     loadKWICTranslationAndHighlight(alcorp, idx){
         let tokdata = []
         this.data.items.forEach((x, i) => {
-            let hitlen = x.hitlen ? x.hitlen : 1
-            tokdata.push(x.toknum + ':' + hitlen)
+            tokdata.push(x.toknum + ':' + Math.min(x.hitlen || 1, this.data.maxhitlen))
         })
         this.translations.requests[alcorp] = Connection.get({
-            url: window.config.URL_BONITO + "translate_kwic?corpname=" + this.corpus.corpname + "&bim_corpname=" + this.prefix + alcorp,
+            url: window.config.URL_BONITO + "translate_kwic",
             context: this,
-            xhrParams: {
-                method: "POST",
-                data: "json=" + JSON.stringify({
-                    corpname: AppStore.getActualCorpname(),
-                    bim_corpname: alcorp,
-                    data: tokdata.join('\t')
-                })
+            data: {
+                corpname: AppStore.getActualCorpname(),
+                bim_corpname: this.prefix + alcorp,
+                data: tokdata.join('\t')
             },
+            postKeys: ["data"],
             done: function(payload){
                 if (payload.toknum2words && payload.dict) {
                     this.translations.found = true
@@ -248,15 +253,17 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
                         let poses = []
                         for (let h=0; h<hitlen; h++) {
                             let w = payload.toknum2words[parseInt(x.toknum) + h]
-                            if (payload.dict[w]) {
-                                let t = payload.dict[w]
-                                let pos = this._subInArray(t, x.Align[idx].Kwic)
-                                poses = poses.concat(pos)
-                            }
-                            if (payload.dict[w.toLowerCase()]) {
-                                let t = payload.dict[w.toLowerCase()]
-                                let pos = this._subInArray(t, x.Align[idx].Kwic)
-                                poses = poses.concat(pos)
+                            if(w){
+                                if (payload.dict[w]) {
+                                    let t = payload.dict[w]
+                                    let pos = this._subInArray(t, x.Align[idx].Kwic)
+                                    poses = poses.concat(pos)
+                                }
+                                if (payload.dict[w.toLowerCase()]) {
+                                    let t = payload.dict[w.toLowerCase()]
+                                    let pos = this._subInArray(t, x.Align[idx].Kwic)
+                                    poses = poses.concat(pos)
+                                }
                             }
                         }
                         for (let p=0; p<poses.length; p++) {
@@ -272,7 +279,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
                         $("#parconc_translation").hide()
                     }.bind(this), 5000)
                 }
-                this.updatePageTag()
+                this.trigger("translations_loaded")
             }.bind(this)
         })
     }
@@ -289,7 +296,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         }
         let structures = []
         if (arrStruct.indexOf('s') >= 0) structures.push('s')
-        if (this.corpus.is_err_corpus) {
+        if (this.corpus.is_error_corpus) {
             if (arrStruct.indexOf('err') >= 0) structures.push('err')
             if (arrStruct.indexOf('corr') >= 0) structures.push('corr')
         }
@@ -297,7 +304,8 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         this.attrList = this.corpus.attributes.map(a => {
             return {
                 value: a.name,
-                label: a.label
+                label: a.label,
+                isLc: a.isLc
             }
         })
         this.structList = this.corpus.structures.map(s => {
@@ -383,7 +391,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
     }
 
     getUserOptions(){ // overriden
-        let skip = [ "freqml", "formValue", "formparts", "show_gdex_scores"]
+        let skip = [ "freqml", "formValue", "formparts", "show_gdex_scores", "refs"]
         let userOptions = {}
         this.searchOptions.forEach((option) => {
             let key = option[0]
@@ -408,6 +416,12 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
                     labelId: "cc." + operation.name,
                     value: operation.arg || ""
                 }
+            }
+        })
+        this.data.formparts.forEach(part => {
+            userOptions["corpora"] = {
+                labelId: "corpora",
+                value: part.corpname
             }
         })
         if(this.isFreq){
@@ -505,44 +519,46 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
 
     operationsInit() {
         this.data.operations = []
+        let queryselector =  this.data.formValue.queryselector || "iquery"
         let keyword = this.data.formValue.keyword
         let cql = this.data.formValue.cql
-        let desc = keyword || cql
         let query = {
-            queryselector: (this.data.formValue.queryselector || "iquery") + "row",
-            sel_aligned: [],
-            cql: cql
+            queryselector: queryselector + "row",
+            [queryselector]: this.data.formValue[queryselector == "cql" ? "cql" : "keyword"],
+            sel_aligned: []
         }
-        query[this.data.formValue.queryselector || "iquery"] =
-                this.data.formValue.queryselector == "cql" ? cql : keyword
+        if(queryselector == "lemma"){
+            query.lpos = this.data.formValue.lpos
+        }
+        if(queryselector == "lemma" || queryselector == "phrase" || queryselector == "word"){
+            query.qmcase = this.data.formValue.qmcase
+        }
+        if(queryselector == "cql"){
+            query.default_attr = this.data.formValue.default_attr
+        }
         for (let i=0; i<this.data.formparts.length; i++) {
             let c = this.data.formparts[i].corpname
             let f = this.data.formparts[i].formValue
+            let qs = f.queryselector || "iquery"
             if (!c) {
                 c = this.corpus.aligned[0]
             }
-            query["queryselector_" + c] = (f.queryselector || "iquery")
-                    + "row"
-            query[(f.queryselector || "iquery") + "_" + c] = f.keyword
+            query["queryselector_" + c] = qs + "row"
+            query[qs + "_" + c] = f[qs == "cql" ? "cql" : "keyword"]
             if (f.queryselector == "lemma") {
                 query["lpos_" + c] = f.lpos
-                query["lemma_" + c] = f.keyword
-            }
-            else if (f.queryselector == "word") {
+            } else if (f.queryselector == "lemma" || f.queryselector == "phrase" || f.queryselector == "word") {
                 query["qmcase_" + c] = f.qmcase
-            }
-            else if (f.queryselector == "cql") {
+            } else if (f.queryselector == "cql") {
                 query["default_attr_" + c] = f.default_attr
-                query["cql_" + c] = f.cql
             }
-            query["pcq_pos_neg_" + c] = f.pcq_pos_neg ? "pos" : "neg"
+            query["pcq_pos_neg_" + c] = f.pcq_pos_neg
             query["filter_nonempty_" + c] = f.filter_nonempty ? "on" : ""
             query["sel_aligned"].push(c)
-            if (f.keyword) { desc += ", " + (f.keyword || f.cql) }
         }
         this.addOperation({
-            name: "iquery",
-            arg: desc,
+            name: queryselector,
+            arg: query[queryselector],
             active: true,
             query: query
         })
@@ -550,15 +566,16 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
     }
 
     addOperation(operation){
-        operation.id = Math.floor((Math.random() * 10000))
+        operation.id = this._getOperationId()
         this.data.operations.push(operation)
-        this.data.operations.forEach(o => o.active = true)
+        this.data.operations.forEach(o => {delete o.inactive})
         this.trigger("operationsChange", this.data.operations)
     }
 
     addOperationAndSearch(operation){
         this.addOperation(operation)
         this._setResultScreen("concordance")
+        this.data.closeFeatureToolbar = true
         this.searchAndAddToHistory({
             page: 1
         })
@@ -575,7 +592,13 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         let idx = this.data.operations.findIndex(o => {
             return objectEquals(o, operation)
         })
-        this.data.operations.forEach((o, i) => o.active = i <= idx)
+        this.data.operations.forEach((o, i) => {
+            if(i <= idx){
+                delete o.inactive
+            } else {
+                o.inactive = true
+            }
+        })
         this.searchAndAddToHistory()
         this.trigger("operationsChange", this.data.operations)
     }
@@ -595,7 +618,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
             operations = this.operationsInit()
         }
         operations.forEach((operation, i) => {
-            if(operation.active) {
+            if(!operation.inactive) {
                 if (operation.corpname) {
                     let mycorpname = this.corpus.corpname.split('/').pop()
                     query.push({q: "x-" + operation.corpname.split('/').pop()})
@@ -612,17 +635,27 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         if (this.data.alignedCorpname) {
             query.push({q: "x-" + this.data.alignedCorpname})
         }
-        this.data.sort.length && query.push({
-            mlsort_options: this.data.sort
-        })
+        if(this.data.sort.length){
+            if(this.data.sort[0].corpname){
+                query.push({q: "x-" + this.data.sort[0].corpname.split('/').pop()})
+            }
+            query.push({mlsort_options: this.data.sort})
+        }
         if (this.data.gdex_enabled) {
             let gc = (!this.data.gdexconf || this.data.gdexconf == "__default__") ? "" : " " + this.data.gdexconf
             query.push({
                 q: (this.data.show_gdex_scores ? "E" : "e") + this.data.gdexcnt + gc
             })
         }
-        this._addTextTypesToQuery(query[0])
+        if(this.data.tab == "advanced"){
+            Object.assign(query[0], TextTypesStore.getQueryFromTextTypes(this.data.tts))
+        }
         return query
+    }
+
+    getConcordanceQuery(){
+        // used in breadcrumbs
+        return this.getParconcordanceQuery()
     }
 
     findLang(corpname) {
@@ -677,7 +710,9 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
     }
 
     onPrimaryCorpusChange(corpname){
-        AppStore.checkAndChangeCorpus(this.addPrefixTocorpname(corpname))
+        // language was changed from basic/tab form, do not change tab according to user options
+        this.keepTab = this.data.tab
+        AppStore.checkAndChangeCorpus(this.addPrefixToCorpname(corpname))
     }
 
     addPrefixToCorpname(corpname){
@@ -686,6 +721,38 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
             return actFullCorpname.substr(0, actFullCorpname.lastIndexOf("/") + 1) + corpname
         }
         return corpname
+    }
+
+    getAlignedLangName(corpname){
+        let aligned = this.data.aligned.find(c => corpname == c.value)
+        return aligned ? aligned.label : ""
+    }
+
+    showEmptyResultMessage(){
+        super.showEmptyResultMessage()
+        this._removeLastOperationIfNeeded()
+    }
+
+    showError(errorMessage){
+        super.showError(errorMessage)
+        this._removeLastOperationIfNeeded()
+    }
+
+    _removeLastOperationIfNeeded(){
+        let operations = this.data.operations
+        let lastOperation = operations[operations.length - 1]
+        if(this.isConc && lastOperation.name == "filter"){
+            this.removeOperation(lastOperation)
+        }
+    }
+
+    _onUserDataLoaded(){  // overrides default
+        if(this.keepTab){
+            let userData = UserDataStore.getFeatureOptions(this.corpus.corpname, this.feature)
+            userData.tab = this.keepTab
+            this.keepTab = null
+        }
+        super._onUserDataLoaded()
     }
 
     _setResultScreen(results_screen){
@@ -727,17 +794,35 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         return finallist
     }
 
-    _addTextTypesToQuery(query) {
-        let s = TextTypesStore.get('selection')
-        for (let tt in s) {
-            query["sca_" + tt] = s[tt]
-        }
-    }
-
     _setDataFromUrl(query){ // overriden
         super._setDataFromUrl(query)
         if(query.operations){
             this.data.operations = JSON.parse(query.operations)
+            this.data.operations.forEach(operation => {
+                if(!isDef(operation.id)){
+                    operation.id = this._getOperationId()
+                }
+                if(operation.query){
+                    operation.query.sel_aligned && operation.query.sel_aligned.forEach(al => {
+                        if(!isDef(operation.query["filter_nonempty_" + al])){
+                            operation.query["filter_nonempty_" + al] = "on"
+                        }
+                        if(!isDef(operation.query["pcq_pos_neg_" + al])){
+                            operation.query["pcq_pos_neg_" + al] = "pos"
+                        }
+                        if(!isDef(operation.query["queryselector_" + al])){
+                            operation.query["queryselector_" + al] = "iqueryrow"
+                        }
+                        let queryselector = operation.query["queryselector_" + al]
+                        if(!isDef(operation.query[queryselector + "_" + al])){
+                            operation.query[queryselector + "_" + al] = ""
+                        }
+                    })
+                }
+            })
+        }
+        if(query.selection){
+            this.data.tts = JSON.parse(query.selection)
         }
         this._setResultScreen(query.results_screen || "concordance")
     }
@@ -768,6 +853,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
     }
 
     _onPageChange(pageId, query) { // overriden
+        this._stopBgJobInterval()
         if (this._isActualFeature()) {
             this._cancelRequestResetOptions()
             if(query){
@@ -784,13 +870,21 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         }
     }
 
+    _cancelPreloadRequests(){
+        for(let thousand in this.preloadedData){
+            let request = this.preloadedData[thousand] && this.preloadedData[thousand].request
+            request && request.xhr && request.xhr.abort()
+        }
+    }
+
     _initPreloadedDataIfNeeded(){
-        let data = this._parseRequestData(this.data.activeRequest)
+        let data = window.copy(this.data.activeRequest.data)
         delete data.fromp
         delete data.pagesize
         if(!this.preloadedData.requestedData
                 // preloaded request is not same (excluding fromp and pagesize) as actual request
                 || !window.objectEquals(data, this.preloadedData.requestedData)){
+            this._cancelPreloadRequests()
             this.preloadedData = {
                 requestedData: data
             }
@@ -836,17 +930,18 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         }
         this.preloadedData[thousand] = {}
         let request = copy(this.request[0])
-        this.updateRequestData(request, {
+        Object.assign(request.data, {
             pagesize: 1000,
             fromp: (thousand || 0) + 1
         })
 
         this.preloadedData[thousand].request = Connection.get({
             url: request.url,
+            data: request.data,
             xhrParams: request.xhrParams,
             done: function(thousand, payload){
                 payload.Lines.forEach(item => {
-                    item.ref = item.Tbl_refs.join(" ● ")
+                    item.ref = item.Refs.join(" ● ")
                 })
                 this.preloadedData[thousand].data = payload.Lines
             }.bind(this, thousand)
@@ -880,6 +975,15 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         this.translations.handle && clearTimeout(this.translations.handle)
     }
 
+    _loadAlignedCorporaScripts(){
+        this.data.formparts.forEach(p => {
+            AppStyle.loadCorpusFont(this.addPrefixToCorpname(p.corpname))
+        })
+    }
+    _getOperationId(){
+        return Math.floor(Math.random() * 10000)
+    }
+
     f_searchAndAddToHistory(options, params){
         this._setNonEmptyOptions(options)
         this.f_search(params)
@@ -892,11 +996,8 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         this.data.isLoading = true
         this.updatePageTag()
         this.data.activeRequest = Connection.get({
-            url: window.config.URL_BONITO + (this.data.f_mode == "texttypes" ? "freqs" : "freqml") + '?corpname=' + this.corpus.corpname,
-            xhrParams: {
-                method: 'POST',
-                data: this.f_getRequestData()
-            },
+            url: window.config.URL_BONITO + (this.data.f_mode == "texttypes" ? "freqs" : "freqml"),
+            data: this.f_getRequestData(),
             done: this.f_onDataLoadDone.bind(this),
             fail: this.onDataLoadFail.bind(this),
             always: this.onDataLoadAlways.bind(this)
@@ -912,7 +1013,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
             freq_sort: this.data.freqSort,
             fmaxitems: 5000, // TODO: user data without limit?
             concordance_query: this.getParconcordanceQuery(),
-            group: this.data.f_group
+            group: !!this.data.f_group
         }
         if(this.data.f_mode == "texttypes") {
             data.fcrit = this.data.f_texttypes
@@ -925,21 +1026,24 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
                 data["ml" + (idx + 1) + "ctx"] = this.getFilterContextStr(freq.ctx, freq.base)
             })
         }
-        return "json=" + encodeURIComponent(JSON.stringify(data))
+        data.results_url = window.location.href + '&showresults=1'
+        return data
     }
 
     f_onDataLoadDone(payload){
         if(this.isFreq){
             this.f_hasBeenLoaded = false
+            this.data.raw = payload
             this.data.f_items = []
             this.data.f_error = ''
             this.data.f_isEmpty = true
             this.data.f_isError = false
+            this.onDataLoadedProcessBGJob(payload, this.f_search.bind(this))
             if(payload.error){
                 this.data.f_error = payload.error
                 this.data.f_isError = true
-                this.showError(payload.error)
-            } else{
+                this.showError("Could not load frequency data.", getPayloadError(payload))
+            } else if(!this.data.jobid) {
                 this.data.f_items = payload.Blocks
                 this.data.f_isEmpty = this.data.f_items.length == 0
                 if(!this.data.f_isEmpty){
@@ -952,6 +1056,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
             }
             if(!this.data.f_isError){
                 Dispatcher.trigger("FEATURE_TOOLBAR_SHOW_OPTIONS", null)
+                this.trigger("f_dataLoaded")
             }
         }
     }
@@ -969,7 +1074,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
             f_mode: mode
         }, data))
         concQueryObj.results_screen = "frequency"
-        return Router.createUrl("parconcordance", concQueryObj)
+        return Url.create("parconcordance", concQueryObj)
     }
 
     f_getContextLink(ctx, base, attr, alignedCorpname, f_tab){
@@ -1010,11 +1115,8 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         this.updatePageTag()
 
         this.data.activeRequest = Connection.get({
-            url: window.config.URL_BONITO + "collx?corpname=" + this.corpus.corpname,
-            xhrParams: {
-                method: "POST",
-                data: this.c_getRequestData()
-            },
+            url: window.config.URL_BONITO + "collx",
+            data: this.c_getRequestData(),
             done: this.c_onDataLoadDone.bind(this),
             fail: this.onDataLoadFail.bind(this),
             always: this.onDataLoadAlways.bind(this)
@@ -1052,12 +1154,12 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
                 data[attr.substr(2)] = this.data[attr]
             }
         })
-        return "json=" + encodeURIComponent(JSON.stringify(data))
+        return data
     }
 
     c_onDataLoadDone(payload){
         if(this.isColl){
-            this.request[0].xhrParams.data = this.c_getRequestData(payload.wllimit || 10000000, 1)
+            this.request[0].data = this.c_getRequestData(payload.wllimit || 10000000, 1)
             this.c_hasBeenLoaded = false
             this.data.c_items = []
             this.data.c_error = ''
@@ -1066,7 +1168,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
             if(payload.error){
                 this.data.c_error = payload.error
                 this.data.c_isError = true
-                this.showError(payload.error)
+                this.showError("Could not load collocation data.", getPayloadError(payload))
             } else{
                 this.data.c_items = payload.Items
                 this.data.c_lastpage = payload.lastpage
@@ -1083,6 +1185,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
             }
             if(!this.data.c_isError){
                 Dispatcher.trigger("FEATURE_TOOLBAR_SHOW_OPTIONS", null)
+                this.trigger("c_dataLoaded")
             }
         }
     }

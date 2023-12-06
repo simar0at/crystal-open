@@ -1,3 +1,5 @@
+@import 'app/styles/constants';
+
 .quickLinkColumn{
     display: inline-block;
     margin: 0 8px;
@@ -9,11 +11,11 @@
     .btn{
         display: block;
         a {
-            color: #fff!important;
+            color: $white !important;
         }
         &:hover{
             & > * {
-                color: #fff;
+                color: $white;
             }
         }
     }

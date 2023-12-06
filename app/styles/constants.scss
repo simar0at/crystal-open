@@ -1,10 +1,70 @@
-$new_skeBlue: #279FD2;
-$new_lightBlue: #CFECF4;
-$new_mediumBlue: #A3CCDD;
-$new_darkBlue: #004B69;
-$new_darkBlue_hover: #006992;
-$new_darkBlue_disabled: rgba(0,75,105,0.38);
-$textOnDark: white;
-$hoverWhite: lightgrey;
-$new_contrastColor: #C52031;
-$new_contrastColorLight: #dc2339;
+// colors
+$blue-800: #004B69;
+$blue-750: #006992;
+$blue-710: #039be5;
+$blue-700: #2AA0D1;
+$blue-600: #279FD2;
+$blue-200: #A3CCDD;
+$blue-100: #CFECF4;
+$blue-800_disabled: rgba(0,75,105,0.38);
+
+$red-400: #C52031;
+$red-300: #DC2339;
+$red-200: #F44336;
+
+$gray-800: #212121;//rgba(0,0,0,0.87);//#222;
+$gray-600: #757575;//rgba(0,0,0,0.54);//#737373;
+$gray-500: #9E9E9E;//rgba(0,0,0,0.38);//#BDBDBD;
+$gray-400: #BDBDBD;
+$gray-300: #CECECE;
+$gray-250: #D8D8D8;
+$gray-200: #D3D3D3;
+$gray-100: #F2F2F2;
+
+$green-500: #4CAF50;
+$green-300: #BFEFBF;
+$green-200: #D2F0D3;
+
+$white: #FFF;
+$black: #000;
+$persianGreen: #009688;
+$yellow: #F8CD13;
+
+$textOnDark: $white;
+$disabled: rgba(0,0,0,0.42);
+
+// semi-transparent
+$transparentWhite: rgba(255, 255, 255, 0.8);
+$transparentBlack: rgba(0, 0, 0, 0.3);
+
+@mixin maxWidthXsmall{
+    max-width: 500px;
+}
+@mixin maxWidthSmall{
+    max-width: 750px;
+}
+@mixin maxWidthMedium{
+    max-width: 970px;
+}
+@mixin maxWidthLarge{
+    max-width: 1170px;
+}
+@mixin content-box{
+    padding: 20px;
+    background-color: $white;
+}
+
+// Media Query Ranges from MaterializeCss
+$small-screen-up: 601px !default;
+$medium-screen-up: 993px !default;
+$large-screen-up: 1201px !default;
+$small-screen: 600px !default;
+$medium-screen: 992px !default;
+$large-screen: 1200px !default;
+
+$medium-and-up: "only screen and (min-width : #{$small-screen-up})" !default;
+$large-and-up: "only screen and (min-width : #{$medium-screen-up})" !default;
+$extra-large-and-up: "only screen and (min-width : #{$large-screen-up})" !default;
+$small-and-down: "only screen and (max-width : #{$small-screen})" !default;
+$medium-and-down: "only screen and (max-width : #{$medium-screen})" !default;
+$medium-only: "only screen and (min-width : #{$small-screen-up}) and (max-width : #{$medium-screen})" !default;

@@ -1,4 +1,7 @@
+@import 'app/styles/constants';
+
 .concordance-selected-lines-box{
+    pointer-events: none;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -7,7 +10,8 @@
     z-index: 495;
     display: none;
     > div{
-        background-color: #cfecf4;
+        pointer-events: initial;
+        background-color: $blue-100;
         padding: 10px 20px;
         display: inline-block;
         position: relative;

@@ -1,5 +1,26 @@
+@import 'app/styles/constants';
+
 .corpus-tab-advanced{
     .menuCell{
         position: relative;
+    }
+    .sketches{
+      margin-right: 2em;
+    }
+    .lCnt{
+        color: #212121;
+        border-radius: 11px;
+        padding: 0px 5px;
+        font-size: 14px;
+        display: inline-block;
+        line-height: 18px;
+        margin: 0 10px;
+    }
+    .lAut{
+        flex: 1;
+    }
+    .lId{
+        font-size: 14px;
+        color: $gray-400;
     }
 }

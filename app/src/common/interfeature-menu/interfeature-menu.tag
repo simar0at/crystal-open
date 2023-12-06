@@ -1,29 +1,50 @@
 <interfeature-menu>
-    <ul id="{id}" class="dropdown-content interfeature-menu">
-        <li each={link in links} class="doubleLinks" data-feature="{link.feature}" data-link={link.name}>
+    <ul id="{id}"
+            class="dropdown-content interfeature-menu">
+        <li each={link in links}
+                class="doubleLinks"
+                data-feature="{link.feature}"
+                data-link={link.name}>
             <a class="currentTabLink">
                 <i class="ske-icons {getFeatureIcon(link.feature)}"></i>
                 {getLinkLabel(link)}
             </a>
-            <a target="_blank" class="newTabLink menu-tooltip">
+            <a if={link.name != "concordanceMacro"}
+                    target="_blank"
+                    class="newTabLink menu-tooltip">
                 <i class="material-icons">open_in_new</i>
             </a>
         </li>
     </ul>
 
     <script>
+        require("./interfeature-menu-macro-dialog.tag")
+
+        const {Auth} = require("core/Auth.js")
+        const {AppStore} = require("core/AppStore.js")
+        const {MacroStore} = require("common/manage-macros/macrostore.js")
 
         updateAttributes(){
             this.links = {}
             if(Array.isArray(this.opts.features)){
                 this.links = this.opts.features.map( f => {
-                    return {
+                    let link = {
                         feature: f,
                         name: f
                     }
+                    if(f == "concordanceMacro"){
+                        link.feature = "concordance"
+                        link.label = _("concordanceMacro")
+                    }
+                    return link
                 })
             } else{
                 this.links = this.opts.links
+            }
+            if(!Auth.isFullAccount()){
+                this.links = this.links.filter(l => {
+                    return l.name != "concordanceMacro"
+                })
             }
         }
         this.updateAttributes()
@@ -57,27 +78,61 @@
                         let feature = li.data("feature")
                         let link = li.data("link")
                         let linkObj = this.links.find(l => { return l.name == link})
+                        let isConcMacro = linkObj.name == "concordanceMacro"
                         let disabled = !window.permissions[feature]
                                 || (isFun(this.opts.isFeatureLinkActive) && !this.opts.isFeatureLinkActive(feature, rowData, evt, linkObj))
+                        let urlParams = this.opts.getFeatureLinkParams(feature, rowData, evt, linkObj)
+                        if(!disabled && urlParams.corpname){
+                            let corpus = AppStore.getCorpusByCorpname(urlParams.corpname)
+                            if(corpus && !corpus.user_can_read){
+                                disabled = true
+                            }
+                        }
+                        if(isConcMacro && !MacroStore.hasAnyMacro()){
+                            disabled = true
+                        }
                         if(disabled){
                             aNodes.attr("disabled", disabled)
                             li.addClass("menu-tooltip disabled")
-                                 .attr("data-tooltip", _("wl." + feature + "LinkDisabled"))
+                            if(isConcMacro){
+                                li.attr("data-tooltip", _("concordanceHasNoMacros"))
+                            } else {
+                                li.attr("data-tooltip", _("wl." + feature + "LinkDisabled"))
+                            }
                         } else{
-                            let url = window.stores[feature].getUrlToResultPage(this.opts.getFeatureLinkParams(feature, rowData, evt, linkObj))
-                            aNodes.attr("href", url)
+                            if(isConcMacro){
+                                aNodes.click(() => {
+                                    menuNode.dropdown("close")
+                                    this.openConcordanceMacroDialog(urlParams)
+                                })
+                            } else {
+                                let url = window.stores[feature].getUrlToResultPage(urlParams)
+                                aNodes.attr("href", url)
+                                li.find(".newTabLink").attr("data-tooltip", _("openInNewTab"))
+                                         .attr("data-position", "right")
+                            }
                         }
-                        li.find(".newTabLink").attr("data-tooltip", _("openInNewTab"))
                     }.bind(this))
                 menuNode.attr("data-target", id)
                     .dropdown({
                         constrainWidth: false,
                         closeOnClick: false,
-                        onOpenEnd: () => {$(".menu-tooltip").tooltip({enterDelay: 500})},
+                        onOpenEnd: () => {$(".menu-tooltip").tooltip({enterDelay: 1000})},
                         onCloseStart: () => {destroyTooltips(".menu-tooltip")}
                     })
                     .dropdown("open")
             }
+        }
+
+        openConcordanceMacroDialog(params){
+            Dispatcher.trigger("openDialog", {
+                title: _("macros"),
+                tag: "interfeature-menu-macro-dialog",
+                fixedFooter: true,
+                opts: {
+                    params: params
+                }
+            })
         }
 
         this.on("update", this.updateAttributes)

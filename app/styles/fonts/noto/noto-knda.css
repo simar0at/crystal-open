@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-knda ._t{
-    font-family: 'Noto Kannada'
+.script-knda ._t,
+body .script-knda ._t,
+body .script-knda._t{
+    font-family: 'Noto Kannada', 'Noto Sans', sans-serif;
 }

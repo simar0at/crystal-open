@@ -1,4 +1,4 @@
-@import 'app/styles/base';
+@import 'app/styles/constants';
 
 .concordance-jump-to{
     display: inline-block;
@@ -16,9 +16,9 @@
         font-size: 20px;
         text-align: center;
         cursor: pointer;
-        color: #009688;
+        color: $persianGreen;
         &:hover{
-            background-color: $whiteGray;
+            background-color: $gray-100;
         }
     }
 }

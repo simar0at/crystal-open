@@ -3,13 +3,19 @@
         display: flex;
     }
     .context-selector{
-        @media (max-width: 1140px){
+        @media (max-width: 750px){
             .narrowCtx{
                 display: block;
             }
             .wideCtx{
                 display: none
             }
+        }
+    }
+    .baseSelect{
+        display: none;
+        @media (max-width: 750px){
+            display: block;
         }
     }
 }

@@ -1,0 +1,55 @@
+<div class="aboutLeftCol">
+    <p>Il thesaurus in Sketch Engine è una lista generata automaticamente di sinonimi o parole appartenenti alla stessa categoria (campo semantico). La lista viene prodotta in base al contesto in cui le parole appaiono nel corpus selezionato. Nella maggior parte dei corpora sono supportati solo nomi, aggettivi, verbi e avverbi.</p>
+</div>
+<div class="aboutRightCol">
+    <iframe width="400" height="225" src="https://www.youtube.com/embed/kLsNUdTrTLk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+</div>
+
+<br>
+<ul class="clearfix collapsible">
+    <li>
+        <div class="collapsible-header">Cosa rende il thesaurus unico?</div>
+        <div class="collapsible-body">
+            <div>Poiché non è coinvolto alcun lavoro manuale, le liste di sinonimi possono essere generate per qualsiasi parola nella lingua, a condizione che si trovi un numero sufficiente di occorrenze nel corpus. Questo è il motivo per cui le liste di sinonimi possono essere generate anche per parole rare che non sarebbero incluse nei thesauri tradizionali.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Come vengono identificati i sinonimi?</div>
+        <div class="collapsible-body">
+            <div>I sinonimi sono identificati automaticamente in base al contesto in cui occorrono. Questo principio si basa sulla teoria della semantica distribuzionale che afferma, in poche parole, che le parole che appaiono nello stesso contesto sono simili nel significato. In Sketch Engine, questo significa che le parole che hanno <a href="https://www.sketchengine.eu/my_keywords/collocation/" target="_blank">collocazioni</a> simili sono simili nel significato. Il word sketch è la chiave per determinare la similarità. Per determinare i sinonimi della parola ricercata, si confrontano gli word sketch di tutte le parole con la stessa parte del discorso e si elencano quelle che condividono la maggior proporzione di %[collocate|collocati]%. Il punteggio dato per ogni sinonimo indica la percentuale di collocati condivisi.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Qualità del thesaurus</div>
+        <div class="collapsible-body">
+            <div>La qualità del thesaurus è fortemente dipendente da word sketch ricchi che contengono molti collocati, il che dipende di conseguenza da un'alta %[frequency|frequenza]% della parola ricercata così come da un'alta frequenza dei potenziali sinonimi. Questo significa che è necessario un corpus molto grande. Una dimensione di circa 100.000 parole è il minimo indispensabile per produrre qualche risultato utilizzabile per le parole ad alta frequenza. Tuttavia, un corpus molto più grande è necessario per le parole rare per garantire una frequenza sufficiente. L'uso dei nostri corpora di molti miliardi di parole è altamente raccomandato.</div>
+            <br>
+            <div>La lista dei sinonimi può contenere parole che non dovrebbero essere incluse. Questo è il risultato dell'elaborazione automatica. Sketch Engine non può determinare direttamente la similarità di significato, può solo confrontare i collocati. Se due parole condividono gli stessi collocati, saranno elencate come sinonimi anche se il significato non è simile. Queste imprecisioni occasionali non rendono lo strumento meno utile. Per evitare questo, usate un corpus più grande. Thesaurus per parole estremamente rare (con una frequenza di poche centinaia di parole o meno) produrranno inevitabilmente risultati scadenti o potrebbero non produrre affatto il thesaurus.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Come viene calcolato e interpretato il punteggio?</div>
+        <div class="collapsible-body">
+            <div>Il punteggio, che può essere visualizzato utilizzando le opzioni di visualizzazione, è semplicemente una percentuale dei collocati condivisi. Per stabilirlo, il word sketch della parola cercata viene confrontato con gli schizzi di tutte le altre parole del corpus con la stessa parte di discorso. Ogni relazione grammaticale viene confrontata separatamente. Si prega di fare riferimento a <a href="https://www.sketchengine.eu/statistics-used-in-sketch-engine" target="_blank">Statistiche in Sketch Engine</a> per la formula e i dettagli.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Requisiti per il buon funzionamento del thesaurus</div>
+        <div class="collapsible-body">
+            <div>
+                <b>Word Sketch</b> <br>Thesaurus può funzionare solo se esistono word sketch nel corpus. Il corpus deve essere taggato in Sketch Engine o usare lo stesso tagset. Una <a href="https://www.sketchengine.eu/my_keywords/word-sketch-grammar/" target="_blank">word sketch grammar</a> personalizzata deve essere usata se il corpus è taggato con un tagset diverso. <br>Thesaurus funzionerà anche con word sketch grammar universali con tutte le relative limitazioni. Vedi word sketch.
+            </div>
+            <br>
+            <div>
+                <b>Tag e lemmi</b> <br> Un corpus %[tag|taggato]% e %[lemma|lemmatizzato]% è necessario per un thesaurus a pieno titolo. I thesauri generati da corpora non taggati e non lemmatizzati con word sketch universali ne risentiranno in qualità. Tuttavia, possono essere molto utili, specialmente con le lingue con meno risorse dove il tagging e la lemmatizzazione non sono praticabili.
+            </div>
+            <br>
+            <div>
+                <b>Dimensione del corpus</b> <br>La qualità del thesaurus dipende interamente da word sketch ricchi. Un word sketch ricco è definito da un gran numero di collocazioni in tutte le relazioni grammaticali. Un word sketch ricco deve esistere per la parola cercata ma anche per tutte le altre parole con la stessa parte del discorso, in modo da poterle confrontare. Questo requisito può essere soddisfatto solo se la parola ha un'alta %[frequency|frequenza]% nel corpus, idealmente migliaia di occorrenze o più. Di conseguenza, è necessario un corpus molto grande in modo che anche le parole meno frequenti possano produrre ricchi word sketch. L'uso dei nostri corpora di molti miliardi di parole è raccomandato per qualsiasi lavoro serio tramite thesaurus.
+            </div>
+        </div>
+    </li>
+</ul>
+

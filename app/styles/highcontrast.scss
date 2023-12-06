@@ -1,0 +1,189 @@
+@import 'app/styles/constants';
+
+.highContrast{
+    color: $black;
+
+    #mobileMenu,
+    .chip,
+    .header-menu a,
+    header-navbar h1,
+    .input-field > label,
+    label.control-label,
+    label,
+    .ui-list .label,
+    wordsketch-gramrel > table thead i.material-icons,
+    wordsketch-gramrel > table thead .ske-icons,
+    div[data-is="wordsketch-gramrel"] > table thead i.material-icons,
+    div[data-is="wordsketch-gramrel"] > table thead .ske-icons,
+    wordsketch-gramrel > table > tbody table tbody tr.colloc_row,
+    div[data-is="wordsketch-gramrel"] > table > tbody table tbody tr.colloc_row,
+    .wordsketch-one-column .column-table td,
+    .page-sketchdiff .sketchdiff-result-options h5 > span span{
+        color: $black;
+        opacity: 1;
+    }
+
+    .ca-browser .emptyFolder,
+    .ca-browser .loadingFolder,
+    .ca-browser .emptyCorpus{
+        color: $black;
+    }
+
+    .grey-text{
+        color: #4d4d4d!important;
+    }
+
+    .input-label,
+    .cardBtn .desc,
+    .corpus-history table td.size,
+    .corpus-info-dialog .collapsible .collapsible-header span .attr,
+    .corpus-info-dialog .collapsible .collapsible-body .attr,
+    .page-dashboard .card.corpusCard .featureDesc,
+    .concordance-result.hasAttributes .kwicWrapper .itm::after,
+    .concordance-result.hasContextAttributes .itm::after,
+    .ca-compiler .status .statusDesc,
+    .table-label,
+    .frequency-result .column-table i{
+        color: #4d4d4d;
+        opacity: 1;
+    }
+
+    .ca-browser .table td.num,
+    .btn-flat.color-blue-200 i{
+        color: #808080;
+    }
+
+    .btn.contrast{
+        color: #fff
+    }
+
+    .ui{
+        input:not([type]),
+        input[type=text]:not(.browser-default),
+        input[type=password]:not(.browser-default),
+        input[type=email]:not(.browser-default),
+        input[type=url]:not(.browser-default),
+        input[type=time]:not(.browser-default),
+        input[type=date]:not(.browser-default),
+        input[type=datetime]:not(.browser-default),
+        input[type=datetime-local]:not(.browser-default),
+        input[type=tel]:not(.browser-default),
+        input[type=number]:not(.browser-default),
+        input[type=search]:not(.browser-default),
+        textarea.materialize-textarea,
+        .ui-input .input-field input{
+            border-bottom-width: 2px;
+            box-shadow: none;
+        }
+        input::placeholder{
+            color: #808080;
+        }
+        &.ui-input .prefix-icon,
+        &.ui-input .suffix{
+            opacity: 1;
+            color: grey;
+        }
+        &.ui-tabs {
+            > div > ul.tabs .tab a.active{
+                color: $black;
+            }
+            .tabs a{
+                opacity: 0.9;
+            }
+        }
+    }
+
+    .chip{
+        background-color: $white;
+        border: 1px solid $black;
+    }
+
+    .material-clickable{
+        opacity: 0.8;
+        &:hover{
+            opacity: 1
+        }
+    }
+
+    .header-corpus{
+        .ui-input .input-field input{
+            border-color: grey!important;
+        }
+        ul li .cLang,
+        ul li .clSize,
+        .foundCount {
+            opacity: 1;
+            color: #4d4d4d;
+        }
+    }
+
+    side-nav ul#side-nav{
+        background-color: $black;
+    }
+
+    .table-label > span:not(.selected) span{
+        text-decoration: underline;
+    }
+
+    .feature-toolbar{
+        .bar >ul>li>a{
+            &:hover,
+            &#btnannotate{
+                background-color: $black;
+                i{
+                    color: $white;
+                }
+            }
+            i{
+                color: $black;
+            }
+        }
+    }
+
+    .page-wordsketch{
+        .card table td a{
+            text-decoration: underline;
+            color: $black;
+        }
+    }
+
+    .page-concordance{
+        .concordance-annotation-box > div{
+            background-color: $black;
+            label{
+                color: $white;
+            }
+            .btn{
+                background-color: $white;
+                color: $black;
+            }
+        }
+        .annotbox{
+            background-color: $black;
+            color: #fff!important;
+        }
+        .annotmenu{
+            border: 1px solid black;
+            background-color: $white;
+            color: $black;
+            li:hover{
+                background-color: $black;
+                span{
+                    color: $white;
+                }
+            }
+        }
+    }
+
+    .page-trends{
+        .arrowIco{
+            span{
+                color: #4d4d4d!important;
+            }
+        }
+    }
+
+    .card .card-action a:not(.btn):not(.btn-large):not(.btn-small):not(.btn-large):not(.btn-floating) {
+        color: $black;
+    }
+}

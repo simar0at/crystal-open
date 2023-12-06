@@ -1,3 +1,5 @@
+@import 'app/styles/constants';
+
 .concordance-detail-window{
     position: fixed;
     left: 52px; /*sidenav*/
@@ -77,7 +79,7 @@
     }
 
     .coll{
-        color:red;
+        color: $red-200;
         font-weight: bold;
     }
     .strc{

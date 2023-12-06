@@ -9,6 +9,8 @@
     font-style: normal;
 }
 
-.script-hebr ._t{
-    font-family: 'Noto Hebrew'
+.script-hebr ._t,
+body .script-hebr ._t,
+body .script-hebr._t{
+    font-family: 'Noto Hebrew', 'Noto Sans', sans-serif;
 }

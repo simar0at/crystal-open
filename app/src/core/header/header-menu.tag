@@ -1,10 +1,10 @@
 <header-menu-item>
     <li id={"header-menu-" + opts.data.id}>
-        <a id="btn{opts.data.id}" onclick={opts.data.onClick ? opts.data.onClick : null}
+        <a id="btn{opts.data.id}"
+                onclick={opts.data.onClick ? opts.data.onClick : null}
                 href={opts.data.href}
-                class={"header_tt": opts.showTooltip}
-                data-tooltip={opts.showTooltip ? _(opts.data.labelId) : ""}
-                style="position: relative;">
+                class="relative {header_tt: opts.showTooltip}"
+                data-tooltip={opts.showTooltip ? _(opts.data.labelId) : ""}>
             <i class='material-icons'>{opts.data.icon}</i>
             <span if={opts.data.active} class="activeIcon"></span>
             <label>{getLabel(opts.data)}</label>
@@ -70,16 +70,12 @@
                 title: _('fb.feedback'),
                 buttons: [{
                     label: _("send"),
-                    class: "sendFeedbackBtn contrast",
+                    class: "sendFeedbackBtn btn-primary",
                     onClick: (dialog) => {
                         dialog.contentTag.refs.feedback.send()
                     }
                 }]
             })
-        }
-
-        onSkemaClick() {
-            window.open(window.config.URL_SKEMA + "?corpname=" + AppStore.getActualCorpname(), "_blank")
         }
 
         onHelpClick(){
@@ -110,10 +106,6 @@
              window.open(externalLink("globalAdministration"), "_blank")
         }
 
-        onBjClick() {
-            Dispatcher.trigger("ROUTER_GO_TO", "bgjobs")
-        }
-
         onSettingsClick(evt){
             Dispatcher.trigger('openDialog', {
                 tag: 'settings-dialog',
@@ -140,7 +132,7 @@
                 icon: "timelapse",
                 inMenu: true,
                 active: AppStore.data.bgJobsNotify,
-                onClick: this.onBjClick
+                href: "#bgjobs"
             }, {
                 hide: !isFullAccount || !window.config.URL_SKE_LI,
                 id: "link",

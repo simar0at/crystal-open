@@ -60,9 +60,9 @@
         <div if={tuple.expanded && url.show}
                 each={url, urlIdx in tuple.urls}
                 class="url ui-checkbox">
-            <label for="url_{urlIdx}">
+            <label for="url_{tupleIdx}_{urlIdx}">
                 <input type="checkbox"
-                        id="url_{urlIdx}"
+                        id="url_{tupleIdx}_{urlIdx}"
                         checked={url.checked}
                         onchange={onUrlCheckboxChange.bind(this, tuple, url)}/>
                 <span></span>
@@ -75,8 +75,9 @@
     </div>
     <span ref="goBtnWrapper" id="goBtnWrapper" class="fixed-action-btn">
         <a href="javascript:void(0)"
+                id="btnCaSeedsUrlGo"
                 ref="btnGo"
-                class="btn contrast btn-floating btn-large disabled"
+                class="btn btn-primary btn-floating btn-large disabled"
                 onclick={onGoClick}>
             {_("go")}
         </a>
@@ -94,6 +95,7 @@
         CAStore.loadUrlsFromSeeds(this.opts.corpus_id, Object.assign({
             input_type: "seed_words",
             seed_words: this.opts.seed_words,
+            tuple_size: this.opts.tuple_size,
             max_urls_per_query: this.opts.max_urls_per_query,
             sites_list: this.opts.sites_list,
             name: this.opts.name
@@ -179,12 +181,12 @@
                     u.checked && urls.push(u.url)
                 })
             })
-            CAStore.startWebBootCaT(this.opts.corpus_id, {
+            CAStore.startWebBootCaT(this.opts.corpus_id, Object.assign(this.opts.settings, {
                 urls: [...new Set(urls)], // demove duplicities
                 seed_words: this.opts.seed_words,
                 input_type: "urls",
                 name: this.opts.name
-            })
+            }))
         }
 
         onWebBootCaTStarted(){

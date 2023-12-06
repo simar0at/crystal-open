@@ -11,9 +11,10 @@ class UserDataStoreClass extends StoreMixin {
         this.CORPORA_HISTORY_SIZE = 15
         this.CQLS_SIZE = 50
         this.PAGES_SIZE = {
-            history: 200,
-            favourites: 50
+            pages_history: 200,
+            pages_favourites: 50
         }
+        this.PAGES_LABEL_SIZE = 200
         this._reset()
 
         AppStore.on("corpusChanged", this._onCorpusChange.bind(this))
@@ -33,23 +34,29 @@ class UserDataStoreClass extends StoreMixin {
     }
 
     addPageToHistory(page){
-        this._onPageAdd(page, "history")
+        this._onPageAdd(page, "pages_history")
     }
 
     removePageFromHistory(page){
-        this._onPageRemove(page, "history")
+        this._onPageRemove(page, "pages_history")
     }
 
     togglePageFavourites(favourite, page){
         if(favourite){
-            this._onPageAdd(page, "favourites")
+            this._onPageAdd(page, "pages_favourites")
+            SkE.showToast(_("addedToFavourites"))
         } else{
-            this._onPageRemove(page, "favourites")
+            this._onPageRemove(page, "pages_favourites")
+            SkE.showToast(_("removedFromFavourites"))
         }
     }
 
-    getFeatureOptions(feature){
-        return this.data.features[feature] || {}
+    getFeatureOptions(corpname, feature){
+        return this.data.corporaData[corpname] ? this.data.corporaData[corpname].features[feature] : null
+    }
+
+    getCorpusData(corpname, key){
+        return this.data.corporaData[corpname] ? this.data.corporaData[corpname][key] : null
     }
 
     getCQLs(){
@@ -81,27 +88,64 @@ class UserDataStoreClass extends StoreMixin {
     saveFeatureOptions(store, optionList){
         // save given feature options
         let feature = store.feature
+        let corpname = store.corpus.corpname
         let options = {}
         optionList.forEach(option => {
-            options[option] = store.data[option]
+            options[option] = copy(store.get(option))
         })
-        let loadedOptions = this.data.features[feature] || {}
+        let loadedOptions = this.getFeatureOptions(corpname, feature) || {}
         let toSave = Object.assign({}, loadedOptions, options)
         if(!objectEquals(toSave, loadedOptions)){
-            this.saveUserData({
+            this._save({
                 ["features|" + feature]: toSave
-            }, this.corpus.corpname)
-            this.data.features[feature] = toSave
+            }, corpname)
+            // for open crystal allow to store data at least in javascript for actual session
+            if(!this.data.corporaData[corpname]){
+                this.data.corporaData[corpname] = {
+                    features: {}
+                }
+            }
+            this.data.corporaData[corpname].features[feature] = toSave
         }
         return toSave
     }
 
-    saveUserData(options, corpname){
-        this._save(options, corpname)
+    saveLabel(page, label){
+      // save label only to favourites
+      let options = {}
+      let id = this._getGetPageIndexInHistory(page, "pages_favourites")
+      let newPage = {...page, label: label}
+
+      if(id < 0){
+        this.togglePageFavourites(true, page)
+        id = this._getGetPageIndexInHistory(page, "pages_favourites")
+      }
+      this.data.pages_favourites[id] = newPage
+      options[`pages_favourites[${id}]`] = newPage
+      this._save(options)
     }
 
-    clearUserData(what){
-        // what = "pages" | "corpora"
+    getGlobalData(key){
+        return this._getData("global", key)
+    }
+
+    saveGlobalData(options){
+        return this._saveData("global", options)
+    }
+
+    saveCorpusData(corpname, section, data){
+        if(!this.data.corporaData[corpname]){
+            this.data.corporaData[corpname] = {}
+        }
+        this.data.corporaData[corpname][section] = data
+        return this._save({
+            [section]: data
+        }, corpname)
+    }
+
+
+    clearData(what){
+        // what = "pages_history" | "corpora"
         let xhr = OptionsConnector.update({
             options: {
                 [what]: []
@@ -118,23 +162,62 @@ class UserDataStoreClass extends StoreMixin {
         xhr.what = what
     }
 
+    getOtherData(key){
+        return this._getData("other", key)
+    }
+
+    saveOtherData(options){
+        for(let key in options){
+            this.data.other[key] = options[key]
+            // add prefix "other|" to keys
+            options["other|" + key] = options[key]
+            delete options[key]
+        }
+        return this._save(options)
+    }
+
+    isCorpusDataLoading(){
+        return !!this.corpusDataRequest
+    }
+
+    _getData(section, key){
+        // section = global|other|...
+        if(!this.data[section]){
+            return null
+        }
+        if(isDef(key)){
+            return this.data[section][key]
+        } else{
+            return this.data[section]
+        }
+    }
+
+    _saveData(section, data){
+        for(let key in data){
+            this.data[section][key] = data[key]
+            // add prefix [section] to keys
+            data[`${section}|${key}`] = data[key]
+            delete data[key]
+        }
+        return this._save(data)
+    }
+
     _onCorpusDeleted(corpname){
         let options = {}
         let idx = this.data.corpora.findIndex(c => c.corpname === corpname)
         if(idx != -1){
-            //already in array -> remove it. It will be added to front
             this.data.corpora.splice(idx, 1)
             options[`corpora[${idx}]|__delete`] = ""
             this.trigger("corporaChange")
         }
-        this.data.pages.history = this.data.pages.history.filter((page, i) => {
+        this.data.pages_history = this.data.pages_history.filter((page, i) => {
             if(page.corpname == corpname){
                 options[`pages_history[${i}]|__delete`] = ""
                 return false
             }
             return true
         }, this)
-        this.data.pages.favourites = this.data.pages.favourites.filter((page, i) => {
+        this.data.pages_favourites = this.data.pages_favourites.filter((page, i) => {
             if(page.corpname == corpname){
                 options[`pages_favourites[${i}]|__delete`] = ""
                 return false
@@ -149,16 +232,16 @@ class UserDataStoreClass extends StoreMixin {
     isPageInFavourite(page){
         // page - object from feature store
         // returns true if page result is favourited
-        return this._getGetPageIndexInHistory(page, "favourites") != -1
+        return this._getGetPageIndexInHistory(page, "pages_favourites") != -1
     }
 
     _loadAll(){
         if(Auth.isFullAccount()){
-            this._loadUserData(["global", "corpora", "pages_favourites", "pages_history", "cqls"])
+            this._loadData(["global", "corpora", "pages_favourites", "pages_history", "cqls", "other"])
         }
     }
 
-    _loadUserData(options){
+    _loadData(options){
         OptionsConnector.get({
             options: options,
             prefix: "user_data_",
@@ -170,57 +253,66 @@ class UserDataStoreClass extends StoreMixin {
     }
 
     _loadCorpusData(corpname){
-        OptionsConnector.get({
-            options: [this._getCorpusFeaturesKey()],
-            done: this._onCorpusDataLoaded.bind(this),
+        this.corpusDataRequest = OptionsConnector.get({
+            options: this._getCorpusDataKeys(corpname),
+            done: this._onCorpusDataLoaded.bind(this, corpname),
             fail: (payload) => {
                 SkE.showToast(_("err.userDataLoad"))
+            },
+            always: () => {
+                this.trigger("corpusDataLoadDone")
+                this.corpusDataRequest = null
             }
         })
     }
 
     _onDataLoaded(payload){
         let data = payload.user
-        if(data.corpora){
-            this.data.corpora = Array.isArray(data.corpora) ? data.corpora : []
-            this.trigger("corporaChange")
-        }
-        if(data.global){
-            this.data.global = data.global
-            this.data.globalDataLoaded = true
-            this.trigger("globalUserDataChange")
-        }
-        if(data.pages_history){
-            this.data.pages.history = Array.isArray(data.pages_history) ? data.pages_history : []
-        }
-        if(data.pages_favourites){
-            this.data.pages.favourites = Array.isArray(data.pages_favourites) ? data.pages_favourites : []
-        }
-        if(data.pages_favourites || data.pages_history){
-            this.trigger("pagesChange")
-        }
-        if(data.cqls){
-            this.data.cqls = data.cqls
-            this.trigger("cqlsChange")
+        for(let section in data){
+            if(data[section]){
+                this.data[section] = data[section]
+                this.data[section + "Loaded"] = true
+                this.trigger(section + "Change")
+            }
         }
     }
 
-    _onCorpusDataLoaded(payload){
-        let features = payload.user[this._getCorpusFeaturesKey()]
-        if(features){
-            this.data.features = features
-            this.trigger("featureDataLoaded")
+    _onCorpusDataLoaded(corpname, payload){
+        if(!this.data.corporaData[corpname]){
+            this.data.corporaData[corpname] = {
+                features: {},
+                macros: []
+            }
         }
-        Dispatcher.trigger("USER_DATA_CORPUS_LOADED")
+        ;["macros", "defaultSubcorpus", "defaultMacro"].forEach(key => {
+            let data = payload.user[this._getCorpusDataKey(corpname, key)]
+            if(data){
+                this.data.corporaData[corpname][key] = data
+            }
+        })
+        let data = payload.user[this._getCorpusDataKey(corpname, "features")]
+        if(data){
+            if(typeof data == "object"){
+                this.data.corporaData[corpname]["features"] = data
+            } else {
+                // broken data, reset it to empty object
+                this._save({"features": {}}, corpname)
+                this.data.corporaData[corpname].features = {}
+            }
+        }
+        this.trigger("corpusDataLoaded", corpname)
+        Dispatcher.trigger("USER_DATA_CORPUS_LOADED", corpname)
     }
 
     _onCorpusChange(){
         let corpus = AppStore.getActualCorpus()
         this.corpus = corpus
-        this.data.features = {}
         corpus && Auth.isFullAccount() && this._loadCorpusData(corpus.corpname)
         if(!corpus || !App.isReady()){
             return
+        }
+        this.data.corporaData[corpus.corpname] = {
+            features: {}
         }
         // corpus has change -> push it corpus history
         let idx = this.data.corpora.findIndex(c => c.corpname === corpus.corpname)
@@ -250,42 +342,47 @@ class UserDataStoreClass extends StoreMixin {
     }
 
     _onPageAdd(page, section){
-        // section = "history" | "favourites"
+        // section = "pages_history" | "pages_favourites"
         page.timestamp = Date.now()
+        if(Auth.isLoggedAs()){
+            page.wasLoggedAs = 1
+        } else {
+            delete page.wasLoggedAs
+        }
         let idx = this._getGetPageIndexInHistory(page, section)
         let options = {}
-        this.data.pages[section].push(page)
+        this.data[section].push(page)
         if(idx != -1){
             //already in array -> remove it. It will be added to front
-            options[`pages_${section}[${idx}]|__delete`] = ""
-            this.data.pages[section].splice(idx, 1)
+            options[`${section}[${idx}]|__delete`] = ""
+            this.data[section].splice(idx, 1)
         }
         let i = 0
-        let aboveLimit = this.data.pages[section].length - this.PAGES_SIZE[section]
+        let aboveLimit = this.data[section].length - this.PAGES_SIZE[section]
         while(aboveLimit > 0){ // remove all pages overlaping limit
             aboveLimit--
-            options[`pages_${section}[${aboveLimit}]|__delete`] = ""
-            this.data.pages[section].shift()
+            options[`${section}[${aboveLimit}]|__delete`] = ""
+            this.data[section].shift()
         }
-        options[`pages_${section}|__append`] = page // __append - command to append item to array on server
+        options[`${section}|__append`] = page // __append - command to append item to array on server
 
         this._save(options)
-        this.trigger("pagesChange")
+        this.trigger(section + "Change")
     }
 
     _onPageRemove(page, section){
         let idx = this._getGetPageIndexInHistory(page, section)
         if(idx != -1){
-            this.data.pages[section].splice(idx, 1)
+            this.data[section].splice(idx, 1)
             this._save({
-                [`pages_${section}[${idx}]|__delete`]: ""
+                [`${section}[${idx}]|__delete`]: ""
             })
-            this.trigger("pagesChange")
+            this.trigger(section + "Change")
         }
     }
 
     _getGetPageIndexInHistory(page, section){
-        return this.data.pages[section].findIndex(p => {
+        return this.data[section].findIndex(p => {
             if(p.pageId == page.pageId && p.corpname == page.corpname){
                 if(objectEquals(p.userOptions, page.userOptions)){
                     return true
@@ -295,21 +392,26 @@ class UserDataStoreClass extends StoreMixin {
         })
     }
 
-    _getCorpusFeaturesKey(){
-        return this.corpus.corpname + ":user_data_features"
+    _getCorpusDataKeys(corpname){
+        return ["features", "defaultSubcorpus", "macros", "defaultMacro"].map(key => {
+            return this._getCorpusDataKey(corpname, key)
+        }, this)
+    }
+
+    _getCorpusDataKey(corpname, key){
+        return corpname + ":user_data_" + key
     }
 
     _reset(){
         this.data = {
             globalDataLoaded: false,
             global: {},
+            corporaData: {},
             corpora: [],
-            pages: {
-                history: [],
-                favourites: []
-            },
+            pages_history: [],
+            pages_favourites: [],
             cqls: [],
-            features: {} // options for actual corpus
+            other: {}
         }
     }
 
@@ -317,7 +419,7 @@ class UserDataStoreClass extends StoreMixin {
         if(!Auth.isFullAccount()){
             return
         }
-        // options {pages: {...}} | {corpora: {...}}
+        // options {pages_history: {...}} | {corpora: {...}}
         let data = {
             options: options,
             prefix: "user_data_"
@@ -325,7 +427,7 @@ class UserDataStoreClass extends StoreMixin {
         if(corpname){
             data.corpus = corpname
         }
-        OptionsConnector.update(data)
+        return OptionsConnector.update(data).xhr
     }
 }
 
