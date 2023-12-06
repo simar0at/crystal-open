@@ -1,0 +1,29 @@
+.notification-bar{
+    position: fixed;
+    display: block;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    .nb-container{
+        .nb-item{
+            background-color: #CFECF4;
+            padding: 14px 24px;
+            margin-bottom: 10px;
+            .nb-info-icon{
+                opacity: 0.4;
+                font-size: 32px;
+                float: left;
+                margin-right: 20px;
+            }
+            .nb-content{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .nb-message{
+               margin-right: 30px;
+            }
+        }
+    }
+}

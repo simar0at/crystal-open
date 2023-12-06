@@ -1,0 +1,11 @@
+@import 'app/styles/constants';
+
+.range-select{
+    display: inline-block;
+    margin-bottom: 1em;
+    .btn{
+        display: inline-block;
+        vertical-align: middle;
+        font-family: Roboto Condensed, Roboto, sans-serif;
+    }
+}

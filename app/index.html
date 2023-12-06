@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Sketch Engine</title>
+
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="Description" content="Sketch Engine is the ultimate corpus tool to create and search 400+ text corpora in 90+ languages. Try 30-day free trial.">
+
+        <link href="styles/googlefonts-material-icons.css" rel="stylesheet">
+        <link href="styles/fonts/skeicons/skeicons.css" rel="stylesheet">
+    	<link rel="stylesheet" href="libs/materialize/materialize-1.0.0.min.css">
+
+        <!-- favicons -->
+        <link rel="apple-touch-icon-precomposed" href="images/favicon-152.png">
+        <meta name="msapplication-TileColor" content="#000000">
+        <meta name="msapplication-TileImage" content="images/favicon-144.png">
+        <link rel="icon" href="images/favicon-32.png" sizes="32x32">
+        <link rel="shortcut icon" sizes="196x196" href="images/favicon-196.png">
+
+        <style type="riot"></style>
+        <style>
+            html {
+                max-height: max-content;
+            }
+            body{
+                position: absolute;
+                top: 0;
+                min-height: 100vh;
+                min-width: 100%;
+                margin: 0;
+                background-color: white;
+            }
+            #htmlLoading{
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: #fff;
+                z-index: 999998;
+            }
+            .htmlLoadingContent{
+                position: fixed;
+                top: 30%;
+                left: 50%;
+                left: 50vw;
+                margin-left: -150px;
+                text-align: center;
+                z-index: 999999;
+            }
+            .htmlLoadingAnim{
+                transform: translateX(50%);
+                text-align: left;
+            }
+            .htmlLoadingAnim > span{
+                white-space: nowrap;
+                display: inline-block;
+                overflow: hidden;
+                animation: htmlLoadingAnimFrames linear 1.8s;
+                animation-timing-function: steps(3, end);
+                animation-iteration-count: infinite;
+            }
+            .htmlLoadingAnim > span > span{
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                margin-right: 10px;
+                border-radius: 50%;
+                background-color: #2AA0D1;
+            }
+            @keyframes htmlLoadingAnimFrames{
+                0% { max-width: 0;}
+                63% {max-width: 60px;}
+                99.99% { max-width: 60px;}
+                100% {max-width: 0px;}
+            }
+            #crystal_version{
+                position: absolute;
+                bottom: 10px;
+                right: 20px;
+                color: rgba(255, 255, 255, 0.4);
+                font-size: 85%;
+            }
+        </style>
+    </head>
+
+    <body class="SkE" id="app">
+        <div id="htmlLoading">
+            <div class="htmlLoadingContent">
+                <img src="images/logo_blue.png" alt="Sketch Engine" width="300" height="112">
+                <div class="htmlLoadingAnim">
+                    <span>
+                        <span></span><span></span><span></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <crystal-app></crystal-app>
+
+        <p id="crystal_version">v@VERSION@</p>
+
+        <script>
+            window.version = "@VERSION@"
+        </script>
+        <script src="libs/jquery/jquery-3.3.1.min.js"></script>
+        <script src="libs/jquery-ui/jquery-ui-1.12.1.min.js"></script>
+
+        <!-- materialize -->
+        <script src="libs/materialize/materialize-1.0.0.min.js"></script>
+        <!-- materialize -->
+        <script src="config.js?ver=@VERSION@"></script>
+        <script src="bundle.js?v=@VERSION@" charset="utf-8"></script>
+    </body>
+</html>

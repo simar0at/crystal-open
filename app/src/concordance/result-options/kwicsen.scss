@@ -1,0 +1,39 @@
+@import 'app/styles/constants';
+
+.kwicsen {
+    .chip{
+        display: inline-flex;
+        vertical-align: middle;
+        align-items: center;
+        margin-top: 4px;
+        color: $new_darkBlue;
+        box-sizing: content-box;
+        &:focus {
+            background-color: $new_mediumBlue;
+        }
+    }
+
+    > a {
+        font-size: 16px;
+        i {
+            width: 18px;
+        }
+    }
+    .dropdown-content {
+        box-shadow: none;
+        background-color: transparent;
+        li {
+            a {
+                white-space: nowrap;
+                padding: .65ex .75em
+            }
+            border: 2px solid $new_lightBlue;
+            border-radius: 20px;
+            background-color: white;
+            min-height: initial;
+            &:hover {
+                background-color: $hoverWhite;
+            }
+        }
+    }
+}

@@ -1,0 +1,16 @@
+.ca-compile-log{
+    display: block;
+    .logWrapper{
+        font-size: 13px;
+        max-height: 600px;
+        overflow-y: auto;
+        max-width: 100%;
+        word-wrap: break-word;
+        white-space: pre-line;
+        h3{
+            opacity: 0.4;
+            text-align: center;
+            padding: 80px;
+        }
+    }
+}

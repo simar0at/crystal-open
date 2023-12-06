@@ -1,0 +1,51 @@
+.background-jobs {
+    .card-panel{
+        background-color: #f4f4f4;
+        position: relative;
+    }
+    table{
+        tr :nth-child(3),
+        tr :nth-child(4),
+        tr :nth-child(5),
+        tr :nth-child(6),
+        tr :nth-child(7){
+            text-align: right;
+        }
+        tr.inactive {
+            opacity: 0.4;
+        }
+        tr th {
+            padding: .1em .5em;
+        }
+        a.btn {
+            padding: .4rem .8rem;
+            height: 2.3rem;
+            line-height: 1.65rem;
+        }
+    }
+    .status{
+        display: inline-block;
+        padding: 0 6px;
+    }
+    .status_R{
+        color: #fff;
+        background-color: #4CAF50;
+    }
+    .status_T{
+        color: #fff;
+        background-color: #F44336;
+    }
+    .status_D{
+        color: black;
+        background-color: #BBB;
+    }
+    .empty{
+        opacity: 0.4;
+        text-align: center;
+        padding: 50px;
+        i{
+            font-size: 3em;
+            display:block;
+        }
+    }
+}

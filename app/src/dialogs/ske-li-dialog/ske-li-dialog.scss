@@ -1,0 +1,62 @@
+.ske-li-dialog{
+    table{
+        max-width: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-height: 100px;
+        td{
+            padding-bottom: 10px;
+        }
+        td:first-child{
+            width: 1%;
+            white-space: nowrap;
+            vertical-align: top;
+            @media screen and(max-width: 450px){
+                display: none;
+            }
+        }
+        td:nth-child(2){
+            overflow: hidden;
+            position: relative;
+            padding-bottom: 25px;
+            a{
+                margin: 0 25px 0 0;
+                font-size: 1.2em;
+            }
+            .linkUrl{
+                font-size: 75%;
+                white-space: nowrap;
+                position: absolute;
+                line-height: 1em;
+            }
+        }
+    }
+    .noStoredLinks{
+        color: #a7a6a6;
+        text-align: center;
+        padding: 50px;
+    }
+    .copyLink{
+        cursor: pointer;
+        position: relative;
+        top: -10px;
+    }
+}
+
+
+.shortLinkDialog .modal{
+    transition: width 0.5s;
+}
+
+.skeLiExpanded .modal{
+    width: 95%;
+}
+
+.shortLinkDialog:not(.skeLiExpanded) .modal{
+    height: initial!important;
+    padding-bottom: 75px;
+    .modal-content{
+        position: initial;
+    }
+}
+

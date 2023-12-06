@@ -1,0 +1,12 @@
+ADDING NEW ICONS
+================
+
+1) add another line in the form of
+
+  , "0xe939": "features/ocd_i.svg"
+
+into the "glyphs" key of the JSON structure in skeicons.json
+
+2) run make
+
+You need to have FontForge installed.

@@ -1,0 +1,24 @@
+@import 'app/styles/base';
+
+.wordlist-result-table{
+    .oneColumn{
+        max-width: 600px;
+        margin: auto;
+    }
+
+    .table{
+        th{
+            text-transform: capitalize;
+        }
+    }
+
+    .menuColumn {
+        width: 1%;
+        i{
+            color: $mediumGray;
+        }
+    }
+    .barsColumn{
+        min-width: 70px;
+    }
+}

@@ -1,0 +1,27 @@
+.text-type-detail{
+    .btnCloseDetail{
+        position: absolute;
+        right: 0;
+        top: 0;
+        i{
+            font-size: 45px;
+        }
+    }
+    .buttons i{
+        font-size: 40px;
+        letter-spacing: -0.5em;
+        &:first-child{
+            line-height: 9px;
+            padding-top: 20px;
+            margin-left: -20px;
+        }
+        &:last-child{
+            margin-left: -20px;
+        }
+    }
+    @media only screen and (max-width: 600px){
+        .buttons > div{
+            display: inline-block;
+        }
+    }
+}

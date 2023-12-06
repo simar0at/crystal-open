@@ -1,0 +1,18 @@
+.concordance-quick-filters{
+    float: right;
+    margin-bottom: 15px;
+    display: inline-block;
+    label{
+        margin-bottom: 15px;
+    }
+    a{
+        display: block;
+        margin-bottom: 15px;
+        text-align:center;
+    }
+    @media only screen and (max-width: 1060px){
+        margin: auto;
+        display: table;
+        float: none;
+    }
+}

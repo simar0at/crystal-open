@@ -1,0 +1,85 @@
+<div>Keyword and term extraction is used to:</div>
+<ul class="browser-default">
+    <li>extract terminology for use in translation and interpreting</li>
+    <li>extract single word and multi-word units which are typical of a corpus/document/text or which define its content or topic</li>
+    <li>compare two corpora/documents/texts by identifying what is unique in the first corpus compared to the second</li>
+</ul>
+<div>The result is divided into
+    <a href="https://www.sketchengine.eu/my_keywords/keyword/" target="_blank" rel="noopener">keywords</a> (single word items) and
+    <a href="https://www.sketchengine.eu/my_keywords/term/" target="_blank" rel="noopener">terms</a> (multi-word items) and are displayed together with links to the sentences in both the focus and the reference corpora.
+</div>
+<br>
+<div>Keywords and terms extracted from a corpus of texts about digital photography.</div>
+<div>
+    <br>
+    <img src="https://www.sketchengine.eu/wp-content/uploads/keywords-1.png" />
+    <br><br>
+</div>
+
+<ul class="collapsible">
+    <li>
+        <div class="collapsible-header">Keywords and terms</div>
+        <div class="collapsible-body">
+            <div>
+                <b>Keywords</b>
+                <br />Keywords are individual words (%[token|tokens]%) which appear more frequently in the
+                <a href="https://www.sketchengine.eu/my_keywords/focus-corpus/" target="_blank" rel="noopener">focus corpus</a> than in the
+                <a href="https://www.sketchengine.eu/my_keywords/reference-corpus-2/" target="_blank" rel="noopener">reference corpus</a>. Any %[token]% can qualify for a keyword if it is used more frequently in the focus corpus than in the reference corpus. In reality, the result will include mainly nouns and adjectives because the frequencies of other parts of speech tend to be similar in all texts.
+            </div>
+            <br>
+            <div>
+                <b>Terms</b>
+                <br />Terms are multi-word expressions which appear more frequently in the focus corpus than in the reference corpus and, additionally, match the typical format of terminology in the language. The format is defined in the
+                <a href="https://www.sketchengine.eu/my_keywords/term-grammar/" target="_blank" rel="noopener">term grammar</a>.
+            </div>
+            <br>
+            <div>The result of term extraction is displayed as %[lemma|lemmas]%.
+                <a href="https://www.sketchengine.eu/my_keywords/gender-lemma/" target="_blank" rel="noopener">Gender lemmas</a> are used for languages where the word form of an adjective has to match the gender of the noun.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Focus corpus and reference corpus</div>
+        <div class="collapsible-body">
+            <div>For the tool to work, at least 2 corpora (or 2 subcorpora) in the language must exist. The corpus in which keywords and terms are identified is called a focus corpus. The corpus used for comparison is called a reference corpus.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Simple maths</div>
+        <div class="collapsible-body">
+            <div>The simple maths method is used to determine the
+                <a href="https://www.sketchengine.eu/documentation/simple-maths/" target="_blank" rel="noopener">keyness score</a> of both keywords and terms. It works with normalized (relative,
+                <a href="https://www.sketchengine.eu/my_keywords/freqmill/" target="_blank" rel="noopener">per million</a>) frequencies in the focus and reference corpora.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Terminology extraction</div>
+        <div class="collapsible-body">
+            <div>Terminology extraction extracts words which are typical of the topic of the document or corpus, i.e. they appear in the corpus more frequently than they would in general language. A large non-specialized corpus in the language is used to represent general language.
+                <br />The default settings are normally sufficient for the extraction to provide high-quality results.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Extracting unique features of a corpus</div>
+        <div class="collapsible-body">
+            <div>This use is almost identical to terminology extraction. The difference is that the user may not only be interested in specialized lexis which is rare in general language but sometimes it might be interesting to look which medium-frequency words or even high-frequency words are used more often than in general language. Use the slider on the advanced tab to focus the extraction on different parts of the frequency range.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Comparing corpora</div>
+        <div class="collapsible-body">
+            <div>Comparing two texts manually is not realistic if the two texts are very long. Even with short texts, statistical comparison can bring up phenomena which would go unnoticed when comparing manually.
+                <br />Keywords and terms can be used to compare two corpora or subcorpora. When comparing subcorpora, they can both be in the same or different corpus.
+                <br />The result will show what is typical of the focus (sub)corpus in comparison with the reference (sub)corpus.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Requirements for keywords and terms to work</div>
+        <div class="collapsible-body">
+            <div>Keywords will be extracted from any tokenized corpus. Terms can only be extracted from corpora which are tagged and lemmatized in languages for which a term grammar exists.</div>
+        </div>
+    </li>
+</ul>

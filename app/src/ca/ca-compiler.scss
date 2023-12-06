@@ -1,0 +1,97 @@
+@import 'app/styles/base';
+
+.ca-compiler{
+    min-height: 200px;
+    display: block;
+    .compilerSettings{
+        margin:auto;
+        max-width:800px;
+        .card-panel{
+            position: relative;
+            min-height: 150px;
+        }
+    }
+    preloader-spinner{
+        padding: 100px 0;
+    }
+
+    .quickInfo{
+        margin:auto;
+        max-width: 800px;
+    }
+    .status{
+        max-width: 800px;
+        min-height: 130px;
+        margin: 50px auto 15px auto;
+        text-align: center;
+        padding-top: 50px;
+        .statusText{
+            position: relative;
+            font-size: 30px;
+            a{
+                position: relative;
+                top: -2px;
+            }
+        }
+        .statusDesc{
+            font-size: 0.8em;
+            color: $lightGray;
+            min-height: 76px;
+        }
+    }
+    .row{
+        label{
+            i{
+                position: relative;
+                top: 4px;
+                line-height: 1px;
+                font-size: 21px;
+            }
+        }
+        #structAttrs{
+            padding-top: 12px;
+            a{
+                top: 2px;
+            }
+        }
+        .attr{
+            padding-left: 40px;
+            &:last-child {
+                margin-bottom: 15px;
+            }
+        }
+        .strAttrLabel{
+            position: relative;
+            top: 3px;
+            margin-right: 10px;
+            left: 0;
+        }
+        .ca-radio{
+            a{
+                opacity: 0.2;
+            }
+            >div{
+                &:hover{
+                    a{
+                        opacity: 0.5;
+                    }
+                }
+            }
+        }
+    }
+
+    .ca-compile-log{
+        max-width: 800px;
+        margin: auto;
+    }
+
+    .spaceLimitReached{
+        display: block;
+        max-width: 660px;
+        margin: auto;
+    }
+
+    .addGrammarBtn{
+        margin-left: 35px;
+    }
+}

@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Ethiopic';
+    src: local('Noto Sans Ethiopic'),
+        local('NotoSansEthiopic-Regular'),
+        url('NotoSansEthiopic-Regular.woff2') format('woff2'),
+        url('NotoSansEthiopic-Regular.woff') format('woff'),
+        url('NotoSansEthiopic-Regular.svg#NotoSansEthiopic-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-ethi ._t{
+    font-family: 'Noto Ethiopic'
+}

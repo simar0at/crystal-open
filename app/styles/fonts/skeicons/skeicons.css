@@ -1,0 +1,231 @@
+@font-face {
+  font-family: 'skeicons';
+  src:
+    url('fonts/skeicons.ttf?5ei2mw') format('truetype'),
+    url('fonts/skeicons.woff?5ei2mw') format('woff'),
+    url('fonts/skeicons.svg?5ei2mw#skeicons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.ske-icons {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'skeicons' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Enable Ligatures ================ */
+  letter-spacing: 0;
+  -webkit-font-feature-settings: "liga";
+  -moz-font-feature-settings: "liga=1";
+  -moz-font-feature-settings: "liga";
+  -ms-font-feature-settings: "liga" 1;
+  font-feature-settings: "liga";
+  -webkit-font-variant-ligatures: discretionary-ligatures;
+  font-variant-ligatures: discretionary-ligatures;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.skeFlipHoriz{
+  transform: scale(1, -1);
+}
+.skeFlipVert{
+  transform: scale(-1, 1);
+}
+
+.skeStack{
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.skeStacked{
+    position: absolute;
+    left: 0;
+    width: 100%;
+    text-align: center;
+}
+.skeico_trends:before {
+  content: "\e917";
+}
+.skeico_trends_i:before {
+  content: "\e916";
+}
+.skeico_n_grams:before {
+  content: "\e915";
+}
+.skeico_n_grams_i:before {
+  content: "\e914";
+}
+.skeico_word_sketch_difference:before {
+  content: "\e913";
+}
+.skeico_word_sketch_difference_i:before {
+  content: "\e912";
+}
+.skeico_keywords:before {
+  content: "\e911";
+}
+.skeico_keywords_i:before {
+  content: "\e910";
+}
+.skeico_random_i:before {
+  content: "\e92f";
+}
+.skeico_csv_i:before {
+  content: "\e90a";
+}
+.skeico_csv:before {
+  content: "\e90b";
+}
+.skeico_pdf_i:before {
+  content: "\e90c";
+}
+.skeico_pdf:before {
+  content: "\e90d";
+}
+.skeico_parallel_concordance_i:before {
+  content: "\e90e";
+}
+.skeico_parallel_concordance:before {
+  content: "\e90f";
+}
+.skeico_word_sketch_i:before {
+  content: "\e918";
+}
+.skeico_arrow_down:before {
+  content: "\e926";
+}
+.skeico_ocd_i:before {
+  content: "\e939";
+}
+.skeico_ocd:before {
+  content: "\e938";
+}
+.skeico_arrow_up:before {
+  content: "\e927";
+}
+.skeico_def:before {
+  content: "\e935";
+}
+.skeico_def_i:before {
+  content: "\e934";
+}
+.skeico_cql:before {
+  content: "\e937";
+}
+.skeico_cql_i:before {
+  content: "\e936";
+}
+.skeico_arrow_down_up:before {
+  content: "\e928";
+}
+.skeico_sort_right:before {
+  content: "\e924";
+}
+.skeico_gdex:before {
+  content: "\e933";
+}
+.skeico_gdex_i:before {
+  content: "\e932";
+}
+.skeico_sort:before {
+  content: "\e925";
+}
+.skeico_bars_right_i:before {
+  content: "\e922";
+}
+.skeico_sort_left:before {
+  content: "\e923";
+}
+.skeico_bilingual_word_sketch:before {
+  content: "\e920";
+}
+.skeico_bilingual_word_sketch_i:before {
+  content: "\e921";
+}
+.skeico_select_i:before {
+  content: "\e92d";
+}
+.skeico_select:before {
+  content: "\e92e";
+}
+.skeico_bars_middle:before {
+  content: "\e92a";
+}
+.skeico_collocation_i:before {
+  content: "\e92b";
+}
+.skeico_pin:before {
+  content: "\e940";
+}
+.skeico_pin_active:before {
+  content: "\e941";
+}
+.skeico_collocation:before {
+  content: "\e92c";
+}
+.skeico_txt_i:before {
+  content: "\e908";
+}
+.skeico_txt:before {
+  content: "\e909";
+}
+.skeico_concordance_i:before {
+  content: "\e91e";
+}
+.skeico_thesaurus:before {
+  content: "\e91d";
+}
+.skeico_thesaurus_i:before {
+  content: "\e91c";
+}
+.skeico_word_sketch:before {
+  content: "\e919";
+}
+.skeico_word_list_i:before {
+  content: "\e91a";
+}
+.skeico_bars_right:before {
+  content: "\e929";
+}
+.skeico_xml_i:before {
+  content: "\e900";
+}
+.skeico_xml:before {
+  content: "\e901";
+}
+.skeico_xls_i:before {
+  content: "\e902";
+}
+.skeico_xls:before {
+  content: "\e903";
+}
+.skeico_tmx_i:before {
+  content: "\e904";
+}
+.skeico_tmx:before {
+  content: "\e905";
+}
+.skeico_tbx_i:before {
+  content: "\e906";
+}
+.skeico_tbx:before {
+  content: "\e907";
+}
+.skeico_random:before {
+  content: "\e931";
+}
+.skeico_concordance:before {
+  content: "\e91f";
+}
+.skeico_word_list:before {
+  content: "\e91b";
+}

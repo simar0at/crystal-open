@@ -1,0 +1,29 @@
+.page-ca-logs{
+    .log{
+        padding: 5px;
+        vertical-align: middle;
+        cursor: pointer;
+        &.active{
+            background-color: rgba(0, 0, 0, 0.05);
+            color: black;
+            font-weight: bold;
+        }
+    }
+
+    .logWrapper{
+        font-size: 13px;
+        height: calc(100vh - 260px);
+        min-height: 400px;
+        overflow-y: auto;
+        max-width: 100%;
+        word-wrap: break-word;
+        white-space: pre-line;
+    }
+
+    .empty{
+        padding: 80px 0;
+        text-align: center;
+        opacity: 0.4;
+        font-size: 1em;
+    }
+}

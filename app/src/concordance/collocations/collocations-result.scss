@@ -1,0 +1,27 @@
+@import 'app/styles/base';
+
+.collocations-result{
+    .raw-html{
+        white-space: nowrap
+    }
+    .hasItemsContent{
+        border-top: 1px solid #cecece;
+    }
+    .header{
+        display: inline-block;
+        margin-right: 20px;
+        vertical-align: middle;
+    }
+    .column-table {
+        .menuColumn{
+            width: 40px;
+        }
+        i{
+            color: $mediumGray;
+        }
+    }
+
+    .table tr td:nth-child(2) > span{
+        font-weight: bold;
+    }
+}

@@ -1,0 +1,134 @@
+@import 'app/styles/base';
+
+.modal-line-detail .modal-content{
+    overflow-y: scroll!important;
+}
+.concordance-line-detail-dialog{
+    concordance-result-context{
+        white-space: nowrap;
+        position: absolute;
+    }
+    .input-field{
+        margin-top: 0.6rem;
+    }
+    .arrows {
+        margin-top: -3px;
+        a.disabled{
+            opacity: 0.4;
+        }
+    }
+    .options{
+        height: 45px;
+        margin-top: 10px;
+        .ui-checkbox{
+            margin-right: 0;
+            &:not(:first-child){
+                margin-left: 30px;
+            }
+        }
+        .ui-input .input-field {
+            margin-top: 0;
+            input{
+                height: 1.6rem;
+                margin-bottom: 0;
+            }
+        }
+    }
+    .card{
+        .card-content{
+            background-color: $whiteGray;
+            padding: 5px;
+        }
+    }
+    .table{
+        &.result-table{
+            margin-bottom: 0px;
+        }
+        .kwic{
+            cursor: default;
+        }
+        .itm{
+            background-color: initial;
+        }
+    }
+    .ui-filtering-list{
+        > div > label{
+            position: absolute;
+            left: 255px;
+        }
+        .ui-input{
+            margin-left: 40px;
+            max-width: 200px;
+        }
+    }
+    .rightCol{
+        text-align: left;
+    }
+    .leftCol{
+        text-align: right;
+    }
+
+    .ui-list-list{
+        box-shadow: none!important;
+        background-color: initial;
+        max-height: initial!important;
+        li {
+            user-select: initial;
+            span{
+                vertical-align: top;
+                white-space: normal;
+                display: inline-block;
+                &.ld_label{
+                    width: 300px;
+                }
+                &.ld_value{
+                    max-width: calc(100% - 330px);
+                    font-weight: bold;
+                    @media (max-width: 700px){
+                        display: block;
+                        max-width: 100%;
+                    }
+                }
+            }
+            a{
+                color: $heavyBlue;
+            }
+        }
+        .goToFrequency{
+            position: relative;
+            opacity: 0.6;
+            &:hover{
+                opacity: 1;
+            }
+
+        }
+        div{
+            font-size: 0.8em;
+            color: $mediumGray;
+        }
+    }
+    preloader-spinner{
+        position: absolute;
+        top: 50%;
+    }
+    &.directionRTL{
+        .rtlNode{
+            direction: rtl;
+        }
+        .rightCol{
+            text-align: right;
+        }
+        .leftCol{
+            text-align: left;
+        }
+
+        .kwicWrapper {
+            .kwic{
+                margin-left: 0
+            }
+            &:not(:first-child) .kwic {
+                margin-right: 5px;
+            }
+        }
+    }
+}

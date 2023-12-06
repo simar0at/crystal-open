@@ -1,0 +1,424 @@
+.stdDir{
+    direction: ltr;
+}
+
+.rtl{
+
+////// common
+    .stdDir{
+        direction: rtl;
+    }
+
+    .right{
+        float: left!important;
+    }
+    .left{
+        float: right!important;
+    }
+
+    .left-align{
+        text-align: right;
+    }
+    .right-align{
+        text-align: left;
+    }
+
+    .row .col{
+        float: right;
+    }
+
+    ul{
+        margin: 0;
+        margin-block-start: 0;
+        margin-block-end: 0;
+        padding-inline-start: 0;
+    }
+
+    td, th{
+        text-align: right;
+    }
+
+////// UI
+    .input-field>label{
+        left: unset;
+        right: 0;
+    }
+
+    .tab-content .input-field {
+        margin-left: 2em;
+        margin-right: 0;
+    }
+
+    .ui-input {
+        .hasSuffixIcon input{
+            padding-right: 7px!important;
+            padding-left: 25px!important;
+        }
+        .hasPrefixIcon input{
+            padding-left: 7px!important;
+            padding-right: 25px!important;
+        }
+        .prefix-icon {
+            left: unset;
+            right: 0px;
+        }
+        .suffix {
+            right: unset;
+            left: 0px;
+        }
+        &.whiteField{
+            .hasSuffixIcon input{
+                padding-left: 34px!important;
+                padding-right: 7px!important;
+            }
+            .hasPrefixIcon input{
+                padding-right: 34px!important;
+                padding-left: 7px!important;
+            }
+            .prefix-icon {
+                right: 10px;
+                left: unset;
+            }
+            .suffix {
+                left: 10px;
+                right: unset;
+            }
+        }
+    }
+
+    .ui-checkbox{
+        margin-right: 0;
+        margin-left: 2.5em;
+    }
+
+    [type="checkbox"]+span:not(.lever):before,
+    [type="checkbox"]:not(.filled-in)+span:not(.lever):after{
+        right: 0;
+        left: 0;
+    }
+
+    [type="checkbox"]:checked+span:not(.lever):before{
+        right: 10px;
+    }
+
+    [type="checkbox"]+span:not(.lever){
+        padding-left: 0;
+        padding-right: 35px;
+    }
+
+    [type="radio"]:not(:checked)+span,
+    [type="radio"]:checked+span{
+        padding-left: 0;
+        padding-right: 35px;
+    }
+
+    [type="radio"]+span:before,
+    [type="radio"]+span:after{
+        left: unset;
+        right: 0;
+    }
+
+    .ui-list .ui-list-list li.checkbox::before{
+        left: unset;
+        right: 15px;
+    }
+
+    .ui-list .ui-list-list li.selected.checkbox::before{
+        right: 26px;
+        left: unset;
+    }
+
+    .ui-list .ui-list-list li.checkbox{
+        padding-right: 48px;
+        padding-left: 0;
+    }
+
+    .ui-list .ui-list-list li{
+        text-align: right;
+    }
+
+    .ui-filtering-list .floatingDropdown .listWrapper .ui-list{
+        right: 0;
+        left: unset;
+    }
+
+    .ui-pagination{
+        .pagination{
+            i.material-icons{
+                transform: rotate(180deg);
+            }
+        }
+    }
+
+    .dropdown-content li{
+        text-align: right;
+        & > a > i{
+            margin: 0 0 0 24px;
+        }
+    }
+
+////// components
+
+    .chip{
+        .close{
+            float: left;
+            padding-right: 8px;
+        }
+    }
+
+    .result-list{
+        .link{
+            right: unset;
+            left: 0;
+        }
+        .clear{
+            left: 1px;
+            right: unset;
+        }
+        .ui-list-list li .raw-html{
+            .date{
+                left: 0;
+                right: unset;
+                padding-right: 0;
+                padding-left: 50px;
+            }
+            .corpus{
+                padding-left: 20px;
+                padding-right: unset;
+            }
+            .opts{
+                padding-right: 18px;
+                padding-left: 0;
+            }
+            .delete{
+                right: unset;
+                left: 5px;
+            }
+            .featureIco{
+                float: right;
+            }
+        }
+    }
+
+    .interfeature-menu li{
+        position: relative;
+        .currentTabLink{
+            margin-right: unset;
+            margin-left: 50px;
+        }
+        a i{
+            float: right;
+                margin: 0 0 0 24px;
+        }
+        .newTabLink{
+            right: unset;
+            left: 0;
+            i{
+                margin-right: unset;
+                margin-left: 0;
+            }
+        }
+    }
+
+    .sidenav{
+        left: unset;
+        right: 0;
+        padding: 0;
+    }
+
+    .sidenav li > a > i{
+        float: right;
+        margin: 0 0 0 32px;
+        width: 48px;
+    }
+
+    side-nav + .page-router{
+        margin-left: 0;
+        margin-right: 52px;
+    }
+
+    side-nav.show ul li a{
+        padding: 0 32px 0 0;
+    }
+
+    @media only screen and (max-width: 993px){
+        .page-router{
+            margin-right: 0!important;
+        }
+    }
+
+    .header-navbar nav{
+        padding-left: unset;
+        padding-right: 48px;
+    }
+
+    nav .sidenav-trigger{
+        float: right;
+    }
+
+    @media (max-width: 992px){
+        .header-navbar nav{
+            padding-right: 0;
+        }
+    }
+
+    .modal .modal-footer{
+        text-align: left;
+    }
+
+    .columnForm .row > label{
+        text-align: left;
+    }
+
+    .lang-corp-list li{
+        i.material-icons{
+            float: right;
+            margin-right: unset;
+            margin-left: 15px;
+        }
+        .cLabel{
+            padding-right: 39px;
+            padding-left: 210px;
+        }
+        .clSize{
+            left: 20px;
+            right: unset;
+            min-width: 84px;
+        }
+        .cLang{
+            text-align: right;
+            left: 105px;
+            right: unset;
+        }
+
+        @media only screen and (max-width: 900px){
+            .cLabel{
+                padding-left: 115px;
+                padding-right: unset;
+            }
+        }
+        @media only screen and (max-width: 750px){
+            .clSize{
+                padding-left: unset;
+                padding-right: 60px;
+            }
+            .cLabel{
+                padding-left: 0px;
+            }
+        }
+    }
+
+    .text-types .toggleExpand{
+        left: -0.75em;
+        right: unset;
+    }
+
+    .text-type .card .card-content .buttons{
+        left: 0;
+        right: unset;
+    }
+
+    .text-type-detail .btnCloseDetail{
+        right: unset;
+        left: 0;
+    }
+
+    .feature-toolbar .activeOptions .optsHeader .close{
+        left: 6px;
+        right: unset;
+    }
+
+////// pages
+    .concordance-breadcrumbs{
+        float: right;
+        .chip{
+            margin-right: 12px;
+            margin-left: 0;
+        }
+        .delimiter{
+            left: unset;
+            right: -6px;
+            transform: rotate(180deg);
+        }
+    }
+
+    .concordance-result a.lineDetail{
+        margin-right: unset;
+        margin-left: 10px;
+    }
+
+    .concordance-result .table.result-table .num{
+        padding-left: 0;
+        padding-right: 10px;
+    }
+
+    .concordance-result .leftCol concordance-result-context{
+        left: 0;
+        right: initial;
+    }
+    .concordance-result .rightCol concordance-result-context{
+        right: 0;
+        left: initial;
+    }
+
+    .page-sketchdiff{
+        .sketchdiff-result-options{
+            h5  >span span {
+                margin: 0 8px 0 0;
+            }
+        }
+    }
+
+    .frequency-tabs{
+        .leftColumn{
+            @media only screen and (min-width: 760px){
+                margin-right: 0;
+                margin-left: 20px;
+                padding-right: 0;
+                padding-left: 20px;
+                border-left: 1px solid rgb(206, 206, 206);
+                border-right: none;
+            }
+        }
+        .frequency-quick-list{
+            float: left;
+        }
+    }
+
+    .wordlist-tab-advanced .rightColumn{
+        border-left: unset;
+        border-right: 1px solid #cecece;
+    }
+
+    .page-ca-create{
+        i{
+            right: -6px;
+            left: unset;
+            bottom: -4px;
+        }
+    }
+
+    .page-corpus .corpus-tab-basic .corpusLeftCol{
+        @media screen and(min-width: 1405px){
+            border-right: 0;
+            border-left: 1px solid #fff;
+            margin-left: 2em;
+            margin-right: unset;
+        }
+    }
+
+    .page-corpus .corpus-tab-advanced .tabs .tab > a{
+        text-align: right;
+        span:last-child{
+            float: left;
+        }
+    }
+
+    .page-parconcordance .parconcordance-result .alcorpname{
+        left: .7rem;
+        right: initial;
+    }
+}
+
+
+

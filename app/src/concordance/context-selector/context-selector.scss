@@ -1,0 +1,43 @@
+@import 'app/styles/constants';
+
+.context-selector{
+    display: block;
+    .pos{
+        margin: 0 20px;
+        font-family: Roboto Condensed, Roboto, sans-serif;
+        font-size: 16px;
+        background-color: #A3CCDD;
+        color: $new_darkBlue;
+        box-shadow: none;
+        &.squareBtn{
+            padding: 1px 1rem;
+            margin: 0 4px;
+        }
+        &:first-child{
+            margin-left: 0!important;
+        }
+        &:last-child{
+            margin-right: 0!important;
+        }
+        &.btn-flat:hover{
+            color: #fff;
+            background-color: #5b8da4;
+        }
+        &.selected{
+            background-color: $new_darkBlue;
+            color: #fff;
+        }
+    }
+    .kwicBtn{
+        padding: 0 1rem;
+    }
+    .posWrapper{
+        display: flex;
+    }
+    .wideCtx{
+        display: inline-block;
+    }
+    .narrowCtx{
+        display: none;
+    }
+}

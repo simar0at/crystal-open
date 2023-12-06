@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Noto Thaana';
+    src: local('Noto Sans Thaana'),
+        local('NotoSansThaana-Regular'),
+        url('NotoSansThaana.woff2') format('woff2'),
+        url('NotoSansThaana.woff') format('woff'),
+        url('NotoSansThaana.svg#NotoSansThaana') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+.script-thaa ._t{
+    font-family: 'Noto Thaana'
+}

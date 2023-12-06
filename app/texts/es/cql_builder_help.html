@@ -1,0 +1,80 @@
+Aprende la CQL <a href="https://www.sketchengine.eu/documentation/corpus-querying/" target="_blank">en nuestra página web</a> o <a href="https://www.youtube.com/playlist?list=PLPVgp0Xm6hWBLZzD7haCVbhC9pSfWZk1S" target="_blank">canal YouTube</a>.
+<br><br>
+
+<h5>Ejemplo</h5>
+<table class="material-table">
+    <tr>
+        <td>
+            un sustantivo a cierta distancia de un verbo
+        </td>
+        <td class="monospace">
+            [tag="N.*"] [ ]{0,3} [tag="V.*"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            un sustantio y verbo con exacto un token entre ellos
+        </td>
+        <td class="monospace">
+            [tag="N.*"] [ ] [tag="V.*"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            un sustantivo a cierta distancia del verbe dentro de la misma oración
+        </td>
+        <td class="monospace">
+            [tag="N.*"] [ ]{0,3} [tag="V.*"] within &lt;s/&gt;
+        </td>
+    </tr>
+    <tr>
+        <td>
+            perro grande o lobo
+        </td>
+        <td class="monospace">
+            ([lc="perro"] [lc="grande"])|[lc="lobo"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            perro grande o lobo grande
+        </td>
+        <td class="monospace">
+            [lc="perro|lobo"] [lc="grande"]
+        </td>
+    </tr>
+</table>
+<br><br>
+
+
+<h5>Errores frecuentes</h5>
+<table class="material-table">
+    <thead>
+        <tr>
+            <th>error</th>
+            <th>correción</th>
+            <th>explicación</th>
+        </tr>
+    </thead>
+
+    <tr>
+        <td class="monospace">[lemma="veces"]</td>
+        <td class="monospace">[lemma="vez"]</td>
+        <td>veces no es un lema</td>
+    </tr>
+    <tr>
+        <td class="monospace">[word="¡Hola!"]</td>
+        <td class="monospace">[word="\!"] [word="Hola"] [word="\!"]</td>
+        <td>cada puntuación es un token separado, signo de exclamación debe preceder con un caracter de escape</td>
+    </tr>
+    <tr>
+        <td class="monospace">[word="Hola "]</td>
+        <td class="monospace">[word="Hola"]</td>
+        <td>tokens no contienen espacios</td>
+    </tr>
+    <tr>
+        <td class="monospace">[tag="V.*"] [] [lc="gato"] within &lt;s&gt;</td>
+        <td class="monospace">[tag="V.*"] [] [lc="gato"] within &lt;s/&gt;</td>
+        <td>estrucuras deben usar el modo "entero" para funcionar con within y contianing</td>
+    </tr>
+</table>

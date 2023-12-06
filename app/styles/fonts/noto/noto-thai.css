@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Thai';
+    src: local('Noto Sans Thai'),
+        local('NotoSansThai-Regular'),
+        url('NotoSansThai-Regular.woff2') format('woff2'),
+        url('NotoSansThai-Regular.woff') format('woff'),
+        url('NotoSansThai-Regular.svg#NotoSansThai-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-thai ._t{
+    font-family: 'Noto Thai'
+}

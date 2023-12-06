@@ -1,0 +1,33 @@
+.sortmlContainer {
+    min-width: 100%;
+    .card-content{
+        min-width: 100%;
+        background-color: #f4f4f4;
+        > i {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+        }
+    }
+    .sortLabel{
+        display: inline-block;
+        min-width: 100px;
+        @media (max-width: 600px){
+            display: block;
+        }
+    }
+    .context-selector {
+        @media (max-width: 1200px){
+            .narrowCtx{
+                display: block;
+            }
+            .wideCtx{
+                display: none
+            }
+        }
+    }
+    ui-checkbox {
+        margin-left: 0.7em;
+    }
+}
+

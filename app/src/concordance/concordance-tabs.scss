@@ -1,0 +1,10 @@
+@import 'app/styles/constants';
+
+.concordance-tabs{
+    .collapsible-header {
+        color: $new_darkBlue;
+    }
+    .concordance-tab-error {
+        padding: 1em;
+    }
+}

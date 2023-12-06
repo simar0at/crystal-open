@@ -1,0 +1,22 @@
+.grammar-detail-dialog{
+    pre{
+        overflow: initial;
+    }
+    .comment {
+        font-style: italic;
+        color: grey
+    }
+    .grname {
+        font-weight: bold;
+        color:green
+    }
+    .directive {
+        font-style: italic;
+        color: darkblue
+    }
+    .label {
+        font-weight: bold;
+        color: #C00;
+        display: inline
+    }
+}

@@ -1,0 +1,141 @@
+@import 'app/styles/constants';
+
+side-nav{
+    .linkText {
+        white-space: nowrap;
+    }
+
+    #navMain {
+        height: 105px;
+        a {
+            height: 100%;
+            padding-top: 10px;
+            padding-bottom: 20px;
+            span {
+                background-image: url("images/logo_white_300.png");
+                background-repeat: no-repeat;
+                background-size: cover;
+                width: 30px;
+                height: 30px;
+                display: inline-block;
+                transition: all 0.3s linear;
+            }
+        }
+    }
+    &.show ul#side-nav #navMain span{
+        width: 200px;
+        height: 100%;
+        transition-delay: 1000ms;
+    }
+
+    #side-nav.open #navMain {
+        a{
+            padding: 10px 32px 20px;
+        }
+        span{
+            width: 200px;
+            height: 100%;
+        }
+    }
+
+    ul#side-nav{
+        box-shadow: none;
+        background-color: $new_darkBlue;
+        transition: 0.3s cubic-bezier(0.800, 0.000, 0.200, 1.000);
+        &::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        li{
+            a{
+                white-space: nowrap;
+                font-weight: bold;
+                transition: padding 0.3s cubic-bezier(0.800, 0.000, 0.200, 1.000);
+                .linkText{
+                    transition: opacity 0.3s;
+                    font-size: large;
+                }
+                i, span {
+                    color: white;
+                }
+                &:hover {
+                    background-color: rgba(0,0,0,0.3)
+                }
+            }
+            &.disabled{
+                opacity: 0.3;
+                a{
+                    background-color: initial!important;
+                    cursor: default!important;
+                }
+            }
+            &.active{
+                a{
+                    cursor: default;
+                }
+                background-color: $new_skeBlue;
+                i,
+                span{
+                    color: #fff;
+                }
+            }
+        }
+        .skeLogo{
+            position: relative;
+            padding: 20px 20px 0 32px;
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+    }
+    &.show ul#side-nav,
+    &.show ul#side-nav a{
+        transition-delay: 1000ms;
+    }
+    #side-nav{
+        overflow: hidden;
+    }
+
+    #side-nav.open,
+    &.show #side-nav{
+        overflow: auto;
+    }
+    &:not(.show){
+        ul{
+            width: 52px!important;
+            li{
+                a{
+                    padding: 0 9px;
+                    .linkText{
+                        opacity: 0;
+                    }
+                }
+            }
+        }
+    }
+    &.show{
+        ul{
+            li:not(:first-child){
+                a{
+                    padding: 0 0 0 32px;
+                }
+            }
+        }
+    }
+    #side-nav{
+        @media only screen and (min-width: 993px){
+            /* on large screen is menu always visible, override hide after menu item click */
+            transform: translateX(0)!important;
+        }
+        @media only screen and (max-width: 992px){
+            width: 330px!important;
+            li:not(:first-child){
+                a{
+                    padding: 0 32px;
+                    .linkText{
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,29 @@
+.table-label{
+    color: #757575;
+    font-weight: 400;
+    white-space: nowrap;
+    position: relative;
+    display: inline-block;
+    .material-icons{
+        font-size: inherit;
+    }
+    i {
+        visibility: hidden;
+        top: 4px;
+        position: relative;
+        padding: 0 2px;
+    }
+    .selected,
+    &.active:hover > span{
+        color: #000;
+        i{
+            visibility: initial;
+        }
+    }
+    &.active{
+        cursor: pointer;
+    }
+    span span:first-letter{
+        text-transform: uppercase;
+    }
+}

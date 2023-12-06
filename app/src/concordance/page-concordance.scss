@@ -1,0 +1,17 @@
+@import 'app/styles/base';
+
+.page-concordance {
+    .form {
+        transition: all 0.5s ease;
+        max-width: 100%;
+    }
+    .narrowForm {
+        @include maxWidthSmall;
+    }
+    .mediumForm{
+        max-width: 1250px;
+    }
+    .wideForm{
+        max-width: 100%;
+    }
+}

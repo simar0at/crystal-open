@@ -1,0 +1,30 @@
+introduction {
+    #intro_logo {
+        width: 50%;
+        transition: all 2s linear;
+        display: none;
+        margin: auto;
+        position: relative;
+        opacity: 0;
+    }
+    #welcome {
+        margin: auto;
+        display: none;
+        font-size: 15vh;
+        position: relative;
+    }
+    #first_time {
+        margin: auto;
+        display: none;
+        opacity: 0;
+        transition: all 2s linear;
+    }
+    #cards {
+        margin: auto;
+        display: inline-block;
+        >div {
+            padding: 1em 3em;
+            border-radius: 1em;
+        }
+    }
+}

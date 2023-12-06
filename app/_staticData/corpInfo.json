@@ -1,0 +1,237 @@
+{
+	"info": "British Academic Written English corpus of good-standard student assignments. For Sketch Engine prepared by Paul Thompson and Alois Heuboeck at Reading. Tagged by Paul Rayson with POS CLAWS v7 and semantic category with WMatrix.",
+	"encoding": "UTF-8",
+	"compiled": "02/08/2017 17:56:27",
+	"unicameral": false,
+	"alsizes": [],
+	"tagsetdoc": "https://www.sketchengine.co.uk/english-claws7-part-of-speech-tagset/",
+	"structs": [
+		["figure", 4676, [
+			["figure.id", "id", 4676]
+		]],
+		["text", 2761, [
+			["text.discipline", "Discipline", 31],
+			["text.discgroup", "Discipline group (area)", 4],
+			["text.l1", "First language of author", 42],
+			["text.grade", "Grade", 3],
+			["text.level", "Level of studies", 5],
+			["text.genre", "Text genre", 45],
+			["text.educ", "educ", 17],
+			["text.sex", "sex", 2],
+			["text.studentage", "studentage", 3],
+			["text.wordcount", "wordcount", 2012]
+		]],
+		["back", 2761, []],
+		["docTitle", 2610, []],
+		["table", 2180, [
+			["table.id", "id", 2180]
+		]],
+		["div6", 9, []],
+		["div5", 65, []],
+		["div4", 372, []],
+		["div3", 2499, [
+			["div3.type", "type", 2]
+		]],
+		["div2", 8025, [
+			["div2.type", "type", 3]
+		]],
+		["div1", 13648, [
+			["div1.n", "n", 5],
+			["div1.type", "type", 10]
+		]],
+		["titlePage", 2551, []],
+		["p", 127401, [
+			["p.n", "n", 13392],
+			["p.rend", "rend", 9]
+		]],
+		["note", 20418, [
+			["note.id", "id", 20418],
+			["note.place", "place", 2]
+		]],
+		["formula", 9176, [
+			["formula.id", "id", 9176]
+		]],
+		["ref", 20468, [
+			["ref.target", "target", 20468]
+		]],
+		["body", 2761, []],
+		["head", 23406, [
+			["head.rend", "rend", 10]
+		]],
+		["quote", 2110, [
+			["quote.lang", "lang", 8],
+			["quote.rend", "rend", 5]
+		]],
+		["titlePart", 4486, [
+			["titlePart.rend", "rend", 8]
+		]],
+		["hi", 76702, [
+			["hi.rend", "rend", 17]
+		]],
+		["front", 2761, []],
+		["seg", 6308, [
+			["seg.n", "n", 4974],
+			["seg.type", "type", 1]
+		]],
+		["name", 5341, [
+			["name.type", "type", 7]
+		]],
+		["g", 1196961, []],
+		["doc", 10, [
+			["doc.date", "date", 1],
+			["doc.domain", "domain", 1],
+			["doc.filename", "filename", 10],
+			["doc.genre", "genre", 1],
+			["doc.id", "id", 10],
+			["doc.pop", "pop", 1],
+			["doc.title", "title", 1],
+			["doc.wordcount", "wordcount", 10]
+		]],
+		["list", 2058, [
+			["list.type", "type", 3]
+		]],
+		["item", 9656, [
+			["item.rend", "rend", 8]
+		]],
+		["s", 293113, [
+			["s.n", "n", 116190],
+			["s.rend", "rend", 11]
+		]],
+		["text1", 2761, [
+			["text1.course", "Course title", 334],
+			["text1.date", "Date of writing", 77],
+			["text1.id", "Document ID number", 2761],
+			["text1.title", "Document title", 2603],
+			["text1.modtitle", "Module title", 1212],
+			["text1.modcode", "modcode", 1041]
+		]],
+		["epigraph", 46, []]
+	],
+	"wposlist": [
+		["adjective", "J.*"],
+		["adverb", "R.*"],
+		["article", "AT.*"],
+		["conjunction", "C.*"],
+		["noun", "N.*"],
+		["number", "M.*"],
+		["pronoun", "APPGE|P.*"],
+		["preposition", "I.*"],
+		["verb", "V.*"],
+		["desc. of sound", "VOCAL"]
+	],
+	"lang": "English",
+	"name": "British Academic Written English Corpus (BAWE)",
+	"sizes": {
+		"tokencount": "8336262",
+		"sentcount": "293113",
+		"wordcount": "6968089",
+		"normsum": "6968089",
+		"parcount": "127401",
+		"doccount": "2761"
+	},
+	"subcorpora": [{
+		"tokens": 2727126,
+		"relsize": 32.71401498657312,
+		"words": 2279541,
+		"n": "SS_Disciplines-Business,Economics,Law,Politics,Sociology"
+	}, {
+		"tokens": 37768,
+		"relsize": 0.4530567777260359,
+		"words": 31569,
+		"n": "Genre_Essays"
+	}, {
+		"tokens": 455734,
+		"relsize": 5.466886717332061,
+		"words": 380937,
+		"n": "Discipline_Biological_Sciences"
+	}, {
+		"tokens": 1754545,
+		"relsize": 21.047143191996604,
+		"words": 1466583,
+		"n": "LS_Disciplines-Agriculture,Biological_Sciences,Food_Sciences,Medicine,Psychology"
+	}, {
+		"tokens": 2570523,
+		"relsize": 30.835439193249925,
+		"words": 2148640,
+		"n": "All_except_English_as_author_first_language"
+	}, {
+		"tokens": 329853,
+		"relsize": 3.9568454062504275,
+		"words": 275716,
+		"n": "Discipline_English"
+	}, {
+		"tokens": 1611261,
+		"relsize": 19.328339248454522,
+		"words": 1346815,
+		"n": "PS_Disciplines-Chemistry,Computer Science,Cybernetics_Electronic_Engineering,Engineering,Physics,Mathematics,Meteorology,other"
+	}, {
+		"tokens": 2243330,
+		"relsize": 26.91050257297575,
+		"words": 1875147,
+		"n": "AH_Disciplines-Linguistics,Archaeology,Classics,Comparative_American_Studies,History,Philosophy"
+	}, {
+		"tokens": 5765739,
+		"relsize": 69.16456080675007,
+		"words": 4819448,
+		"n": "English_as_author_first_language"
+	}],
+	"infohref": "https://www.sketchengine.co.uk/bawe",
+	"lposlist": [
+		["adjective", "-J"],
+		["adverb", "-R"],
+		["conjunction", "-C"],
+		["noun", "-N"],
+		["preposition", "-I"],
+		["pronoun", "-P"],
+		["verb", "-V"]
+	],
+	"attributes": [{
+		"fromattr": "",
+		"id_range": 175126,
+		"dynamic": "",
+		"name": "word",
+		"label": ""
+	}, {
+		"fromattr": "",
+		"id_range": 358,
+		"dynamic": "",
+		"name": "tag",
+		"label": ""
+	}, {
+		"fromattr": "",
+		"id_range": 137598,
+		"dynamic": "",
+		"name": "lemma",
+		"label": ""
+	}, {
+		"fromattr": "",
+		"id_range": 157008,
+		"dynamic": "",
+		"name": "lempos",
+		"label": ""
+	}, {
+		"fromattr": "",
+		"id_range": 2751,
+		"dynamic": "",
+		"name": "sem",
+		"label": ""
+	}, {
+		"fromattr": "",
+		"id_range": 14,
+		"dynamic": "",
+		"name": "textpart",
+		"label": ""
+	}, {
+		"fromattr": "word",
+		"id_range": 148879,
+		"dynamic": "utf8lowercase",
+		"name": "lc",
+		"label": "word (lowercase)"
+	}, {
+		"fromattr": "lemma",
+		"id_range": 137598,
+		"dynamic": "utf8lowercase",
+		"name": "lemma_lc",
+		"label": "lemma (lowercase)"
+	}]
+}

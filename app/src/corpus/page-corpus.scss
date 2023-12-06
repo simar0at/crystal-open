@@ -1,0 +1,221 @@
+@import 'app/styles/base';
+@import 'app/styles/constants';
+
+.page-corpus{
+    margin: auto;
+    raw-html {
+        display: inline-block;
+    }
+    raw-html > b {
+        color: #C52031;
+        text-decoration: underline;
+    }
+    .content{
+        padding-bottom: 20px;
+    }
+    .langBtn{
+        margin: 0 15px 10px 0;
+        min-width: 189px;
+    }
+    .corpus-tab-basic{
+        max-width: 1180px;
+        margin: auto;
+        .corpusLeftCol{
+            max-width: 440px;
+            @media screen and(min-width: 1405px){
+                border-right: 1px solid #fff;
+                margin-right: 2em;
+            }
+        }
+        .corpusRightCol{
+            width: 100%;
+            max-width: 660px;
+        }
+    }
+    .controlBar{
+        & > div {
+            margin-bottom: -10px;
+        }
+        .input-field {
+            margin-top: 0;
+        }
+        >.btn.right{
+            top: 4px;
+            padding-left: 10px;
+            position: relative;
+        }
+    }
+    .corpus-tab-advanced {
+        tr.actual {
+            opacity: 0.5 !important;
+        }
+        @media (max-width: 600px) {
+            .advseltab {
+                font-size: 80%;
+                tbody > tr > td {
+                    padding: 8px 8px;
+                }
+            }
+        }
+        @media (max-width: 530px) {
+            .langcchip {
+                display: none;
+            }
+        }
+        .transparent .floatingDropdown .ui-input {
+            opacity: 0.5;
+        }
+        .old-corpora-td {
+            font-style: italic;
+            cursor: pointer;
+            text-align: center;
+            i.material-icons {
+                vertical-align: bottom;
+            }
+        }
+        .plainField{
+            input{
+                background-color: initial;
+                border-bottom: 1px solid $new_darkBlue;
+            }
+        }
+        #catDropdown-button {
+            clear: both;
+            max-width: 400px;
+        }
+        #catDropdown.dropdown-content {
+            span {
+                color: black;
+                float: right;
+            }
+            li.disabled {
+                cursor: default;
+                opacity: 0.5;
+            }
+        }
+        .tabs {
+            height: auto;
+            -ms-flex-direction: column;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            display: -webkit-flex;
+            display: flex;
+            .tab {
+                width: 100%;
+                cursor: pointer;
+                text-align: left;
+                &.disabled > a {
+                    opacity: 0.4;
+                }
+                &.active {
+                    background-color: #A7CADC;
+                    color: #004b69;
+                    &:hover {
+                        background-color: #A7CADC;
+                    }
+                }
+                &:hover {
+                    background-color: $new_mediumBlue;
+                }
+                >a {
+                    border-bottom: none;
+                    opacity: 1.0;
+                    color: $new_darkBlue;
+                    font-size: 100%;
+                    > i.material-icons {
+                        font-size: 110%;
+                        vertical-align: text-top;
+                    }
+                }
+            }
+        }
+        [type="checkbox"]+label {
+            margin-left: 1em;
+        }
+        table.material-table {
+            .selcorp {
+                cursor: pointer;
+            }
+            .notAvailable {
+                opacity: 0.3;
+            }
+        }
+        preloader-spinner {
+            display: block;
+            text-align: center;
+            margin-top: 2em;
+        }
+        .llab {
+            vertical-align: top;
+            margin-left: 1em;
+        }
+        .chip > i.material-icons {
+            font-size: inherit;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+    }
+    .corpus-tab-my, .corpus-tab-shared {
+        @media (max-width: 600px) {
+            .tab-content{
+                padding: 5px;
+            }
+            .table {
+                font-size: 80%;
+                thead > tr > th,
+                tbody > tr > td{
+                    padding: 8px 8px;
+                }
+            }
+        }
+        table td{
+            cursor: pointer;
+        }
+    }
+    .dropdown-content {
+        padding: 0 0.5em;
+        overflow: hidden;
+        li[data-item] {
+            width: 2.5em;
+            height: 2em;
+            display: inline-block;
+            color: $new_darkBlue;
+            text-align: center;
+            &.disabled {
+                cursor: default;
+                color: $new_mediumBlue;
+            }
+            &.disabled:hover {
+                color: $new_mediumBlue;
+            }
+            &:hover {
+                background-color: transparent !important;
+                color: $skeBlue;
+            }
+            i {
+                padding: .5em;
+            }
+        }
+    }
+    .shared{
+        vertical-align: bottom;
+        margin-right: 10px;
+        opacity: 0.6;
+        color: #004b68;
+    }
+}
+@media only screen and (max-width: 1480px) {
+    .hide-on-xxlarge-and-down {
+        display: none !important
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .hide-on-large-and-down {
+        display:none !important
+    }
+}
+@media only screen and (min-width: 1201px) {
+    .hide-on-xlarge {
+        display:none !important
+    }
+}

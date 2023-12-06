@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Tamil';
+    src: local('Noto Sans Tamil'),
+        local('NotoSansTamil-Regular'),
+        url('NotoSansTamil-Regular.woff2') format('woff2'),
+        url('NotoSansTamil-Regular.woff') format('woff'),
+        url('NotoSansTamil-Regular.svg#NotoSansTamil-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-taml ._t{
+    font-family: 'Noto Tamil'
+}

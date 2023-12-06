@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Georgian';
+    src: local('Noto Sans Georgian'),
+        local('NotoSansGeorgian-Regular'),
+        url('NotoSansGeorgian-Regular.woff2') format('woff2'),
+        url('NotoSansGeorgian-Regular.woff') format('woff'),
+        url('NotoSansGeorgian-Regular.svg#NotoSansGeorgian-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-geor ._t{
+    font-family: 'Noto Georgian'
+}

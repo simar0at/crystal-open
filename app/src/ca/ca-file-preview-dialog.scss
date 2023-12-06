@@ -1,0 +1,13 @@
+.ca-file-preview-dialog{
+    position: relative;
+    .fieldHelp{
+        position: relative;
+        top: -2px;
+        color: grey;
+        font-size: 14px;
+    }
+    .filePreview{
+        overflow: auto;
+        white-space: pre-wrap;
+    }
+}

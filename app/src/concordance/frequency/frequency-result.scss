@@ -1,0 +1,68 @@
+@import 'app/styles/base';
+
+.frequency-result{
+    display: block;
+    .header{
+        display: inline-block;
+        margin-right: 20px;
+        vertical-align: middle;
+    }
+    .headerButtons{
+        .btn{
+            position: relative;
+            top: 7px;
+        }
+        @media only screen and (max-width: 600px){
+            display: block;
+            margin-bottom: 10px;
+            .btn{
+                top: 0;
+            }
+        }
+    }
+    .raw-html{
+        white-space: nowrap
+    }
+    .frequencyOptions{
+        margin-top: 20px;
+        background-color: #e4e4e4;
+        padding: 10px 15px;
+        .ui-checkbox{
+            margin: 0;
+        }
+    }
+    .column-table {
+        .material-table > tbody > tr > td{
+            padding: 0px 15px;
+        }
+        .col-tab-num{
+            width: 1%;
+            min-width: 20px;
+        }
+        .freqColumn{
+            width: 9%;
+        }
+        .relColumn{
+            width: 9%;
+        }
+        .barColumn{
+            width: 30%;
+        }
+        .menuColumn{
+            width: 40px;
+        }
+        i{
+            color: $mediumGray;
+        }
+    }
+    .progress{
+        width: 100%;
+        min-width: 100px;
+        display: inline-block;
+        margin-bottom: 3px;
+    }
+
+    .ui-pagination{
+        justify-content: center;
+    }
+}

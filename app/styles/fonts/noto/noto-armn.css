@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Armenian';
+    src: local('Noto Sans Armenian'),
+        local('NotoSansArmenian-Regular'),
+        url('NotoSansArmenian-Regular.woff2') format('woff2'),
+        url('NotoSansArmenian-Regular.woff') format('woff'),
+        url('NotoSansArmenian-Regular.svg#NotoSansArmenian-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-armn ._t{
+    font-family: 'Noto Armenian'
+}

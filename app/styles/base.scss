@@ -1,0 +1,38 @@
+
+// colors
+$darkBlue: #000F14;
+$heavyBlue: #004B69;
+$blue: #2AA0D1;
+$pastelBlue: #A3CDDE;
+$lightSilver: #F0F0F0;
+$skeBlue: #2AA0D1;
+
+$primaryColor: #009688;
+//$secondaryColor:;
+
+$darkGray: #212121;//rgba(0,0,0,0.87);//#222;
+$mediumGray: #757575;//rgba(0,0,0,0.54);//#737373;
+$lightGray: #9e9e9e;//rgba(0,0,0,0.38);//#BDBDBD;
+$whiteGray: #f2f2f2;
+
+// semi-transparent
+$transparentWhite: rgba(255, 255, 255, 0.8);
+$transparentBlack: rgba(0, 0, 0, 0.3);
+
+@mixin maxWidthXsmall{
+    max-width: 500px;
+}
+@mixin maxWidthSmall{
+    max-width: 750px;
+}
+@mixin maxWidthMedium{
+    max-width: 970px;
+}
+@mixin maxWidthLarge{
+    max-width: 1170px;
+}
+@mixin content-box{
+    padding: 20px;
+    background-color: #fff;
+}
+

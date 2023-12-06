@@ -1,0 +1,31 @@
+.ca-web-bootcat{
+    .inputTypeOptions{
+        margin-top: 8px;
+        .ui-textarea{
+            width: calc(100% - 30px);
+            textarea{
+                margin-bottom: 0;
+            }
+        }
+    }
+    .ui-textarea, .ui-input, .ui-chips{
+        width: calc(100% - 30px);
+        display: inline-block;
+    }
+
+    .inlineHelp{
+        position: relative;
+        vertical-align: top;
+        top: 15px;
+    }
+
+    .bootcat-settings{
+        .row >span{
+            max-width: 250px;
+        }
+    }
+
+    .kwBtn{
+        margin: 10px 0 20px;
+    }
+}

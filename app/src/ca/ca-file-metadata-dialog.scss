@@ -1,0 +1,32 @@
+.ca-file-metadata-dialog{
+    .table{
+        td, th{
+            padding: 2px 20px;
+        }
+        th:last-child{
+            width: 64px;
+        }
+        td{
+            .ui-input{
+                margin-bottom: 10px;
+                .input-field{
+                    margin-top: 0;
+                }
+                input{
+                    height: 2.5em;
+                }
+            }
+        }
+        tr{
+            i{
+                opacity: 0.2;
+            }
+            &:hover i{
+                opacity: 0.5;
+                &:hover{
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}

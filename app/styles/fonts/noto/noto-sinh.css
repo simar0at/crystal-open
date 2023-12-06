@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Sinhala';
+    src: local('Noto Sans Sinhala'),
+        local('NotoSansSinhala-Regular'),
+        url('NotoSansSinhala-Regular.woff2') format('woff2'),
+        url('NotoSansSinhala-Regular.woff') format('woff'),
+        url('NotoSansSinhala-Regular.svg#NotoSansSinhala-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-sinh ._t{
+    font-family: 'Noto Sinhala'
+}

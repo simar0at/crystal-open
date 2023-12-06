@@ -1,0 +1,199 @@
+@import 'app/styles/base';
+
+.ca-browser{
+    display: block;
+    .card-panel{
+        position: relative;
+        min-height: 293px;
+    }
+    .btnsCol{
+        width: 1%;
+    }
+    .btnIco{
+        cursor: pointer;
+        opacity: 0.3;
+        &:hover{
+            opacity: 0.8;
+        }
+    }
+
+    .columnFiles{
+        min-height: 230px;
+        position: relative;
+        .selectColumn{
+            width: 1px;
+            margin: 0;
+            .ui-checkbox{
+                margin: 0;
+                span{
+                    padding-left: 30px;
+                    height: 17px;
+                    line-height: 17px;
+                }
+            }
+        }
+    }
+
+    .filesetsTable{
+        tbody{
+            tr{
+                height: 35px;
+                cursor: pointer;
+            }
+        }
+        .progress{
+            margin: 0 0 5px 0;
+        }
+    }
+    .filesTable{
+        tr{
+            height: 42px;
+        }
+        .fileProgress{
+            float: right;
+            & > * {
+                display: inline-block;
+                vertical-align: middle;
+            }
+            .progress{
+                width: 60px;
+            }
+        }
+    }
+    .table {
+        thead{
+            th{
+                padding: 5px;
+            }
+        }
+        tbody{
+            tr{
+                &.deleteInProgress{
+                    opacity: 0.3;
+                    pointer-events: none;
+                    .dotsAnimation{
+                        font-size: 20px;
+                        position: relative;
+                        top: -3px;
+                        left: 4px;
+                    }
+                }
+                &.fileDetails{
+                    td{
+                        padding: 0 30px;
+                        position: relative;
+                        i{
+                            vertical-align: initial;
+                        }
+                    }
+                }
+                .filesetCell{
+                    i{
+                        &.folder{
+                            margin-right: 10px;
+                            float: left;
+                        }
+                        &.webcrawlInfo{
+
+                        }
+                    }
+                    >span{
+                        vertical-align: bottom;
+                        cursor: pointer;
+                    }
+                    .filesetName{
+                        padding-left: 34px;
+                        display: block;
+                    }
+                }
+                .progressCell{
+                    padding: 0 5px;
+                    text-align: right;
+                    white-space: nowrap;
+                    .progressTop{
+                        white-space: nowrap;
+                    }
+                    & > *{
+                        vertical-align: middle;
+                        display: inline-block;
+                    }
+                }
+                &.active{
+                    td{
+                        background-color: rgba(0, 0, 0, 0.05);
+                    }
+                    .filesetCell{
+                         >span{
+                            color: black;
+                            font-weight: bold;
+                        }
+                    }
+                }
+                &.selectedRow{
+                    td:first-child{
+                        font-weight: bold;
+                    }
+                }
+            }
+            td{
+                padding: 5px;
+                &.btnCell{
+                    padding: 0 5px;
+                }
+            }
+            i{
+                vertical-align: middle;
+            }
+        }
+        .num{
+            text-align: right;
+        }
+        td.num{
+            color: $lightGray;
+        }
+    }
+    .emptyFolder,
+    .loadingFolder,
+    .emptyCorpus{
+        color: #a7a6a6;
+        text-align: center;
+        padding: 50px;
+    }
+
+    .emptyCorpus{
+        font-size: 1em;
+        i{
+            display: block;
+            font-size: 3em;
+        }
+    }
+
+    .filePreview{
+        color: grey;
+        overflow: hidden;
+        margin-left: 60px;
+        div{
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+    }
+
+    .lineDetailText{
+        margin-left: 60px;
+        color: grey;
+    }
+
+    table-label{
+        text-transform: capitalize;
+    }
+
+    #bulkActionBtn{
+        margin: 15px 0 10px;
+    }
+    .docCountItem{
+        padding: 10px 16px;
+        color: grey;
+        pointer-events: none;
+        font-size: 13px;
+    }
+}

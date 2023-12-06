@@ -1,0 +1,200 @@
+@import 'app/styles/base';
+
+.corpus-info-dialog{
+    .titleWithButton{
+        .btn{
+            margin-right: 50px;
+            margin-bottom: 20px;
+        }
+    }
+    h4{
+        display: inline-block;
+        padding-right: 20px;
+        @media only screen and (max-width: 1200px){
+            font-size: 2rem;
+        }
+        @media only screen and (max-width: 900px){
+            font-size: 1.6rem;
+        }
+    }
+    preloader-spinner{
+        display: block;
+        text-align: center;
+        margin-top: 30px;
+    }
+    .corpInfoSections{
+        display: flex;
+        flex-wrap: wrap;
+        & > *{
+            flex-basis: 100%;
+            padding: 5px;
+            @media only screen and (min-width: 800px){
+                max-width: 50%;
+            }
+            @media only screen and (min-width: 1125px){
+                max-width: 33%;
+            }
+            @media only screen and (min-width: 1500px){
+                max-width: 25%;
+            }
+            & > *{
+                height: 100%;
+            }
+        }
+        table{
+            tr:not(:last-child){
+                border-bottom: 1px solid rgb(229, 229, 229);
+            }
+            td{
+                padding: 6px 15px;
+                &:first-child{
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+    .card-panel{
+        h5{
+            margin-top: 0;
+        }
+        &.noPaddingCard{
+            padding: 0;
+        }
+    }
+
+    .colsContainer{
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .leftCol{
+        width: 100%;
+    }
+    .rightCol{
+        width: 0;
+    }
+    .hasRightCol{
+        .leftCol{
+            width: 66%;
+        }
+        .rightCol{
+            padding: 5px;
+            width: 33%;
+        }
+        @media only screen and (max-width: 1299px){
+            .leftCol{
+                width: 50%;
+            }
+            .rightCol{
+                width: 50%;
+            }
+        }
+        @media only screen and (max-width: 899px){
+            .leftCol,
+            .rightCol{
+                width: 100%;
+            }
+        }
+        .corpInfoSections{
+            & > *{
+                @media only screen and (min-width: 900px){
+                    max-width: 100%;
+                }
+                @media only screen and (min-width: 1300px){
+                    max-width: 50%;
+                }
+                @media only screen and (min-width: 1600px){
+                    max-width: 33%;
+                }
+            }
+        }
+    }
+    .collapsible-header{
+        position: relative;
+        padding-right: 40px;
+        display: block;
+        &::after {
+            content: "keyboard_arrow_down";
+            font-family: 'Material Icons';
+            font-size: 24px;
+            font-weight: normal;
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            opacity: 0.5;
+            margin-top: -18px;
+        }
+        &:hover::after{
+            opacity: 0.8;
+        }
+        &.active::after{
+            content: "keyboard_arrow_up"
+        }
+    }
+    .collapsible{
+        box-shadow: none;
+        font-weight: bold;
+        .collapsible-header span,
+        .collapsible-body{
+            span{
+                font-weight: normal;
+            }
+            .attr{
+                color: gray;
+                @media only screen and (max-width: 550px){
+                    display: block;
+                }
+            }
+        }
+    }
+    .collapsible-body{
+        background-color: whitesmoke;
+        padding: 5px 40px 5px 30px;
+        div{
+            position: relative;
+            font-size: 14px;
+            line-height: 1.5em;
+            padding-bottom: 10px;
+        }
+        a{
+            position: absolute;
+            right: -35px;
+            top: 0;
+            i{
+                font-size: 24px!important;
+                color: #014b68;
+            }
+        }
+    }
+    .subcorpora{
+        td:first-child{
+            word-break: break-word;
+        }
+    }
+    .scnt{
+        opacity: 0.8;
+        font-weight: normal;
+    }
+
+    .lexiconSizes{
+        .table{
+            i{
+                font-size: 21px;
+                vertical-align: text-bottom;
+                color: $lightGray;
+                cursor: help;
+            }
+        }
+    }
+}
+
+.density-low .noPaddingCard h5{
+    padding: 24px;
+}
+
+.density-medium .noPaddingCard h5{
+    padding: 16px;
+}
+
+.density-high .noPaddingCard h5{
+    padding: 10px;
+}

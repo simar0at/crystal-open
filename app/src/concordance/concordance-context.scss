@@ -1,0 +1,22 @@
+.concordance-context{
+    padding: 0;
+    display: block;
+    max-width: 1000px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    .context-type{
+        margin-left: 35px;
+        > *{
+            vertical-align: top;
+        }
+        >span{
+            margin: 0 10px;
+        }
+        .context-label{
+            font-size: 20px;
+        }
+    }
+    .buttons{
+        margin-top: 20px;
+    }
+}

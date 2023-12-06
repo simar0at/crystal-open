@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Devanagari';
+    src: local('Noto Sans Devanagari'),
+        local('NotoSansDevanagari-Regular'),
+        url('NotoSansDevanagari-Regular.woff2') format('woff2'),
+        url('NotoSansDevanagari-Regular.woff') format('woff'),
+        url('NotoSansDevanagari-Regular.svg#NotoSansDevanagari-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-deva ._t{
+    font-family: 'Noto Devanagari'
+}

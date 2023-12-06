@@ -1,0 +1,67 @@
+.header-menu{
+    #menuDropdownList{
+        min-width: 220px;
+        li{
+            min-height: 50px;
+            line-height: 1.5rem;
+            *{
+                cursor: pointer;
+            }
+            white-space: nowrap;
+            float: none;
+            a{
+                line-height: 22px;
+                padding: 14px 16px;
+                white-space: nowrap;
+            }
+            i{
+                height: inherit;
+                line-height: inherit;
+                float: left;
+                margin: 0 24px 0 0;
+                width: 24px;
+            }
+        }
+    }
+
+    #menuList{
+        display: flex;
+        >header-menu-item>li>a>label{
+            display: none;
+            padding-right: 10px;
+        }
+    }
+
+    #header-menu-messages{
+        position: relative;
+    }
+
+    .activeIcon {
+        position: absolute;
+        top: 13px;
+        right: 13px;
+        display: inline-block;
+        background-color: red;
+        border-radius: 50%;
+        height: 10px;
+        width: 10px;
+    }
+    .messageCount{
+        position: absolute;
+        top: 13px;
+        left: 32px;
+        display: inline-block;
+        color: white;
+        background-color: red;
+        border-radius: 50%;
+        height: 18px;
+        width: 18px;
+        line-height: 18px;
+        text-align: center;
+        font-size: 13px;
+    }
+}
+
+.loginAsDialog .modal{
+    overflow: visible;
+}

@@ -1,0 +1,42 @@
+.crystal-app{
+   min-height: calc(100vh - 50px);
+   min-width: 100%;
+   display: block;
+   position: relative;
+   max-height: 100vh;
+}
+
+.page-router{
+    transition: margin-left 0.3s cubic-bezier(0.800, 0.000, 0.200, 1.000);
+}
+side-nav + .page-router{
+    margin-left: 52px;
+}
+
+side-nav + .page-router{
+    &:before{
+     content: " ";
+       position: absolute;
+       left:0;
+       right:0;
+       top:0;
+       bottom:0;
+       background-color: rgba(0,0,0,0.3);
+       z-index: 500;
+       pointer-events: none;
+       opacity: 0;
+       transition: all 0.4s cubic-bezier(0.800, 0.000, 0.200, 1.000);
+   }
+}
+side-nav.show + .page-router{
+    &:before{
+        transition-delay: 1000ms;
+        opacity: 1;
+   }
+}
+
+@media only screen and (max-width: 993px){
+    .page-router{
+        margin-left: 0!important;
+    }
+}

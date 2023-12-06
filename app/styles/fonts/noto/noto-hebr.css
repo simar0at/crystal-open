@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Hebrew';
+    src: local('Noto Sans Hebrew'),
+        local('NotoSansHebrew-Regular'),
+        url('NotoSansHebrew-Regular.woff2') format('woff2'),
+        url('NotoSansHebrew-Regular.woff') format('woff'),
+        url('NotoSansHebrew-Regular.svg#NotoSansHebrew-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-hebr ._t{
+    font-family: 'Noto Hebrew'
+}

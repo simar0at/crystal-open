@@ -1,0 +1,41 @@
+@import 'app/styles/constants';
+
+alt-lposlist {
+    display: inline-block;
+    vertical-align: middle;
+    .chip{
+        display: inline-flex;
+        vertical-align: middle;
+        align-items: center;
+        margin-bottom: 0px;
+        color: $new_darkBlue;
+        box-sizing: content-box;
+        &:focus {
+            background-color: $new_mediumBlue;
+        }
+    }
+
+    a.al-dropdown {
+        font-size: 16px;
+        i {
+            width: 18px;
+        }
+        >span>span {
+            color: $new_contrastColor;
+        }
+    }
+    .dropdown-content {
+        box-shadow: none;
+        background-color: transparent;
+        li {
+            a {
+                white-space: nowrap;
+                padding: .65ex .75em
+            }
+            border: 2px solid $new_lightBlue;
+            border-radius: 20px;
+            background-color: white;
+            min-height: initial;
+        }
+    }
+}

@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Bengali';
+    src: local('Noto Sans Bengali'),
+        local('NotoSansBengali-Regular'),
+        url('NotoSansBengali-Regular.woff2') format('woff2'),
+        url('NotoSansBengali-Regular.woff') format('woff'),
+        url('NotoSansBengali-Regular.svg#NotoSansBengali-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-beng ._t{
+    font-family: 'Noto Bengali'
+}

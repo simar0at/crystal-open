@@ -1,0 +1,97 @@
+@import 'app/styles/constants';
+
+.concordance-result-options-sort{
+    @media (max-width: 600px){
+        width: 100%;
+    }
+    .sortContainer{
+        display: table;
+        margin: 0 auto;
+    }
+    .currentSorts{
+        margin-bottom: 10px;
+        .chip{
+            font-size: inherit;
+            background-color: #f2f2f2;
+            color: rgb(102, 102, 102);
+        }
+    }
+    .sortForm{
+        padding: 10px 20px 25px;
+        margin: 0 -20px;
+    }
+    .sortLine{
+        text-align: center;
+        min-height: 40px;
+        a{
+            margin-top: -9px;
+        }
+    }
+    .sortLabel{
+        display: inline-block;
+        min-width: 110px;
+        padding-right: 10px;
+        @media (max-width: 600px){
+            display: block;
+        }
+    }
+    .context-selector{
+        .pos{
+            margin: 0 9px;
+            &.kwicBtn{
+                margin: 0 30px;
+            }
+        }
+        @media (max-width: 450px){
+            .narrowCtx{
+                display: block;
+            }
+            .wideCtx{
+                display: none
+            }
+        }
+    }
+    .context{
+        margin: 0 4px;
+        >span{
+            white-space: nowrap;
+            display: inline-block;
+            margin: 2px 1px;
+            border-radius: 1px;
+            width: 8px;
+            height: 8px;
+            background-color: #9e9e9e;
+            &:nth-child(4){
+                width: 16px;
+                margin: 2px 8px;
+            }
+            &.active{
+                background-color: #2196f3;
+            }
+        }
+    }
+    .sortOptions > *{
+        margin-right: 20px;
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+    .buttonGo{
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 20px;
+    }
+    .buttons{
+        margin-top: 20px;
+    }
+    .btn-smalltext {
+        font-size: .75em;
+        padding: 5px;
+        line-height: 20px;
+        height: 27px;
+        background-color: $new_mediumBlue;
+        &:hover {
+            background-color: $new_mediumBlue;
+        }
+    }
+}

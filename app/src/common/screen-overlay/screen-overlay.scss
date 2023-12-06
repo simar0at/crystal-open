@@ -1,0 +1,22 @@
+.screen-overlay{
+    >*{
+        direction: ltr;
+    }
+    .overlay{
+        direction: ltr;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.6);
+        z-index: 1010;
+        .preloader-wrapper{
+            color: #fff;
+            position: absolute;
+            left:50vw;
+            top: 40vh;
+        }
+    }
+}

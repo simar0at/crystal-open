@@ -1,0 +1,89 @@
+@import 'app/styles/base';
+
+.page-keywords {
+    #keywordsform {
+        @include maxWidthSmall;
+        transition: max-width 0.5s ease;
+        &.wideForm{
+            max-width: 100%;
+        }
+    }
+    .keywords-tab,
+    .terms-tab,
+    .wipo-tab,
+    .about-tab {
+        padding-top: 1em;
+    }
+    .keywords-tab-advanced {
+        position: relative;
+        .mainForm{
+            max-width: 700px;
+        }
+        .ui-input[name="minfreq"] {
+            label {
+                white-space: nowrap;
+            }
+        }
+        .ui-filtering-list {
+            .floatingDropdown {
+                &.disabled {
+                    opacity: 0.5 !important;
+                }
+            }
+        }
+        h6 {
+            font-size: 1.2rem;
+            margin: .5rem 0 1.5rem 0;
+        }
+        .kwTermsRow{
+            >col{
+                padding: 0 .2rem;
+            }
+            .card-panel{
+                position: relative;
+                min-height: 250px;
+            }
+        }
+    }
+    .keywords-result-info {
+        .chip {
+            background-color: rgba(90, 90, 90, 0.1)
+        }
+    }
+    .columns{
+        display: flex;
+        flex-wrap: wrap;
+        .column{
+            min-width: 50%;
+        }
+    }
+    .col-tab-menu {
+        text-align: right;
+    }
+    h5 > span.warn > i.material-icons {
+        color: orangered;
+    }
+    .ui-pagination{
+        justify-content: center;
+    }
+    .termsNA{
+        position: absolute;
+        left: 15px;
+        right: 15px;
+        text-align: center;
+        top: 30%;
+        color: grey;
+    }
+    .theadMeta span {
+        display: block;
+        text-align: center;
+    }
+    .material-table > thead > tr > th{
+        &.frq1, &.frq2, &.rfrq1, &.rfrq2{
+            text-align: center;
+            .table-label{
+                float: none!important;
+            }
+        }
+    }
+}

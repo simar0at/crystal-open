@@ -1,0 +1,73 @@
+@import 'app/styles/base';
+@import 'app/styles/constants';
+
+.SkE .greyCard{
+    background-color: #f1f1f1;
+}
+
+.caSupportedFormats{
+    font-size: 13px;
+    color: #bdbdbd;
+    position: relative;
+}
+
+.ca-breadcrumbs{
+    display: block;
+    margin-bottom: 15px;
+    nav{
+        background-color: initial;
+        box-shadow: none;
+        height: 44px!important;
+        line-height: 44px!important;
+        a.breadcrumb:hover{
+            color: black;
+        }
+        .breadcrumb{
+            color: $new_mediumBlue;
+            text-transform: uppercase;
+            &.active{
+                color: $new_darkBlue;
+                font-weight: 500;
+            }
+            &::before{
+                color: $new_mediumBlue;
+            }
+        }
+    }
+}
+
+.ca-title{
+    display: flex;
+    margin-bottom: 15px;
+    font-size: 2em;
+    align-items: center;
+    .name{
+        text-transform: uppercase;
+        color: $new_darkBlue;
+    }
+    .corpname{
+        color: black;
+        margin: 0 0.3em;
+    }
+    .language {
+        font-size: .5em;
+        color: $new_darkBlue;
+        line-height: 3.5em;
+    }
+    @media screen and (max-width: 950px){
+        font-size: 1.5em;
+        .name{
+            display: none;
+        }
+    }
+    @media screen and (max-width: 500px){
+        font-size: 1.2em;
+        .language{
+            display: none;
+        }
+    }
+}
+
+#btnBack {
+    color: $new_darkBlue;
+}

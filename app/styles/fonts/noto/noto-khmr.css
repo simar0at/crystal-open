@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Khmer';
+    src: local('Noto Sans Khmer'),
+        local('NotoSansKhmer-Regular'),
+        url('NotoSansKhmer-Regular.woff2') format('woff2'),
+        url('NotoSansKhmer-Regular.woff') format('woff'),
+        url('NotoSansKhmer-Regular.svg#NotoSansKhmer-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-khmr ._t{
+    font-family: 'Noto Khmer'
+}

@@ -1,0 +1,15 @@
+.frequency-tabs{
+    .columns {
+        display: flex;
+    }
+    .context-selector{
+        @media (max-width: 1140px){
+            .narrowCtx{
+                display: block;
+            }
+            .wideCtx{
+                display: none
+            }
+        }
+    }
+}

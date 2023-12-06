@@ -1,0 +1,26 @@
+@import 'app/styles/base';
+
+.page-wordlist{
+    margin: auto;
+    .screen-overlay .overlay{
+        z-index: 950; //so header and left navbar are above
+    }
+    .form {
+        max-width: 1170px;
+        transition: max-width 0.5s ease;
+        &.wideForm{
+            max-width: 100%;
+        }
+    }
+    .content{
+        box-shadow: none;
+    }
+
+    &.tab-attribute{
+        .wordlist-result-table{
+            .oneColumn{
+                max-width: 1000px;
+            }
+        }
+    }
+}

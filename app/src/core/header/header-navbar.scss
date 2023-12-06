@@ -1,0 +1,117 @@
+@import 'app/styles/constants';
+
+.header-navbar{
+    .logo {
+        background-image: url('images/logo_blue.png');
+    }
+    nav{
+        box-shadow: none;
+        padding-left: 48px;
+        height: 50px;
+        line-height: 50px;
+        background-color: #FFF;
+        .header-menu i{
+            height: 50px;
+            line-height: 50px;
+        }
+        .input-field input{
+            padding-left: 0;
+        }
+        ul a{
+            color: $new_skeBlue;
+        }
+    }
+
+    h1{
+        display: inline-block;
+        text-transform: uppercase;
+        color: $new_darkBlue;
+        vertical-align: middle;
+        margin: 0 1em 0 0;
+        font-size: 2.2rem;
+        font-weight: 400;
+    }
+    #headerMiddle{
+        display: inline-block;
+        margin-left: 20px;
+    }
+
+    #mobileMenu{
+        height: 50px;
+        line-height: 50px;
+         display: inline-block;
+        margin: 0 9px;
+        i{
+            height: 50px;
+            line-height: 50px;
+            font-size: 32px;
+        }
+    }
+
+    .accountBar{
+        line-height: 1.3em;
+        margin-top: 7px;
+        font-size: 13px;
+        > * {
+            display: inline-block;
+        }
+        .subscribeBtn{
+            vertical-align: top;
+            margin-right:10px;
+        }
+        .anonymousUser{
+            padding-top: 4px;
+        }
+        .licenceName{
+            padding-top: 10px;
+        }
+
+        .requestMoreSpace{
+            line-height: 35px;
+            a{
+                color: #039be5;
+                i{
+                    height: 10px;
+                    width: 10px;
+                    line-height: 10px;
+                    display: inline-block;
+                    font-size: 19px;
+                    vertical-align: middle;
+                    margin-right: 20px;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 600px){
+        h1{
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 945px){
+        #headerMiddle{
+            margin-top: 3px;
+        }
+        h1{
+            display: block;
+            vertical-align: top;
+            font-size: 1em;
+            margin: 0px 0 3px 0;
+        }
+        header-corpus{
+            display: block;
+        }
+    }
+
+    @media (max-width: 992px){
+        nav{
+            padding-left: 0;
+        }
+    }
+    @media (max-width: 700px){
+        .accountBar{
+            display: none;
+        }
+    }
+}

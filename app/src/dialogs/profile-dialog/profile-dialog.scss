@@ -1,0 +1,15 @@
+.profile-dialog{
+    .headerId{
+        color: lightgray;
+        font-size: 12px;
+    }
+    .row div:nth-child(2){
+        font-weight: bold;
+    }
+    .key {
+        font-family: "Roboto Mono", "Courier", monospace;
+    }
+    .requestMoreSpaceBtn{
+        margin-left: 15px;
+    }
+}

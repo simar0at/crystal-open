@@ -1,0 +1,12 @@
+.result-error{
+    max-width: 600px;
+    display: block;
+    margin: auto;
+    .newSearch{
+        margin: 30px 0;
+    }
+    .errorDetails{
+        text-align: left;
+        font-family: monospace;
+    }
+}

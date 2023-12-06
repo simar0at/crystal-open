@@ -1,0 +1,23 @@
+@import 'app/styles/base';
+
+.text-type-selection{
+    display: block;
+    .btnMore{
+        cursor: pointer;
+        width: auto;
+        color: #fff;
+        background-color: $primaryColor;
+    }
+    &.compressed{
+        .chip{
+            line-height: 22px;
+            height: 22px;
+            padding: 0 8px;
+            border-radius: 12px;
+            i{
+                line-height: 22px;
+                padding-left: 5px;
+            }
+        }
+    }
+}

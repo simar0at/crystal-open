@@ -1,0 +1,86 @@
+.concordance-detail-window{
+    position: fixed;
+    left: 52px; /*sidenav*/
+    right: 0;
+    bottom: 0;
+    z-index: 490;
+    pointer-events: none;
+    max-height: 0px;
+    transition: max-height 200ms cubic-bezier(0.800, 0.000, 0.200, 1.000);
+    &.show{
+        max-height: 100%;
+    }
+    @media only screen and (max-width: 992px){
+        left: 0;
+    }
+    >div{
+        pointer-events: auto;
+        background-color: whitesmoke;
+        max-width: 960px;
+        height: 400px;
+        margin: auto;
+        @media only screen and (max-width: 992px){
+            max-width: 90%;
+        }
+        .close{
+            cursor: pointer;
+            height: 40px;
+            background-color: #eeeeee;
+            margin-bottom: 10px;
+            opacity: 0.5;
+            i{
+
+                font-size: 3rem;
+            }
+            &:hover{
+
+
+                    opacity: 1
+
+            }
+        }
+        .cd-content{
+            padding: 0 20px 20px 20px;
+            max-height: 85%;
+            overflow: auto;
+        }
+    }
+    .displayLoadStructBtn{
+        .cd-content{
+            max-height: 73%;
+            min-height: 73%;
+        }
+        .loadSturctBtn{
+            padding-top: 10px;
+            border-top: 1px solid #d6d6d6;
+            text-align: center;
+        }
+    }
+    .loading{
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        margin-left: -25px;
+    }
+
+    table{
+        td{
+            padding: 0px 5px;
+            width: 25%;
+            &:first-child{
+                font-weight: bold;
+            }
+            &:nth-child(3){
+                font-weight: bold;
+            }
+        }
+    }
+
+    .coll{
+        color:red;
+        font-weight: bold;
+    }
+    .strc{
+        color: blue;
+    }
+}

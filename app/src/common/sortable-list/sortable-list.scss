@@ -1,0 +1,23 @@
+.sortable-list{
+    display: block;
+    .ui-sortable{
+        white-space: nowrap;
+    }
+    position: relative;
+    > *{
+        cursor: move; /* fallback if grab cursor is unsupported */
+       cursor: grab;
+       cursor: -moz-grab;
+       cursor: -webkit-grab;
+    }
+
+    .ui-sortable-helper {
+       cursor: grabbing;
+       cursor: -moz-grabbing;
+       cursor: -webkit-grabbing;
+    }
+
+    .ui-sortable-placeholder{
+        height: 10px;
+    }
+}

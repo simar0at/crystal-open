@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Myanmar';
+    src: local('Noto Sans Myanmar'),
+        local('NotoSansMyanmar-Regular'),
+        url('NotoSansMyanmar-Regular.woff2') format('woff2'),
+        url('NotoSansMyanmar-Regular.woff') format('woff'),
+        url('NotoSansMyanmar-Regular.svg#NotoSansMyanmar-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-mymr ._t{
+    font-family: 'Noto Myanmar'
+}

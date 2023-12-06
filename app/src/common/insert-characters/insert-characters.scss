@@ -1,0 +1,17 @@
+.insert-characters{
+    & >*{
+        margin-bottom: 10px;
+        margin-right: 5px;
+    }
+    label{
+        opacity: 0.6;
+        margin-right: 13px;
+    }
+    .btn-flat{
+        padding: 0 11px;
+        color: #000;
+        background-color: #A3CCDD;
+        font-family: monospace;
+        min-width: 41px;
+    }
+}

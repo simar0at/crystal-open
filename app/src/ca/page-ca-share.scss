@@ -1,0 +1,35 @@
+.page-ca-share{
+    .subheader{
+        font-size: 1.5em
+    }
+    .ui-radio{
+        >div{
+            margin-top: 20px;
+        }
+    }
+    .privilegesLabel{
+        font-weight: bold
+    }
+    .privilegesDesc{
+        opacity: 0.7
+    }
+    .shareEmpty{
+        padding: 60px 0 20px;
+        text-align: center;
+        opacity: 0.4;
+        font-size: 1em;
+        i{
+            display: block;
+            font-size: 3em;
+        }
+    }
+    table {
+        .badge{
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+        i{
+            vertical-align: middle;
+        }
+    }
+}

@@ -1,0 +1,28 @@
+.frequency-result-block{
+    display: block;
+    position: relative;
+    margin-bottom: 15px;
+    .loading{
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.7);
+        z-index: 200;
+        preloader-spinner{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -25px;
+            margin-top: -25px;
+        }
+    }
+    .column-table{
+        .container-fluid{
+            >div{
+                margin-bottom: 10px;
+            }
+        }
+    }
+}

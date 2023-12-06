@@ -1,0 +1,18 @@
+@import 'app/styles/base';
+
+.concordance-tab-basic{
+    margin: auto;
+    .bigInput{
+        max-width: 20em;
+    }
+}
+.youtubeCol{
+    text-align: right;
+    @media only screen and (max-width: 600px){
+        text-align: center;
+    }
+}
+.basicYoutube{
+    max-width: 700px;
+    min-width: 300px;
+}

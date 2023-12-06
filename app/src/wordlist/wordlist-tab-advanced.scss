@@ -1,0 +1,35 @@
+@import 'wordlist';
+
+.wordlist-tab-advanced{
+    @include wordlistTabCommon();
+    .mainForm{
+        max-width: 1122px;
+    }
+    >div.card-content{
+        .ui-radio label{
+            white-space: nowrap;
+        }
+    }
+    .collapsedBlacklist{
+        .input-field{
+            margin-top: 0px;
+            textarea{
+                min-height: 2px;
+                height: 2px;
+                margin-bottom: 0;
+                padding: 0;
+            }
+        }
+    }
+
+    .rightColumn{
+        margin-top: 20px;
+        @media only screen and (min-width: 1200px){
+            border-left: 1px solid rgb(206, 206, 206);
+        }
+    }
+}
+
+.modal-content .wordlist-tab-advanced{
+    padding: 0;
+}

@@ -1,0 +1,18 @@
+.frequency-tab-basic{
+    .columns{
+        @media (max-width: 580px){
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+    .leftColumn{
+        @media only screen and (min-width: 760px){
+            margin-right: 20px;
+            padding-right: 20px;
+            border-right: 1px solid rgb(206, 206, 206);
+        }
+        @media only screen and (max-width: 759px){
+            margin-bottom: 20px;
+        }
+    }
+}

@@ -1,0 +1,82 @@
+@import 'app/styles/base';
+@import 'app/styles/constants';
+
+.result-list{
+    display: block;
+    position: relative;
+    .clear{
+        position: absolute;
+        right: 1px;
+        top: 30px;
+        opacity: 0;
+        font-size: 14px;
+    }
+    &:hover{
+        .clear{
+            opacity: 0.7;
+            &:hover{
+                opacity: 1;
+            }
+        }
+    }
+    .ui-filtering-list{
+        .ui-input{
+            max-width: 200px;
+        }
+    }
+    .ui-list-list{
+        max-height: 430px!important;
+        li{
+            position: relative;
+            &:not(:first-child):not(.serviceNode){
+                border-top: 1px solid $new_mediumBlue;
+            }
+            .raw-html{
+                white-space: normal;
+                >a{
+                    display: block;
+                }
+                //padding-left: 40px;
+                >span{
+                    display: inline-block;
+                }
+                .featureIco i{
+                    font-size: 1.5rem;
+                    vertical-align: middle;
+                }
+                .date{
+                    position: absolute;
+                    right: 0;
+                    top: 14px;
+                    text-align: right;
+                    font-size: 12px;
+                    opacity: 0.6;
+                    min-width: 120px;
+                    padding-right: 50px;
+                }
+                .corpus{
+                    padding-right: 20px;
+                    display: block;
+                }
+                .feature{
+                    font-size: 13px;
+                    min-width: 135px;
+                    display: inline-block;
+                }
+                .opts{
+                    font-size: 13px;
+                    padding-left: 18px;
+                    span:not(:first-child):before{
+                        content: " ● "
+                    }
+                }
+                .delete{
+                    text-align: right;
+                    position: absolute;
+                    right: 5px;
+                    top: 5px;
+                }
+            }
+        }
+    }
+}

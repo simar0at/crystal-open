@@ -1,0 +1,47 @@
+.preloader-spinner{
+    direction: ltr;
+    .preloader-wrapper{
+        &.tiny{
+            width: 26px;
+            height: 26px;
+        }
+    }
+    &.overlay{
+        .preloader-container {
+            color: #fff;
+            position: absolute;
+            left: 50%;
+            top: 33%;
+            transform: translateX(-50%);
+        }
+        &.fixed{
+            .preloader-container{
+                position: fixed;
+            }
+        }
+        .message,
+        .cancel{
+            color: #9e9e9e;
+            cursor: pointer;
+            font-size: 18px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        .cancel{
+            text-shadow: 0px 0px 2px white, 0px 0px 4px white, 0px 0px 6px white;
+            transition: opacity .2s ease-in-out;
+            opacity: 1;
+            &.hideCancel{
+                opacity: 0;
+                pointer-events: none;
+            }
+            &:hover{
+                color: #4285f4;
+            }
+            i{
+                font-size: 21px;
+                vertical-align: middle;
+            }
+        }
+    }
+}

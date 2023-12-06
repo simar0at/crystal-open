@@ -1,0 +1,28 @@
+.page-ca-create{
+    .columnWrapper{
+        max-width: 600px;
+        margin: auto;
+    }
+    .learnToBuildBtn{
+        position: relative;
+        top: -10px;
+        margin-left: 35px;
+        margin-bottom: 15px;
+    }
+    .availableFeatures{
+        margin: 20px 0 40px;
+    }
+    .feature{
+        padding: 5px!important;
+        i{
+            font-size: 14px;
+            position: relative;
+            left: -6px;
+            bottom: -4px;
+            float: left;
+        }
+    }
+    .caSupportedFormats{
+        text-align: right;
+    }
+}

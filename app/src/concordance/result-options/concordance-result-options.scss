@@ -1,0 +1,23 @@
+.concordance-result-options{
+    .bar{
+        >ul>li>div>.ui-select{
+            margin-top: -6px;
+            .select-dropdown{
+                margin-bottom: 0;
+            }
+        }
+    }
+    #concmenudropdown{
+        li a{
+            white-space: nowrap;
+        }
+    }
+    .concordance-result-options-view,
+    .concordance-result-options-sample,
+    .concordance-result-options-shuffle,
+    .concordance-result-options-collocations{
+        // center
+        display: table;
+        margin: 0 auto;
+    }
+}

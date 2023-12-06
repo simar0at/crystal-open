@@ -1,0 +1,80 @@
+Learn CQL on <a href="https://www.sketchengine.eu/documentation/corpus-querying/" target="_blank">our web</a> or <a href="https://www.youtube.com/playlist?list=PLPVgp0Xm6hWBLZzD7haCVbhC9pSfWZk1S" target="_blank">YouTube channel</a>.
+<br><br>
+
+<h5>Examples</h5>
+<table class="material-table">
+    <tr>
+        <td>
+            a noun at a certain distance from a verb
+        </td>
+        <td class="monospace">
+            [tag="N.*"] [ ]{0,3} [tag="V.*"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            a noun and verb with exactly one token in between
+        </td>
+        <td class="monospace">
+            [tag="N.*"] [ ] [tag="V.*"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            a noun at a certain distance from a verb inside the same sentence
+        </td>
+        <td class="monospace">
+            [tag="N.*"] [ ]{0,3} [tag="V.*"] within <s/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            big dog or wolf
+        </td>
+        <td class="monospace">
+            ([lc="big"] [lc="dog"])|[lc="wolf"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            big dog or big wolf
+        </td>
+        <td class="monospace">
+            [lc="big"] [lc="dog|wolf"]
+        </td>
+    </tr>
+</table>
+<br><br>
+
+
+<h5>Frequent mistakes</h5>
+<table class="material-table">
+    <thead>
+        <tr>
+            <th>mistake</th>
+            <th>correction</th>
+            <th>explanation</th>
+        </tr>
+    </thead>
+
+    <tr>
+        <td class="monospace">[lemma="children"]</td>
+        <td class="monospace">[lemma="child"]</td>
+        <td>children is not a lemma</td>
+    </tr>
+    <tr>
+        <td class="monospace">[word="Hello!"]</td>
+        <td class="monospace">[word="Hello"] [word="\!"]</td>
+        <td>punctuation is a separate token and must be escaped</td>
+    </tr>
+    <tr>
+        <td class="monospace">[word="Hello "]</td>
+        <td class="monospace">[word="Hello"]</td>
+        <td>tokens cannot contain spaces</td>
+    </tr>
+    <tr>
+        <td class="monospace">[tag="V.*"] [] [lc="cat"] within &lt;s&gt;</td>
+        <td class="monospace">[tag="V.*"] [] [lc="cat"] within &lt;s/&gt;</td>
+        <td>a structure needs the "whole" option to work with within and containg</td>
+    </tr>
+</table>

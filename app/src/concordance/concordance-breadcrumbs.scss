@@ -1,0 +1,62 @@
+@import 'app/styles/base';
+@import 'app/styles/constants';
+
+.concordance-breadcrumbs{
+    display: inline-flex;
+    flex-wrap: wrap;
+    & > *{
+        vertical-align: top;
+        margin-bottom: 5px;
+        line-height: 32px;
+        margin-right: 5px;
+    }
+    breadcrumb-chip{
+        background-color: $new_lightBlue;
+        color: $new_darkBlue;
+        font-size: 14px;
+        white-space: nowrap;
+        &:not(.disabled){
+            cursor: pointer;
+        }
+        &:not(.active){
+            opacity: 0.5;
+        }
+        & > *{
+            margin-right: 4px
+        }
+        & > span:first-child {
+            text-transform: lowercase;
+        }
+        .close{
+            &:hover{
+                color: $darkGray;
+            }
+        }
+        .size{
+            font-weight: bold;
+        }
+    }
+    .sort{
+        cursor: pointer;
+    }
+    .pipe{
+        color: $lightGray;
+    }
+    .delimiter{
+        color: $lightGray;
+        position: relative;
+        left: -10px;
+        max-width: 5px;
+    }
+    .params{
+        color: red;
+        max-width: 350px;
+        display: inline-block;
+        height: 34px;
+        vertical-align: middle;
+        unicode-bidi: plaintext;
+    }
+    .relsize{
+        font-size: 0.8em;
+    }
+}

@@ -1,0 +1,86 @@
+{ "props":
+  { "ascent": 960
+  , "descent": 64
+  , "em": 1024
+  , "encoding": "UnicodeFull"
+  , "lang": "English (US)"
+  , "family": "skeicons"
+  , "style": "Regular"
+  , "familyname": "skeicons"
+  , "fontname": "skeicons"
+  , "fullname": "skeicons"
+  }
+, "glyphs":
+  { "0xe900": "export/xml_i.svg"
+  , "0xe901": "export/xml.svg"
+  , "0xe902": "export/xls_i.svg"
+  , "0xe903": "export/xls.svg"
+  , "0xe904": "export/tmx_i.svg"
+  , "0xe905": "export/tmx.svg"
+  , "0xe906": "export/tbx_i.svg"
+  , "0xe907": "export/tbx.svg"
+  , "0xe908": "export/txt_i.svg"
+  , "0xe909": "export/txt.svg"
+  , "0xe90a": "export/csv_i.svg"
+  , "0xe90b": "export/csv.svg"
+  , "0xe90c": "export/pdf_i.svg"
+  , "0xe90d": "export/pdf.svg"
+  , "0xe90e": "features/parallel_concordance_i.svg"
+  , "0xe90f": "features/parallel_concordance.svg"
+  , "0xe910": "features/keywords_i.svg"
+  , "0xe911": "features/keywords.svg"
+  , "0xe912": "features/word_sketch_difference_i.svg"
+  , "0xe913": "features/word_sketch_difference.svg"
+  , "0xe914": "features/n_grams_i.svg"
+  , "0xe915": "features/n_grams.svg"
+  , "0xe916": "features/trends_i.svg"
+  , "0xe917": "features/trends.svg"
+  , "0xe918": "features/word_sketch_i.svg"
+  , "0xe919": "features/word_sketch.svg"
+  , "0xe91a": "features/word_list_i.svg"
+  , "0xe91b": "features/word_list.svg"
+  , "0xe91c": "features/thesaurus_i.svg"
+  , "0xe91d": "features/thesaurus.svg"
+  , "0xe91e": "features/concordance_i.svg"
+  , "0xe91f": "features/concordance.svg"
+  , "0xe920": "features/bilingual_word_sketch.svg"
+  , "0xe921": "features/bilingual_word_sketch_i.svg"
+  , "0xe922": "concordance/sorting/bars_right_i.svg"
+  , "0xe923": "concordance/sorting/sort_left.svg"
+  , "0xe924": "concordance/sorting/sort_right.svg"
+	, "0xe925": "concordance/sorting/sort.svg"
+  , "0xe926": "concordance/sorting/arrow_down.svg"
+  , "0xe927": "concordance/sorting/arrow_up.svg"
+  , "0xe928": "concordance/sorting/arrow_down_up.svg"
+  , "0xe929": "concordance/sorting/bars_right.svg"
+  , "0xe92a": "concordance/sorting/bars_middle.svg"
+  , "0xe92b": "concordance/sorting/collocation_i.svg"
+  , "0xe92c": "concordance/sorting/collocation.svg"
+  , "0xe92d": "concordance/select_i.svg"
+  , "0xe92e": "concordance/select.svg"
+  , "0xe92f": "concordance/random_i.svg"
+  , "0xe931": "concordance/random.svg"
+  , "0xe932": "concordance/gdex_i.svg"
+  , "0xe933": "concordance/gdex.svg"
+  , "0xe934": "concordance/def_i.svg"
+  , "0xe935": "concordance/def.svg"
+  , "0xe936": "concordance/cql_i.svg"
+  , "0xe937": "concordance/cql.svg"
+  , "0xe938": "features/ocd.svg"
+  , "0xe939": "features/ocd_i.svg"
+  , "0xe940": "wordsketch/pin.svg"
+  , "0xe941": "wordsketch/pin_active.svg"
+  }
+, "sfnt_names":
+  [ ["English (US)", "Copyright", "Copyright (c) 2017 by Lexical Computing"]
+  , ["English (US)", "Family", "skeicons"]
+  , ["English (US)", "SubFamily", "Regular"]
+  , ["English (US)", "UniqueID", "skeicons 2017-09-27"]
+  , ["English (US)", "Fullname", "skeicons"]
+  , ["English (US)", "Version", "Version 001.000"]
+  , ["English (US)", "PostScriptName", "skeicons"]
+  ]
+, "input": "icons"
+, "output": [ "skeicons.ttf", "skeicons.svg", "skeicons.woff" ]
+, "# vim: set et sw=2 ts=2 sts=2:": false
+}

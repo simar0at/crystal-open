@@ -1,0 +1,781 @@
+.density-high{
+    .ui{
+        margin-bottom: 10px;
+    }
+    .card .card-content{
+        padding: 10px;
+    }
+    .card-panel{
+        padding: 10px;
+    }
+    .btn:not(.btn-floating):not(.contrast){
+        line-height: 26px;
+        height: 25px;
+        padding: 0 8px;
+    }
+    span.badge{
+        line-height: 16px;
+        height: 16px;
+    }
+    .lazy-dialog{
+        vertical-align: middle;
+    }
+
+    .inline-text{
+        line-height: 2.7rem;
+    }
+
+    .columnForm{
+        .row{
+            margin: 4px 0;
+            & > label,
+            & > .fieldCell{
+                margin: .27rem 0;
+            }
+            .input-field{
+                input{
+                    line-height: 1.5rem;
+                }
+            }
+            .ui-radio{
+                margin-top: 0;
+            }
+            .ui-checkbox{
+                margin-top: 0;
+            }
+        }
+    }
+
+    .iconButton{
+        line-height: 20px;
+        width: 25px;
+        height: 20px;
+        vertical-align: middle;
+        border-radius: unset;
+        i{
+            line-height: 20px;
+        }
+    }
+
+    .ui-input{
+        .input-field{
+            input{
+                line-height: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+        &.bigInput .input-field input{
+            line-height: 2.5rem;
+            height: 2.5rem;
+        }
+    }
+
+    .ui-textarea{
+        textarea.materialize-textarea{
+            padding: 1px;
+        }
+    }
+
+    .ui-list{
+        .input-field{
+            label{
+                top: -34px;
+            }
+        }
+        .ui-list-list{
+            min-height: 29px;
+            padding: 2px 0;
+            li{
+                padding: 1px 10px;
+                &.checkbox{
+                    padding-left: 40px;
+                    &:before{
+                        top: 2px;
+                        left: 12px;
+                    }
+                    &.selected{
+                        &:before{
+                            top: -1px;
+                            left: 7px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .ui-range{
+        margin-bottom: 20px;
+        .rangeWrapper{
+            margin-top: .2rem;
+            span{
+                line-height: 26px;
+                height: 25px;
+                padding: 0 .7rem;
+            }
+        }
+    }
+
+    .input-field{
+        label{
+            line-height: 1em;
+            top: 0;
+            white-space: nowrap;
+            &:not(.label-icon){
+                -webkit-transform: translateY(-10px) scale(1);
+                        transform: translateY(-10px) scale(1);
+            }
+        }
+    }
+
+    .input-label{
+        line-height: 1.5rem;
+        height: 1.5rem;
+        margin: .5rem 0 5px 0;
+    }
+
+    .select-wrapper{
+        input.select-dropdown{
+            line-height: 1.5rem;
+            height: 1.5rem;
+            margin: 0 0 5px 0;
+        }
+    }
+
+    .dropdown-content:not(.horizontalDropdown) li:not(.divider){
+        line-height: 1rem;
+        min-height: 25px;
+        & > a,
+        & > span{
+            line-height: 20px;
+            padding: 3px 5px;
+        }
+    }
+
+    [type='radio']:not(:checked) + label,
+    [type='radio']:checked + label{
+        line-height: 18px;
+        height: 18px;
+        padding-left: 25px;
+        &:before,
+        &:after{
+            margin: 2px;
+        }
+    }
+
+    [type='checkbox'] + label{
+        padding-left: 30px;
+    }
+
+    input:not([type]),
+    input[type=text],
+    input[type=password],
+    input[type=email],
+    input[type=url],
+    input[type=time],
+    input[type=date],
+    input[type=datetime],
+    input[type=datetime-local],
+    input[type=tel],
+    input[type=number],
+    input[type=search],
+    textarea.materialize-textarea{
+        margin: 0 0 1px 0;
+        & + label:after{
+            top: 33px;
+        }
+    }
+
+    .material-table > thead > tr > th,
+    .material-table > tbody > tr > td{
+        padding: 0 8px;
+    }
+    .material-table > tbody > tr > td{
+        line-height: 1.2em;
+    }
+    &.SkE textarea.materialize-textarea + span:after,
+    &.SkE textarea.materialize-textarea:focus + span:after,
+    &.SkE .ui-list .ui-list-list + span:after{
+        bottom: -10px;
+    }
+
+    .background-jobs{
+        table{
+            td,
+            th{
+                padding: .1em .5em;
+            }
+            a.btn{
+                font-size: 70%;
+                font-weight: bold;
+                line-height: 1.3rem;
+                height: 1.4rem;
+                padding: .05rem .4rem;
+            }
+        }
+    }
+
+    .feature-toolbar{
+        .activeOptions{
+            &.card-content{
+                padding: 10px;
+            }
+        }
+    }
+
+    .insert-characters{
+        .btn-flat{
+            min-width: 33px;
+        }
+    }
+
+    .text-types{
+        .card{
+            &.expanded{
+                &.hasSelection .card-title{
+                    margin-bottom: -12px;
+                    transform: translateY(-5px);
+                }
+            }
+        }
+        .card-content{
+            padding: 5px 8px;
+        }
+        .text-type-selection{
+            .chip{
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .header-corpus{
+        ul li{
+            padding: 0 5px;
+        }
+        .featureLinks i{
+            line-height: 26px;
+            height: 26px;
+        }
+    }
+
+    .context-selector{
+        .pos.squareBtn{
+            padding: 1px .7rem;
+        }
+    }
+
+
+    .corpus-tab-advanced{
+        .tabs{
+            .tab{
+                line-height: 24px;
+                height: 24px;
+            }
+        }
+    }
+
+    .result-list .clear{
+        top: 15px;
+    }
+
+    .page-concordance{
+        .concordance-result .table.result-table .th,
+        .concordance-result .table.result-table .td{
+            padding: 0 2px;
+        }
+        .concordance-result .kwicWrapper .kwic{
+            padding: 0 3px;
+        }
+        .concordance-result .table.result-table .copyCell{
+            i{
+                font-size: 20px;
+                line-height: 15px;
+            }
+        }
+        .concordance-result-options-sort{
+            .context-selector{
+                .pos.kwicBtn{
+                    margin: 0 15px;
+                }
+            }
+        }
+    }
+
+    .page-parconcordance{
+        .parconcordance-result .table.result-table .th,
+        .parconcordance-result .table.result-table .td{
+            padding: 2px;
+        }
+    }
+
+
+    .page-sketchdiff{
+        .horizTables sketchdiff-gramrel table{
+            tr.colloc_row{
+                line-height: 20px;
+            }
+            thead{
+                padding-top: .1em;
+                padding-bottom: .1em;
+                border-bottom-width: 2px !important;
+                tr:first-child{
+                    line-height: 20px;
+                }
+            }
+            th,
+            td{
+                padding: 0 1em;
+                &.gramrelname{
+                    padding: 0 10px;
+                }
+            }
+            sketchdiff-contextmenu[details=true]{
+                .btn{
+                    font-size: 20px;
+                    width: 20px;
+                    height: 20px;
+                    i{
+                        line-height: 20px;
+                    }
+                }
+            }
+        }
+    }
+
+    .page-trends{
+        .arrowIco{
+            .material-icons{
+                line-height: 11px;
+                position: relative;
+                top: 7px;
+            }
+        }
+    }
+
+    .page-wordsketch,
+    .modal-dialog{
+        wordsketch-gramrel table,
+        div[data-is='wordsketch-gramrel'] table{
+            tr{
+                &.colloc_row{
+                    line-height: 20px;
+                }
+                td.cm{
+                    padding-bottom: 0;
+                }
+            }
+            .chip{
+                height: 20px;
+                .clustColl{
+                    line-height: 20px;
+                }
+            }
+            thead{
+                border-bottom-width: 2px !important;
+                tr:last-child th{
+                    padding-top: .1em;
+                    padding-bottom: .1em;
+                }
+            }
+        }
+    }
+
+    .ca-browser{
+        .table{
+            tbody td,
+            thead th{
+                padding: 0 3px;
+            }
+        }
+        .filesetsTable tr{
+            height: 27px;
+        }
+        .filesTable{
+            tr{
+                height: 25px;
+            }
+            .chbCell span{
+                line-height: 18px;
+                height: 18px;
+            }
+        }
+    }
+}
+
+
+
+
+///////////////////// MEDIUM /////////////////////
+
+
+
+
+.density-medium{
+    .ui{
+        margin-bottom: 16px;
+    }
+    .card .card-content{
+        padding: 16px;
+    }
+    .card-panel{
+        padding: 16px;
+    }
+    .btn:not(.btn-floating):not(.contrast){
+        line-height: 31px;
+        height: 30px;
+        padding: 0 12px;
+    }
+
+    .inline-text{
+        line-height: 3.7rem;
+    }
+    .columnForm{
+        .row{
+            margin: 8px 0;
+            & > label,
+            & > .fieldCell{
+                margin: .5rem 0;
+            }
+            .input-field{
+                input{
+                    line-height: 2.2rem;
+                }
+            }
+            .ui-radio{
+                margin-top: .1rem;
+            }
+            .ui-checkbox{
+                margin-top: .1rem;
+            }
+        }
+    }
+    .iconButton{
+        line-height: 30px;
+        width: 30px;
+        height: 30px;
+        i{
+            line-height: 30px;
+        }
+    }
+
+    .ui-input{
+        .input-field{
+            input{
+                line-height: 2rem;
+                height: 2rem;
+            }
+        }
+        &.bigInput .input-field input{
+            line-height: 2.7rem;
+            height: 2.7rem;
+        }
+    }
+
+    .ui-textarea{
+        textarea.materialize-textarea{
+            padding: .4rem 0 .3rem 0;
+        }
+    }
+
+    .ui-list{
+        .input-field{
+            label{
+                top: -37px;
+            }
+        }
+        .ui-list-list{
+            min-height: 45px;
+            padding: 3px 0;
+            li{
+                padding: 6px 15px;
+                &.checkbox{
+                    padding-left: 40px;
+                    &:before{
+                        top: 7px;
+                        left: 12px;
+                    }
+                    &.selected{
+                        &:before{
+                            top: 3px;
+                            left: 7px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .ui-range{
+        .rangeWrapper{
+            margin-top: .3rem;
+            span{
+                line-height: 30px;
+                height: 30px;
+                padding: 0 .9rem;
+            }
+        }
+    }
+
+    .input-field{
+        margin-top: 1.3rem;
+        label{
+            top: -.3rem;
+            &:not(.label-icon){
+                -webkit-transform: translateY(-10px) scale(1);
+                        transform: translateY(-10px) scale(1);
+            }
+        }
+    }
+
+    .input-label{
+        line-height: 2rem;
+        height: 2rem;
+        margin: .8rem 0 8px 0;
+    }
+
+    .select-wrapper{
+        input.select-dropdown{
+            line-height: 2rem;
+            height: 2rem;
+            margin: 0 0 5px 0;
+        }
+    }
+
+    .dropdown-content:not(.horizontalDropdown) li:not(.divider){
+        line-height: 2rem;
+        min-height: 35px;
+        & > a,
+        & > span{
+            line-height: 30px;
+            padding: 8px 10px;
+        }
+    }
+
+    [type='radio']:not(:checked) + label,
+    [type='radio']:checked + label{
+        line-height: 20px;
+        height: 20px;
+        padding-left: 28px;
+        &:before,
+        &:after{
+            margin: 3px;
+        }
+    }
+
+    [type='checkbox'] + label{
+        padding-left: 32px;
+    }
+
+    input:not([type]),
+    input[type=text],
+    input[type=password],
+    input[type=email],
+    input[type=url],
+    input[type=time],
+    input[type=date],
+    input[type=datetime],
+    input[type=datetime-local],
+    input[type=tel],
+    input[type=number],
+    input[type=search],
+    textarea.materialize-textarea{
+        margin: 0rem 0 5px 0;
+        & + label:after{
+            top: 39px;
+        }
+    }
+
+    .material-table > thead > tr > th,
+    .material-table > tbody > tr > td{
+        padding: 6px 14px;
+    }
+    .material-table > tbody > tr > td{
+        line-height: 1.3em;
+    }
+
+
+    &.SkE textarea.materialize-textarea + span:after,
+    &.SkE textarea.materialize-textarea:focus + span:after,
+    &.SkE .ui-list .ui-list-list + span:after{
+        bottom: -10px;
+    }
+
+    .background-jobs{
+        table{
+            td,
+            th{
+                padding: .2rem .8rem;
+            }
+            a.btn{
+                font-size: 90%;
+                line-height: 1.4rem;
+                height: 1.8rem;
+                padding: .2rem .6rem;
+            }
+        }
+    }
+
+    .feature-toolbar{
+        .activeOptions{
+            &.card-content{
+                padding: 12px;
+            }
+        }
+    }
+
+    .insert-characters{
+        .btn-flat{
+            min-width: 40px;
+        }
+    }
+
+    .text-types{
+        .card{
+            &.expanded{
+                &.hasSelection .card-title{
+                    transform: translateY(-10px);
+                }
+            }
+        }
+        .card-content{
+            padding: 10px ;
+        }
+        .text-type-selection{
+            .chip{
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .header-corpus{
+        ul li{
+            padding: 3px 8px;
+        }
+        .featureLinks i{
+            line-height: 32px;
+            height: 32px;
+        }
+    }
+
+    .context-selector{
+        .pos.squareBtn{
+            padding: 1px .9rem;
+        }
+    }
+
+    .corpus-tab-advanced{
+        .tabs{
+            .tab{
+                line-height: 36px;
+                height: 36px;
+            }
+        }
+    }
+
+    .ca-browser{
+        .table{
+            tbody td,
+            thead th{
+                padding: 1px 4px;
+            }
+        }
+        .filesetsTable tr{
+            height: 32px;
+        }
+        .filesTable{
+            tr{
+                height: 30px;
+            }
+            .chbCell span{
+                line-height: 22px;
+                height: 22px;
+            }
+        }
+    }
+
+    .page-concordance{
+        .concordance-result .table.result-table .th,
+        .concordance-result .table.result-table .td{
+            padding: 3px 6px;
+        }
+
+        .concordance-result-options-sort{
+            .context-selector{
+                .pos.kwicBtn{
+                    margin: 0 20px;
+                }
+            }
+        }
+    }
+
+
+    .page-parconcordance{
+        .parconcordance-result .table.result-table .th,
+        .parconcordance-result .table.result-table .td{
+            padding: 3px 6px;
+        }
+    }
+
+    .page-sketchdiff{
+        sketchdiff-gramrel table{
+            tr.colloc_row{
+                line-height: 30px;
+            }
+            .chip{
+                height: 25px;
+                border-radius: 15px;
+            }
+            tr.colloc_row{
+                line-height: 30px;
+            }
+            thead{
+                padding-top: .3em;
+                padding-bottom: .3em;
+                border-bottom-width: 3px !important;
+                tr:first-child{
+                    line-height: 30px;
+                }
+            }
+            .dropdown-content li > a{
+                line-height: initial;
+            }
+            sketchdiff-contextmenu[details=true]{
+                .btn{
+                    font-size: 20px;
+                    width: 20px;
+                    height: 20px;
+                    i{
+                        line-height: 20px;
+                    }
+                }
+            }
+        }
+    }
+
+    .page-wordsketch,
+    .modal-dialog{
+        wordsketch-gramrel table,
+        div[data-is='wordsketch-gramrel'] table{
+            .chip{
+                height: 25px;
+                border-radius: 15px;
+                .clustColl{
+                    line-height: 25px;
+                }
+            }
+            tr.colloc_row{
+                line-height: 30px;
+            }
+            thead{
+                border-bottom-width: 3px !important;
+                tr:last-child th{
+                    padding-top: .3em;
+                    padding-bottom: .3em;
+                }
+            }
+            .dropdown-content li > a{
+                line-height: initial;
+            }
+        }
+    }
+}

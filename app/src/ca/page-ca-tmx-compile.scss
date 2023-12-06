@@ -1,0 +1,27 @@
+.page-ca-tmx-compile{
+    .columnWrapper{
+        max-width: 600px;
+        margin: auto;
+        .row >span{
+            line-height: 40px;
+        }
+    }
+    .statusColumn{
+        white-space: nowrap;
+        color: gray;
+        text-align: right;
+        .status{
+            text-align: center;
+        }
+    }
+    .compiledBtns{
+        .btn-flat i{
+            color: #004B69;
+        }
+    }
+    .leaveNote{
+        font-size: 14px;
+        color: grey;
+        margin-top: 15px;
+    }
+}

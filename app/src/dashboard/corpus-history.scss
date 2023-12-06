@@ -1,0 +1,22 @@
+.corpus-history{
+    .content{
+        max-height: calc(100% - 40px);
+        overflow: auto;
+    }
+    table{
+        td{
+            cursor: pointer;
+            &.size{
+                text-align: right;
+                font-size: 12px;
+                opacity: 0.6;
+            }
+            &:last-child{
+                width: 1px;
+            }
+            &:first-child{
+                word-break: break-word;
+            }
+        }
+    }
+}

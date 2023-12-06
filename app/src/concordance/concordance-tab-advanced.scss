@@ -1,0 +1,11 @@
+@import 'app/styles/base';
+
+.concordance-tab-advanced{
+    margin: auto;
+    position: relative;
+
+    subcorpus-select{
+        display: block;
+        max-width: 636px;
+    }
+}

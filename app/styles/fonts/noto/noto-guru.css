@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Gurmukhi';
+    src: local('Noto Sans Gurmukhi'),
+        local('NotoSansGurmukhi'),
+        url('NotoSansGurmukhi.woff2') format('woff2'),
+        url('NotoSansGurmukhi.woff') format('woff'),
+        url('NotoSansGurmukhi.svg#NotoSansGurmukhi') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-guru ._t{
+    font-family: 'Noto Gurmukhi'
+}

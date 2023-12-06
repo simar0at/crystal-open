@@ -1,0 +1,20 @@
+.page-router{
+    @media only screen and (min-width: 993px) {
+        border-radius: 30px 0px 0px 0px;
+    }
+    display: block;
+    min-height: calc(100vh - 50px);
+    .appContainer{
+        margin: 0 auto;
+        padding: 0px 20px 30px 20px;
+        >div{
+            position: relative;
+        }
+    }
+    @media only screen and (max-width: 992px){
+        margin-top: 20px;
+        .appContainer{
+            padding: 5px;
+        }
+    }
+}

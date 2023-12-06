@@ -1,0 +1,54 @@
+.page-ca{
+    .options{
+        a{
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+        .cardBtn{
+            min-width: 270px;
+            max-width: 270px;
+            .desc{
+                min-height: 40px;
+            }
+        }
+    }
+    .corpusInfo{
+        margin-bottom: 15px;
+        position: relative;
+        top: -10px;
+    }
+    .newCorpus{
+        background-color: initial;
+        box-shadow: none!important;
+    }
+    .busy{
+        margin: 40px 0;
+        .progres{
+            max-width: 500px;
+            margin: auto;
+        }
+        .busyDesc{
+            margin-top: 10px;
+        }
+    }
+
+    @media only screen and (max-width: 993px){
+        .options{
+            text-align: center;
+        }
+    }
+
+    @media only screen and (max-width: 581px){
+        .options{
+            i{
+                line-height: 0.7em;
+            }
+            .title{
+                line-height: 1em;
+            }
+            .cardBtn .desc{
+                min-height: initial;
+            }
+        }
+    }
+}

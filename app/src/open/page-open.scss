@@ -1,0 +1,48 @@
+.page-open{
+    margin: auto;
+    raw-html {
+        display: inline-block;
+    }
+    raw-html > b {
+        color: #C52031;
+        text-decoration: underline;
+    }
+    .content{
+        padding-bottom: 20px;
+    }
+    .openCorpora{
+        padding: 50px 0;
+        margin: 0 auto;
+        display: table;
+    }
+    @media only screen and(max-width: 800px){
+        table td{
+            padding: 6px 10px;
+        }
+    }
+
+    @media only screen and(max-width: 600px){
+        .corpusTable.material-table{
+            display: block;
+            tbody, tr, td{
+                display: block;
+            }
+            tr{
+                padding: 8px;
+            }
+            td{
+                border: none;
+                padding: 4px 4px;
+                &.num{
+                    text-align: left
+                }
+                &.buttons{
+                    text-align: center;
+                }
+            }
+            tr{
+                border-bottom: 1px solid #CFECF4;
+            }
+        }
+    }
+}

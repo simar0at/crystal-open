@@ -1,0 +1,85 @@
+.ca-seeds-url-dialog{
+    .controlBar{
+        background-color: #cfecf4;
+        .ui-input{
+            margin-bottom: 0;
+        }
+        button{
+            margin: 10px 0;
+        }
+    }
+    .nothingFound{
+        padding-top: 40px;
+        text-align: center;
+    }
+    .header{
+        padding-left: 20px;
+        cursor: pointer;
+        background-color: #cfecf4;
+         > *{
+            vertical-align: middle;
+        }
+        &:hover{
+            background-color: #b7dae4;
+        }
+        .ui-checkbox{
+            height: 23px;
+        }
+
+        span{
+            font-size: 20px;
+        }
+        .count{
+            font-size: 14px;
+            position: relative;
+            top: 3px;
+            color: grey;
+        }
+    }
+    .url{
+        line-height: 25px;
+        height: 25px;
+        padding-left: 40px;
+        white-space: nowrap;
+        label{
+            font-size: 16px;
+            cursor: pointer;
+            span{
+                line-height: 15px;
+                height: 15px;
+                padding-left: 25px;
+                &:before,
+                &:after{
+                    width: 15px;
+                    height: 15px;
+                }
+            }
+            input:checked + span:before{
+                width: 9px;
+                height: 19px;
+            }
+        }
+        &:last-child{
+            margin-bottom: 10px;
+        }
+        .urlLink{
+            vertical-align: top;
+            i{
+                font-size: 20px;
+                cursor: pointer;
+                vertical-align: text-top;
+                opacity: .2;
+                &:hover{
+                    opacity: 1;
+                }
+            }
+        }
+    }
+    .ui-checkbox{
+        margin-right: 0;
+        margin-bottom: 0;
+    }
+}
+#goBtnWrapper{
+    z-index: 1200;
+}

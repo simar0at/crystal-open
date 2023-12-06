@@ -1,0 +1,13 @@
+.wordlist-option-display{
+    display: block;
+    margin-top: -1rem;
+    .card{
+        margin-top: 0;
+    }
+
+    .required{
+        font-size: .8rem;
+        color: #F44336;
+        transform: translateY(-100%);
+    }
+}

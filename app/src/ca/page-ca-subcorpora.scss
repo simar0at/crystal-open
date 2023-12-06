@@ -1,0 +1,60 @@
+.page-ca-subcorpora{
+    .obsolete_info {
+        opacity: 0.2;
+    }
+    .subcorpora{
+        max-width: 800px;
+        margin: auto;
+
+    }
+    .rightCol{
+        .ui-checkbox{
+            margin-top: 15px;
+        }
+    }
+    table{
+        th{
+            text-transform: capitalize;
+            &:not(:first-child){
+                width: 1%;
+            }
+        }
+        td{
+            &:last-child{
+                white-space: nowrap;
+            }
+        }
+        th:nth-child(2),
+        th:nth-child(3),
+        th:nth-child(4),
+        td:nth-child(2),
+        td:nth-child(3),
+        td:nth-child(4){
+            text-align: right;
+        }
+    }
+    @media screen and (max-width: 950px){
+        table{
+            td:nth-child(3),
+            th:nth-child(3){
+                display: none;
+            }
+        }
+    }
+    @media screen and (max-width: 800px){
+        table{
+            td:nth-child(4),
+            th:nth-child(4){
+                display: none;
+            }
+        }
+    }
+    @media screen and (max-width: 500px){
+        table{
+            td:nth-child(2),
+            th:nth-child(2){
+                display: none;
+            }
+        }
+    }
+}

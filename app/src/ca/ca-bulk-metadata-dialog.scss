@@ -1,0 +1,33 @@
+.ca-bulk-metadata-dialog{
+    .topBar{
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        border-bottom: 1px dashed #cecece;
+    }
+    .table{
+        td, th{
+            padding: 2px 20px;
+            width: 33%;
+            .subLabel{
+                font-size: 12px;
+                font-weight: normal
+            }
+        }
+        th{
+            height: 46px;
+            vertical-align: top;
+        }
+        tbody td{
+            height: 55px;
+        }
+        .ui-input{
+            margin-bottom: 10px;
+            .input-field{
+                margin-top: 0;
+            }
+            input{
+                height: 2.5em;
+            }
+        }
+    }
+}

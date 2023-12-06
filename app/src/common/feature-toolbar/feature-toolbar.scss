@@ -1,0 +1,79 @@
+@import 'app/styles/base';
+@import 'app/styles/constants';
+
+.download-tag {
+    .btn-crystal {
+        margin-right: 1em;
+    }
+}
+
+.feature-toolbar{
+    .right{
+        float: right;
+    }
+    .left{
+        float: left;
+    }
+    .bar{
+        display: inline-block;
+        min-height: 42px;
+        >.ui-radio, >ul{
+            display: inline-block;
+            vertical-align: top;
+        }
+        >.ui-radio{
+            margin-right: 20px;
+        }
+        >ul{
+            margin: 0;
+        }
+        li{
+            display: inline-block;
+            vertical-align: top;
+            a{
+                &.active{
+                    background-color: $new_lightBlue;
+                }
+                &[disabled]{
+                    background-color: rgba(255, 255, 255, 0)!important;
+                    i{
+                        opacity: 0.3;
+                    }
+                }
+                &.pulse{
+                    i{
+                        color: #fff;
+                    }
+                }
+            }
+        }
+    }
+    #activeOptionsWrapper{
+        margin-top: 15px;
+    }
+    .activeOptions{
+        position: relative;
+        margin-bottom: 20px;
+        &.card-content{
+            padding: 14px;
+        }
+        .optsHeader{
+            color: $new_darkBlue;
+            border-bottom: none;
+            text-transform: uppercase;
+            line-height: 2rem;
+            font-size: 1.6rem;
+            margin-bottom:  0.9rem;
+            padding-bottom: 3px;
+            >i{
+                vertical-align: bottom;
+                font-size: 2rem;
+            }
+            .close{
+                position: absolute;
+                right: 6px;
+                top: 6px;
+            }
+        }
+    }
+}

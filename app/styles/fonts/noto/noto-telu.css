@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Telugu';
+    src: local('Noto Sans Telugu'),
+        local('NotoSansTelugu'),
+        url('NotoSansTelugu.woff2') format('woff2'),
+        url('NotoSansTelugu.woff') format('woff'),
+        url('NotoSansTelugu.svg#NotoSansTelugu') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-telu ._t{
+    font-family: 'Noto Telugu'
+}

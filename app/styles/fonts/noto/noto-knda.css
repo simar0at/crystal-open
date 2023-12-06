@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Kannada';
+    src: local('Noto Sans Kannada'),
+        local('NotoSansKannada'),
+        url('NotoSansKannada.woff2') format('woff2'),
+        url('NotoSansKannada.woff') format('woff'),
+        url('NotoSansKannada.svg#NotoSansKannada') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-knda ._t{
+    font-family: 'Noto Kannada'
+}

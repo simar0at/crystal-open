@@ -1,0 +1,29 @@
+@import 'app/styles/constants.scss';
+
+.collocations-tabs{
+    .collocations-tab-basic,
+    .collocations-tab-advanced{
+        position: relative;
+        padding: 20px;
+    }
+    .columns > span{
+        vertical-align: top;
+        margin-right: 20px;
+    }
+    .colAttrs{
+        color: $new_darkBlue;
+        margin-top: 30px;
+    }
+    .colRange{
+        padding-top: 5px;
+    }
+    .customRange{
+        margin-top: -30px;
+    }
+    .colFuncs{
+        @media (min-width: 1200px){
+            border-left: 1px solid #cecece;
+            padding-left: 20px;
+        }
+    }
+}

@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Lao';
+    src: local('Noto Sans Lao'),
+        local('NotoSansLao-Regular'),
+        url('NotoSansLao-Regular.woff2') format('woff2'),
+        url('NotoSansLao-Regular.woff') format('woff'),
+        url('NotoSansLao-Regular.svg#NotoSansLao-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-laoo ._t{
+    font-family: 'Noto Lao'
+}

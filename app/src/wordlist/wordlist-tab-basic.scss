@@ -1,0 +1,10 @@
+@import 'wordlist';
+
+.wordlist-tab-basic{
+    @include wordlistTabCommon();
+    @include maxWidthSmall;
+}
+.modal-content .wordlist-tab-basic{
+    padding: 0;
+}
+

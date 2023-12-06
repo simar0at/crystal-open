@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Tibetan';
+    src: local('Noto Sans Tibetan'),
+        local('NotoSansTibetan'),
+        url('NotoSansTibetan.woff2') format('woff2'),
+        url('NotoSansTibetan.woff') format('woff'),
+        url('NotoSansTibetan.svg#NotoSansTibetan') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-tibt ._t{
+    font-family: 'Noto Tibetan'
+}

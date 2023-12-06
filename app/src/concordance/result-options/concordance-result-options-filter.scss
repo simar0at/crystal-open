@@ -1,0 +1,39 @@
+.concordance-result-options-filter{
+    .tabContent{
+        padding: 20px;
+    }
+    .queryWrapper{
+        max-width: 1000px;
+    }
+    .filterRange{
+        > span {
+            vertical-align: top;
+        }
+        .ui-radio{
+            margin-right: 40px;
+        }
+        .ranges{
+            margin-top: 15px;
+        }
+    }
+    .excludeKwic{
+        .filterRangeToken .rangeWrapper span:nth-child(6),
+        .filterRangeSentence .rangeWrapper span:nth-child(4){
+            color: #004B69;
+            background-color: #A3CCDD;
+        }
+    }
+
+    .filterRange{
+        .ui-radio{
+            > div  {
+                & > *{
+                    &:nth-child(2){
+                        display: block;
+                        margin-left: 40px;
+                    }
+                }
+            }
+        }
+    }
+}

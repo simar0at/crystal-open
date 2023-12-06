@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Gujarati';
+    src: local('Noto Sans Gujarati'),
+        local('NotoSansGujarati'),
+        url('NotoSansGujarati.woff2') format('woff2'),
+        url('NotoSansGujarati.woff') format('woff'),
+        url('NotoSansGujarati.svg#NotoSansGujarati') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-gujr ._t{
+    font-family: 'Noto Gujarati'
+}

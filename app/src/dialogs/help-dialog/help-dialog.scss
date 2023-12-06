@@ -1,0 +1,87 @@
+.help-dialog {
+    .cardBtnContainer{
+        a{
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    }
+    .key {
+        min-width: 150px;
+        display: inline-block;
+        raw-html{
+            & > *{
+                margin: 0 0.2em;
+            }
+        }
+    }
+    .action{
+        display: inline-block;
+        b{
+            color: #C52031;
+            font-weight: bold;
+        }
+    }
+    img{
+        float: right;
+        @media screen and (max-width: 1200px){
+            float: none;
+            display: block;
+            margin: auto;
+        }
+    }
+
+    .help-youtube-st0 {
+        fill: #FF0000;
+    }
+
+    .help-youtube-st1 {
+        fill: #FFFFFF;
+    }
+
+    .help-youtube-st2 {
+        fill: #282828;
+    }
+
+    .colHeader{
+        font-size: 1.3em;
+    }
+    .videoContainer{
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .videoLeftCol{
+        min-width: 300px;
+
+        flex: 3;
+        margin-right: 30px;
+    }
+    .videoRightCol{
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .socials{
+        border-top: 1px solid #9e9e9e;
+        position: relative;
+        top: 66px;
+        padding-top: 20px;
+        display: flex;
+        align-items: flex-end;
+        a{
+            width: 26px;
+            height: 26px;
+            display: inline-block;
+            margin: 0 7px;
+        }
+        @media only screen and (max-width: 550px){
+            top: 5px;
+            justify-content: center;
+        }
+    }
+    .hotkeyFeature{
+        margin-top: 20px;
+        & >div {
+            padding-left: 20px;
+        }
+    }
+}

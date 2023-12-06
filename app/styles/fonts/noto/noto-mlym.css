@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Malayalam';
+    src: local('Noto Sans Malayalam'),
+        local('NotoSansMalayalam'),
+        url('NotoSansMalayalam.woff2') format('woff2'),
+        url('NotoSansMalayalam.woff') format('woff'),
+        url('NotoSansMalayalam.svg#NotoSansMalayalam') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-mlym ._t{
+    font-family: 'Noto Malayalam'
+}

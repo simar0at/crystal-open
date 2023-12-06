@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Noto Arabic';
+    src: local('Noto Sans Arabic'),
+        local('NotoSansArabic-Regular'),
+        url('NotoSansArabic-Regular.woff2') format('woff2'),
+        url('NotoSansArabic-Regular.woff') format('woff'),
+        url('NotoSansArabic-Regular.svg#NotoSansArabic-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.script-arab ._t{
+    font-family: 'Noto Arabic'
+}

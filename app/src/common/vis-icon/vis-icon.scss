@@ -1,0 +1,15 @@
+@import 'app/styles/constants.scss';
+
+.vis-icon {
+    .pointer    { cursor: pointer }
+    svg circle    { fill: $new_darkBlue; }
+    svg.active #c0, svg:hover #c0 { fill: #000000 }
+    svg.active #c1, svg:hover #c1 { fill: #E4AC24 }
+    svg.active #c2, svg:hover #c2 { fill: #554A9E }
+    svg.active #c3, svg:hover #c3 { fill: #D71C56 }
+    svg.active #c4, svg:hover #c4 { fill: #52BE97 }
+    svg.active #c5, svg:hover #c5 { fill: #B9D532 }
+    svg.active #c6, svg:hover #c6 { fill: #63C9D5 }
+    svg.active #c7, svg:hover #c7 { fill: #A3227F }
+    svg.active #c8, svg:hover #c8 { fill: #B33426 }
+}
