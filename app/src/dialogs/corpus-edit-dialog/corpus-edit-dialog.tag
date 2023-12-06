@@ -1,4 +1,4 @@
-<ca-corpus-edit-dialog>
+<corpus-edit-dialog>
     <br>
     <div class="row">
         <ui-input
@@ -33,4 +33,4 @@
             delay(() => {$(".ca-edit-name input").focus()}, 1)
         })
     </script>
-</ca-corpus-edit-dialog>
+</corpus-edit-dialog>

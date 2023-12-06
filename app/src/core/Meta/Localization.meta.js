@@ -36,7 +36,7 @@ const LocalizationMeta = {
     }, {
         id: 'sl',
         label: 'Slovenščina',
-        labelEn: 'Slovene'
+        labelEn: 'Slovenian'
     }, {
         id: 'ga',
         label: 'Gaeilge',

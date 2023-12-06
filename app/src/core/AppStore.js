@@ -17,10 +17,16 @@ class AppStoreClass extends StoreMixin {
         this.TO_BE_COMPILED = "TO_BE_COMPILED"
         this.COMPILATION_FAILED = "COMPILATION_FAILED"
 
-        // refrenece corpora compatibility level
+        // reference corpora compatibility level
         this.FEATURE_NA = 0
         this.FEATURE_PART_COMPATIBILITY = 1
         this.FEATURE_FULL_COMPATIBILITY = 2
+
+        // this list needs to be synchronized with OCT / global.js / oct.updatedLanguages
+        this.langsWithBiterms = ["Czech", "Danish", "German", "English",
+                "Estonian", "Finnish", "French", "Croatian", "Hungarian",
+                "Italian", "Dutch", "Polish", "Portuguese",
+                "Slovenian", "Spanish", "Swedish"]
 
         this._reset()
 

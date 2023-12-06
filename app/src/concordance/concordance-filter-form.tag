@@ -60,14 +60,6 @@
                                 on-input={refreshDisabled}
                                 on-change={onOptionChange}
                                 on-submit={onSubmit}></cql-textarea>
-                        <br>
-                        <ui-select
-                            inline=1
-                            name="default_attr"
-                            label-id="cc.defaultAttr"
-                            options={defaultAttrOptions}
-                            riot-value={value.default_attr}
-                            on-change={onOptionChange}></ui-select>
                     </div>
                 </div>
 
@@ -113,7 +105,6 @@
         this.mixin("tooltip-mixin")
 
         this.value = this.opts.riotValue
-        this.defaultAttrOptions = this.corpus.attributes
         let hasLemma = !!AppStore.getAttributeByName("lemma")
         this.queryselectorOptions = ["iquery"].concat(hasLemma ? ["lemma"] : []).concat(["phrase", "word", "char", "cql"]).map((option) => {
             return {

@@ -1,12 +1,13 @@
 const {Connection} = require("core/Connection.js")
 const {Auth} = require("core/Auth.js")
+const {AppStore} = require("core/AppStore.js")
 require("./create-subcorpus-dialog/create-subcorpus-dialog.tag")
 require("./change-password-dialog/change-password-dialog.tag")
 require("./request-space-dialog/request-space-dialog.tag")
 require("./grammar-detail-dialog/grammar-detail-dialog.tag")
 require("./reset-fup-dialog/reset-fup-dialog.tag")
 require("./tags-dialog/tags-dialog.tag")
-
+require("./corpus-edit-dialog/corpus-edit-dialog.tag")
 
 const showCreateSubcorpus = (showManageBtn) => {
     Dispatcher.trigger("openDialog", {
@@ -78,6 +79,36 @@ const showGrammarDetailDialog = (opts) => {
     })
 }
 
+
+const showCorpusConfigDialog = (corpus_id) => {
+    Dispatcher.trigger("openDialog", {
+        title: _("ca.corpusSettings"),
+        tag: "corpus-edit-dialog",
+        small: true,
+        id: "editCorpus",
+        buttons: [{
+            label: _("expertSettings"),
+            class: "mr-2",
+            onClick: () => {
+                Dispatcher.trigger("closeDialog", "editCorpus")
+                Dispatcher.trigger("ROUTER_GO_TO", "ca-config")
+            }
+        }, {
+            label: _("save"),
+            class: "btn-primary",
+            id: "corpusEditSaveBtn",
+            onClick: () => {
+                AppStore.updateCorpus(corpus_id, {
+                    name: $(".ca-edit-name input").val(),
+                    info: $(".ca-edit-info textarea").val()
+                })
+                Dispatcher.trigger("closeDialog", "editCorpus")
+            }
+        }]
+    })
+}
+
+
 Dispatcher.on("FUPLimitReached", () => {
     if(Auth.isFullAccount()){
         Dispatcher.trigger("openDialog", {
@@ -97,5 +128,6 @@ module.exports = {
     showCreateSubcorpus,
     showChangePasswordDialog,
     showRequestMoreSpaceDialog,
-    showGrammarDetailDialog
+    showGrammarDetailDialog,
+    showCorpusConfigDialog
 }

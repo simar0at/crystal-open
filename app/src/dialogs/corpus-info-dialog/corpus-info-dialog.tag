@@ -1,13 +1,18 @@
 <corpus-info-dialog class="corpus-info-dialog relative">
-    <div if={!data}>
+    <div if={!corpus}>
         <preloader-spinner overlay=1></preloader-spinner>
     </div>
-    <div if={data && !error}>
+    <div if={corpus && !error}>
         <div class="titleWithButton">
             <span class="title">
-                <h4>{data.name}</h4>
+                <span class="mr-4">
+                    <h4>{corpus.name}</h4>
+                    <i if={!window.config.NO_CA && opts.corpname == actualCorpname && corpus.user_can_manage}
+                            class="material-icons material-clickable"
+                            onclick={onCorpusEditClick}>edit</i>
+                </span>
                 <span class="corpname grey-text hide-on-med-and-down">
-                    {data.corpname}
+                    {corpus.corpname}
                     <span if={corpusListData && corpusListData.created}>
                         ● {_("created")}
                         {window.Formatter.date(new Date(corpusListData.created), {
@@ -21,61 +26,75 @@
                     </span>
                 </span>
             </span>
-            <a if={window.permissions.ca} href="#ca?corpname={data.corpname}" class="btn white-text" onclick={closeDialog}>
+        </div>
+        <div if={corpus.info} class="grey-text">
+            {corpus.info}
+            <a if={corpus.infohref} href={corpus.infohref} target="_blank">{_("seeMore")}</a>
+        </div>
+        <div class="mt-3 mb-2 buttons">
+            <a if={window.permissions.ca}
+                    href="#ca?corpname={corpus.corpname}"
+                    class="btn white-text"
+                    onclick={closeDialog}>
                 {_("manageCorpus")}
             </a>
-        </div>
-        <div if={data.info} class="grey-text">
-            {data.info}
-            <a if={data.infohref} href={data.infohref} target="_blank">{_("seeMore")}</a>
+            <a href="#ca-subcorpora"
+                    class="btn">
+                {_("ca.subcorporaDesc")}
+            </a>
+            <a if={window.permissions["compare-corpora"]}
+                    href="#compare-corpora?corpname={corpus.corpname}"
+                    class="btn tooltipped"
+                    data-tooltip={_("compareCorporaDesc")}>
+                {_("compareCorpora")}
+            </a>
+            <a href="#text-type-analysis?corpname={corpus.corpname}&wlminfreq=1&include_nonwords=1&showresults=1&wlicase=1&wlnums=frq"
+                    class="btn"
+                    onclick={closeDialog}>
+                {_("tta")}
+            </a>
         </div>
 
         <div class="colsContainer {hasRightCol: activeRequest || (structures && structures.length)}">
             <div class="leftCol">
                 <div class="corpInfoSections">
                     <div>
-                        <div class="card-panel">
+                        <div class="card-panel generalInfo">
                             <h5>{_("ci.generalInfo")}</h5>
-                            <table class="table">
-                                <tr>
-                                    <td>{_("language")}</td>
-                                    <td>{data.language_name}</td>
-                                </tr>
-                                <tr if={data.infohref}>
-                                    <td>{_("ci.corpusDescription")}</td>
-                                    <td><a href={data.infohref} class="btn" target="_blank">{_("read")}</a></td>
-                                </tr>
-                                <tr if={data.tagsetdoc}>
-                                    <td>{_("tagset")}</td>
-                                    <td><a href={data.tagsetdoc} class="btn" target="_blank">{_("listTags")}</a></td>
-                                </tr>
-                                <tr if={data.errsetdoc}>
-                                    <td>{_("ci.errset")}</td>
-                                    <td><a href={data.errsetdoc} class="btn" target="_blank">{_("listCodes")}</a></td>
-                                </tr>
-                                <tr if={data.wsdef}>
-                                    <td>{_("ci.wordSketchGrammar")}</td>
-                                    <td><button class="btn t_showSketchGrammar" onclick={showGrammarDialog.bind(this, false)}>{_("show")}</button></td>
-                                </tr>
-                                <tr if={data.termdef}>
-                                    <td>{_("termGrammar")}</td>
-                                    <td><button class="btn t_showTermGrammar" onclick={showGrammarDialog.bind(this, true)}>{_("show")}</button></td>
-                                </tr>
-                            </table>
+                            <div>
+                                <b>
+                                    {_("language")}: {corpus.language_name}
+                                </b>
+                            </div>
+                            <div>
+                                <a href={corpus.infohref} class="btn" target="_blank">{_("corpusDescAndBibliography")}</a>
+                            </div>
+                            <div>
+                                <a href={corpus.tagsetdoc} class="btn {disabled: !corpus.tagsetdoc}" target="_blank">{_(corpus.tagsetdoc ? "tagset" : "noTagset")}</a>
+                            </div>
+                            <div if={corpus.errsetdoc}>
+                                <a href={corpus.errsetdoc} class="btn" target="_blank">{_("listCodes")}</a>
+                            </div>
+                            <div>
+                                <button class="btn t_showSketchGrammar {disabled: !corpus.wsdef}" onclick={showGrammarDialog.bind(this, false)}>{_(corpus.wsdef ? "ci.wordSketchGrammar" : "noWsdef")}</button>
+                            </div>
+                            <div>
+                                <button class="btn t_showTermGrammar {disabled: !corpus.termdef}" onclick={showGrammarDialog.bind(this, true)}>{_(corpus.termdef ? "termGrammar" : "noTermGrammar")}</button>
+                            </div>
                         </div>
                     </div>
 
                     <div>
-                        <div if={data.sizes}  class="counts card-panel">
+                        <div if={corpus.sizes}  class="counts card-panel">
                             <h5>{_("ci.counts")}&nbsp;<i class="material-icons tooltipped" data-tooltip="t_id:ci_counts">info</i></h5>
                             <table class="table">
-                                <tr each={obj, idx in sizesList} if={data.sizes[obj[0]] > 0}>
+                                <tr each={obj, idx in sizesList} if={corpus.sizes[obj[0]] > 0}>
                                     <td>
                                         <span class={tooltipped : !!obj[2]} data-tooltip={obj[2]}>
                                             {_(obj[1])}<sup if={obj[2]}>?</sup>
                                         </span>
                                     </td>
-                                    <td class="right-align">{window.Formatter.num(parent.data.sizes[obj[0]])}</td>
+                                    <td class="right-align">{window.Formatter.num(parent.corpus.sizes[obj[0]])}</td>
                                 </tr>
                             </table>
                         </div>
@@ -88,8 +107,14 @@
                             <table if={!activeRequest} class="table">
                                 <tr each={attr in attributes}>
                                     <td>
-                                        <span class={tooltipped : attr.name == "word"} data-tooltip={attr.name == "word" ? "t_id:ci_nonwords" : null}>
-                                            {attr.name}<sup if={attr.name == "word"}>?</sup>
+                                        <span if={attr.name == "word"} class="tooltipped" data-tooltip="t_id:ci_nonwords">
+                                            word<sup>?</sup>
+                                        </span>
+                                        <span if={attr.name == "lempos"} class="tooltipped" data-tooltip="t_id:ci_lempos">
+                                            lempos<sup>?</sup>
+                                        </span>
+                                        <span if={!["word", "lempos"].includes(attr.name)}>
+                                            {attr.name}
                                         </span>
                                         <i if={attr.label} class="material-icons tooltipped" data-tooltip={attr.label}>info_outline</i>
                                     </td>
@@ -100,17 +125,17 @@
                     </div>
 
                     <div>
-                        <div if={data.wposlist && data.wposlist.length} class="card-panel">
+                        <div if={corpus.wposlist && corpus.wposlist.length} class="card-panel">
                             <h5>{_("commonTags")}</h5>
                             <table class="table">
-                                <tr each={pos in data.wposlist}>
+                                <tr each={pos in corpus.wposlist}>
                                     <td>{pos.label}</td>
                                     <td class="right-align"
                                             style="word-break: break-all;">{pos.value}</td>
                                 </tr>
                             </table>
-                            <a if={data.tagsetdoc}
-                                    href="{data.tagsetdoc}"
+                            <a if={corpus.tagsetdoc}
+                                    href="{corpus.tagsetdoc}"
                                     target="_blank"
                                     style="margin-top: 5px; display: inline-block;">
                                 <i class="material-icons small-help" style="vertical-align: middle;">help_outline</i>
@@ -120,10 +145,10 @@
                     </div>
 
                     <div>
-                        <div if={data.lposlist && data.lposlist.length} class="card-panel t_lemposSuffixes">
+                        <div if={corpus.lposlist && corpus.lposlist.length} class="card-panel t_lemposSuffixes">
                             <h5>{_("ci.lemposSuffixes")}&nbsp;<i class="material-icons tooltipped" data-tooltip="t_id:ci_lempos_suffixes">info</i></h5>
                             <table class="table">
-                                <tr each={pos in data.lposlist}>
+                                <tr each={pos in corpus.lposlist}>
                                     <td>{pos.label}</td>
                                     <td class="right-align">{pos.value}</td>
                                 </tr>
@@ -150,12 +175,6 @@
                                     <td class="right-align">{window.Formatter.num(sc.relsize,  {minimumFractionDigits: 2})}</td>
                                 </tr>
                             </table>
-                            <br>
-                            <div class="center-align">
-                                <a href="#ca-subcorpora" class="btn">
-                                    {_("ca.subcorporaDesc")}
-                                </a>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -166,8 +185,8 @@
                     <h5>{_("textTypes")}
                         &nbsp;
                         <i class="material-icons tooltipped" data-tooltip="t_id:ci_text_types">info</i>
-                        <a href="#text-type-analysis?corpname={data.corpname}&wlminfreq=1&include_nonwords=1&showresults=1&wlicase=1&wlnums=frq"
-                                class="btn right"
+                        <a href="#text-type-analysis?corpname={corpus.corpname}&wlminfreq=1&include_nonwords=1&showresults=1&wlicase=1&wlnums=frq"
+                                class="btn btn-flat right"
                                 onclick={closeDialog}>
                                 {_("tta")}
                         </a>
@@ -221,11 +240,12 @@
         this.activeRequest = null
         this.isFullAccount = Auth.isFullAccount()
         this.corpusListData = AppStore.getCorpusByCorpname(this.opts.corpname)
+        this.actualCorpname = AppStore.getActualCorpname()
 
-        if (this.opts.corpname == AppStore.getActualCorpname()) {
-            this.data = AppStore.getActualCorpus()
+        if (this.opts.corpname == this.actualCorpname) {
+            this.corpus = AppStore.getActualCorpus()
         } else {
-            this.data = {}
+            this.corpus = {}
             AppStore.loadAnyCorpus(this.opts.corpname)
         }
 
@@ -291,28 +311,36 @@
             this.update()
         }
 
+        onCorpusEditClick(){
+            Dialogs.showCorpusConfigDialog(this.corpus.id)
+        }
+
         closeDialog(){
             Dispatcher.trigger("closeDialog", "corpusInfo")
         }
 
         showGrammarDialog(is_term){
-            Dialogs.showGrammarDetailDialog({corpname: this.data.corpname, is_term: is_term})
+            Dialogs.showGrammarDetailDialog({corpname: this.corpus.corpname, is_term: is_term})
         }
 
-        Dispatcher.on('ANY_CORPUS_LOADED', (data) => {
-            this.data = data
+        onCorpusLoaded(corpus){
+            this.corpus = corpus
             this.update()
-        })
+        }
+
+        Dispatcher.on('ANY_CORPUS_LOADED', this.onCorpusLoaded.bind(this))
 
         this.on("mount", () => {
             this.load()
             Url.updateQuery({corp_info: 1})
+            Dispatcher.on("CORPUS_INFO_LOADED", this.onCorpusLoaded)
         })
 
         this.on("unmount", () => {
             let query = Url.getQuery()
             delete query.corp_info
             Url.setQuery(query)
+            Dispatcher.off("CORPUS_INFO_LOADED", this.onCorpusLoaded)
         })
 
         this.on("updated", () => {

@@ -17,17 +17,13 @@
     <script>
         const {AppStore} = require("core/AppStore.js")
         this.corpora = []
-        this.pubBitermsLangs = ["Czech", "Danish", "German", "English",
-                "Estonian", "Finnish", "French", "Croatian", "Hungarian",
-                "Italian", "Dutch", "Polish", "Portuguese",
-                "Slovenian", "Spanish", "Swedish"]
 
         initData() {
             this.corpus = AppStore.get("corpus")
             let languages = AppStore.get('languageList') || []
             this.oct_languages = languages.filter(l => l.reference_corpus && l.has_term_grammar).map(l => l.name)
             let aligned = this.corpus.aligned_details.map(c => ({ ...c, id: this.corpus.aligned_details.indexOf(c)}))
-            let alignedLangs = this.corpus.owner_id !== null ? this.oct_languages : this.pubBitermsLangs
+            let alignedLangs = this.corpus.owner_id !== null ? this.oct_languages : AppStore.langsWithBiterms
             this.corpora = aligned.filter(ac => alignedLangs.includes(ac.language_name))
             this.update()
         }

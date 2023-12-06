@@ -207,7 +207,8 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         this._setResultScreen("concordance")
         Object.assign(this.data, {
             sort: [],
-            page: 1
+            page: 1,
+            searchdesc: ""
         }, options)
         this.operationsInit()
         this.searchAndAddToHistory()
@@ -774,6 +775,7 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
     cancelPreviousRequest() { // overriden
         super.cancelPreviousRequest()
         this.asyncResults.stop()
+        this.data.isCountLoading = false
     }
 
     resetContext(){

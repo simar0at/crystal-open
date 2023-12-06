@@ -62,6 +62,15 @@
                     inline=1
                     label-id="showReldens"
                     on-change={setCheckboxValue.bind(this, "f_showreldens")}></ui-checkbox>
+            <div if={!isConcordanceComplete}
+                    class="relNA mt-5">
+                {_("relValuesNA")}
+                <i if={!isConcordanceComplete}
+                        class="material-icons tooltipped inlineBlock"
+                        data-tooltip={_("relValuesNATip")}>
+                    help_outline
+                </i>
+            </div>
         </div>
         <br>
         <frequency-result-block each={block, idx in data.f_items}
@@ -125,6 +134,14 @@
 
         updateAttributes(){
             this.isConcordanceComplete = this.data.total == this.data.fullsize
+            if(this.isConcordanceComplete){
+                let smallestSample = this.data.operations.filter(o => o.name == "sample")
+                        .sort((a,b) => {return a.arg * 1 - b.arg *1})[0]
+                if(smallestSample && smallestSample.arg * 1 == this.data.total){
+                    // random sample operation reduced concordance result -> relative frequency should not be available
+                    this.isConcordanceComplete = false
+                }
+            }
             this.showRelTtAndRelDens = this.store.f_showRelTtAndRelDens()
             this.interFeatureMenuLinks = [{
                 name: "concordance",

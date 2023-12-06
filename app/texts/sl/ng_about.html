@@ -1,4 +1,4 @@
-<div>Orodje n-gram pripravi%[frekvenčne]% sezname zaporedij %[pojavnica|pojavnice]%. N-grami se imenujejo tudi večbesedni izrazi ali MWE. Uporabnik ima na voljo več možnosti filtriranja, vključno z %[regex|regularnimi izrazi]%, s katerimi podrobno določi, za katere n-grame naj se ustvari njihova frekvenca. N-grami se lahko generirajo na podlagi katerega koli %[atributa]%, pri čemer se najpogosteje uporabljata %[Besedna oblika|beseda]% in %[lema]%.
+<div>Orodje n-gram pripravi %[frequency|frekvenčne]% sezname zaporedij %[token|pojavnic]%. N-grami se imenujejo tudi večbesedni izrazi ali MWE. Uporabnik ima na voljo več možnosti filtriranja, vključno z %[regex|regularnimi izrazi]%, s katerimi podrobno določi, za katere n-grame naj se ustvari njihova frekvenca. N-grami se lahko generirajo na podlagi katerega koli %[attribute|atributa]%, pri čemer se najpogosteje uporabljata %[wordForm|besedna oblika]% in %[lemma|lema]%.
 </div>
 <div class="center">
     <br>
@@ -9,13 +9,13 @@
     <li>
         <div class="collapsible-header">Kako delujejo n-grami?</div>
         <div class="collapsible-body">
-            <div>N-grami so sestavljeni iz %[pojavnica|pojavnice]%, zato je <em>don't like</em> trigram in bo prikazan kot <em>do n't like</em>. (V konkordanci bo <em>don't</em> prikazan brez presledka, ampak prav tako obravnavan kot dve pojavnici.)
+            <div>N-grami so sestavljeni iz %[token|pojavnic]%, zato je <em>don't like</em> trigram in bo prikazan kot <em>do n't like</em>. (V konkordanci bo <em>don't</em> prikazan brez presledka, ampak prav tako obravnavan kot dve pojavnici.)
             </div>
             <br>
             <div>Rezultat lahko omejite z najmanjšo in največjo frekvenco. Privzeto so izključeni n-grami z nizko frekvenco. Če želite to spremeniti, uporabite zavihek za napredne nastavitve.</div>
             <br>
             <div>
-                %[regex|Regularni izrazi]% lahko uporabite za opredelitev kompleksnih meril za n-grame, ki naj bi bili vključeni v frekvenčni seznam. Pri uporabi regularnih izrazov se celoten n-gram obravnava kot eno neprekinjeno zaporedje znakov, vključno s presledki.
+                %[regex|Regularne izraze]% lahko uporabite za opredelitev kompleksnih meril za n-grame, ki naj bi bili vključeni v frekvenčni seznam. Pri uporabi regularnih izrazov se celoten n-gram obravnava kot eno neprekinjeno zaporedje znakov, vključno s presledki.
             </div>
             <br>
             <div>Na voljo sta dve različici začetnega, končnega in vsebujočega filtra. Ena je namenjena filtriranju po znakih (črkah), ki se pojavljajo kjer koli znotraj n-grama, druga pa filtriranju po celotnih besedah, tj. po tem, kar se nahaja med dvema presledkoma.</div>
@@ -31,7 +31,7 @@
     <li>
         <div class="collapsible-header">Zahteve za dobro delovanje n-gramov</div>
         <div class="collapsible-body">
-            <div>N-grami bodo delovali s katerim koli korpusom, če je %[pojavnica|tokeniziran]%. N-grami z lemami ali oznakami bodo na voljo le za lematizirane in označene korpuse. Tokenizacija, lematizacija in označevanje se izvedejo samodejno ob prenosu datotek v Sketch Engine, če je jezik <a href="https://www.sketchengine.eu/user-guide/user-manual/corpora/by-language/" rel="noopener" target="_blank">podprt</a>.
+            <div>N-grami bodo delovali s katerim koli korpusom, če je %[token|tokeniziran]%. N-grami z lemami ali oznakami bodo na voljo le za lematizirane in označene korpuse. Tokenizacija, lematizacija in označevanje se izvedejo samodejno ob prenosu datotek v Sketch Engine, če je jezik <a href="https://www.sketchengine.eu/user-guide/user-manual/corpora/by-language/" rel="noopener" target="_blank">podprt</a>.
             </div>
         </div>
     </li>

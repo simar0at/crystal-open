@@ -17,6 +17,7 @@
             <div class="queryWrapper">
                 <query-types riot-value={formValue}
                     show-video={false}
+                    hide-default-attr={true}
                     on-change={onQueryTypesChange}
                     fixeddefattr={options.default_attr}
                     on-valid-change={onQueryTypesValidChange}

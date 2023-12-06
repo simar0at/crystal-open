@@ -16,14 +16,14 @@
     <li>
         <div class="collapsible-header">Kako tezaver prepozna sopomenke?</div>
         <div class="collapsible-body">
-            <div>Sopomenke prepozna samodejno na podlagi sobesedila, v katerem se pojavljajo. To temelji na teoriji distribucijske semantike, ki na kratko pravi, da so si besede, ki se pojavljajo v istem sobesedilu, pomensko podobne. V programu Sketch Engine to pomeni, da imajo besede, ki imajo podobne <a href="https://www.sketchengine.eu/my_keywords/collocation/" target="_blank">kolokacije</a>, tudi podoben pomen. Besedna skica je ključnega pomena pri določanju podobnosti. Za določitev sopomenk iskane besede orodje primerja besedne skice vseh besed z isto besedno vrsto in navede tiste, ki imajo največji delež %[kolokatov]%. Ocena, ki je podana za vsako sopomenko, kaže odstotek skupnih kolokacij.
+            <div>Sopomenke prepozna samodejno na podlagi sobesedila, v katerem se pojavljajo. To temelji na teoriji distribucijske semantike, ki na kratko pravi, da so si besede, ki se pojavljajo v istem sobesedilu, pomensko podobne. V programu Sketch Engine to pomeni, da imajo besede, ki imajo podobne <a href="https://www.sketchengine.eu/my_keywords/collocation/" target="_blank">kolokacije</a>, tudi podoben pomen. Besedna skica je ključnega pomena pri določanju podobnosti. Za določitev sopomenk iskane besede orodje primerja besedne skice vseh besed z isto besedno vrsto in navede tiste, ki imajo največji delež %[collocate|kolokatov]%. Ocena, ki je podana za vsako sopomenko, kaže odstotek skupnih kolokacij.
             </div>
         </div>
     </li>
     <li>
         <div class="collapsible-header">Kakovost tezavra</div>
         <div class="collapsible-body">
-            <div>Kakovost tezavra je močno odvisna od bogatih besednih skic, ki vsebujejo veliko kolokacij, kar je posledično odvisno od visoke %[frekvence] % iskane besede in visoke frekvence potencialnih sopomenk. To pomeni, da je potreben zelo velik korpus. Potrebujemo vsaj približno 100.000 besed, da bi dobili uporabne rezultate za visokofrekvenčne besede. Za redke besede pa je potreben veliko večji korpus, da se zagotovi zadostna pogostost. Priporočamo uporabo naših korpusov z več milijardami besed.</div>
+            <div>Kakovost tezavra je močno odvisna od bogatih besednih skic, ki vsebujejo veliko kolokacij, kar je posledično odvisno od visoke %[frequency|frekvence] % iskane besede in visoke frekvence potencialnih sopomenk. To pomeni, da je potreben zelo velik korpus. Potrebujemo vsaj približno 100.000 besed, da bi dobili uporabne rezultate za visokofrekvenčne besede. Za redke besede pa je potreben veliko večji korpus, da se zagotovi zadostna pogostost. Priporočamo uporabo naših korpusov z več milijardami besed.</div>
             <br>
             <div>Seznam sopomenk lahko vsebuje besede, ki ne bi smele biti vključene. To je posledica samodejne obdelave. Sketch Engine ne more neposredno določiti podobnosti pomena, lahko le primerja kolokacije. Če imata dve besedi enake kolokacije, bosta navedeni kot sopomenki, čeprav pomen ni podoben. Zaradi takšnih občasnih netočnosti orodje ni manj uporabno. Če se želite temu izogniti, uporabite večji korpus. Tezavri za izjemno redke besede (pogostost le nekaj sto besed ali manj) bodo neizogibno dali slabe rezultate ali pa tezavra sploh ne bo mogoče izdelati.</div>
         </div>
@@ -43,11 +43,11 @@
             </div>
             <br>
             <div>
-                <b>Oznake in leme</b> <br>Za popoln tezaver je potreben %[oznaka|označen]% in %[lema|lematiziran]% korpus. Tezavri, ustvarjeni iz neoznačenih in nelematiziranih korpusov z univerzalnimi besednimi skicami, bodo slabše kakovosti. Kljub temu so lahko zelo uporabni, zlasti pri jezikih z manj viri, kjer označevanje in lematizacija nista realna.
+                <b>Oznake in leme</b> <br>Za popoln tezaver je potreben %[tag|označen]% in %[lemma|lematiziran]% korpus. Tezavri, ustvarjeni iz neoznačenih in nelematiziranih korpusov z univerzalnimi besednimi skicami, bodo slabše kakovosti. Kljub temu so lahko zelo uporabni, zlasti pri jezikih z manj viri, kjer označevanje in lematizacija nista realna.
             </div>
             <br>
             <div>
-                <b>Velikost korpusa</b> <br>Kakovost tezavra je v celoti odvisna od bogatih besednih skic. Bogato besedno skico opredeljuje veliko število kolokacij v vseh slovničnih razmerjih. Bogata besedna skica mora obstajati za iskano besedo in tudi za vse druge besede z isto besedno vrsto, da jih je mogoče primerjati. Ta zahteva je lahko izpolnjena le, če ima beseda v korpusu visoko %[frekvenco] %, najbolje tisoč ali več pojavitev. Zato je potreben zelo velik korpus, da lahko tudi pri manj pogostih besedah dobimo bogate besedne skice. Uporaba naših korpusov z več milijardami besed je priporočljiva za vsako resno delo s tezavri.
+                <b>Velikost korpusa</b> <br>Kakovost tezavra je v celoti odvisna od bogatih besednih skic. Bogato besedno skico opredeljuje veliko število kolokacij v vseh slovničnih razmerjih. Bogata besedna skica mora obstajati za iskano besedo in tudi za vse druge besede z isto besedno vrsto, da jih je mogoče primerjati. Ta zahteva je lahko izpolnjena le, če ima beseda v korpusu visoko %[frequency|frekvenco] %, najbolje tisoč ali več pojavitev. Zato je potreben zelo velik korpus, da lahko tudi pri manj pogostih besedah dobimo bogate besedne skice. Uporaba naših korpusov z več milijardami besed je priporočljiva za vsako resno delo s tezavri.
             </div>
         </div>
     </li>

@@ -65,7 +65,7 @@
                     on-change={onCQLChange}></cql-textarea>
             <br><br>
 
-            <ui-select
+            <ui-select if={!opts.hideDefaultAttr}
                     inline=1
                     name="default_attr"
                     label-id="cc.defaultAttr"

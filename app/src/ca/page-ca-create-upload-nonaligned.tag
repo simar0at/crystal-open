@@ -5,6 +5,7 @@
       <div class="row mb-4">
          <div class="col m6">
             <ui-filtering-list options={languageList}
+                  name="language1"
                   floating-dropdown={true}
                   label-id="language1"
                   riot-value={language1}
@@ -14,6 +15,7 @@
          </div>
          <div class="col m6">
             <ui-filtering-list options={languageList}
+                  name="language2"
                   floating-dropdown={true}
                   label-id="language2"
                   riot-value={language2}
@@ -39,9 +41,11 @@
 
       <div class="row">
          <div class="col m12 center-align mt-10">
-            <button class="btn btn-primary {disabled: isBussy || corpus1 || corpus2 || !language1 || !language2 || !corpname1 || !corpname2}"
+            <button id="btnConfirm"
+                  class="btn btn-primary {disabled: isBussy || corpus1 || corpus2 || !language1 || !language2 || !corpname1 || !corpname2}"
                   onclick={onConfirmClick}>{_("confirm")}</button>
-            <button class="btn {disabled: isBussy || (!corpus1 && !corpus2)}"
+            <button id="btnReset"
+                  class="btn {disabled: isBussy || (!corpus1 && !corpus2)}"
                   onclick={onResetClick}>{_("reset")}</button>
          </div>
       </div>
@@ -52,6 +56,7 @@
          <virtual if={!isBussy}>
             <div class="col m6">
                <ui-uploader id="upl1"
+                     name="upload1"
                      accept=".doc,.docx,.htm,.html,.pdf,.txt"
                      note={_("nonAlignedUploaderFileTypes")}
                      on-add={onFileAdd.bind(this, 1)}></ui-uploader>
@@ -84,6 +89,7 @@
 
             <div class="col m6">
                <ui-uploader id="upl2"
+                     name="upload2"
                      accept=".doc,.docx,.htm,.html,.pdf,.txt"
                      note={_("nonAlignedUploaderFileTypes")}
                      on-add={onFileAdd.bind(this, 2)}></ui-uploader>

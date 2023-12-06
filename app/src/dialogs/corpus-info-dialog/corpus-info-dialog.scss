@@ -9,7 +9,6 @@
     }
     h4{
         display: inline-block;
-        padding-right: 20px;
         @media only screen and (max-width: 1200px){
             font-size: 2rem;
         }
@@ -21,6 +20,15 @@
         display: block;
         text-align: center;
         margin-top: 30px;
+    }
+    .buttons{
+        display: flex;
+        gap: 15px;
+    }
+    .generalInfo{
+        div {
+            margin-bottom: 10px;
+        }
     }
     .corpInfoSections{
         display: flex;

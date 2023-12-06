@@ -221,6 +221,17 @@
         this.hideBanner = window.config.HIDE_DASHBOARD_BANNER
         this.bannerId = Math.ceil(Math.random() * 3)
 
+        _isBitermsActive(){
+            if(!this.corpus
+                    || (this.corpus.owner_id === null && !this.corpus.corpname.includes("_oct"))
+                    || (!this.corpus.aligned || this.corpus.aligned.length == 0)
+                    || !AppStore.langsWithBiterms.includes(this.corpus.language_name)){
+                return false
+            }
+            let compatibleCorpora = AppStore.data.corpusList.filter(c => AppStore.langsWithBiterms.includes(c.language_name))
+                    .map(c => c.corpname.split("/").splice(-1).join("/"))
+            return this.corpus.aligned.some(c => compatibleCorpora.includes(c))
+        }
 
         _updateItems() {
             this.corpus = AppStore.get("corpus")
@@ -282,7 +293,7 @@
                 }, {
                     oct: true,
                     id: "octerms",
-                    active: this.corpus && (this.corpus.owner_id !== null || this.corpus.corpname.includes("_oct")) && this.corpus.aligned && this.corpus.aligned.length > 0,
+                    active: this._isBitermsActive(),
                     tooltip: "t_id:d_octerms_inactive"
                 }
             ]

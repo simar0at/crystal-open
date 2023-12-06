@@ -296,6 +296,7 @@
                 "specialized", "diachronic", "multimedia", "learner",
                 "error-annotated"]
         this.presentLangs = {}
+        this.langMap = {}
         this.langList = []
         this.showLimit = 60
         this.someHasSketches = false

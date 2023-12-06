@@ -190,8 +190,7 @@
             let moveKey = [38, 40, 33, 34].includes(evt.keyCode)
             if(moveKey || [13, 32].includes(evt.keyCode)){ // send navigation to list
                 moveKey && this.open(evt)
-                if(evt.keyCode == 13 && !this.refs.list.isAnyItemSelected() && isFun(this.opts.onSubmit)){
-                    // enter without highlighted item in list -> submit value in input
+                if(evt.keyCode == 13 && (!this.refs.list.isAnyItemSelected() || !this.showList) && isFun(this.opts.onSubmit)){
                     evt.stopPropagation()
                     this.opts.onSubmit(this.refs.input.value, this.opts.name, this.evt, this)
                 }

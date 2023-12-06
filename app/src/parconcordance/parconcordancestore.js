@@ -152,7 +152,8 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         this._setResultScreen("concordance")
         Object.assign(this.data, {
             sort: [],
-            page: 1
+            page: 1,
+            searchdesc: ""
         }, options)
         this.operationsInit()
         this.searchAndAddToHistory()

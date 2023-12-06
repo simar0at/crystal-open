@@ -55,10 +55,10 @@
 
     <script>
         require("./page-ca.scss")
-        require("./ca-corpus-edit-dialog.tag")
         require("./ca-corpus-download-dialog.tag")
         const {AppStore} = require("core/AppStore.js")
         const {CAStore} = require("ca/castore.js")
+        const Dialogs = require("dialogs/dialogs.js")
 
         this.tooltipClass = ".ca-tooltip"
         this.tooltipMargin = -105
@@ -77,31 +77,7 @@
         }
 
         onConfigClick(){
-            Dispatcher.trigger("openDialog", {
-                title: _("ca.corpusSettings"),
-                tag: "ca-corpus-edit-dialog",
-                small: true,
-                id: "editCorpus",
-                buttons: [{
-                    label: _("expertSettings"),
-                    class: "mr-2",
-                    onClick: () => {
-                        Dispatcher.trigger("closeDialog", "editCorpus")
-                        Dispatcher.trigger("ROUTER_GO_TO", "ca-config")
-                    }
-                }, {
-                    label: _("save"),
-                    class: "btn-primary",
-                    id: "corpusEditSaveBtn",
-                    onClick: () => {
-                        AppStore.updateCorpus(this.corpus.id, {
-                            name: $(".ca-edit-name input").val(),
-                            info: $(".ca-edit-info textarea").val()
-                        })
-                        Dispatcher.trigger("closeDialog", "editCorpus")
-                    }
-                }]
-            })
+            Dialogs.showCorpusConfigDialog(this.corpus.id)
         }
 
         onUpgradeClick(){
