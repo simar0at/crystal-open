@@ -17,13 +17,13 @@
         margin: 0 auto;
         display: table;
     }
-    @media only screen and(max-width: 800px){
+    @media only screen and (max-width: 800px){
         table td{
             padding: 6px 10px;
         }
     }
 
-    @media only screen and(max-width: 600px){
+    @media only screen and (max-width: 600px){
         .corpusTable.material-table{
             display: block;
             tbody, tr, td{

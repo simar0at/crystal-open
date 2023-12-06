@@ -45,7 +45,8 @@
                 validate={opts.validate}
                 pattern={opts.pattern}
                 pattern-mismatch-message={opts.patternMismatchMessage}
-                suffix-icon="search"
+                suffix-icon={opts.suffixIcon || "search"}
+                on-suffix-icon-click={opts.onSuffixIconClick}
                 placeholder={_(opts.placeholder || "ui.typeToSearch")}
                 size={opts.size}></ui-input>
         <span ref="listContainer" class={hidden: opts.floatingDropdown}>

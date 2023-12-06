@@ -27,6 +27,7 @@
         </div>
         <div if={data.info} class="grey-text">
             {data.info}
+            <a if={data.infohref} href={data.infohref} target="_blank">{_("seeMore")}</a>
         </div>
 
         <div class="colsContainer {hasRightCol: activeRequest || (structures && structures.length)}">

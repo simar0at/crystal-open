@@ -21,7 +21,7 @@
         margin: auto;
         .corpusLeftCol{
             max-width: 440px;
-            @media screen and(min-width: 1405px){
+            @media screen and (min-width: 1405px){
                 border-right: 1px solid $white;
                 margin-right: 2em;
             }
@@ -34,31 +34,56 @@
     .controlBar{
         display: flex;
         flex-wrap: wrap;
+        margin-bottom: 10px;
+        padding-top: 10px;
         .fuzzy-input{
-            order: 1;
-            margin-right: auto;
             margin-bottom: 0;
         }
         .spaceLimit{
-            order: 2;
             line-height: 32px;
         }
         .btnNewCorpus{
-            order: 3;
             margin-left: 20px;
         }
         .input-field {
             margin-top: 0;
         }
-        @media (max-width: 1150px) {
-            .spaceLimit{
-                order: -1;
-                width: 100%;
-                text-align: right;
-            }
+        .chip{
+            background-color: #fff;
+        }
+        .btnCat{
+            margin-right: 20px;
         }
     }
     .corpus-tab-advanced {
+        .controlBar{
+            .controlBarRight{
+                display: flex;
+                flex-wrap: wrap;
+                margin-left: auto;
+                margin-bottom: 20px;
+                @media (max-width: 1200px) {
+                    width: 100%;
+                    order: -1;
+                    .corpusBtns{
+                        margin-left: auto;
+                    }
+                }
+            }
+            .floatingDropdown{
+                label{
+                    position: absolute;
+                    top: -13px;
+                }
+            }
+            @media (max-width: 700px) {
+                flex-direction: column;
+                & > * {
+                    margin: 12px 0;
+                }
+            }
+        }
+
         tr.actual {
             opacity: 0.5 !important;
         }
@@ -84,12 +109,6 @@
             text-align: center;
             i.material-icons {
                 vertical-align: bottom;
-            }
-        }
-        .plainField{
-            input{
-                background-color: initial;
-                border-bottom: 1px solid $blue-800;
             }
         }
         #catDropdown-button {
@@ -171,6 +190,28 @@
     .corpus-tab-my{
         & > .tab-content{
             min-height: 40vh
+        }
+        .fuzzy-input{
+            margin-right: auto;
+            order: 1;
+        }
+        .spaceLimit{
+            order: 2;
+        }
+        .btnNewCorpus{
+            order: 3;
+        }
+        @media (max-width: 1150px) {
+            .spaceLimit{
+                order: -1;
+                width: 100%;
+                text-align: right;
+            }
+        }
+    }
+    .corpus-tab-shared{
+        .btnNewCorpus{
+            margin-left: auto;
         }
     }
     .corpus-tab-my, .corpus-tab-shared {

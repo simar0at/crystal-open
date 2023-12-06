@@ -69,6 +69,8 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
             showcopy: true,
             tbl_template: "",
             macro: "",
+            hasAttributes: false,
+            hasContextAttributes: false,
             ///// frequency
             f_items: [],
             f_tab: "basic",
@@ -272,6 +274,8 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         this.data.gdex_scores = payload.gdex_scores
         this.data.relsize = payload.relsize
         this.data.fullsize = payload.fullsize
+        this.data.hasAttributes = this.data.attrs.split(",").length > 1
+        this.data.hasContextAttributes = this.data.hasAttributes && this.data.attr_allpos == "all"
         this._addComputedData(this.data.items)
     }
 
@@ -1146,6 +1150,35 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
                 link.icon = this.linkIcons[link.mediatype]
             })
         })
+        if(!this.data.hasContextAttributes){
+            items.forEach(item => {
+                item.Left = this._getContextReducedItems(item.Left)
+                item.Right = this._getContextReducedItems(item.Right)
+                if(!this.data.hasAttributes || this.data.attr_allpos != "kw"){
+                    item.Kwic = this._getContextReducedItems(item.Kwic)
+                }
+            }, this)
+        }
+    }
+
+    _getContextReducedItems(items){
+        // combine items into groups - [{str:"have"}, {str:"some"}, {str:"time"}, {strc:"<s>"}, {str:"How"}] ->[{str:"have some time"}, {strc:"<s>"}, {str:"How"}]
+        return items.reduce((arr, token) => {
+            if(!arr.length){
+                arr.push(token)
+            } else{
+                let lastToken = arr[arr.length - 1]
+                if(!token.strc && !lastToken.strc && token.coll === lastToken.coll && token.color === lastToken.color){
+                    arr[arr.length-1].str += " " + token.str
+                } else {
+                    if(token.str && lastToken.str){
+                        token.str = " " + token.str
+                    }
+                    arr.push(token)
+                }
+            }
+            return arr
+        }, [])
     }
 
     _checkAndFixData(){

@@ -201,8 +201,8 @@
             fullContext: data.fullcontext && data.viewmode == "kwic",
             directionRTL: corpus.righttoleft,
             directionLTR: !corpus.righttoleft,
-            hasAttributes: hasAttributes,
-            hasContextAttributes: hasContextAttributes,
+            hasAttributes: data.hasAttributes,
+            hasContextAttributes: data.hasContextAttributes,
             viewSen: data.viewmode == "sen",
             viewKwic: data.viewmode == "kwic"}>
     <concordance-selected-lines-box></concordance-selected-lines-box>
@@ -381,44 +381,11 @@
                 .dropdown("open")
         }
 
-        getContextReducedItems(items){
-            // combine items into groups - [{str:"have"}, {str:"some"}, {str:"time"}, {strc:"<s>"}, {str:"How"}] ->[{str:"have some time"}, {strc:"<s>"}, {str:"How"}]
-            return items.reduce((arr, token) => {
-                if(!arr.length){
-                    arr.push(token)
-                } else{
-                    let lastToken = arr[arr.length - 1]
-                    if(!token.strc && !lastToken.strc && token.coll === lastToken.coll && token.color === lastToken.color){
-                        arr[arr.length-1].str += " " + token.str
-                    } else {
-                        if(token.str && lastToken.str){
-                            token.str = " " + token.str
-                        }
-                        arr.push(token)
-                    }
-                }
-                return arr
-            }, [])
-        }
-
         updateAttributes(){
             this.isRTL = Localization.getDirection() == "rtl" && this.corpus.righttoleft
             this.showResultsFrom = (this.data.page - 1) * this.data.itemsPerPage
-            this.hasAttributes = this.data.attrs.split(",").length > 1
-            this.hasContextAttributes = this.hasAttributes && this.data.attr_allpos == "all"
             this.lngroup2label = AnnotationStore.lngroup2label
-            if(this.hasContextAttributes){
-                this.items = this.data.items
-            } else{
-                this.items = copy(this.data.items)
-                this.items.forEach(item => {
-                    item.Left = this.getContextReducedItems(item.Left)
-                    item.Right = this.getContextReducedItems(item.Right)
-                    if(!this.hasAttributes || this.data.attr_allpos != "kw"){
-                        item.Kwic = this.getContextReducedItems(item.Kwic)
-                    }
-                }, this)
-            }
+            this.items = this.data.items
             let showRefsLeft            = !this.data.refs_up || this.data.refs === ""
             let showRefsUp              = !showRefsLeft
             let showLineNumbers         = this.data.linenumbers

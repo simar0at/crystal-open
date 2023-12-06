@@ -1790,5 +1790,6 @@
     "lowFreq": "Lempos \"%{0}\" frequency is too low to identify representative word sketches.",
     "noWsketchFor": "No word sketches for lempos \"%{0}\".",
     "couldNotLoadTranslations403": "Translations could not be loaded. You do not have access to the aligned corpus (%{0}).",
-    "wsCannotAnalyze": "Word Sketch cannot analyse this word"
+    "wsCannotAnalyze": "Word Sketch cannot analyse this word",
+    "seeMore": "see more"
 }

@@ -1,6 +1,4 @@
 <text-type-analysis-result-table class="text-type-analysis-result-table">
-    <div ref="printChart"
-            class="printChart"></div>
     <span class="formBlock card-panel inline-block vertical-top">
         <span class="listWrapper">
             <ui-list label-id="textTypeSelect"
@@ -108,9 +106,10 @@
                     <i class="ske-icons skeico_{format}"></i>
                     {format.toUpperCase()}
                 </a>
-                <a class="btn btn-flat ml-4 whte-text"
-                        onclick={onDownloadChartClick}
-                        download="chart.png">
+                <a  ref="downloadChart"
+                        class="btn btn-flat ml-4 whte-text"
+                        href=""
+                        download="text_type_analysis.png">
                     <i class="material-icons">donut_large</i>
                     {_("chart")}
                 </a>
@@ -353,25 +352,6 @@
         }
         this.setColMeta()
 
-        onDownloadChartClick(){
-            let win = window.open()
-            let chart = this.drawChart(this.refs.printChart, {width: 1200, height:600})
-            let src = chart.getImageURI()
-            let fileName = this.title.replace(" - ", "_").replace(/\W/g,'_') + ".png"
-            let title = this.title + " | Sketch Engine"
-            setTimeout(function(){
-                let btnStyle = ' style="line-height: 31px;height: 30px;padding: 0 12px;color: #FFF;text-decoration: none;text-align: center;letter-spacing: .5px;transition: background-color .2s ease-out;cursor: pointer;font-size: 14px;outline: 0;border: none;border-radius: 2px;display: inline-block;text-transform: uppercase;vertical-align: middle;-webkit-tap-highlight-color: transparent;margin:0 10px;font-family:sans-serif"'
-                let content = '<img src="' + src  + '" style="border:0; display: block; margin: auto;" allowfullscreen loading="lazy">'
-                        + '<div style="text-align:center;">'
-                        + '<a href="' + src.replace(/^data:image\/[^;]+/, 'data:application/octet-stream')  + '" download="' + fileName + '" ' + btnStyle + '>download</a>'
-                        + '<a class="background-color-blue-800" onclick="window.printChart()" ' + btnStyle + '>print</a>'
-                        + '</div>'
-                        + '<script>window.printChart = function(){window.print()}</scr' + 'ipt>' //split script tag - otherwise riot compiler fails
-                win.document.write(content)
-                win.document.title = title
-            }, 100)
-        }
-
         drawChart(node, chartOptions) {
             let attr = this.data.wlsort
             node = node || this.refs.chart
@@ -405,7 +385,7 @@
             let options = Object.assign({
                 title: this.title,
                 pieHole: 0.4,
-                backgroundColor: "transparent",
+                backgroundColor: "#fff",
                 slices: slices,
                 sliceVisibilityThreshold: 0,
                 chartArea:{
@@ -417,6 +397,8 @@
 
             let chart = new google.visualization.PieChart(node)
             chart.draw(data, options)
+
+            this.refs.downloadChart.href = chart.getImageURI()
             return chart
         }
 

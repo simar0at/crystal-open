@@ -67,6 +67,8 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
             filterInclKwic: true,
             pnfilter: "p",
             detailShowAll: false,
+            hasAttributes: false,
+            hasContextAttributes: false,
             // frequency
             f_tab: "basic",
             f_items: [],
@@ -210,16 +212,9 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
             this.data.breadcrumbsDesc[0].size = lastFilterOp.size
             this.data.breadcrumbsDesc[0].rel = lastFilterOp.rel
         }
-        this.data.items.forEach(item => {
-            item.ref = item.Tbl_refs.join(" ● ")
-            item.Align.length && item.Align.forEach((al, idx) => {
-                if(this.isAlignedRtl(idx)){
-                    let tmp = al.Left
-                    al.Left = al.Right
-                    al.Right = tmp
-                }
-            }, this)
-        })
+        this.data.hasAttributes = this.data.attrs.split(",").length > 1
+        this.data.hasContextAttributes = this.data.hasAttributes && this.data.attr_allpos == "all"
+        this._addComputedData(this.data.items)
     }
 
     reloadActualResults(params){
@@ -837,6 +832,52 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         this._setResultScreen(query.results_screen || "concordance")
     }
 
+
+    _addComputedData(items){
+        items.forEach(item => {
+            item.ref = item.Tbl_refs.join(" ● ")
+            item.Align.length && item.Align.forEach((al, idx) => {
+                if(this.isAlignedRtl(idx)){
+                    let tmp = al.Left
+                    al.Left = al.Right
+                    al.Right = tmp
+                }
+            }, this)
+        })
+        if(!this.data.hasContextAttributes){
+            items.forEach(item => {
+                item.Left = this._getContextReducedItems(item.Left)
+                item.Kwic = this._getContextReducedItems(item.Kwic)
+                item.Right = this._getContextReducedItems(item.Right)
+                item.Align.forEach(aligned => {
+                    aligned.Left = this._getContextReducedItems(aligned.Left)
+                    aligned.Kwic = this._getContextReducedItems(aligned.Kwic)
+                    aligned.Right = this._getContextReducedItems(aligned.Right)
+                })
+            }, this)
+        }
+    }
+
+    _getContextReducedItems(items){
+        // combine items into groups - [{str:"have"}, {str:"some"}, {str:"time"}, {strc:"<s>"}, {str:"How"}] ->[{str:"have some time"}, {strc:"<s>"}, {str:"How"}]
+        return items.reduce((arr, token) => {
+            if(!arr.length){
+                arr.push(token)
+            } else{
+                let lastToken = arr[arr.length - 1]
+                if(!token.strc && !lastToken.strc && token.coll === lastToken.coll && token.color === lastToken.color){
+                    arr[arr.length-1].str += " " + token.str
+                } else {
+                    if(token.str && lastToken.str){
+                        token.str = " " + token.str
+                    }
+                    arr.push(token)
+                }
+            }
+            return arr
+        }, [])
+    }
+
     _getQueryObject(dataIn){ // overriden
         let data = dataIn || this.data
         let queryObject = super._getQueryObject(data)
@@ -950,9 +991,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
             data: request.data,
             xhrParams: request.xhrParams,
             done: function(thousand, payload){
-                payload.Lines.forEach(item => {
-                    item.ref = item.Refs.join(" ● ")
-                })
+                this._addComputedData(payload.Lines)
                 this.preloadedData[thousand].data = payload.Lines
             }.bind(this, thousand)
         })

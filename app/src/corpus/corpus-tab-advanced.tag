@@ -2,60 +2,47 @@
     <preloader-spinner if={!corpusListLoaded}> </preloader-spinner>
     <div class="tab-content card-content" if={corpusListLoaded}>
         <div class="controlBar">
-            <ui-input
-                    class="fuzzy-input"
-                    placeholder={_("cp.filterByName")}
-                    inline={true}
-                    riot-value={data.query}
-                    white=1
-                    size=12
-                    ref="filter"
-                    floating-dropdown={true}
-                    on-input={onQueryChangeDebounced}
-                    suffix-icon={data.query !== "" ? "close" : ""}
-                    on-suffix-icon-click={onSuffixIconClick}>
-            </ui-input>
-            <ui-switch
-                    if={data.cat != 'parallel' && !window.config.NO_SKE}
-                    class="hide-on-med-and-down tighter inline-block sketches"
-                    label-id="cp.hasSketches"
-                    name="sketches"
-                    disabled={!visibleCorpora.length || !someHasSketches}
-                    on-change={onOnlySketchesChange}
-                    riot-value={data.sketches == "1" ? true : false}>
-            </ui-switch>
-            <div class="chip catchip" if={data.cat != 'all'}>
-                {_("cp." + (data.cat || "all"))}
-                <i class="material-icons" onclick={onRemoveSelCat}>close</i>
+            <div class="fuzzy-input">
+                <ui-input
+                        class="fuzzy-input"
+                        placeholder={_("cp.filterByName")}
+                        inline={true}
+                        riot-value={data.query}
+                        size=12
+                        ref="filter"
+                        floating-dropdown={true}
+                        on-input={onQueryChangeDebounced}
+                        suffix-icon={data.query !== "" ? "close" : "search"}
+                        on-suffix-icon-click={onSuffixIconClick}>
+                </ui-input>
+                <div style="font-size: 0.8em; color: grey;opacity: 0.8;" class="hide-on-small-only">
+                    <span>
+                        <b>{visibleCorpora.length}</b>
+                        {_("cp.corpora")}
+                    </span>
+                    <span if={!data.lang}>
+                        <b>{Object.keys(presentLangs).length}</b> {_("cp.languages")}
+                    </span>
+                </div>
             </div>
-            <div class="chip langchip" if={data.lang}>
-                <b>{langMap[data.lang]}</b>
-                <b if={data.lang2}>{langMap[data.lang2]}</b>
-                <i if={langMap[data.lang]}
-                        class="material-icons"
-                        onclick={onRemoveSelLang}>close</i>
+            <div>
+                <ui-filtering-list
+                        options={langList}
+                        floating-dropdown={true}
+                        value-in-search={true}
+                        riot-value={data.lang}
+                        label={data.cat == 'parallel' ? "primary" : ""}
+                        size={12}
+                        inline={true}
+                        autocomplete={false}
+                        open-on-focus=1
+                        placeholder={data.cat == "parallel" ? "cp.filterByL1" : "cp.filterByLanguage"}
+                        on-change={onLangChange}
+                        suffix-icon={langMap[data.lang] ? "close" : ""}
+                        on-suffix-icon-click={langMap[data.lang] ? onRemoveSelLang : null}>
+                </ui-filtering-list>
             </div>
-            <a if={!window.config.NO_SKE && !window.config.NO_CA}
-                    class='dropdown-button btn hide-on-xlarge'
-                    id="catDropdown-button"
-                    href='javascript: void(0)'
-                    data-target='catDropdown'>{_("cp.categories")}:
-                    {_("cp." + data.cat)}</a>
-            <ui-filtering-list
-                    options={langList}
-                    floating-dropdown={true}
-                    value-in-search={true}
-                    riot-value={data.lang}
-                    label={data.cat == 'parallel' ? "primary" : ""}
-                    white=1
-                    size={12}
-                    class="hide-on-large-and-down plainField"
-                    inline={true}
-                    autocomplete={false}
-                    open-on-focus=1
-                    placeholder={data.cat == "parallel" ? "cp.filterByL1" : "cp.filterByLanguage"}
-                    on-change={onLangChange}>
-            </ui-filtering-list>
+
             <ui-filtering-list
                     if={data.cat == 'parallel'}
                     label="aligned"
@@ -64,32 +51,63 @@
                     open-on-focus={true}
                     options={langList}
                     riot-value={data.lang2}
-                    white=1
                     size={12}
-                    class="selectL hide-on-large-and-down plainField"
+                    class="selectL"
                     inline={true}
                     autocomplete={false}
                     placeholder="cp.filterByL2"
                     on-change={onLang2Change}>
             </ui-filtering-list>
-            <a href="#ca-create" if={window.permissions["ca-create"]}
-                    id="btnAdvCreateCorpus"
-                    class="btn btn-primary tooltipped right"
-                    data-tooltip={_("ca.newCorpusDesc")}>
-                {_("newCorpus")}
-            </a>
-            <a href="#compare-corpora" if={window.permissions["compare-corpora"]}
-                    class="btn tooltipped right btn-flat"
-                    data-tooltip={_("compareCorporaDesc")}>
-                {_("compareCorpora")}
-            </a>
-            <div style="font-size: 0.8em; color: grey;opacity: 0.8; position: relative; top: -13px;" class="hide-on-small-only">
-                <span>
-                    <b>{visibleCorpora.length}</b>
-                    {_("cp.corpora")}
-                </span>
-                <span if={!data.lang}>
-                    <b>{Object.keys(presentLangs).length}</b> {_("cp.languages")}
+            <ui-switch
+                    if={data.cat != 'parallel' && !window.config.NO_SKE}
+                    class="tighter inline-block sketches"
+                    label-id="cp.hasSketches"
+                    name="sketches"
+                    disabled={!visibleCorpora.length || !someHasSketches}
+                    on-change={onOnlySketchesChange}
+                    riot-value={data.sketches == "1" ? true : false}>
+            </ui-switch>
+
+            <div class="controlBarRight">
+                <a if={!window.config.NO_SKE && !window.config.NO_CA}
+                        class='dropdown-button btn hide-on-xlarge btnCat'
+                        id="catDropdown-button"
+                        href='javascript: void(0)'
+                        data-target='catDropdown'>{_("cp.categories")}:
+                        {_("cp." + data.cat)}</a>
+                <span class="corpusBtns">
+                    <button if={window.permissions["compare-corpora"] || window.permissions["ca-create"]}
+                            id="tabAdvDropdown"
+                            class="dropdown-trigger btn btn-floating btn-flat hide-on-large-only"
+                            data-target='tabAdvDropdownMenu'>
+                        <i class="material-icons">
+                            more_horiz
+                        </i>
+                    </button>
+                    <ul id="tabAdvDropdownMenu"
+                            class="dropdown-content">
+                        <li if={window.permissions["compare-corpora"]}>
+                            <a href="#compare-corpora">
+                                {_("compareCorpora")}
+                            </a>
+                        </li>
+                        <li if={window.permissions["ca-create"]}>
+                            <a href="#ca-create">
+                                {_("newCorpus")}
+                            </a>
+                        </li>
+                    </ul>
+                    <a href="#compare-corpora" if={window.permissions["compare-corpora"]}
+                            class="btn tooltipped btn-flat btnCompareCorpora hide-on-med-and-down"
+                            data-tooltip={_("compareCorporaDesc")}>
+                        {_("compareCorpora")}
+                    </a>
+                    <a href="#ca-create" if={window.permissions["ca-create"]}
+                            id="btnAdvCreateCorpus"
+                            class="btn btn-primary tooltipped btnNewCorpus hide-on-med-and-down"
+                            data-tooltip={_("ca.newCorpusDesc")}>
+                        {_("newCorpus")}
+                    </a>
                 </span>
             </div>
         </div>
@@ -306,6 +324,7 @@
             evt.preventUpdate = true
             this.data.query = ""
             this.filterCorpora()
+            $(".fuzzy-input input", this.root).focus()
         }
 
         onOnlySketchesChange(value, name) {
@@ -324,15 +343,13 @@
             this.filterCorpora()
         }
 
-        onRemoveSelCat() {
-            this.data.cat = 'all'
-            this.filterCorpora()
-        }
-
-        onRemoveSelLang() {
+        onRemoveSelLang(evt) {
+            evt.stopPropagation()
+            evt.preventDefault()
             this.data.lang = ''
             this.data.lang2 = ''
             this.filterCorpora()
+            $(".fuzzy-input input", this.root).focus()
         }
 
         onLangChange(value, name, label) {
@@ -547,8 +564,8 @@
         initCatDropdown(){
             let node = $('#catDropdown-button')
             node && node.dropdown({
-                constrainWidth: true,
-                coverTrigger: true,
+                constrainWidth: false,
+                coverTrigger: false,
                 alignment: 'right'
             })
         }
@@ -655,6 +672,11 @@
             this.data.query !== "" && this.highlightOccurrences()
             $(window).on("scroll", this.onScrollDebounced)
             AppStore.on('corpusListChanged', this.onCorpusListChanged)
+            $(".fuzzy-input input", this.root).focus()
+            $("#tabAdvDropdown").dropdown({
+                constrainWidth: false,
+                coverTrigger: false
+            })
         })
 
         this.on('unmount', () => {

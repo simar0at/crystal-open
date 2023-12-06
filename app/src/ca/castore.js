@@ -725,6 +725,11 @@ class CAStoreClass extends StoreMixin {
                                     title: _("allSpaceUsed"),
                                     tag: "ca-space-dialog"
                                 })
+                            } else if(error == "DAILY_TAGGING_EXCEEDED"){
+                                Dispatcher.trigger("openDialog", {
+                                    tag: "external-text",
+                                    opts: {text: "daily_tagging_exceeded.html"}
+                                })
                             }
                             this.data.filesToUpload = []
                             this.data.totalFiles = 0

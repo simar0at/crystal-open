@@ -1,5 +1,5 @@
-<parconcordance-result class={hasAttributes: hasAttributes,
-            hasContextAttributes: hasContextAttributes,
+<parconcordance-result class={hasAttributes: data.hasAttributes,
+            hasContextAttributes: data.hasContextAttributes,
             viewSen: data.viewmode == "sen",
             viewKwic: data.viewmode == "kwic"}>
     <div class="table material-table highlight result-table" if={items.length} onmouseover={onMouseOver}>
@@ -198,23 +198,7 @@
             this.lineNumbersUp = this.data.linenumbers && this.refsUp
             this.corpusDirClass = this.corpus.righttoleft ? "rtl" : "ltr"
             this.alignedClasses = []
-            this.hasAttributes = this.data.attrs.split(",").length > 1
-            this.hasContextAttributes =  this.hasAttributes && this.data.attr_allpos == "all"
-            if(this.hasContextAttributes){
-                this.items = this.data.items
-            } else{
-                this.items = copy(this.data.items)
-                this.items.forEach(item => {
-                    item.Left = this.getContextReducedItems(item.Left)
-                    item.Kwic = this.getContextReducedItems(item.Kwic)
-                    item.Right = this.getContextReducedItems(item.Right)
-                    item.Align.forEach(aligned => {
-                        aligned.Left = this.getContextReducedItems(aligned.Left)
-                        aligned.Kwic = this.getContextReducedItems(aligned.Kwic)
-                        aligned.Right = this.getContextReducedItems(aligned.Right)
-                    })
-                }, this)
-            }
+            this.items = this.data.items
             this.data.formparts.forEach((part, idx) => {
                 let corpus = AppStore.getCorpusByCorpname(this.getCorpusPrefix(this.corpus.corpname) + part.corpname)
                 let classes = [this.store.isAlignedRtl(idx) ? "rtl": "ltr"]

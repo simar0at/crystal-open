@@ -59,6 +59,7 @@
 
         onTabChange(tabId){
             CorpusStore.changeTab(tabId)
+            $(".fuzzy-input:visible input").focus()
         }
 
         updateIntro() {

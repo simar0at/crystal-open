@@ -127,7 +127,6 @@
             let lineIdx = this.items.findIndex( i => {
                 return i.toknum == this.toknum
             })
-
             this.line = this.items[lineIdx]
             this.prevLine = this.items[lineIdx -1]
             this.nextLine = this.items[lineIdx +1]

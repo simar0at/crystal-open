@@ -273,9 +273,8 @@
         onSubmit(){
             let queryselector = this.formValue.queryselector
             let valueField = queryselector == "cql" ? "cql" : "keyword"
-            let direction = this.corpus.righttoleft ? - 1 : 1
-            let filfpos = this.options.filfpos == "kwic" ? "kwic" : this.options.filfpos * direction
-            let filtpos = this.options.filtpos == "kwic" ? "kwic" : this.options.filtpos * direction
+            let filfpos = this.options.filfpos == "kwic" ? "kwic" : this.options.filfpos
+            let filtpos = this.options.filtpos == "kwic" ? "kwic" : this.options.filtpos
             let filfposIsSentence = this.options.filter_range == 1 || (this.options.filter_range == 2 && this.options.range_from_type == "sentence")
             let filtposIsSentence = this.options.filter_range == 1 || (this.options.filter_range == 2 && this.options.range_to_type == "sentence")
             let filfposDesc = filfpos
@@ -293,18 +292,18 @@
             filter[queryselector] = this.formValue[valueField]
             if(filfposIsSentence){
                 if(filfpos == "kwic" || filfpos == 0){
-                    filter.filfpos = -1 * direction
+                    filter.filfpos = -1
                 } else {
-                    filter.filfpos = filfpos - 1 * direction * -Math.sign(filfpos)
+                    filter.filfpos = filfpos - 1 * -Math.sign(filfpos)
                 }
                 filfposDesc += ":s"
                 filter.filfpos += ":s"
             }
             if(filtposIsSentence){
                 if(filtpos == "kwic" || filtpos == 0){
-                    filter.filtpos = 1 * direction
+                    filter.filtpos = 1
                 } else {
-                    filter.filtpos = filtpos + 1 * direction * Math.sign(filtpos)
+                    filter.filtpos = filtpos + 1 * Math.sign(filtpos)
                 }
                 filtposDesc += ":s"
                 filter.filtpos += ":s"

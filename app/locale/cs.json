@@ -1789,5 +1789,7 @@
     "lowFreq": "Frekvence lemposu \"%{0}\" je příliš nízká na to, aby bylo možné identifikovat reprezentativní word sketch.",
     "hp.showKeyboardShortcuts": "Zobrazit tuto nápovědu (**K**lávesové zkratky)",
     "noWsketchFor": "Žádné word sketch pro lempos \"%{0}\".",
-    "couldNotLoadTranslations403": "Překlady se nepodařilo načíst. Nemáte přístup k zarovnanému korpusu (%{0})."
+    "couldNotLoadTranslations403": "Překlady se nepodařilo načíst. Nemáte přístup k zarovnanému korpusu (%{0}).",
+    "wsCannotAnalyze": "Toto slovo nemůže být analyzováno přes funkci word sketch",
+    "seeMore": "zjistit více"
 }

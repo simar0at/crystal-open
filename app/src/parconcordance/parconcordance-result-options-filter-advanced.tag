@@ -92,7 +92,6 @@
         }
 
         onFormReset(){
-            debugger
             this.store.resetGivenOptions(this.options)
             this.update()
         }

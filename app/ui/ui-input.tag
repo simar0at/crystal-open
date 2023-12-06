@@ -93,8 +93,11 @@
 
         onSuffixIconClick(evt) {
             evt.preventUpdate = true
-            $(this.refs.input).focus()
-            isFun(this.opts.onSuffixIconClick) && this.opts.onSuffixIconClick(evt, this)
+            if(isFun(this.opts.onSuffixIconClick)){
+                this.opts.onSuffixIconClick(evt, this)
+            } else {
+                $(this.refs.input).focus()
+            }
         }
 
         onPrefixIconClick(evt) {

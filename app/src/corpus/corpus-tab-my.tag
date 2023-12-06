@@ -6,12 +6,11 @@
                     class="fuzzy-input"
                     placeholder={_("cp.filterByName")}
                     inline={true}
-                    white=1
                     size=15
                     ref="filter"
                     floating-dropdown={true}
                     on-input={onQueryChangeDebounced}
-                    suffix-icon={searchQuery !== "" ? "close" : ""}
+                    suffix-icon={searchQuery !== "" ? "close" : "search"}
                     on-suffix-icon-click={onSuffixIconClick}>
             </ui-input>
             <span class="spaceLimit">
@@ -140,6 +139,7 @@
             evt.preventUpdate = true
             this.searchQuery = ""
             this.filterCorpora()
+            $(".fuzzy-input input", this.root).focus()
         }
 
         sortCorpora(){
@@ -241,6 +241,7 @@
         this.on('mount', () => {
             $(window).on("scroll", this.onScrollDebounced)
             AppStore.on('corpusListChanged', this.onCorpusListLoaded)
+            $(".fuzzy-input input", this.root).focus()
         })
 
         this.on('unmount', () => {

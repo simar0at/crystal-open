@@ -79,13 +79,8 @@
     .resultBlock{
         flex: 100%
     }
-
-    .printChart{
-        position: absolute;
-        left: -99999px;
-        top: -99999px;
-        width: 1200px;
-        height: 600px;
+    .chart svg rect{
+        fill: transparent!important
     }
     .google-visualization-tooltip{
         pointer-events: none;

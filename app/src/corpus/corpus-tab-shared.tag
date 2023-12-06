@@ -1,26 +1,23 @@
 <corpus-tab-shared class="corpus-tab-shared">
-    <preloader-spinner if={!corpusListLoaded}></preloader-spinner>
+    <preloader-spinner if={!corpusListLoaded} center=1></preloader-spinner>
     <div class="tab-content card-content">
         <div class="controlBar">
-            <div class="col s12">
-                <ui-input
-                        class="fuzzy-input"
-                        placeholder={_("cp.filterByName")}
-                        inline={true}
-                        white=1
-                        size=15
-                        ref="filter"
-                        floating-dropdown={true}
-                        on-input={onQueryChangeDebounced}
-                        suffix-icon={searchQuery !== "" ? "close" : ""}
-                        on-suffix-icon-click={onSuffixIconClick}>
-                </ui-input>
-                <a href="#ca-create" if={window.permissions["ca-create"]}
-                        class="btn btn-primary tooltipped right"
-                        data-tooltip={_("ca.newCorpusDesc")}>
-                    {_("newCorpus")}
-                </a>
-            </div>
+            <ui-input
+                    class="fuzzy-input"
+                    placeholder={_("cp.filterByName")}
+                    inline={true}
+                    size=15
+                    ref="filter"
+                    floating-dropdown={true}
+                    on-input={onQueryChangeDebounced}
+                suffix-icon={searchQuery !== "" ? "close" : "search"}
+                    on-suffix-icon-click={onSuffixIconClick}>
+            </ui-input>
+            <a href="#ca-create" if={window.permissions["ca-create"]}
+                    class="btn btn-primary tooltipped btnNewCorpus"
+                    data-tooltip={_("ca.newCorpusDesc")}>
+                {_("newCorpus")}
+            </a>
         </div>
         <table if={corpusListLoaded} class="table material-table highlight">
             <thead>
@@ -124,11 +121,13 @@
             orderBy: 'name'
         }
         this.showLimit = 60
+        this.searchQuery = ""
 
         onSuffixIconClick(evt) {
             evt.preventUpdate = true
             this.searchQuery = ""
             this.filterCorpora()
+            $(".fuzzy-input input", this.root).focus()
         }
 
         sortCorpora(){
@@ -226,6 +225,7 @@
         this.on('mount', () => {
             $(window).on("scroll", this.onScrollDebounced)
             AppStore.on('corpusListChanged', this.onCorpusListLoaded)
+            $(".fuzzy-input input", this.root).focus()
         })
 
         this.on('unmount', () => {
