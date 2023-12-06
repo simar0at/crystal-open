@@ -1,0 +1,16 @@
+.page-ca-create-upload-nonaligned{
+   .contentCard{
+      max-width: 1100px;
+      margin: 50px auto 20px;
+   }
+   .corporaRow{
+      min-height: 400px;
+      position: relative
+   }
+   .uploadedFiles th:last-child{
+      width: 1px;
+   }
+   .progress{
+      min-width: 24px;
+   }
+}

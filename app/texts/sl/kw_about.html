@@ -1,0 +1,72 @@
+<div>Luščenje ključnih besed in izrazov se uporablja za:</div>
+<ul class="browser-default">
+    <li>luščenje terminologije za uporabo pri prevajanju in tolmačenju</li>
+    <li>luščenje eno- in večbesednih enot, ki so značilne za korpus/dokument/besedilo ali opredeljujejo njegovo vsebino ali temo</li>
+    <li>primerjavo dveh korpusov/dokumentov/besedil z ugotavljanjem, kaj je edinstveno v prvem korpusu v primerjavi z drugim</li>
+</ul>
+<div>Rezultat je razdeljen na <a href="https://www.sketchengine.eu/my_keywords/keyword/" rel="noopener" target="_blank">ključne besede</a> (enobesedne enote) in <a href="https://www.sketchengine.eu/my_keywords/term/" rel="noopener" target="_blank">izraze</a> (večbesedne enote) in so prikazane skupaj s povezavami do stavkov v fokusnem in referenčnem korpusu.
+</div>
+<br>
+<div>Ključne besede in izrazi, pridobljeni iz korpusa besedil o digitalni fotografiji.</div>
+<div>
+    <br>
+    <img src="https://www.sketchengine.eu/wp-content/uploads/keywords-1.png" loading="lazy">
+    <br><br>
+</div>
+
+<ul class="collapsible">
+    <li>
+        <div class="collapsible-header">Ključne besede in izrazi</div>
+        <div class="collapsible-body">
+            <div>
+                <b>Ključne besede</b> <br>Ključne besede so posamezne besede (%[pojavnica|pojavnice]%), ki se pogosteje pojavljajo v <a href="https://www.sketchengine.eu/my_keywords/focus-corpus/" rel="noopener" target="_blank">fokusnem korpusu</a> kot v <a href="https://www.sketchengine.eu/my_keywords/reference-corpus-2/" rel="noopener" target="_blank">referenčnem korpusu</a>. Vsaka %[pojavnica]% se lahko šteje za ključno besedo, če se v fokusnem korpusu uporablja pogosteje kot v referenčnem korpusu. V resnici bo rezultat vključeval predvsem samostalnike in pridevnike, saj je pogostost drugih besednih vrst v vseh besedilih podobna.
+            </div>
+            <br>
+            <div>
+                <b>Izrazi</b> <br>Izrazi so večbesedni izrazi, ki se v fokusnem korpusu pojavljajo pogosteje kot v referenčnem korpusu in poleg tega ustrezajo tipični obliki terminologije v jeziku. Oblika je opredeljena v <a href="https://www.sketchengine.eu/my_keywords/term-grammar/" rel="noopener" target="_blank">slovnici terminov</a>.
+            </div>
+            <br>
+            <div>Rezultat luščenja izrazov se prikaže kot %[lema|leme]%. <a href="https://www.sketchengine.eu/my_keywords/gender-lemma/" rel="noopener" target="_blank">Ospoljene leme</a> se uporabljajo v jezikih, kjer se mora besedna oblika pridevnika ujemati s spolom samostalnika.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Fokusni korpus in referenčni korpus</div>
+        <div class="collapsible-body">
+            <div>Da bi orodje delovalo, morata obstajati vsaj 2 korpusa (ali 2 podkorpusa) v jeziku. Korpus, v katerem so prepoznane ključne besede in izrazi, se imenuje fokusni korpus. Korpus, ki se uporablja za primerjavo, se imenuje referenčni korpus.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Osnovna matematika</div>
+        <div class="collapsible-body">
+            <div>S preprosto matematično metodo se določi <a href="https://www.sketchengine.eu/documentation/simple-maths/" rel="noopener" target="_blank">ključnost</a> ključnih besed in izrazov. Deluje z normaliziranimi (relativnimi, <a href="https://www.sketchengine.eu/my_keywords/freqmill/" rel="noopener" target="_blank">na milijon</a>) frekvencami v fokusnem in referenčnem korpusu.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Luščenje terminologije</div>
+        <div class="collapsible-body">
+            <div>Luščenje terminologije zajema besede, ki so značilne za temo dokumenta ali korpusa, tj. v korpusu se pojavljajo pogosteje kot v splošnem jeziku. Za predstavitev splošnega jezika se uporabi velik nespecializiran korpus v jeziku. <br> Privzete nastavitve običajno zadoščajo, da luščenje zagotovi visokokakovostne rezultate.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Luščenje edinstvenih značilnosti korpusa</div>
+        <div class="collapsible-body">
+            <div>Ta uporaba je skoraj enaka luščenju terminologije. Razlika je v tem, da uporabnika morda ne zanima le specializirana leksika, ki je v splošnem jeziku redka, temveč je včasih zanimivo pogledati, katere srednje- ali celo visokofrekvenčne besede se uporabljajo pogosteje kot v splošnem jeziku. Z drsnikom na zavihku za napredne se lahko pri luščenju osredotočite na različne dele frekvenčnega razpona.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Primerjava korpusov</div>
+        <div class="collapsible-body">
+            <div>Ročna primerjava dveh besedil ni izvedljiva, če sta besedili zelo dolgi. Tudi pri kratkih besedilih lahko statistična primerjava pokaže pojave, ki bi pri ročni primerjavi ostali neopaženi. <br>Ključne besede in izrazi se lahko uporabijo za primerjavo dveh korpusov ali podkorpusov. Pri primerjavi podkorpusov sta lahko oba v istem ali različnih korpusih. <br>Rezultat bo pokazal, kaj je značilno za fokusni (pod)korpus v primerjavi z referenčnim (pod)korpusom.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Zahteve za delovanje ključnih besed in izrazov</div>
+        <div class="collapsible-body">
+            <div>Ključne besede bodo izluščene iz vsakega tokeniziranega korpusa. Izraze je mogoče izluščiti le iz korpusov, ki so označeni in lematizirani v jezikih, za katere obstaja slovnica terminov.</div>
+        </div>
+    </li>
+</ul>

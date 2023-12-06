@@ -1,0 +1,44 @@
+<div>Orodje n-gram pripravi%[frekvenčne]% sezname zaporedij %[pojavnica|pojavnice]%. N-grami se imenujejo tudi večbesedni izrazi ali MWE. Uporabnik ima na voljo več možnosti filtriranja, vključno z %[regex|regularnimi izrazi]%, s katerimi podrobno določi, za katere n-grame naj se ustvari njihova frekvenca. N-grami se lahko generirajo na podlagi katerega koli %[atributa]%, pri čemer se najpogosteje uporabljata %[Besedna oblika|beseda]% in %[lema]%.
+</div>
+<div class="center">
+    <br>
+    <img src="https://www.sketchengine.eu/wp-content/uploads/Ngrams1.png" loading="lazy">
+    <br><br>
+</div>
+<ul class="collapsible">
+    <li>
+        <div class="collapsible-header">Kako delujejo n-grami?</div>
+        <div class="collapsible-body">
+            <div>N-grami so sestavljeni iz %[pojavnica|pojavnice]%, zato je <em>don't like</em> trigram in bo prikazan kot <em>do n't like</em>. (V konkordanci bo <em>don't</em> prikazan brez presledka, ampak prav tako obravnavan kot dve pojavnici.)
+            </div>
+            <br>
+            <div>Rezultat lahko omejite z najmanjšo in največjo frekvenco. Privzeto so izključeni n-grami z nizko frekvenco. Če želite to spremeniti, uporabite zavihek za napredne nastavitve.</div>
+            <br>
+            <div>
+                %[regex|Regularni izrazi]% lahko uporabite za opredelitev kompleksnih meril za n-grame, ki naj bi bili vključeni v frekvenčni seznam. Pri uporabi regularnih izrazov se celoten n-gram obravnava kot eno neprekinjeno zaporedje znakov, vključno s presledki.
+            </div>
+            <br>
+            <div>Na voljo sta dve različici začetnega, končnega in vsebujočega filtra. Ena je namenjena filtriranju po znakih (črkah), ki se pojavljajo kjer koli znotraj n-grama, druga pa filtriranju po celotnih besedah, tj. po tem, kar se nahaja med dvema presledkoma.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Omejitev</div>
+        <div class="collapsible-body">
+            <div>Za izdelavo seznama n-gramov se uporabi le prva milijarda pojavnic iz korpusa. Če je korpus večji, se preostali del korpusa ne bo odražal v rezultatih. To je tehnična omejitev, ki je ni mogoče odpraviti. Seznam n-gramov, ustvarjen iz celotnega korpusa, se lahko izdela proti plačilu. Obrnite se na <a href="https://www.sketchengine.eu/contact-us/" rel="noopener" target="_blank">Sketch Engine</a>.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Zahteve za dobro delovanje n-gramov</div>
+        <div class="collapsible-body">
+            <div>N-grami bodo delovali s katerim koli korpusom, če je %[pojavnica|tokeniziran]%. N-grami z lemami ali oznakami bodo na voljo le za lematizirane in označene korpuse. Tokenizacija, lematizacija in označevanje se izvedejo samodejno ob prenosu datotek v Sketch Engine, če je jezik <a href="https://www.sketchengine.eu/user-guide/user-manual/corpora/by-language/" rel="noopener" target="_blank">podprt</a>.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Hitrost in velikost korpusa</div>
+        <div class="collapsible-body">
+            <div>Sketch Engine je zasnovan posebej za hitro obdelavo zelo velikih korpusov. Seznam n-gramov se generira v sekundi ali dveh. Izdelava n-gramov iz velikih korpusov z več milijardami besed lahko traja več sekund. Uporaba zelo kompleksnih regularnih izrazov lahko postopek znatno upočasni.</div>
+        </div>
+    </li>
+</ul>

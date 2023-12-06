@@ -150,6 +150,7 @@
         require("./text-type-analysis-result-table.scss")
         const {AppStore} = require("core/AppStore.js")
         const {Connection} = require("core/Connection.js")
+        const {UserDataStore} = require("core/UserDataStore.js")
 
         this.mixin("feature-child")
         this.mixin("tooltip-mixin")
@@ -158,6 +159,8 @@
         if(this.data.filter == "all"){
             this.data.filter = "containing"
         }
+        this.data.usesubcorp = UserDataStore.getCorpusData(this.corpus.corpname, "defaultSubcorpus") || this.data.usesubcorp
+
         this.labels = [5, 10, 15].map(i =>{
             return {
                 text: i,

@@ -43,7 +43,7 @@
               let id = this.refs.l2_select.value
               corpname2 = this.corpus.aligned[id]
             }
-            window.open(`${config.URL_OCT}?corpname=${corpname}&corpname2=${prefix}/${corpname2}#results/aligned`, '_blank')
+            window.open(`${config.URL_OCT}results-aligned?corpname=${corpname}&corpname2=${prefix}/${corpname2}`, '_blank')
             this.modalParent.close()
         }
 

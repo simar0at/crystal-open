@@ -257,10 +257,9 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         let request = super.getDownloadRequest(idx)
         let data = {}
         if(this.isFreq){
-            let showRelFrqAndPerc = this.f_showRelFrqAndPerc()
             let showRelTtAndRelDens = this.f_showRelTtAndRelDens()
-            data.showpoc = this.data.f_showperc && showRelFrqAndPerc
-            data.showfpm = this.data.f_showrelfrq && showRelFrqAndPerc
+            data.showpoc = this.data.f_showperc && !showRelTtAndRelDens
+            data.showfpm = this.data.f_showrelfrq && !showRelTtAndRelDens
             data.showreltt = this.data.f_showreltt && showRelTtAndRelDens
             data.showrel = this.data.f_showreldens && showRelTtAndRelDens
             data.fmaxitems = this.data.raw.wllimit || 10000000
@@ -1468,21 +1467,14 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         return texttypes !== "" ? [texttypes] : []
     }
 
-     f_showRelFrqAndPerc(){
-        let firstItem = this.data.f_items.length && this.data.f_items[0].Items[0]
-        return firstItem
-                && !isDef(firstItem.rel)
-                && !isDef(firstItem.reltt)
-                && (isDef(firstItem.poc) || isDef(firstItem.fpm))
-     }
+    f_showRelTtAndRelDens(){
+        let refs = this.refList.map(r => r.value)
+        return this.data.f_freqml.every(f => {
+            return refs.includes(f.attr)
+        }, this)
+    }
 
-     f_showRelTtAndRelDens(){
-        let firstItem = this.data.f_items.length && this.data.f_items[0].Items[0]
-        return firstItem
-                && (isDef(firstItem.rel) || isDef(firstItem.reltt))
-     }
-
-     f_sortBlock(block){
+    f_sortBlock(block){
         if(block.Items.length < 5000){
             // everything is loaded on frontend
             let isNum = typeof block.sort == "number"  // frequency attribute index - there could be more of them in the result
@@ -1496,7 +1488,7 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
         } else {
             this.f_search(block)
         }
-     }
+    }
 
     //////////// COLLOCATIONS
 

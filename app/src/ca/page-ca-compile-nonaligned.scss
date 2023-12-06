@@ -1,0 +1,24 @@
+.ca-create-compile-nonaligned{
+   min-height: 40vh;
+   position: relative;
+   .columnWrapper{
+      max-width: 800px;
+      margin: auto;
+   }
+   .leaveNote{
+      font-size: 14px;
+      color: grey;
+      margin-top: 15px;
+   }
+   .corpusRow {
+      & > .col{
+         line-height: 50px;
+      }
+      i{
+         vertical-align: text-bottom;
+      }
+   }
+   .infoIcon{
+      vertical-align: text-bottom;
+   }
+}

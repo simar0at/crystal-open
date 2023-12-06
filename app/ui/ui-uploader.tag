@@ -3,13 +3,13 @@
         <div class="input">
             <i class="material-icons icon">cloud_upload</i>
             <input type="file"
-                    id="file"
+                    id="{id}"
                     name="files[]"
                     class="file"
                     data-multiple-caption="{count} files selected"
                     multiple
                     accept={opts.accept}/>
-            <label for="file">
+            <label for="{id}">
                 <div class="text">
                     <span class="choosefile">{_("ui.chooseFile")}</span>
                     <span class="dragndrop">{_("ui.orDnD")}</span>.
@@ -18,6 +18,9 @@
                     </div>
                     <div if={opts.maxFileSize} class="maxFiles">
                         {_("uploadFilesSizeLimit", [opts.maxFileSize])}
+                    </div>
+                    <div if={opts.note} class="note">
+                        {opts.note}
                     </div>
                 </div>
             </label>
@@ -44,6 +47,7 @@
     </form>
 
     <script>
+        this.id = `file_${Math.round(Math.random() * 100000)}`
         this.allowedFileTypes = []
         this.droppedFiles = []
         this.isUploading = false

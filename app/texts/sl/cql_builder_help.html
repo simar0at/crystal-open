@@ -1,0 +1,80 @@
+Learn CQL on <a href="https://www.sketchengine.eu/documentation/corpus-querying/" target="_blank">our web</a> or <a href="https://www.youtube.com/playlist?list=PLPVgp0Xm6hWBLZzD7haCVbhC9pSfWZk1S" target="_blank">YouTube channel</a>.
+<br><br>
+
+<h5>Examples</h5>
+<table class="material-table">
+    <tr>
+        <td>
+            samostalnik na določeni razdalji od glagola
+        </td>
+        <td class="monospace">
+            [tag="S.*"] [ ]{0,3} [tag="G.*"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            samostalnik in glagol s točno eno pojavnico med njima
+        </td>
+        <td class="monospace">
+            [tag="S.*"] [ ] [tag="G.*"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            samostalnik na določeni razdalji od glagola v istem stavku
+        </td>
+        <td class="monospace">
+            [tag="S.*"] [ ]{0,3} [tag="G.*"] within <s />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            velik pes ali volk
+        </td>
+        <td class="monospace">
+            ([lc="velik"] [lc="pes"])|[lc="volk"]
+        </td>
+    </tr>
+    <tr>
+        <td>
+            velik pes ali velik volk
+        </td>
+        <td class="monospace">
+            [lc="velik"] [lc="pes|volk"]
+        </td>
+    </tr>
+</table>
+<br><br>
+
+
+<h5>Pogoste napake</h5>
+<table class="material-table">
+    <thead>
+        <tr>
+            <th>napaka</th>
+            <th>popravek</th>
+            <th>razlaga</th>
+        </tr>
+    </thead>
+
+    <tr>
+        <td class="monospace">[lemma="otroci"]</td>
+        <td class="monospace">[lemma="otrok"]</td>
+        <td>otroci ni lema</td>
+    </tr>
+    <tr>
+        <td class="monospace">[word="Živijo!"]</td>
+        <td class="monospace">[word="Živijo"] [word="\!"]</td>
+        <td>ločila so svoja pojavnica in mora biti zaščiteno s \</td>
+    </tr>
+    <tr>
+        <td class="monospace">[word="Živijo "]</td>
+        <td class="monospace">[word="Živijo"]</td>
+        <td>pojavnice ne smejo vsebovati presledkov</td>
+    </tr>
+    <tr>
+        <td class="monospace">[tag="G.*"] [] [lc="mačka"] within &lt;s&gt;</td>
+        <td class="monospace">[tag="G.*"] [] [lc="mačka"] within &lt;s/&gt;</td>
+        <td>struktura potrebuje možnost "celote", da lahko dela s funkcijama within in containg</td>
+    </tr>
+</table>

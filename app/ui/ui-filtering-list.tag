@@ -2,9 +2,11 @@
     <div class="{floatingDropdown: opts.floatingDropdown, disabled:opts.disabled}">
         <label if={opts.label || opts.labelId}
                 ref="label"
-                class="label {tooltipped: opts.tooltip}"
+                class="label">
+            <span class="label {tooltipped: opts.tooltip}"
                 data-tooltip={ui_getDataTooltip()}>
-            {getLabel(opts)}
+                {getLabel(opts)}
+            </span>
             <sup if={opts.tooltip}>?</sup>
             <lazy-dialog if={opts.helpDialog} file={opts.helpDialog}></lazy-dialog>
             <span class="selectedCount" ref="selectedCount">

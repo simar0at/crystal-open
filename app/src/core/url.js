@@ -46,9 +46,7 @@ class UrlClass {
         for(let key in query){
             value = query[key]
             urlValue = (typeof value == "boolean") ? (value * 1) : value
-            if(key){
-                str += (str ? "&" : "") + key + "=" + encodeURIComponent(urlValue)
-            }
+            str += (str ? "&" : "") + key + "=" + encodeURIComponent(urlValue)
         }
 
         return str ? ("?" + str) : ""

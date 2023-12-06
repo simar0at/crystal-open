@@ -101,7 +101,7 @@
                                 <a href="#ca-add-content" class="btn white-text">{_("addTexts")}</a>
                             </virtual>
                             <virtual if={corpus.isCompilationFailed && window.permissions["ca-compile"]}>
-                                 <h4>{_("ca.compilation_failed")}</h4>
+                                 <h4>{_("compilation_failed")}</h4>
                                 <div class="note">{_("ca.compilation_failedDesc")}</div>
                                 <br>
                                 <a href="#ca-compile" class="btn white-text btn-primary">{_("compile")}</a>
@@ -131,11 +131,51 @@
 
             <div if={!hideBanner}
                     class="banner center-align">
-                <img src="images/boot_camp.png" width="200" loading="lazy">
-                <div class="mb-3"> An online course in using Sketch Engine. Registration open!</div>
-                <a href="https://www.sketchengine.eu/bootcamp/boot-camp-online/"
-                        class="btn"
-                        target="_blank">Registration</a>
+                <div if={bannerId == 1}>
+                    <div class="bannerContainer">
+                        <img src="images/elex-logo.png" loading="lazy">
+                        <div style="min-width: 250px; max-width: 400px;">
+                            <div class="bannerHeadline">
+                                Electronic Lexicography in the 21st Century <br>
+                            </div>
+                            <div class="bannerNote">
+                                Brno, Czech Republic, 27–29 June 2023
+                            </div>
+                            <a href="https://elex.link/elex2023/"
+                                    class="btn mt-4"
+                                    target="_blank">Registration</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div if={bannerId == 2}>
+                     <div class="bannerContainer">
+                        <img src="images/lexicom-logo.png" loading="lazy" width="240" height="64">
+                        <div style="min-width: 250px; max-width: 400px;">
+                            <div class="bannerHeadline">An intensive workshop in digital lexicography and lexical&nbsp;computing<br>
+                            </div>
+                            <div class="bannerNote">
+                                Cambridge, UK, 11–15 September 2023
+                            </div>
+                            <a href="https://lexicom.courses/lexicom-2023-cambridge-uk-lexicography-workshop/"
+                                    class="btn mt-4"
+                                    target="_blank">Registration</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div if={bannerId == 3}>
+                     <div class="bannerContainer">
+                        <img src="images/boot_camp.png" width="262" height="69" loading="lazy">
+                        <div style="min-width: 250px; max-width: 400px;">
+                            <div class="bannerHeadline">An online course in using Sketch Engine. Registration open!<br>
+                            </div>
+                            <a href="https://www.sketchengine.eu/bootcamp/boot-camp-online/"
+                                    class="btn mt-4"
+                                    target="_blank">Registration</a>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!--div class="banner bigBanner center-align">
                 <a class="btn btn-floating btn-flat right" onClick={onBannerToggleClick}>
@@ -179,6 +219,7 @@
         this.isFullAccount = Auth.isFullAccount()
         this.bannerExpanded = true
         this.hideBanner = window.config.HIDE_DASHBOARD_BANNER
+        this.bannerId = Math.ceil(Math.random() * 3)
 
 
         _updateItems() {
@@ -323,10 +364,6 @@
         this.on("updated", this._updateUrl)
 
         this.on("mount", () => {
-            let query = Url.getQuery()
-            if(query.corp_info && this.corpus && this.corpus.corpname){
-                SkE.showCorpusInfo(this.corpus.corpname)
-            }
             this._updateUrl()
             AppStore.on("corpusChanged", this.update)
         })

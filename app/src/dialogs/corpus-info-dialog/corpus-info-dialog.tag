@@ -306,6 +306,13 @@
 
         this.on("mount", () => {
             this.load()
+            Url.updateQuery({corp_info: 1})
+        })
+
+        this.on("unmount", () => {
+            let query = Url.getQuery()
+            delete query.corp_info
+            Url.setQuery(query)
         })
 
         this.on("updated", () => {

@@ -26,14 +26,26 @@ let RoutingMeta = {
         "ca-create-compile": {
             labelId: "createCorpus"
         },
-        "ca-tmx-settings": {
-            labelId: "settings"
+        "ca-create-alignment": {
+            labelId: "createCorpus"
         },
-        "ca-tmx-compile": {
+        "ca-create-upload-aligned": {
+            labelId: "createCorpus"
+        },
+        "ca-create-upload-nonaligned": {
+            labelId: "createCorpus"
+        },
+        "ca-create-compile-nonaligned": {
+            labelId: "createCorpus"
+        },
+        "ca-settings-aligned": {
+            labelId: "createCorpus"
+        },
+        "ca-compile-aligned": {
             labelId: "createCorpus"
         },
         "ca-compile": {
-            labelId: "compileCorpus"
+            labelId: "createCorpus"
         },
         "ca-add-content": {
             labelId: "enlargeCorpus"

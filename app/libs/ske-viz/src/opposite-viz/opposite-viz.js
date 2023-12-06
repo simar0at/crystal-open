@@ -206,16 +206,16 @@ function OppositeViz(data, params) {
         id: `main_word-0-${ _data.mainWords[0].text }`,
         text: _data.mainWords[0].text,
         freq: _data.mainWords[0].freq,
-        color: _params.score.color[2],
-        x: _params.viz.width,
+        color: _params.score.color[0],
+        x: -(_params.viz.mainWordWidth),
         y: 0
       },
       {
         id: `main_word-1-${ _data.mainWords[1].text }`,
         text: _data.mainWords[1].text,
         freq: _data.mainWords[1].freq,
-        color: _params.score.color[0],
-        x: -(_params.viz.mainWordWidth),
+        color: _params.score.color[2],
+        x: _params.viz.width,
         y: 0
       }
     ];

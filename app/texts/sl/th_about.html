@@ -1,0 +1,55 @@
+<div class="aboutLeftCol">
+    <p>Tezaver v programu Sketch Engine je samodejno ustvarjen seznam sopomenk ali besed, ki spadajo v isto kategorijo (semantično polje). Seznam je sestavljen na podlagi sobesedila, v katerem se besede pojavljajo v izbranem korpusu. V večini korpusov so podprti samo samostalniki, pridevniki, glagoli in prislovi.</p>
+</div>
+<div class="aboutRightCol">
+    <iframe width="400" height="225" src="https://www.youtube.com/embed/kLsNUdTrTLk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+</div>
+
+<br>
+<ul class="clearfix collapsible">
+    <li>
+        <div class="collapsible-header">Zakaj je tezaver poseben?</div>
+        <div class="collapsible-body">
+            <div>Ker ni potrebno ročno delo, se lahko seznam sopomenk ustvari za katerokoli besedo v jeziku, če je v korpusu zadostno število pojavitev. Zato je mogoče ustvariti sezname sopomenk tudi za redke besede, ki ne bi bile vključene v tradicionalne tezavre.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Kako tezaver prepozna sopomenke?</div>
+        <div class="collapsible-body">
+            <div>Sopomenke prepozna samodejno na podlagi sobesedila, v katerem se pojavljajo. To temelji na teoriji distribucijske semantike, ki na kratko pravi, da so si besede, ki se pojavljajo v istem sobesedilu, pomensko podobne. V programu Sketch Engine to pomeni, da imajo besede, ki imajo podobne <a href="https://www.sketchengine.eu/my_keywords/collocation/" target="_blank">kolokacije</a>, tudi podoben pomen. Besedna skica je ključnega pomena pri določanju podobnosti. Za določitev sopomenk iskane besede orodje primerja besedne skice vseh besed z isto besedno vrsto in navede tiste, ki imajo največji delež %[kolokatov]%. Ocena, ki je podana za vsako sopomenko, kaže odstotek skupnih kolokacij.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Kakovost tezavra</div>
+        <div class="collapsible-body">
+            <div>Kakovost tezavra je močno odvisna od bogatih besednih skic, ki vsebujejo veliko kolokacij, kar je posledično odvisno od visoke %[frekvence] % iskane besede in visoke frekvence potencialnih sopomenk. To pomeni, da je potreben zelo velik korpus. Potrebujemo vsaj približno 100.000 besed, da bi dobili uporabne rezultate za visokofrekvenčne besede. Za redke besede pa je potreben veliko večji korpus, da se zagotovi zadostna pogostost. Priporočamo uporabo naših korpusov z več milijardami besed.</div>
+            <br>
+            <div>Seznam sopomenk lahko vsebuje besede, ki ne bi smele biti vključene. To je posledica samodejne obdelave. Sketch Engine ne more neposredno določiti podobnosti pomena, lahko le primerja kolokacije. Če imata dve besedi enake kolokacije, bosta navedeni kot sopomenki, čeprav pomen ni podoben. Zaradi takšnih občasnih netočnosti orodje ni manj uporabno. Če se želite temu izogniti, uporabite večji korpus. Tezavri za izjemno redke besede (pogostost le nekaj sto besed ali manj) bodo neizogibno dali slabe rezultate ali pa tezavra sploh ne bo mogoče izdelati.</div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Kako se izračuna in interpretira ocena?</div>
+        <div class="collapsible-body">
+            <div>Rezultat, ki ga lahko prikažete z možnostmi prikaza, je preprosto odstotek skupnih kolokacij. To ugotovimo tako, da besedno skico iskane besede primerjamo z besednimi skicami vseh drugih besed v korpusu z isto besedno vrsto. Vsako slovnično razmerje se primerja posebej. Glej <a href="https://www.sketchengine.eu/statistics-used-in-sketch-engine" target="_blank">Statistike v Sketch Enginu</a> za formulo in podrobnosti.
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="collapsible-header">Zahteve za dobro delovanje tezavra</div>
+        <div class="collapsible-body">
+            <div>
+                <b>Besedna skica</b> <br>Tezaver lahko deluje le, če v korpusu obstajajo besedne skice. Korpus mora biti označen v programu Sketch Engine ali pa mora biti uporabljen isti nabor oznak. Če je korpus označen z drugačnih naborom oznak, moramo uporabiti <a href="https://www.sketchengine.eu/my_keywords/word-sketch-grammar/" target="_blank">slovnico besednih skic</a> po meri. <br>Tezaver bo deloval tudi z univerzalnimi slovnicami besednih skic z vsemi povezanimi omejitvami. Glejte besedno skico.
+            </div>
+            <br>
+            <div>
+                <b>Oznake in leme</b> <br>Za popoln tezaver je potreben %[oznaka|označen]% in %[lema|lematiziran]% korpus. Tezavri, ustvarjeni iz neoznačenih in nelematiziranih korpusov z univerzalnimi besednimi skicami, bodo slabše kakovosti. Kljub temu so lahko zelo uporabni, zlasti pri jezikih z manj viri, kjer označevanje in lematizacija nista realna.
+            </div>
+            <br>
+            <div>
+                <b>Velikost korpusa</b> <br>Kakovost tezavra je v celoti odvisna od bogatih besednih skic. Bogato besedno skico opredeljuje veliko število kolokacij v vseh slovničnih razmerjih. Bogata besedna skica mora obstajati za iskano besedo in tudi za vse druge besede z isto besedno vrsto, da jih je mogoče primerjati. Ta zahteva je lahko izpolnjena le, če ima beseda v korpusu visoko %[frekvenco] %, najbolje tisoč ali več pojavitev. Zato je potreben zelo velik korpus, da lahko tudi pri manj pogostih besedah dobimo bogate besedne skice. Uporaba naših korpusov z več milijardami besed je priporočljiva za vsako resno delo s tezavri.
+            </div>
+        </div>
+    </li>
+</ul>
+

@@ -118,6 +118,7 @@
     <script>
         require('../concordance/query-types/query-types.tag')
         const {AppStore} = require("core/AppStore.js")
+        const {UserDataStore} = require("core/UserDataStore.js")
 
         this.mixin("feature-child")
         this.mixin("tooltip-mixin")
@@ -137,9 +138,9 @@
                 formValue: this.data.formValue,
                 formparts: this.data.formparts,
                 aligned_props: this.data.aligned_props,
-                usesubcorp: this.data.usesubcorp,
                 tts: this.data.tts
             }
+            this.options.usesubcorp = UserDataStore.getCorpusData(this.corpus.corpname, "defaultSubcorpus") || this.data.usesubcorp
         }
         this.updateAttributes()
 

@@ -4,7 +4,7 @@
         <div class="status card-panel">
             <virtual if={corpus.can_be_compiled || corpus.isCompiling || corpus.isTagging}>
                 <span class="statusText">
-                    {_("ca." + corpus.status.toLowerCase())}
+                    {_(corpus.status.toLowerCase())}
                     <a if={corpus.isCompiling}
                             id="btnCancelCompilation"
                             class="btn btn-floating btn-flat"

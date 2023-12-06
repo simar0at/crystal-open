@@ -289,6 +289,7 @@
         const {Connection} = require('core/Connection.js')
         const {AppStore} = require("core/AppStore.js")
         const {Auth} = require('core/Auth.js')
+        const {UserDataStore} = require("core/UserDataStore.js")
 
         this.mixin("feature-child")
         this.isAnonymous = Auth.isAnonymous()
@@ -319,7 +320,7 @@
 
         updateAttributes(){
             this.options = {};
-            ["usesubcorp", "k_attr", "minfreq", "maxfreq", "simple_n", "onealpha",
+            ["k_attr", "minfreq", "maxfreq", "simple_n", "onealpha",
                 "alnum", "max_items",
                 "t_notAvailable", "t_wlpat", "k_wlpat", "n_wlpat",
                 "n_ngrams_n", "n_ngrams_max_n", "icase", "exclude",
@@ -336,6 +337,7 @@
                 this.options.useterms = false
             }
             this.options.tts = copy(this.store.data.tts)
+            this.options.usesubcorp = UserDataStore.getCorpusData(this.corpus.corpname, "defaultSubcorpus") || this.data.usesubcorp
         }
         this.updateAttributes()
 

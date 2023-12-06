@@ -1,10 +1,6 @@
 <page-bgjobs class="background-jobs">
-    <div class="card" if={isLoading}>
-       <div class="card-content" style="text-align: center;">
-            <preloader-spinner></preloader-spinner>
-        </div>
-    </div>
-    <table if={!isLoading && jobs.length} class="table">
+    <preloader-spinner if={isLoading}></preloader-spinner>
+    <table if={jobs.length} class="table">
         <thead>
             <th>{_("description")}</th>
             <th>{_("bj.started")}</th>
@@ -148,6 +144,11 @@
             }
         }
 
+        reloadStart(){
+            this.isLoading = true
+            this.update()
+        }
+
         this.on("before-mount", () => {
             AppStore.data.bgJobsNotify = false // shown => hide red dot notification
             Dispatcher.trigger('BGJOBS_UPDATED') // redraw header
@@ -160,12 +161,14 @@
             if (AppStore.data.bgJobs && AppStore.data.bgJobs.length) {
                 this.reload(AppStore.data.bgJobs)
             }
+            Dispatcher.on('BGJOBS_LOADING', this.reloadStart)
             Dispatcher.on('BGJOBS_UPDATED', this.reload)
             Dispatcher.on("RESULT_PREV_PAGE", this.prevPage.bind(this))
             Dispatcher.on("RESULT_NEXT_PAGE", this.nextPage.bind(this))
         })
 
         this.on('before-unmount', () => {
+            Dispatcher.off('BGJOBS_LOADING', this.reloadStart)
             Dispatcher.off('BGJOBS_UPDATED', this.reload)
             Dispatcher.off("RESULT_PREV_PAGE", this.prevPage.bind(this))
             Dispatcher.off("RESULT_NEXT_PAGE", this.nextPage.bind(this))

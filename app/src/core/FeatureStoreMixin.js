@@ -305,7 +305,8 @@ class FeatureStoreMixin extends StoreMixin{
     resetGivenOptions(options){
         for(let key in options){
             // usesubcorp is locked, do not reset
-            if(key == "usesubcorp" && UserDataStore.getCorpusData(this.corpus.corpname, "defaultSubcorpus")){
+            if(key == "usesubcorp"){
+                options.usesubcorp = UserDataStore.getCorpusData(this.corpus.corpname, "defaultSubcorpus") || ""
                 continue
             }
             if(isDef(this.defaults[key])){
@@ -712,10 +713,6 @@ class FeatureStoreMixin extends StoreMixin{
     }
 
     _setDataFromUserOptions(){
-        if(this.corpus && isDef(this.data.usesubcorp)){
-            // subcorp is locked -> set
-            this.data.usesubcorp = UserDataStore.getCorpusData(this.corpus.corpname, "defaultSubcorpus") || ""
-        }
         for(let key in this.userOptions){
             this.set(key, this.userOptions[key])
         }

@@ -674,10 +674,9 @@
                 usesubcorp: featureParams.prefix == "ref_" ? this.data.ref_usesubcorp : this.store.data.usesubcorp
             }
             if(feature == "concordance"){
-                let query = rowData.item.query.substr(1)
                 Object.assign(params, {
                     queryselector: 'cql',
-                    cql: query,//rowData.coltype == 'k' ? query : '[term(2,' + query + ')]',
+                    cql: rowData.item.query,
                     selection: featureParams.prefix == "ref_" ? {} : this.store.data.tts
                 })
             } else if(feature == "wordsketch") {

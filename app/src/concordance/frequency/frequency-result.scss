@@ -26,19 +26,17 @@
     .frequencyOptions{
         margin-top: 20px;
         background-color: #e4e4e4;
-        padding: 10px 15px;
         .ui-checkbox{
             margin: 0 10px;
         }
     }
     .column-table {
-        .container-fluid .col-tab-col .table{
+        .table{
             width: 100%;
             min-width: 50vw;
             max-width: 1500px;
         }
-        .container-fluid .material-table > tbody > tr > td{
-            padding: 0px 15px;
+        .material-table > tbody > tr > td{
             white-space: normal;
         }
         .col-tab-num{

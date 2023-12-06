@@ -51,6 +51,7 @@
     <script>
         const {Auth} = require("core/Auth.js")
         const {MacroStore} = require("common/manage-macros/macrostore.js")
+        const {UserDataStore} = require("core/UserDataStore.js")
 
         require("./concordance-context.tag")
         require("./concordance-tab-advanced.scss")
@@ -59,9 +60,6 @@
         this.mixin("feature-child")
         this.isSearchDisabled = true
         this.macroStore = MacroStore
-
-
-        this.macroStore.initData()
 
         updateAttributes(){
             this.isFullAccount = Auth.isFullAccount()
@@ -74,10 +72,10 @@
                 qmcase: this.data.qmcase,
                 cql: this.data.cql,
                 cb: this.data.cb,
-                usesubcorp: this.data.usesubcorp,
                 tts: this.data.tts,
                 macro: this.data.macro
             }
+            this.options.usesubcorp = UserDataStore.getCorpusData(this.corpus.corpname, "defaultSubcorpus") || this.data.usesubcorp
         }
         this.updateAttributes()
 

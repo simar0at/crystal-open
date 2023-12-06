@@ -1,0 +1,112 @@
+<h4>Vrsta poizvedbe</h4>
+<h5>Enostavno</h5>
+<p>Ta možnost je enaka enostavnemu iskanju v zavihku OSNOVNO.</p>
+<p>Poišče besede, ki se ujemajo z iskalnimi besedami ali katerih %[lema]% (osnovna oblika) se ujema z iskalno besedo. Ne razlikuje velikih in malih črk.</p>
+<p>Vnesite besedo ali besedno zvezo. Uporabite zvezdico (*) za nedoločeno število poljubnih znakov. Uporabite vprašaj (?) za natanko en poljuben znak. Uporabite navpično črto (|) za vključitev več kot ene besede ali besedne zveze. Uporabite dva vezaja (--) za iskanje besede, ki se lahko piše z vezajem, brez vezaja ali kot dve ločeni besedi.</p>
+<h6>Primeri</h6>
+<table width="100%">
+    <thead>
+        <tr>
+            <th style="width: 25%"><b>uporabi</b></th>
+            <th>poiskati</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>m*</b></td>
+            <td>besede ali leme, ki se začnejo na <em>m-</em></td>
+        </tr>
+        <tr>
+            <td><b>*mo</b></td>
+            <td>besede ali leme, ki se končajo na <em>-mo</em></td>
+        </tr>
+        <tr>
+            <td><b>imeti * idejo</b></td>
+            <td>poljubna beseda ali lema</td>
+        </tr>
+        <tr>
+            <td><b>imeti * * * idejo</b></td>
+            <td>tri poljubne besede ali leme</td>
+        </tr>
+        <tr>
+            <td><b>???t</b></td>
+            <td>Besede ali leme s 4 črkami, ki se končajo na <em>-t</em></td>
+        </tr>
+        <tr>
+            <td><b>več--milijarden</b></td>
+            <td>poišče <em>več-milijarden</em> ali <em>večmilijarden</em> ali <em>več milijarden</em></td>
+        </tr>
+        <tr>
+            <td><b>oditi|iti nazaj</b></td>
+            <td>poišče <em>oditi</em> ali <em>iti nazaj</em></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<h5>Lema</h5>
+<p>Vnesite lemo, da poiščete vse %[Besedna oblika|besedna oblika]% leme. %[regex|Regularni izrazu]% so podprti. </p>
+<h6>Primer</h6>
+<table width="100%">
+    <thead>
+        <tr>
+            <th style="width: 25%">uporabi</th>
+            <th><b>poiskati</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>iti</b></td>
+            <td>iti gre je šel bo šel</td>
+        </tr>
+        <tr>
+            <td><b>b.*</b></td>
+            <td>biti, je bil, banane, bogat, bogatejši (besede, katerih lema se začne na b-)</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<h5>Zveza</h5>
+<p>Poišče večbesedno besedno zvezo natančno tako, kot je bila vnesena. Podprti so %[regex|Regularni izrazi]%. </p>
+<br>
+<h5>Beseda</h5>
+<p>Poišče določeno %[Besedna Oblika|besedna oblika]% točno tako, kot je bila vnesena. Podprti so %[regex|Regularni izrazi]%. </p>
+<h6>Primer</h6>
+<table width="100%">
+    <thead>
+        <tr>
+            <th style="width: 25%">uporabi</th>
+            <th><b>poiskati</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>iti</b></td>
+            <td>iti</td>
+        </tr>
+        <tr>
+            <td><b>gre</b></td>
+            <td>gre</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<h5>Znak</h5>
+<p>Poišče %[pojavnica|pojavnice]%, ki vsebuje določen znak ali niz znakov.</p>
+<h6>Primer</h6>
+<table width="100%">
+    <thead>
+        <tr>
+            <th style="width: 25%">uporabi</th>
+            <th><b>poiskati</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>lj</b></td>
+            <td>molj bolj najbolj …</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<h5>CQL</h5>
+<p>Corpus Query Language (Korpusni poizvedovalni jezik) se uporablja za kompleksna iskanja leksikalnih in slovničnih struktur ter za iskanja z nespecifičnimi merili. %[cqlPriročnik|več"]%</p>

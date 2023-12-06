@@ -19,7 +19,7 @@
                     name="attr_allpos"
                     label-id="cc.displayAttrs"
                     riot-value={options.attr_allpos}
-                    on-change={onDataChange}
+                    on-change={onAttrAllposChange}
                     options={attrsDisplayOptions}></ui-radio>
             </div>
             <div>
@@ -70,11 +70,12 @@
                 on-change={onChangeValue}
                 class="lever-right"></ui-switch>
             <ui-switch
-                riot-value={data.glue}
+                riot-value={options.attr_allpos == "all" && options.attrs.length > 1 ? 0 : data.glue}
                 label-id="cc.glue"
                 name="glue"
                 tooltip="t_id:conc_r_view_glue"
                 on-change={onDataChange}
+                disabled={options.attr_allpos == "all" && options.attrs.length > 1}
                 class="lever-right"></ui-switch>
             <ui-switch
                 if={hasTBL}
@@ -177,6 +178,11 @@
 
         onAttrsChange(value){
             this.options.attrs = value.length ? value : ["word"]
+            this.update()
+        }
+
+        onAttrAllposChange(value){
+            this.options.attr_allpos = value
             this.update()
         }
 

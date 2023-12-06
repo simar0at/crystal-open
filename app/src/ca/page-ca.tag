@@ -22,7 +22,7 @@
     <div if={isBusy} class="busy center-align">
         <span class="statusText">
             <h5 class="inline-block" ref="compilationText">
-                {corpus.isCompiling ? _("ca.compiling") : _("ca.upgrading")}
+                {corpus.isCompiling ? _("compiling") : _("ca.upgrading")}
             </h5>
             <a id="btnCancelCompilation"
                     if={corpus.isCompiling}
@@ -230,7 +230,7 @@
         }
 
         onCancelCompilation(evt){
-            this.refs.compilationText.innerHTML = _("ca.cancelling")
+            this.refs.compilationText.innerHTML = _("cancelling")
             $(evt.currentTarget).addClass("disabled")
             CAStore.cancelCompilation(this.corpus.id)
             this.update()

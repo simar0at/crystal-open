@@ -10,7 +10,7 @@
                 riot-value=1
                 inline=1></ui-input>
         &nbsp;
-        {_("milionWords")}
+        {_("millionWords")}
         <br><br>
         {_("spaceRequestNote")}
     </div>

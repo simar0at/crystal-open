@@ -129,8 +129,8 @@
             if(data.showcontext != "none"){
                 parts.push([_("context"), this.store.getContextStr(data)])
             }
-            let operations = data.operations.filter(o => o.name != "context").forEach(operation => {
-                parts.push([operation.name, truncate(operation.arg, 30)])
+            let operations = data.operations.slice(1).filter(o => o.name != "context").forEach(operation => {
+                parts.push([operation.name, isDef(operation.arg) ? truncate(operation.arg, 30) : ""])
             }, "")
             for(let key in data.tts){
                 parts.push([TextTypesStore.getTextType(key).label, data.tts[key].length])

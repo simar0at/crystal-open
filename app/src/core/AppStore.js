@@ -141,6 +141,7 @@ class AppStoreClass extends StoreMixin {
         this.data.bgJobsRequest && this.data.bgJobsRequest.xhr.abort()
         clearTimeout(this.data.bgJobsTimer)
         this.data.bgJobsTimer = null
+        Dispatcher.trigger('BGJOBS_LOADING')
         this.data.bgJobsRequest = Connection.get({
             url: window.config.URL_BONITO + 'jobs?format=json&finished=true',
             done: (payload) => {
@@ -300,7 +301,7 @@ class AppStoreClass extends StoreMixin {
                 return false
             }
             if(!corpus.user_can_read){
-                if(corpus.access_on_demand) {
+                if(corpus.access_level == "ondemand") {
                     if(corpus.terms_of_use) {
                         Dispatcher.trigger("openDialog", {
                             content: corpus.terms_of_use,
@@ -776,7 +777,7 @@ class AppStoreClass extends StoreMixin {
             this.data.corpusCALoaded = true;
 
             ["is_featured", "user_can_read", "language_name", "is_shared",
-                    "access_on_demand", "reference_corpus", "user_can_manage",
+                    "access_level", "reference_corpus", "user_can_manage",
                     "tagset_id", "language_id", "corpname", "tags", "is_sgdev",
                     "owner_id", "owner_name", "can_be_upgraded", "id",
                     "available_structures", "expert_mode","file_structure",
@@ -1012,6 +1013,9 @@ class AppStoreClass extends StoreMixin {
     _onCorpusListLoaded(payload) {
         this.data.corpusListLoaded = true
         this.data.corpusList = payload.data
+        this.data.corpusList.forEach(c => {
+            c.tagsStr = c.tags.join(", ")
+        })
         this._filterCompatibleCorporaLists()
         this._refreshAvailableLanguageList()
         this.trigger("corpusListChanged", this.data.corpusList)

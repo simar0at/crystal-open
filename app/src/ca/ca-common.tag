@@ -1,16 +1,9 @@
 <ca-breadcrumbs class="ca-breadcrumbs hide-on-small-only">
     <nav>
         <div class="nav-wrapper">
-            <div class="col s12">
-                <virtual each={link, idx in links} >
-                    <a if={idx < parent.activeIndex } id="step_{idx}" href="#{link.href}" class="breadcrumb">
-                        {idx + 1}.&nbsp;{_(link.labelId)}
-                    </a>
-                    <span if={idx >= parent.activeIndex} class="breadcrumb {active: idx == parent.activeIndex}">
-                        {idx + 1}.&nbsp;{_(link.labelId)}
-                    </span>
-                </virtual>
-            </div>
+            <span each={link, idx in links} class="breadcrumb {active: idx == parent.activeIndex}">
+                {_(link.labelId)}
+            </span>
         </div>
     </nav>
 
@@ -20,7 +13,7 @@
         updateLinks(){
             this.links = CAMeta.links[opts.section]
             this.activeIndex = this.links.findIndex((link) => {
-                return link.href == this.opts.active
+                return link.href.split("?")[0] == this.opts.active
             })
         }
         this.updateLinks()

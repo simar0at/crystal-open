@@ -31,7 +31,7 @@
             progress={data.raw.processing}></bgjob-card>
     <div if={!data.f_isEmpty && !data.isLoading && !data.jobid} class="dividerTop center-align">
         <div class="z-depth-1 card-content frequencyOptions">
-            <ui-checkbox if={showRelFrqAndPerc}
+            <ui-checkbox if={!showRelTtAndRelDens}
                     id="showrelfrq"
                     name="f_showrelfrq"
                     checked={isConcordanceComplete && data.f_showrelfrq}
@@ -39,7 +39,7 @@
                     inline=1
                     label-id="showRelFrq"
                     on-change={setCheckboxValue.bind(this, "f_showrelfrq")}></ui-checkbox>
-            <ui-checkbox if={showRelFrqAndPerc}
+            <ui-checkbox if={!showRelTtAndRelDens}
                     id="showperc"
                     name="f_showperc"
                     checked={data.f_showperc}
@@ -125,7 +125,6 @@
 
         updateAttributes(){
             this.isConcordanceComplete = this.data.total == this.data.fullsize
-            this.showRelFrqAndPerc = this.store.f_showRelFrqAndPerc()
             this.showRelTtAndRelDens = this.store.f_showRelTtAndRelDens()
             this.interFeatureMenuLinks = [{
                 name: "concordance",

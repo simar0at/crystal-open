@@ -11,8 +11,7 @@
         order-by={block.sort}
         sort="desc"
         on-sort={onSort}
-        no-resize=1
-        standard-width=true></column-table>
+        no-resize=1></column-table>
     <user-limit if={block.total > data.raw.wllimit}
             wllimit={data.raw.wllimit}
             total={block.total}
@@ -96,7 +95,7 @@
                 }
             })
 
-            if(this.store.f_showRelFrqAndPerc()){
+            if(!this.store.f_showRelTtAndRelDens()){
                 if(this.data.f_showrelfrq && this.isConcordanceComplete){
                     this.colMeta.push({
                         id: "relfrq",

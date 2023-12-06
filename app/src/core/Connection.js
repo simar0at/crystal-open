@@ -59,6 +59,7 @@ class ConnectionClass{
         // shorter values will be send in query string. Other is post data.
         this.MAX_QUERY_VALUE_LENGTH = 250
         this.lastBonitoVersion = null
+        this.activeRequests = []
     }
 
     get(request){
@@ -74,6 +75,8 @@ class ConnectionClass{
             .always(this._onAlways.bind(this, request));
 
         request.xhr = xhr
+
+        this.activeRequests.push(request)
 
         return request
     }
@@ -231,6 +234,10 @@ class ConnectionClass{
     }
 
     _onAlways(request, payload){
+        this.activeRequests = this.activeRequests.filter(r => r != request)
+        if(!this.activeRequests.length){
+            Dispatcher.trigger("NO_ACTIVE_REQUEST")
+        }
         if(request.xhr.statusText == "abort"){
             return
         }

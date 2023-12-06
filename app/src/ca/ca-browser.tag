@@ -76,7 +76,7 @@
                                     {_("processing")}
                                 </span>
                                 <span if={fileset.progress == -1 && fileset.cancelling} class="grey-text">
-                                    {_("ca.cancelling")}
+                                    {_("cancelling")}
                                 </span>
                             </td>
                             <td class="num" style="white-space: nowrap;">
@@ -248,7 +248,7 @@
                                                     </a>
                                                 </virtual>
                                                 <span if={file.cancelling} class="grey-text">
-                                                    {_("ca.cancelling")}
+                                                    {_("cancelling")}
                                                 </span>
                                             </span>
                                         </virtual>

@@ -167,6 +167,7 @@
         require("./wordlist-criteria.tag")
         const {AppStore} = require("core/AppStore.js")
         const {Auth} = require("core/Auth.js")
+        const {UserDataStore} = require("core/UserDataStore.js")
         const Meta = require("./Wordlist.meta.js")
 
         this.mixin("feature-child")
@@ -218,12 +219,13 @@
         updateAttributes(){
             this.options = {};
             ["find", "exclude", "filter", "keyword", "wlblacklist", "wlicase",
-                    "wlminfreq", "wlmaxfreq", "viewAs", "usesubcorp",
+                    "wlminfreq", "wlmaxfreq", "viewAs",
                     "wlfile", "wlstruct_attr1", "wlstruct_attr2",
                     "wlstruct_attr3", "criteria", "include_nonwords", "histid"].forEach(name => {
                 this.options[name] = this.store.data[name]
             })
             this.options.tts = copy(this.store.data.tts)
+            this.options.usesubcorp = UserDataStore.getCorpusData(this.corpus.corpname, "defaultSubcorpus") || this.data.usesubcorp
             this.viewAsOptions = Meta.viewAsOptions
         }
         this.updateAttributes()

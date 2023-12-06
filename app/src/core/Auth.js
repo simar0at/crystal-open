@@ -1,4 +1,5 @@
 const {Connection} = require('core/Connection.js')
+const {Url} = require('core/url.js')
 
 class AuthClass{
 
@@ -11,6 +12,7 @@ class AuthClass{
         Dispatcher.on("CHECK_SESSION_AND_REDIRECT", this.checkSessionAndRedirect.bind(this))
         Dispatcher.on("RELOAD_USER_SPACE", this.reloadUserSpace.bind(this))
         Dispatcher.on("LOGOUT_AS", this.logoutAs.bind(this))
+        Dispatcher.one("NO_ACTIVE_REQUEST", this.onNoActiveRequest.bind(this))
     }
 
     isLogged() {
@@ -197,6 +199,28 @@ class AuthClass{
                 Dispatcher.trigger("USER_SPACE_RELOADED", this._space)
             }
        })
+    }
+
+    onNoActiveRequest(){
+        // try to login as once there is no active request (otherwise active
+        // request would fail after logging-as in and redirect user to the login page)
+        let loginAs = Url.getQuery().login_as
+        if(this.isSuperUser() && loginAs){
+            if(loginAs.indexOf("@") == -1){
+                this.loginAs(loginAs)
+            } else {
+                Connection.get({
+                    url: window.config.URL_CA + "users?q=" + loginAs,
+                    done: function(payload){
+                        if(payload.data && payload.data[0]){
+                            this.loginAs(payload.data[0].username)
+                        } else {
+                            SkE.showToast(`User with email ${loginAs} not found.`)
+                        }
+                    }.bind(this)
+                })
+            }
+        }
     }
 
     _onLoginDone(payload){

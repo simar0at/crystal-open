@@ -7,58 +7,60 @@
             margin-right: -7px;
             text-align: center;
         }
-        .col-tab-col{
-            padding-left: 7px;
-            padding-right: 7px;
-            display: inline-block;
-            vertical-align: top;
-            .table{
-                width: 1px;
-                thead {
-                    background-color: $blue-100;
-                }
-                td, th{
-                    white-space: nowrap;
-                }
-                td{
-                    >span,
-                    >raw-html {
-                        &:empty{
-                            &:after{
-                                content: "==unknown==";
-                                opacity: 0.6;
-                                font-style: italic;
-                            }
-                        }
+    }
+    .col-tab-col{
+        padding-left: 7px;
+        padding-right: 7px;
+        display: inline-block;
+        vertical-align: top;
+    }
+    .table{
+        width: 1px;
+        thead {
+            background-color: $blue-100;
+        }
+        td, th{
+            white-space: nowrap;
+        }
+        td{
+            >span,
+            >raw-html {
+                &:empty{
+                    &:after{
+                        content: "==unknown==";
+                        opacity: 0.6;
+                        font-style: italic;
                     }
                 }
-                .col-tab-menu{
-                    width: 1px;
-                }
-                &.dense-table{
-                    >thead>tr>th:not(:first-child),
-                    >tbody>tr>td:not(:first-child){
-                        padding-left: 5px;
-                    }
-                    >thead>tr>th:not(:last-child),
-                    >tbody>tr>td:not(:last-child){
-                        padding-right: 5px;
-                    }
-                    >tbody>tr.inner>td.word>span {
-                        padding-left: 2em;
-                    }
-                    >tbody>tr.inner {
-                        font-size: 90%;
-                    }
-                }
-            }
-            .col-tab-num{
-                width: 1px;
-                padding-right: 10px;
-                font-size: 0.8em;
-                white-space: nowrap;
-                color: $blue-200;
             }
         }
+        >thead>tr>th,
+        >tbody>tr>td{
+            padding: 8px 16px;
+        }
+        >thead>tr>th:not(:first-child),
+        >tbody>tr>td:not(:first-child){
+            padding-left: 5px;
+        }
+        >thead>tr>th:not(:last-child),
+        >tbody>tr>td:not(:last-child){
+            padding-right: 5px;
+        }
+        >tbody>tr.inner>td.word>span {
+            padding-left: 2em;
+        }
+        >tbody>tr.inner {
+            font-size: 90%;
+        }
+    }
+    .col-tab-num{
+        width: 1px;
+        padding-right: 10px;
+        font-size: 0.8em;
+        white-space: nowrap;
+        color: $blue-200;
+    }
+    .col-tab-menu{
+        width: 1px;
     }
 }

@@ -294,7 +294,7 @@
         this.categories = ["all", "recent", "my", "shared", "featured",
                 "general", "web", "non-web", "parallel", "spoken",
                 "specialized", "diachronic", "multimedia", "learner",
-                "error-annotated", "gramdev"]
+                "error-annotated"]
         this.presentLangs = {}
         this.langList = []
         this.showLimit = 60
@@ -583,8 +583,6 @@
                     return corp.aligned.length > 0
                 case "my":
                     return corp.owner_id && corp.owner_id == this.userid
-                case "gramdev":
-                    return corp.is_sgdev
                 case "shared":
                     return corp.user_can_read && corp.owner_id
                             && corp.owner_id != this.userid

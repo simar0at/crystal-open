@@ -157,7 +157,7 @@
                             on-change={onShowPreloadedChange}></ui-switch>
                   </div>
                 <div class="buttons">
-                    <a href="#ca" id="btnBack" class="btn btn-flat">{_("back")}</a>
+                    <a href="#ca" id="btnBack" class="btn btn-flat color-blue-800">{_("back")}</a>
                 </div>
             </div>
         </div>

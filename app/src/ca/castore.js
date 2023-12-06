@@ -153,7 +153,7 @@ class CAStoreClass extends StoreMixin {
     }
 
     createCorpus(name, language_id, tagset_id, info){
-        Connection.get({
+        return Connection.get({
             url: window.config.URL_CA + "corpora",
             xhrParams: {
                 method: "POST",
@@ -167,7 +167,7 @@ class CAStoreClass extends StoreMixin {
             },
             done: this._onCorpusCreated.bind(this),
             fail: this._onCorpusCreateFail.bind(this)
-        })
+        }).xhr
     }
 
     createGrammar(grammar){
@@ -247,7 +247,7 @@ class CAStoreClass extends StoreMixin {
         })
     }
 
-    uploadCorpusTMX(file){
+    uploadAlignedDataFile(file){
         let formData = new FormData()
         formData.append("file", file)
         return Connection.get({
@@ -261,7 +261,7 @@ class CAStoreClass extends StoreMixin {
         })
     }
 
-    changeTMXCorpusSettings(somefile_id, settings){
+    changeAlignedDataSettings(somefile_id, settings){
         return Connection.get({
             url: window.config.URL_CA + "somefiles/" + somefile_id,
             xhrParams: {
@@ -274,7 +274,7 @@ class CAStoreClass extends StoreMixin {
 
     uploadPlainText(corpus_id, text){
         Connection.get({
-            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents?feeling=lucky",
+            url: window.config.URL_CA + "corpora/" + corpus_id + "/documents",
             xhrParams: {
                 method: "POST",
                 contentType: "application/json",
@@ -365,7 +365,7 @@ class CAStoreClass extends StoreMixin {
                 let file = payload.data
                 this.data.files[this._getFileIndex(file.id)] = file
                 this._startFolderUploadedChecking(corpus_id)
-                this._startFileChecking(corpus_id, file.id)
+                this.startFileChecking(corpus_id, file.id)
                 this._checkIfCompilationIsNeeded()
                 this.trigger("filesChanged", this.data.files)
             }.bind(this, corpus_id),
@@ -662,12 +662,12 @@ class CAStoreClass extends StoreMixin {
     _startFilesChecking(corpus_id){
         this.data.files.forEach(file => {
             if(file.vertical_progress > 0 && file.vertical_progress < 100){
-                this._startFileChecking(corpus_id, file.id)
+                this.startFileChecking(corpus_id, file.id)
             }
         }, this)
     }
 
-    _startFileChecking(corpus_id, document_id){
+    startFileChecking(corpus_id, document_id, onComplete){
         let ar_id = `corpus_${corpus_id}_document_${document_id}`
         if(this.data.asyncResults[ar_id]){
             return // already checking
@@ -689,7 +689,7 @@ class CAStoreClass extends StoreMixin {
                     this.trigger("filesChanged")
                 }
             }.bind(this, corpus_id, document_id),
-            onComplete: this.loadFile.bind(this, corpus_id, document_id),
+            onComplete: onComplete || this.loadFile.bind(this, corpus_id, document_id),
             interval: 2000,
             intervalStep: 1000,
             intervalMax: 10000
@@ -709,7 +709,7 @@ class CAStoreClass extends StoreMixin {
                 let formData = new FormData()
                 formData.append("file", this.data.filesToUpload.pop())
                 Connection.get({
-                    url: window.config.URL_CA + "corpora/" + corpus_id + "/documents?feeling=lucky",
+                    url: window.config.URL_CA + "corpora/" + corpus_id + "/documents",
                     xhrParams: {
                         method: "POST",
                         processData: false,
@@ -997,7 +997,7 @@ class CAStoreClass extends StoreMixin {
         fileset.progress = Math.round((1 - this.data.filesToUpload.length / this.data.totalFiles) * 100)
         if(this.data.activeFilesetId === 0){
             this.data.files.unshift(payload.data)
-            this._startFileChecking(this.corpus.id, payload.data.id)
+            this.startFileChecking(this.corpus.id, payload.data.id)
         } else {
             this._startFolderUploadedChecking(this.corpus.id)
         }

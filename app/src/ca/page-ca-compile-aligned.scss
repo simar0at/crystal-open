@@ -1,11 +1,16 @@
 @import 'app/styles/constants';
 
-.page-ca-tmx-compile{
+.page-ca-compile-aligned{
+    min-height: 40vh;
+    position: relative;
     .columnWrapper{
-        max-width: 600px;
+        max-width: 800px;
         margin: auto;
-        .row >span{
-            line-height: 40px;
+        .row {
+            margin-bottom: 20px;
+            &>span{
+                line-height: 40px;
+            }
         }
     }
     .statusColumn{

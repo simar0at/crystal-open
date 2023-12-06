@@ -2,7 +2,7 @@
     <div if={items.length} ref="container" class="container-fluid">
         <div class="row">
             <div class="col-tab-col" each={x, colNumber in new Array(columnCount)}>
-                <table class="table material-table {dense-table: denseTable}" style={style}>
+                <table class="table material-table" style={style}>
                     <thead if={opts.theadMeta} class="theadMeta">
                         <tr>
                             <th each={th in opts.theadMeta} colspan={th.colspan} class={th.class}>
@@ -67,7 +67,6 @@
             this.sort = this.opts.sort
             this.orderBy = this.opts.orderBy
             this.minItemsInColumn = opts.minItemsInColumn || 10 // minimal count of items in column
-            this.denseTable = !JSON.parse(this.opts.standardWidth || false) // JSON parse to convert string to bool
             /*
             [{
                 "id": string,

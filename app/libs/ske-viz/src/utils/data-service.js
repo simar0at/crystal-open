@@ -19,17 +19,17 @@ const _parseWord = (data, category, mainWord) => {
 const _parseWSDiffWord = (data) => {
   return {
     text: data.word,
-    score: data.rnk1 - data.rnk2,
+    score: data.rnk2 - data.rnk1,
     words: [
-      {
-        score: data.rnk1,
-        freq: data.cnt1,
-        id: data.seek1
-      },
       {
         score: data.rnk2,
         freq: data.cnt2,
         id: data.seek2
+      },
+      {
+        score: data.rnk1,
+        freq: data.cnt1,
+        id: data.seek1
       }
     ]
   };
@@ -129,7 +129,6 @@ const _parseWSDiffWords = (rawWords, mainWords) => {
   // there are number of categories (grammatical relations), each containing words
   rawWords.forEach(wordsInTable => {
     const category = {};
-
     category.info = {
       name: wordsInTable.table.Header[0],
       words: [

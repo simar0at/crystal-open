@@ -154,11 +154,18 @@
                 width: 105px;
                 white-space: nowrap;
             }
-            .cInfo{
+            .cInfo,
+            .cTags{
                 font-size: 12px;
-                opacity: 0.6;
                 line-height: 1;
                 padding-left: 40px;
+            }
+            .cInfo{
+                opacity: 0.6;
+            }
+            .cTags{
+                position: relative;
+                top: -4px;
             }
             @media only screen and (max-width: 900px){
                 .cLang{

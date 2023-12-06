@@ -24,8 +24,15 @@
                     </i>
                     <span class="cLang" ref="{idx}_l">{corpus.language_name}</span>
                     <span if={showCorpname} class="cCorpname" ref="{idx}_c">{corpus.corpname}&nbsp;●&nbsp;</span>
-                    <span class="cLabel" ref="{idx}_n">{corpus.name}</span>
+                    <span if={corpus.access_level} class="cLabel">
+                        <span ref="{idx}_n">{corpus.name}</span>
+                        <span title="{corpus.access_level}">{accessLevelIcons[corpus.access_level]}</span>
+                    </span>
+                    <span if={!corpus.access_level} class="cLabel" ref="{idx}_n">{corpus.name}</span>
                     <span class="clSize">{corpus.sizes ? window.Formatter.num(corpus.sizes.wordcount) : ""}</span>
+                </div>
+                <div if={showTags} class="cTags" ref="{idx}_t">
+                    {corpus.tagsStr}
                 </div>
                 <div if={showInfo} class="cInfo" ref="{idx}_i">
                     {corpus.info}
@@ -67,6 +74,11 @@
                     <ui-checkbox label={"Show description"}
                             checked={showInfo}
                             on-change={onShowInfoChange}></ui-checkbox>
+                </span>
+                <span if={isSuperUser}>
+                    <ui-checkbox label={"Show tags"}
+                            checked={showTags}
+                            on-change={onShowTagsChange}></ui-checkbox>
                 </span>
                 <a href="#corpus?tab=advanced"
                         id="btnManageCorpora"
@@ -123,6 +135,15 @@
         this.showCorpname = false
         this.corpusListLoaded = AppStore.get("corpusListLoaded")
         this.showInfo = UserDataStore.getOtherData("showInfoInCorpusSearch") || false
+        this.tagsInfo = Auth.isSuperUser() && UserDataStore.getOtherData("showInfoInCorpusSearch") || false
+        this.accessLevelIcons = {
+            trial: "⌛",
+            main: "💰",
+            retired: "🗑️",
+            restricted: "🔒",
+            dev: "🛠️",
+            ondemand: "🙏🏻"
+        }
 
         compareCorporaFun(a, b){
             if(a.sort_to_end && !b.sort_to_end) return 1
@@ -155,6 +176,7 @@
         updateAttributes(){
             this.ready = AppStore.get("ready")
             this.loggedAs = Auth.isLoggedAs()
+            this.isSuperUser = Auth.isSuperUser()
         }
         this.updateAttributes()
 
@@ -259,6 +281,16 @@
             }
         }
 
+        onShowTagsChange(showTags){
+            this.showTags = showTags
+            UserDataStore.saveOtherData({showTagsInCorpusSearch: showTags})
+            if(this.query){
+                this.filterCorpora()
+            } else {
+                this.update()
+            }
+        }
+
         filterCorpora(query){
             this.cursorPosition = 0
             this.showCorpname = this.query[0] == "#"
@@ -280,6 +312,9 @@
                     keys = ["language_name", "name"]
                     if(this.showInfo){
                         keys.push("info")
+                    }
+                    if(this.showTags){
+                        keys.push("tagsStr")
                     }
                 }
                 fuzzySorted = FuzzySort.go(query, this.allCorpora, {
@@ -309,6 +344,9 @@
                             c.h_name = FuzzySort.highlight(fs[1], '<b class="red-text">', "</b>")
                             if(this.showInfo){
                                 c.h_info = FuzzySort.highlight(fs[2], '<b class="red-text">', "</b>")
+                            }
+                            if(this.showTags){
+                                c.h_tags = FuzzySort.highlight(fs[this.showInfo ? 3 : 2], '<b class="red-text">', "</b>")
                             }
                         }
                         return c
@@ -429,6 +467,10 @@
                             if(this.showInfo){
                                 el = this.refs[idx + "_i"];
                                 el.innerHTML = c.h_info ? c.h_info : el.innerHTML.replace(/<b class="red-text">|<\/b>/g, '')
+                            }
+                            if(this.showTags){
+                                el = this.refs[idx + "_t"];
+                                el.innerHTML = c.h_tags ? c.h_tags : el.innerHTML.replace(/<b class="red-text">|<\/b>/g, '')
                             }
                         }
                     }
@@ -555,6 +597,7 @@
 
         onUserDataLoaded(){
             this.showInfo = UserDataStore.getOtherData("showInfoInCorpusSearch") || false
+            this.showTags = Auth.isSuperUser() && UserDataStore.getOtherData("showTagsInCorpusSearch") || false
             this.showList && this.update()
         }
 

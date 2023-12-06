@@ -22,12 +22,6 @@ class MacroStoreClass extends StoreMixin {
         AppStore.on("corpusChanged", this._onCorpusChange.bind(this))
     }
 
-    initData(){
-        if(this.data.macro){
-            Object.assign(ConcordanceStore.data, this.data.macro ? copy(this.data.macro.options) : {}, {macro: this.data.id})
-        }
-    }
-
     getMacro(id){
         return this.data.macros.find(m => m.id == id)
     }
@@ -128,9 +122,6 @@ class MacroStoreClass extends StoreMixin {
         let macro = this.getMacro(id)
         this.data.id = id
         this.data.macro = macro
-        if(macro){
-            Object.assign(ConcordanceStore.data, macro ? copy(macro.options) : {}, {macro: this.data.id})
-        }
         this.trigger("macroChange", this.data.macro)
     }
 

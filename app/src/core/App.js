@@ -1,6 +1,7 @@
 const {AppStore} = require('core/AppStore.js')
 const {SettingsStore} = require('core/SettingsStore.js')
 const {Auth} = require('core/Auth.js')
+const {Url} = require('core/url.js')
 
 
 class AppClass{
@@ -86,7 +87,10 @@ class AppClass{
                 if(Auth.isFullAccount()){
                     // is full account -> once corpus is load we need to load corpus
                     // user data. In anonymous mode data are not loaded
-                    Dispatcher.one("USER_DATA_CORPUS_LOADED", this._updateStatus.bind(this, "userDataLoaded", true))
+                    Dispatcher.one("USER_DATA_CORPUS_LOADED", () => {
+                        this._updateStatus("userDataLoaded", true)
+                        Url.getQuery().corp_info && SkE.showCorpusInfo(corpname)
+                    })
                 }
                 AppStore.changeCorpus(corpname);
             }

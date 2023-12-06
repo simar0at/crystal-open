@@ -1,10 +1,15 @@
 @import 'app/styles/constants';
 
 .background-jobs {
-    .card-panel{
-        background-color: $gray-100;
-        position: relative;
+    position: relative;
+    min-height: 50vh;
+    preloader-spinner{
+        position: fixed;
+        top: 40vh;
+        left: 50%;
+        margin-left: -25px;
     }
+
     table{
         tbody{
             transition: background-color .25s ease;

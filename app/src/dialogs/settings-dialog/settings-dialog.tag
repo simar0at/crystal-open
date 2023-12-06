@@ -142,7 +142,19 @@
 
         onReset(){
             if(!this.isResetDisabled){
-                SettingsStore.resetSettings()
+                Dispatcher.trigger("openDialog", {
+                    title: _("resetSettings"),
+                    content: _("resetSettingsWarn"),
+                    small: true,
+                    buttons: [{
+                        label: _("reset"),
+                        class: "btn-primary",
+                        onClick: (dialog, modal) => {
+                            SettingsStore.resetSettings()
+                            modal.close()
+                        }
+                    }]
+                })
             }
         }
 
@@ -166,12 +178,6 @@
     <script>
         require("./settings-dialog.scss")
         const {SettingsStore} = require("core/SettingsStore.js")
-
-        onReset(){
-            if(!this.isResetDisabled){
-                SettingsStore.resetSettings()
-            }
-        }
 
         onOptionChange(value, name){
             SettingsStore.changeSettings({

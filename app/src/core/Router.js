@@ -7,7 +7,7 @@ import route from 'riot-route'
 class RouterClass{
     constructor(){
         Dispatcher.on("SESSION_LOADED", this._onSessionLoaded.bind(this))
-        Dispatcher.on("ROUTER_GO_TO", this._onPageChange.bind(this))
+        Dispatcher.on("ROUTER_GO_TO", this.goTo.bind(this))
         Dispatcher.on("APP_READY_CHANGED", function(ready){
             ready && this._onAppReady()
         }.bind(this))
@@ -25,6 +25,10 @@ class RouterClass{
     getActualFeature(){
         // acording to actual page returns feature, to which page belongs (wordlist-result->wordlist)
         return this._getPageFeature(this._actualPage)
+    }
+
+    goTo(page, query){
+        window.location.href = Url.create(page, query)
     }
 
     _initRouter(){
