@@ -38,14 +38,14 @@
                     </div>
                 </div>
                 <div class="center-align">
-                    <a if={freqml.length < 4}
+                    <a if={freqml.length < 10}
                             id="btnAddFrequency"
                             class="btn btn-floating btn-small"
                             onclick={onAddClick}>
                         <i class="material-icons color-blue-800">add</i>
                     </a>
                 </div>
-                <div if={freqml.length == 4}>{_("frq.freqmlLimit")}</div>
+                <div if={freqml.length == 10}>{_("frq.freqmlLimit")}</div>
                 <br>
 
                 <ui-checkbox name="f_group"

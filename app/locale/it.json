@@ -210,7 +210,6 @@
     "alignedDataEmptyNote": "Il file caricato non contiene dati sul corpus. Per favore, controlla il file.",
     "alignedDataErrorMessage": "Non è stato trovato alcun file contenente corpora multilingui. Se hai già compilato i corpora, per favore, ignora questo messaggio. Altrimenti contattaci a ",
     "ca.alignedDataSettingsNote": "Ogni lingua presente nel file sorgente viene processata in un corpus monolingue indipendente e allineata con il corpus corrispondente nelle altre lingue. Qui sotto puoi modificare il nome del corpus e/o i nomi delle lingue rilevate automaticamente.",
-    "ca.to_be_compiled": "Compila corpus",
     "ca.to_be_compiledDesc": "Alcuni dati sono stati aggiunti o rimossi dal corpus. Compila il corpus per rendere le modifiche effettive.",
     "ca.totalUsers": "%{0} utenti totali",
     "ca.updateCorpus": "Aggiorna corpus",
@@ -779,7 +778,6 @@
     "ocd.kwLabel": "Parole ed espressioni multi-parola più specifiche",
     "ocd.topnLabel": "Parole più frequenti",
     "ocd.failed": "Creazione della bozza di dizionario fallita",
-    "saveLabelExample": "Utilizza esempi",
     "of": "di",
     "oldPassword": "Vecchia password",
     "olderLinks": "I tuoi link brevi",
@@ -1557,7 +1555,6 @@
     "slowConcordanceWarning": "Visualizzare tag, lemmi o altri attributi con le righe di concordanza o visualizzare molte righe potrebbe sovraccaricare il tuo browser e rallentare la visualizzazione. Visualizza tali informazioni solo quando sono necessarie. Considera di ridurre il numero di righe per pagina.",
     "kw.wordsketchFocus": "Word Sketch (corpus di focus)",
     "kw.wordsketchRef": "Word Sketch (corpus di riferimento)",
-    "listTags": "Elenca tag",
     "listCodes": "Elenca codici",
     "percOfConc": "% di conc.",
     "selectPage": "seleziona tutto su questa pagina",
@@ -1777,5 +1774,6 @@
     "hp.bibliographyDesc": "Bibliografia su Sketch Engine",
     "outdatedTagset": "Il tagset del tuo corpus è obsoleto. Per favore, valuta un aggiornamento alla versione più recente.",
     "outdatedTerms": "I dati delle parole chiave nel tuo corpus sono obsoleti. Per utilizzare parole chiave, per favore, prima ricompila il tuo corpus.",
-    "showAllLanguages": "Mostra tutte le lingue"
+    "showAllLanguages": "Mostra tutte le lingue",
+    "aligning": "Sta allineando…"
 }

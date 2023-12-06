@@ -115,7 +115,7 @@
                     queryselector: "cql",
                     default_attr: "word",
                     usesubcorp: options.usesubcorp,
-                    selection: options.tts,
+                    tts: options.tts,
                     cql: cql
                 }
             } else if(feature == "ngrams"){
@@ -148,28 +148,10 @@
             }
         }
 
-        getCountLabel(attr){
-            if(attr == "str"){
-                if(AppStore.getLposByValue(this.data.find)){
-                    label = _(this.store.getDefaultPosAttribute())
-                } else {
-                    label = this.store.getFindLabel(this.data.find)
-                }
-            }  else {
-                return attr
-            }
-        }
-
         setColMetaSimple(){
-            let label = ""
-            if(AppStore.getLposByValue(this.data.find)){
-                label = _("lemma")
-            }  else {
-                label = this.store.getFindLabel(this.data.find)
-            }
             this.colMeta = [{
                 id: "str",
-                label: label,
+                label: this.store.getValueLabel(this.data.find, "find"),
                 "class": "_t word"
             }]
             this.data.cols.forEach(attr => {

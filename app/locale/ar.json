@@ -155,7 +155,6 @@
     "ca.termsExtraction": "استخراج المصطلحات",
     "ca.terms": "قاعدة المصطلح",
     "ca.to_be_compiledDesc": "طرأ تغيير على الملفات ، يوصى بالتجميع",
-    "ca.to_be_compiled": "التجميع القديم",
     "ca.totalUsers": "إجمالي %{0} من المستخدمين",
     "ca.updateCorpusError": "لم يتم حفظ المدونة، الرجاء المحاولة مرة أخرى.",
     "ca.updateCorpus": "إنشاء المدونة",

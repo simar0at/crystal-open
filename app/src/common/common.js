@@ -51,8 +51,8 @@ window.SkE = {
             type: "warning",
             tag: "error-dialog",
             opts: {
-                message: message,
-                detail: detail
+                message: window.riotEscape(message),
+                detail: window.riotEscape(detail)
             },
             title: _("somethingWentWrong")
         }, dialogParams));

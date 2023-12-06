@@ -57,7 +57,7 @@
                 }
                 ret += "<span>" + label.toLocaleLowerCase()
                 if (isDef(opt.value) && opt.value !== "") {
-                  ret +=  " &quot;<b>" + htmlEscape(riotEscape(opt.value)) + "</b>&quot;"
+                    ret +=  " &quot;<b>" + htmlEscape(riotEscape(opt.value)) + "</b>&quot;"
                 }
                 ret += "</span>"
             }

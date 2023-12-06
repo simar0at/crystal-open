@@ -14,10 +14,10 @@
                     on-suffix-icon-click={onSuffixIconClick}>
             </ui-input>
             <span class="spaceLimit">
-                Your total storage: {window.Formatter.num(space.total / 1000000)} million words ({space.percent}% used
+                {_("storageUsed", [window.Formatter.num(space.total / 1000000), space.percent])}
                 <i class="material-icons material-clickable tooltipped sizeTooltipIcon"
                         data-tooltip="t_id:corp_sizes">help_outline</i>).
-                <a href="{window.config.URL_RASPI}#account/overview">{_("getMoreSpace")}</a>
+                <a href="{window.config.URL_RASPI}#account/overview">{_("getMoreStorage", [Math.ceil((space.used - space.total) / 1000000)])}</a>
             </span>
             <a href="#ca-create" if={window.permissions["ca-create"]}
                     class="btn btn-primary tooltipped btnNewCorpus"
@@ -159,7 +159,7 @@
             if(this.searchQuery !== ""){
                 this.visibleCorpora = []
                 let fuzzySorted = FuzzySort.go(this.searchQuery, copy(this.allCorpora), {
-                    key: "corpname",
+                    threshold: -100000,
                     keys: ["language_name", "name"]
                 })
                 this.visibleCorpora = fuzzySorted.map(fs => {

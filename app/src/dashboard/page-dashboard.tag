@@ -65,7 +65,10 @@
                             </i>
                         </span>
                         <div class="grey-text pt-3">
-                            <raw-html content={_("NAInNoSkeP", ['<a target="_blank" href="https://sketchengine.eu">Sketch Engine</a>'])}></raw-html>
+                            <raw-html if={config.NO_SKE}
+                                    content={_("NAInNoSkeP", ['<a target="_blank" href="https://sketchengine.eu">Sketch Engine</a>'])}></raw-html>
+                            <raw-html if={!config.NO_SKE}
+                                    content={_("availableAfterLogin")}></raw-html>
                         </div>
                     </div>
                 </div>
@@ -168,9 +171,10 @@
                      <div class="bannerContainer">
                         <img src="images/boot_camp.png" width="262" height="69" loading="lazy">
                         <div style="min-width: 250px; max-width: 400px;">
-                            <div class="bannerHeadline">An online course in using Sketch Engine. Registration open!<br>
+                            <div class="bannerHeadline">A <b class="red-text">face-to-face</b> course in using Sketch Engine.<br>
+                                Brno, CZ, 26–27 April 2023 <br>
                             </div>
-                            <a href="https://www.sketchengine.eu/bootcamp/boot-camp-online/"
+                            <a href="https://www.sketchengine.eu/bootcamp/boot-camp-brno/"
                                     class="btn mt-4"
                                     target="_blank">Registration</a>
                         </div>

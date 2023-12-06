@@ -73,6 +73,17 @@
             evt.preventUpdate = true
             evt && evt.stopPropagation()
             this.opts.validate && this.validate()
+            let value = this.refs.input.value
+            if(this.opts.type && this.opts.type.toLowerCase() == "number"){
+                value = value * 1
+                if(isDef(this.opts.min) && this.opts.min * 1 > value){
+                    this.refs.input.value = this.opts.min
+                }
+                if(isDef(this.opts.max) && this.opts.max * 1 < value){
+                    this.refs.input.value = this.opts.max
+                }
+                this._refreshValue()
+            }
             isFun(this.opts.onInput) && this.opts.onInput(this.refs.input.value, this.opts.name, evt, this)
             this.ui_refreshWidth()
         }

@@ -1,5 +1,6 @@
 <parconcordance-result class={hasAttributes: data.hasAttributes,
             hasContextAttributes: data.hasContextAttributes,
+            viewAlign: data.viewmode == "align",
             viewSen: data.viewmode == "sen",
             viewKwic: data.viewmode == "kwic"}>
     <div class="table material-table highlight result-table" if={items.length} onmouseover={onMouseOver}>
@@ -172,23 +173,6 @@
 
         getCorpusPrefix(corpname){
             return corpname.substr(0, corpname.lastIndexOf("/") + 1)
-        }
-
-        getContextReducedItems(items){
-            // combine items into groups - [{str:"have"}, {str:"some"}, {str:"time"}, {strc:"<s>"}, {str:"How"}] ->[{str:"have some time"}, {strc:"<s>"}, {str:"How"}]
-            return items.reduce((arr, token) => {
-                if(!arr.length){
-                    arr.push(token)
-                } else{
-                    let lastToken = arr[arr.length - 1]
-                    if(!token.strc && !lastToken.strc && token.coll === lastToken.coll && token.hl === lastToken.hl && token.color === lastToken.color){
-                        arr[arr.length-1].str += " " + token.str
-                    } else {
-                        arr.push(token)
-                    }
-                }
-                return arr
-            }, [])
         }
 
         updateAttributes(){

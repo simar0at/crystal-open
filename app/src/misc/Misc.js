@@ -511,9 +511,22 @@ window.setCharAt = (str, idx, char) => {
     return str.substring(0, idx) + char + str.substring(idx + 1)
 }
 
-
-
 window.isURL = (str) => {
     let urlRegEx = RegExp(/(http(s)?:\/\/.)(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/)
     return urlRegEx.test(str)
+}
+
+window.downloadSVG = (selector, fileName) => {
+    let svg = $(selector)[0]
+    let svgDocType = document.implementation.createDocumentType('svg', "-//W3C//DTD SVG 1.1//EN", "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd")
+    let svgDoc = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg', svgDocType)
+    svgDoc.replaceChild(svg.cloneNode(true), svgDoc.documentElement)
+    let svgData = (new XMLSerializer()).serializeToString(svgDoc)
+    let link = document.createElement('a')
+    link.download = fileName ? `${fileName}.svg` : "SkE_download.svg"
+    link.style.opacity = "0"
+    link.href =  'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(svgData.replace(/></g, '>\n\r<'))
+    document.body.append(link)
+    link.click()
+    link.remove()
 }

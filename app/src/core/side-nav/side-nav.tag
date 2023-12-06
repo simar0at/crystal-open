@@ -19,6 +19,7 @@
         <li each="{link in menuLinks}"
                 class="feature {'disabled tooltipped': link.disabled}"
                 data-page="{link.page}"
+                data-position="right"
                 data-tooltip={getLinkTooltip(link)}>
             <a href="#{link.href}" id="side_nav_btn{link.page}" class="sidenav-close" onclick={parent.onLinkClick}>
                 <i class="small {link.class}">{link.icon}</i>
@@ -39,6 +40,7 @@
 
         this.allowShow = true
         this.isRTL = Localization.getDirection() == "rtl"
+        this.tooltipEnterDelay = 1300
 
         updateMenuLinks() {
             let p = window.permissions

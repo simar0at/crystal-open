@@ -22,7 +22,7 @@ window.config = {
     // One URL per language is allowed, e.g.: CUSTOM_LOCALE_EN, CUSTOM_LOCALE_DE, CUSTOM_LOCALE_IT,...
     CUSTOM_LOCALE_EN: "",
     // Remove SkE advertisement banner from dashboard.
-    HIDE_DASHBOARD_BANNER: false,
+    HIDE_DASHBOARD_BANNER: true,
 
     links: {
         "wl_download_limits": "https://www.sketchengine.eu/guide/access-to-unlimited-wordlists/",

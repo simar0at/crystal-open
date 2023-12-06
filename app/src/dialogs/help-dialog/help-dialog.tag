@@ -119,7 +119,9 @@
         onShowIntro(){
             this.parent.parent.modalParent.close()
             Dispatcher.trigger("ROUTER_GO_TO", "corpus", {tab: "basic"})
-            intros["newui"].start()
+            setTimeout(() => {
+                intros["newui"].start()
+            }, 1000)
         }
 
         onWhatsNewClick(){

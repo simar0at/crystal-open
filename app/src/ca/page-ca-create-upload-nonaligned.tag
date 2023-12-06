@@ -57,7 +57,7 @@
             <div class="col m6">
                <ui-uploader id="upl1"
                      name="upload1"
-                     accept=".doc,.docx,.htm,.html,.pdf,.txt"
+                     accept=".doc,.docx,.htm,.html,.pdf,.txt,.zip"
                      note={_("nonAlignedUploaderFileTypes")}
                      on-add={onFileAdd.bind(this, 1)}></ui-uploader>
 
@@ -90,7 +90,7 @@
             <div class="col m6">
                <ui-uploader id="upl2"
                      name="upload2"
-                     accept=".doc,.docx,.htm,.html,.pdf,.txt"
+                     accept=".doc,.docx,.htm,.html,.pdf,.txt,.zip"
                      note={_("nonAlignedUploaderFileTypes")}
                      on-add={onFileAdd.bind(this, 2)}></ui-uploader>
                <table if={uploadedFiles2.length}

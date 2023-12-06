@@ -1,3 +1,5 @@
+const {Url} = require("core/url.js")
+
 function createGETURL(url, query){
     url = url || "";
     let queryStr = "";
@@ -60,6 +62,10 @@ class ConnectionClass{
         this.MAX_QUERY_VALUE_LENGTH = 250
         this.lastBonitoVersion = null
         this.activeRequests = []
+        this.bonitoNote = Url.getQuery().note || null
+        Dispatcher.on("NOTE_CHANGED", note =>{
+            this.bonitoNote = note
+        })
     }
 
     get(request){
@@ -138,7 +144,9 @@ class ConnectionClass{
         let getData = {}
         let jsonData = {}
         getKeys.push("corpname", "bim_corpname", "ref_corpname")  //allways in URL. BigBrother uses corpnames in URL to authorize user
-
+        if(this.bonitoNote && request.url.startsWith(window.config.URL_BONITO)){
+            getData.note = this.bonitoNote
+        }
         if(!request.xhrParams || $.isEmptyObject(request.xhrParams)){
             for(let key in data){
                 let value = data[key]

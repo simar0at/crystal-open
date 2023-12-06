@@ -104,7 +104,7 @@
                     "attr": ref[0] == "=" ? ref.substr(1) : ref,
                     "ctx": "0",
                     "bward": sort.sort == "desc" ? "r" : "",
-                    "icase": false
+                    "icase": ""
                 }
             })
             this.sort(sorts)

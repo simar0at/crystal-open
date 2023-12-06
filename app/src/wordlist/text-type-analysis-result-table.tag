@@ -99,12 +99,19 @@
             <div ref="chartDownloads"
                     class="downloads mt-1 align-right"
                     style="display: none;">
-                <a class="btn btn-flat tooltipped ml-4 wite-text"
+                <a class="btn btn-flat tooltipped ml-4"
                         onclick={onDownloadTableClick}
                         data-tooltip={_(format + "Warning")}
                         each={format in formats}>
                     <i class="ske-icons skeico_{format}"></i>
                     {format.toUpperCase()}
+                </a>
+                <a href="javascript:void(0);"
+                        class="btn btn-flat tooltipped ml-4"
+                        onclick={onSvgDownloadClick}
+                        data-tooltip={_("svgWarning")}>
+                    <i class="material-icons">code</i>
+                    SVG
                 </a>
                 <a  ref="downloadChart"
                         class="btn btn-flat ml-4 whte-text"
@@ -245,7 +252,8 @@
                 this.store.searchAndAddToHistory({
                     keyword: this.query,
                     filter: this.mode,
-                    wlicase: !this.matchCase
+                    wlicase: !this.matchCase,
+                    page: 1
                 })
             }
         }
@@ -258,20 +266,23 @@
         onWlattrChange(value){
             this.store.searchAndAddToHistory({
                 wlattr: value,
-                onecolumn: true
+                onecolumn: true,
+                page: 1
             })
             this.refreshTitle()
         }
 
         onSubcorpusChange(value){
             this.store.searchAndAddToHistory({
-                usesubcorp: value
+                usesubcorp: value,
+                page: 1
             })
         }
 
         onWlsortChange(wlsort){
             this.store.searchAndAddToHistory({
-                wlsort: wlsort
+                wlsort: wlsort,
+                page: 1
             })
         }
 
@@ -295,6 +306,10 @@
 
         onDownloadTableClick(evt){
             Connection.download(this.store.getDownloadRequest(0), evt.item.format)
+        }
+
+        onSvgDownloadClick(evt) {
+            window.downloadSVG($("svg", this.refs.chart), "text_type_analysis")
         }
 
         onOpenFrequencyClick(evt){

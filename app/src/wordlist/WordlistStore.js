@@ -177,17 +177,6 @@ class WordlistStoreClass extends FeatureStoreMixin {
         this.data.wlattr = this.data.wlicase && attr.lc ? attr.lc : attrName
     }
 
-    getFindLabel(find){
-        if(this._isTextTypeAnalysis()){
-            return find
-        } else if(this.data.histid){
-            return this.data.raw && this.data.raw.hist_desc || ""
-        } else {
-            let attr = AppStore.getAttributeByName(find) || AppStore.getLposByValue(find)
-            return attr ? attr.label : ""
-        }
-    }
-
     getFilterList(tab){
         return Meta.filterList[tab].map((filter) => {
             return Object.assign({}, Meta.filters[filter])
@@ -396,16 +385,26 @@ class WordlistStoreClass extends FeatureStoreMixin {
         return this.data.tab == "advanced" && this.data.viewAs == 2
     }
 
-    stringifyValue(value, name){
-        if(name == "criteria"){
+    getValueLabel(value, option){
+        if(option == "find"){
+            if(this._isTextTypeAnalysis()){
+                return value
+            } else if(this.data.histid){
+                return this.data.raw && this.data.raw.hist_desc || ""
+            } else {
+                let attr = AppStore.getAttributeByName(value) || AppStore.getLposByValue(value)
+                return attr ? attr.label : value
+            }
+        } else if(option == "wlattr"){
+            return this.corpus.attributes.find(a => a.name == value).label
+        } else if(option == "criteria"){
             return value.map(v => {
                 return `${_(v.filter)} "${v.value}"`
             }).join(", ")
-        } else if(name == "criteriaOperator"){
+        } else if(option == "criteriaOperator"){
             return `"${this.data.criteriaOperator == 1 ? _("and") : _("or")}"`
-        } else {
-            return super.stringifyValue(value, name)
         }
+        return super.getValueLabel(value, option)
     }
 
     _setDataFromUrl(query){

@@ -2,7 +2,7 @@
    <ca-breadcrumbs active="ca-create-upload-aligned" section="createMultiAligned"></ca-breadcrumbs>
 
    <div class="uploaderCard card-panel">
-      <ui-uploader accept=".tmx,.xliff,.xlf,.xls,.xlsx"
+      <ui-uploader accept=".tmx,.xliff,.xlf,.xls,.xlsx,.zip"
             max-files=1
             class="mb-0"
             on-add={onAdd}

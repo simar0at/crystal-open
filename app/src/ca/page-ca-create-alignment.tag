@@ -42,8 +42,8 @@
          <div class="desc">{_("alignedDocsDesc")}</div>
          <br>
          <div class="note">
-            .tmx, .xliff 2.0+, .xlf 2.0+, .xls<span class="tooltipped" data-tooltip={_("xlsTT")}>?</span>
-            , .xlsx<span class=" tooltipped" data-tooltip={_("xlsTT")}>?</span>
+            .tmx, .xliff 2.0+, .xlf 2.0+, .xls<span class="tooltipped" data-tooltip={_("xlsTooltip")}>?</span>
+            , .xlsx<span class=" tooltipped" data-tooltip={_("xlsTooltip")}>?</span>, .zip
          </div>
       </a>
 
@@ -72,7 +72,7 @@
          <div class="title">{_("nonAlignedDocs")}</div>
          <div class="desc">{_("nonAlignedDocsDesc")}</div>
          <br>
-         <div class="note">.doc, .docx, .htm, .html, .pdf, .txt</div>
+         <div class="note">.doc, .docx, .htm, .html, .pdf, .txt, .zip</div>
       </a>
    </div>
    <div class="center-align">

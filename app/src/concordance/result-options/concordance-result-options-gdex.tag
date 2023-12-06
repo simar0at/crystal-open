@@ -7,6 +7,7 @@
             type="number"
             name="gdexcnt"
             size={4}
+            min=1
             value={data.gdexcnt}
             label-id="cc.gdexcnt"
             on-submit={onSaveClick}

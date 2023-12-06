@@ -297,10 +297,10 @@ class CAStoreClass extends StoreMixin {
             url: window.config.URL_CA + "corpora/" + corpus_id + "/filesets/" + fileset_id,
             xhrParams:{method: "DELETE"},
             done: this._onFilesetDeleted.bind(this, fileset_id),
-            fail: function(fileset_id, payload){
+            fail: function(fileset_id, payload, request){
                 let fileset = this._getFileset(fileset_id)
                 fileset.deleteInProgress = false
-                this._defaultOnFail(payload)
+                this._defaultOnFail(payload, request)
                 this.trigger("filesetsChanged")
             }.bind(this, fileset_id)
         })
@@ -337,8 +337,8 @@ class CAStoreClass extends StoreMixin {
                 payload.result = payload.result.substr(0, 1000)
                 this.trigger("filePreviewLoaded", file_id, payload.result)
             }.bind(this, file_id),
-            fail: function(payload){
-                this._defaultOnFail(payload)
+            fail: function(payload, request){
+                this._defaultOnFail(payload, request)
                 this.trigger("filePreviewLoadFail")
             }.bind(this)
         })

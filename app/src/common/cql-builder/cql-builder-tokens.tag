@@ -247,7 +247,6 @@
                     ref="labelInput"
                     inline=1
                     name="label"
-                    type="number"
                     dynamic-width=1
                     riot-value={token.label}
                     options={labelOptions}
@@ -632,6 +631,7 @@
             <ui-input dynamic-width=1
                     inline=1
                     type="number"
+                    min=1
                     label={_("count")}
                     tooltip="thesCntTip"
                     name="count"

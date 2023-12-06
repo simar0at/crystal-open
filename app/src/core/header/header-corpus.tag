@@ -24,11 +24,11 @@
                     </i>
                     <span class="cLang" ref="{idx}_l">{corpus.language_name}</span>
                     <span if={showCorpname} class="cCorpname" ref="{idx}_c">{corpus.corpname}&nbsp;●&nbsp;</span>
-                    <span if={corpus.access_level} class="cLabel">
+                    <span if={isSuperUser && corpus.access_level} class="cLabel">
                         <span ref="{idx}_n">{corpus.name}</span>
                         <span title="{corpus.access_level}">{accessLevelIcons[corpus.access_level]}</span>
                     </span>
-                    <span if={!corpus.access_level} class="cLabel" ref="{idx}_n">{corpus.name}</span>
+                    <span if={!isSuperUser || !corpus.access_level} class="cLabel" ref="{idx}_n">{corpus.name}</span>
                     <span class="clSize">{corpus.sizes ? window.Formatter.num(corpus.sizes.wordcount) : ""}</span>
                 </div>
                 <div if={showTags} class="cTags" ref="{idx}_t">
@@ -47,7 +47,7 @@
         </div>
         <div if={hasCorpus && maxScore < -10000 && query !== "" && query !== "#"} class="featureLinks center">
             <div class="msg">
-                <raw-html content={_("notCorporaSearch", ["<b>" + query + "</b>"])}></raw-html>
+                <raw-html content={_("notCorporaSearch", ["<b>" + window.htmlEscape(query) + "</b>"])}></raw-html>
             </div>
             <a if={window.permissions.wordsketch}
                 href={getUrlToResultPage("wordsketch")} class="btn" onclick={closeList}>
@@ -318,7 +318,7 @@
                     }
                 }
                 fuzzySorted = FuzzySort.go(query, this.allCorpora, {
-                        key: "corpname",
+                        threshold: -100000,
                         keys: keys,
                         fullMatchKeys: ["info"]
                     })

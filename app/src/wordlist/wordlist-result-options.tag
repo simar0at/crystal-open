@@ -71,7 +71,7 @@
                     icon: "info_outline",
                     labelId: 'wl.labelInfo'
                 }]
-            this.resultsFor =  this.store.getFindLabel(this.data.find)
+            this.resultsFor =  this.store.getValueLabel(this.data.find, "find")
             this.totalitems = isNaN(this.data.totalitems) ? "" : window.Formatter.num(this.data.totalitems)
             this.store.request[0].relfreq = this.data.relfreq
             this.pulseId = null

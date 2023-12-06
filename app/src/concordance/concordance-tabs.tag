@@ -20,28 +20,35 @@
         const {AppStore} = require('core/AppStore.js')
 
         this.mixin("feature-child")
-
         this.tabs = [{
-            tabId: "basic",
-            labelId: "basic",
-            tag: "concordance-tab-basic"
-        }, {
-            tabId: "advanced",
-            labelId: "advanced",
-            tag: "concordance-tab-advanced"
-        }]
-        if (AppStore.data.corpus.is_error_corpus) {
-            this.tabs.push({
-                tabId: "error",
-                labelId: "errorAnalysis",
-                tag: "concordance-tab-error"
-            })
+                tabId: "basic",
+                labelId: "basic",
+                tag: "concordance-tab-basic"
+            }, {
+                tabId: "advanced",
+                labelId: "advanced",
+                tag: "concordance-tab-advanced"
+            }, {
+                tabId: "about",
+                labelId: "about",
+                tag: "concordance-tab-about"
+            }]
+
+        updateAttributes(){
+            // Keep this.tabs object, just update it when needed.
+            // Assigning array this.tabs=[...] creates new array object and even
+            // if the content did not change, it makes riot update the component each time.
+            if(this.tabs.length == 3 && this.store.corpus.is_error_corpus){
+                this.tabs.splice(3, 0, {
+                    tabId: "error",
+                    labelId: "errorAnalysis",
+                    tag: "concordance-tab-error"
+                });
+            } else if(this.tabs.length == 4 && !this.store.corpus.is_error_corpus){
+                this.tabs.splice(3, 1)
+            }
         }
-        this.tabs.push({
-            tabId: "about",
-            labelId: "about",
-            tag: "concordance-tab-about"
-        })
+        this.updateAttributes()
 
         onTabChange(tabId){
             if(this.data.tab != tabId){
@@ -53,6 +60,8 @@
                 this.update()
             }
         }
+
+        this.on("update", this.updateAttributes)
 
         this.on("mount", () => {
             $(document).ready(function(){

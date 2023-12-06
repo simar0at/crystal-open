@@ -312,9 +312,15 @@
     </ui-tabs>
     <screen-overlay event-name="WIKI_SEARCH_LOADING"></screen-overlay>
 
+    <interfeature-menu ref="interfeatureMenu_k"
+            is-feature-link-active={isFeatureLinkActive}
+            links={getInterFeatureMenuLinks("k")}
+            get-feature-link-params={getFeatureLinkParams}>
+    </interfeature-menu>
+
     <interfeature-menu ref="interfeatureMenu"
             is-feature-link-active={isFeatureLinkActive}
-            links={interFeatureMenuLinks}
+            links={getInterFeatureMenuLinks()}
             get-feature-link-params={getFeatureLinkParams}>
     </interfeature-menu>
 
@@ -362,7 +368,7 @@
         getColMeta(prefix){
             let colMeta = [{
                 id: "item",
-                label: _("word"),
+                label: prefix == "t" ? _("term") : this.store.getValueLabel(this.data[prefix + "_attr"], prefix + "_attr"),
                 word: true,
                 class: "_t"
             }]
@@ -517,7 +523,7 @@
                     return "<a class=\"iconButton btn btn-flat btn-floating\"><i class=\"material-icons menuIcon\" >more_horiz</i></a>"
                 },
                 onclick: function(item, colMeta, evt){
-                    this.refs.interfeatureMenu.onOpenMenuButtonClick(evt, {
+                    this.refs[prefix == "k" ? "interfeatureMenu_k" : "interfeatureMenu"].onOpenMenuButtonClick(evt, {
                         item: item,
                         coltype: prefix
                     })
@@ -634,55 +640,58 @@
                 this.store.filterResults()
                 this.refs.tabs.refs["content-" + tabId].update()
             }
+            this.refs.interfeatureMenu.update()
         }
 
-        this.interFeatureMenuLinks = []
-        if(this.data.attr == "lemma"){
-            this.interFeatureMenuLinks = [{
-                name: "wordsketch",
-                feature: "wordsketch",
-                labelId: "kw.wordsketchFocus"
+        getInterFeatureMenuLinks(prefix){
+            let interFeatureMenuLinks = []
+            if(prefix == "k" && this.data.k_attr == "lemma"){
+                interFeatureMenuLinks = [{
+                    name: "wordsketch",
+                    feature: "wordsketch",
+                    labelId: "kw.wordsketchFocus"
+                }, {
+                    name: "wordsketchRef",
+                    feature: "wordsketch",
+                    labelId: "kw.wordsketchRef",
+                    prefix: "ref_"
+                }]
+            }
+
+            interFeatureMenuLinks = interFeatureMenuLinks.concat([{
+                name: "concordance",
+                feature: "concordance",
+                labelId: "kw.concordanceFocus",
+                prefix: ""
             }, {
-                name: "wordsketchRef",
-                feature: "wordsketch",
-                labelId: "kw.wordsketchRef",
+                name: "concordanceMacro",
+                feature: "concordance",
+                labelId: "concordanceMacro",
+                prefix: ""
+            }, {
+                name: "concordanceRef",
+                feature: "concordance",
+                labelId: "kw.concordanceRef",
                 prefix: "ref_"
-            }]
+            }])
+            return interFeatureMenuLinks
         }
-
-        this.interFeatureMenuLinks = this.interFeatureMenuLinks.concat([{
-            name: "concordance",
-            feature: "concordance",
-            labelId: "kw.concordanceFocus",
-            prefix: ""
-        }, {
-            name: "concordanceMacro",
-            feature: "concordance",
-            labelId: "concordanceMacro",
-            prefix: ""
-        }, {
-            name: "concordanceRef",
-            feature: "concordance",
-            labelId: "kw.concordanceRef",
-            prefix: "ref_"
-        }])
 
         getFeatureLinkParams(feature, rowData, event, featureParams){
             let params = {
                 tab: 'advanced',
                 corpname: featureParams.prefix == "ref_" ? this.store.data.ref_corpname : this.store.corpus.corpname,
-                usesubcorp: featureParams.prefix == "ref_" ? this.data.ref_usesubcorp : this.store.data.usesubcorp
+                usesubcorp: featureParams.prefix == "ref_" ? this.data.ref_usesubcorp : this.store.data.usesubcorp,
+                tts: featureParams.prefix == "ref_" ? {} : this.store.data.tts
             }
             if(feature == "concordance"){
                 Object.assign(params, {
                     queryselector: 'cql',
-                    cql: rowData.item.query,
-                    selection: featureParams.prefix == "ref_" ? {} : this.store.data.tts
+                    cql: rowData.item.query
                 })
             } else if(feature == "wordsketch") {
                 Object.assign(params, {
-                    lemma: rowData.item.item,
-                    tts: featureParams.prefix == "ref_" ? {} : this.store.data.tts
+                    lemma: rowData.item.item
                 })
             }
             return params

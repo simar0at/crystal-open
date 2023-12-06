@@ -192,13 +192,6 @@
 
         onTextTypesLoaded(textTypes){
             this.textTypes = copy(textTypes)
-            if(textTypes.length){
-                textTypes.forEach((tt) => {
-                    if(isDef(tt.dynamic) && !tt.Values){
-                        this.loadTextType(tt.name)
-                    }
-                })
-            }
             this.update()
         }
 

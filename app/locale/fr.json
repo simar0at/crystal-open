@@ -206,7 +206,6 @@
     "alignedDataEmptyNote": "Le fichier téléchargé ne contient pas de données de corpus. Veuillez vérifier votre fichier.",
     "alignedDataErrorMessage": "Le fichier contenant des corpus multilingues n'a pas été trouvé. Si vous avez déjà compilé des corpus, veuillez ignorer ce message. Sinon, contactez-nous à l'adresse suivante",
     "ca.alignedDataSettingsNote": "Chaque langue du fichier source sera traitée dans un corpus monolingue distinct et alignée sur le corpus correspondant dans l'autre ou les autres langues. Ci-dessous vous pouvez changer les noms de corpus et/ou les langues détectées automatiquement.",
-    "ca.to_be_compiled": "Ancienne compilation",
     "ca.to_be_compiledDesc": "Fichiers modifiés, compilation recommandée",
     "ca.totalUsers": "Total %{0} des utilisateurs ou utilisatrices",
     "ca.updateCorpus": "Mettre à jour le corpus, Mise à jour du corpus",

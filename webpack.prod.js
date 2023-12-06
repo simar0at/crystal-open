@@ -7,7 +7,6 @@ let webpackConfig = {
     entry: ["./app/main.js"],
     output: {
         path: path.resolve(__dirname, '/'),
-        publicPath: '/',
         filename: 'bundle.js',
         chunkFilename: '[name].js'
     },

@@ -43,6 +43,7 @@ class RouterClass{
 
     _onPageChange(pageId, queryObj){
         queryObj = queryObj || {}
+        queryObj.note && Dispatcher.trigger("NOTE_CHANGED", queryObj.note)
         // user clicked on link, insert url address or navigate browser back/forward
         if(queryObj.corpname){
             const corpus = AppStore.getActualCorpus()

@@ -191,7 +191,7 @@
 
         this.on("mount", () => {
             this.initSortable()
-            delay(() => {$("input[name=\"keyword\"]", this.root).focus()}, 10)
+            delay(() => {$("input[name=\"keyword\"]", this.root).first().focus()}, 10)
             this.store.on("change", this.dataChanged)
         })
 

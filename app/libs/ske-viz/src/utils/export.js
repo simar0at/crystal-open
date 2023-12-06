@@ -1,5 +1,4 @@
-function exportSVG() {
-    let svg = document.getElementById('ske-viz-opposite-0') || document.getElementById('ske-viz-radial')
+/*function exportSVG(svg) {
     let svgDocType = document.implementation.createDocumentType('svg', "-//W3C//DTD SVG 1.1//EN", "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd")
     let svgDoc = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg', svgDocType)
     svgDoc.replaceChild(svg.cloneNode(true), svgDoc.documentElement)
@@ -12,7 +11,7 @@ function exportSVG() {
     document.body.append(link)
     link.click()
     link.remove()
-}
+}*/
 
 function exportPNG() {
     let svgElement = document.getElementById('ske-viz-opposite-0') || document.getElementById('ske-viz-radial')
@@ -47,6 +46,6 @@ function exportPNG() {
  }
 
 export {
-  exportSVG,
+  //exportSVG,
   exportPNG
 };

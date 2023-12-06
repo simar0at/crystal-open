@@ -40,7 +40,7 @@
                 this.data.formValue.queryselector = "iquery"
             }
             this.store.updateUrl()
-            $('input[name="lemma"]:visible').focus()
+            $('.tabContent > .active input[name="keyword"], .tabContent > .active  textarea', this.root).first().focus()
         }
     </script>
 </parconcordance-tabs>

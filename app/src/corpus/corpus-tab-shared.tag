@@ -147,7 +147,7 @@
             if(this.searchQuery !== ""){
                 this.visibleCorpora = []
                 let fuzzySorted = FuzzySort.go(this.searchQuery, copy(this.allCorpora), {
-                    key: "corpname",
+                    threshold: -100000,
                     keys: ["language_name", "name"]
                 })
                 this.visibleCorpora = fuzzySorted.map(fs => {

@@ -79,7 +79,8 @@
                                 options.aligned_props[part.corpname].tagsetdoc}
                         on-change={onAlignedQueryTypesChange.bind(this, i)}
                         on-submit={onSubmit}
-                        show-video={false}>
+                        show-video={false}
+                        no-focus-on-mount={true}>
                 </query-types>
                 <ui-checkbox name="filterNonEmpty"
                         label-id="pc.filterNonEmpty"
@@ -249,7 +250,6 @@
         this.on("mount", () => {
             this.initSortable()
             this.store.on("change", this.dataChanged)
-            delay(() => {$("input[name=\"keyword\"]", this.root).focus()}, 10)
         })
 
         this.on("unmount", () => {

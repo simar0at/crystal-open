@@ -57,7 +57,7 @@
                     cb-value={value.cb}
                     name="cql"
                     corpus={corpus}
-                    wpos-options={wposOptions}
+                    wpos-options={wposOptions.slice(1)}
                     tagsetdoc={opts.tagsetdoc}
                     on-input={refreshIsValid}
                     on-submit={onSubmit}
@@ -252,7 +252,9 @@
 
         this.on("mount", () => {
             this.refreshIsValid()
-            this.focusInput()
+            if(!this.opts.noFocusOnMount){
+                this.focusInput()
+            }
         })
     </script>
 </query-types>

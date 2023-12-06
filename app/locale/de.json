@@ -49,7 +49,6 @@
     "compiled": "Kompiliert.",
     "ca.compiledDesc": "Das Korpus wurde kompiliert und steht bereit zur Verfügung.",
     "ca.compileDesc": "Das Korpus kompilieren oder Kompilationeinstellungen ändern.",
-    "ca.to_be_compiled": "Eine ältere Version wurde kompiliert.",
     "ca.to_be_compiledDesc": "Die Dateien wurden verändert, wir empfehlen, das Korpus neuzukompilieren.",
     "compiling": "wird kompiliert...",
     "ca.compilingDesc": "Korpuserstellung im Gange.",

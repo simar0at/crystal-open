@@ -33,8 +33,13 @@
         this.mixin("feature-child")
 
         this.block = this.opts.block
+        if(this.data.f_items.length == 1){
+            this.block.page = this.data.f_page
+            this.block.itemsPerPage = this.data.f_itemsPerPage
+        }
 
         refreshColMeta(){
+            let showRelTtAndRelDens = this.store.f_showRelTtAndRelDens()
             this.colMeta = []
             this.showCheckboxes && this.colMeta.push({
                 id: "chbox",
@@ -95,7 +100,7 @@
                 }
             })
 
-            if(!this.store.f_showRelTtAndRelDens()){
+            if(!showRelTtAndRelDens){
                 if(this.data.f_showrelfrq && this.isConcordanceComplete){
                     this.colMeta.push({
                         id: "relfrq",
@@ -118,7 +123,7 @@
                 }
             }
 
-            if(this.store.f_showRelTtAndRelDens() && this.isConcordanceComplete){
+            if(showRelTtAndRelDens && this.isConcordanceComplete){
                 if(this.data.f_showreltt){
                     this.colMeta.push({
                         id: "reltt",
@@ -151,13 +156,21 @@
                 }
             }
 
-            this.isConcordanceComplete && this.colMeta.push({
+            this.isConcordanceComplete
+                && ((showRelTtAndRelDens && this.store.data.f_showreldens)
+                        || (!showRelTtAndRelDens && this.store.data.f_showperc))
+                && this.colMeta.push({
                 id: "bar",
                 "class": "barColumn",
                 label: "",
                 "generator": function(item, colMeta) {
                     let height = item.frqbar ? (item.frqbar + 1) : 6
-                    let width = isDef(item.relbar) ? (item.relbar / 3) : (item.fbar / 3)
+                    let width = 0
+                    if(this.store.f_showRelTtAndRelDens()){
+                        width = isDef(item.relbar) ? (item.relbar / 3) : (item.fbar / 3)
+                    } else {
+                        width = item.poc || 0
+                    }
                     return '<div class="progress" style="height:' + height +'px;"><div class="determinate" style="width: ' + width + '%;"></div></div>'
                 }.bind(this)
             })
@@ -183,6 +196,7 @@
             this.blockItems = this.block.Items.slice((this.block.page - 1) * this.block.itemsPerPage, this.block.page * this.block.itemsPerPage)
             this.showCheckboxes = this.opts.block.Head.filter(h => isDef(h.id)).length == 1
             this.isConcordanceComplete = this.data.total == this.data.fullsize
+            this.block.showResultsFrom = (this.block.page - 1) * this.block.itemsPerPage
             this.refreshColMeta()
         }
         this.updateAttributes()
@@ -197,10 +211,7 @@
         onPageChange(page){
             let pageCount = Math.ceil(this.block.Items.length / this.block.itemsPerPage)
             if(page >= 1 && page <= pageCount){
-                Object.assign(this.block, {
-                    page: page,
-                    showResultsFrom: (page - 1) * this.block.itemsPerPage
-                })
+                this.block.page = page
             }
             this.update()
         }
@@ -235,8 +246,19 @@
             this.data.f_items.length == 1 && this.onPageChange(this.block.page + 1)
         }
 
+        updateUrl(){
+            if(this.data.f_items.length == 1){ // only one result block is displayed
+                this.data.f_page = this.block.page
+                this.data.f_itemsPerPage = this.block.itemsPerPage
+                this.store.updateUrl()
+            }
+        }
+
         this.on("update", this.updateAttributes)
-        this.on("updated", this.parent.updateBlocksWidth.bind(this.parent))
+        this.on("updated", () => {
+            this.parent.updateBlocksWidth()
+            this.updateUrl()
+        })
 
          this.on("mount", () => {
             Dispatcher.on("RESULT_PREV_PAGE", this.prevPage)

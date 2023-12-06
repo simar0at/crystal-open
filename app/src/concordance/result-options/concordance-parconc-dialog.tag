@@ -34,6 +34,7 @@
             let query = {
                 corpname: ConcordanceStore.corpus.corpname,
                 tab: "basic",
+                usesubcorp: d.usesubcorp,
                 formValue: {
                     queryselector: d.queryselector,
                     keyword: d.keyword,

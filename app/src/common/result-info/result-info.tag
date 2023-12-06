@@ -3,14 +3,14 @@
         <div>
             <div class="chip" each={option in userOptions} if={userOptions.length}>
                 {getLabel(option)}&nbsp;
-                <span class="ro-value">{store.stringifyValue(option.value, option.name)}</span>
+                <span class="ro-value">{option.value}</span>
                 <i if={showCloseButton(option.name)} class="close material-icons" onclick={onUserValueClick}>close</i>
             </div>
         </div>
         <div if={defaultOptions.length}>
             <span class="ro-option" each={option in defaultOptions}>
                 {getLabel(option)}&nbsp;
-                <span class="ro-value">{store.stringifyValue(option.value, option.name)}</span>
+                <span class="ro-value">{option.value}</span>
             </span>
         </div>
         <div if={opts.customInfoTag} class="dividerTop" style="margin-top: 20px; padding-top: 20px;">
@@ -29,8 +29,8 @@
             }
             let item = {
                 name: name,
-                label: _(option[1]),
-                value: value
+                label: window.capitalize(_(option[1])),
+                value: this.store.getValueLabel(value, name)
             }
             if(this.store.isOptionDefault(name, value)){
                 this.defaultOptions.push(item)

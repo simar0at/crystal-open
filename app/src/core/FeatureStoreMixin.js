@@ -298,6 +298,31 @@ class FeatureStoreMixin extends StoreMixin{
         return userOptions
     }
 
+    getValueLabel(value, option){
+        // return human readable variant of the value (sort "f" => "frequency")
+        // to be overriden
+        if(value === ""){
+            return _("none")
+        }
+        if(typeof value == "boolean" || (option && typeof this.defaults[option] == "boolean")){
+            return value ? _("yes") : _("no")
+        }
+        if(Array.isArray(value)){
+            return value.map(v => {
+                return this.getValueLabel(v)
+            }).join(", ")
+        }
+        if(typeof value == "object"){
+            return Object.keys(value).map(key => {
+                return `${key}: ${this.getValueLabel(value[key])}`
+            }).join(", ")
+        }
+        if(option == "usesubcorp"){
+            return AppStore.getSubcorpusName(value)
+        }
+        return value + ""
+    }
+
     setCorpusDefaults(){
         this.data.wsposlist = this.corpus ? this.corpus.wsposlist : []
     }
@@ -517,29 +542,6 @@ class FeatureStoreMixin extends StoreMixin{
             SkE.showToast(_("regexInvalid"))
         }
         return re
-    }
-
-    stringifyValue(value, name){
-        if(value === ""){
-            return _("none")
-        }
-        if(typeof value == "boolean" || (name && typeof this.defaults[name] == "boolean")){
-            return `"${value ? _("yes") : _("no")}"`
-        }
-        if(Array.isArray(value)){
-            return value.map(v => {
-                return this.stringifyValue(v)
-            }).join(", ")
-        }
-        if(typeof value == "object"){
-            return Object.keys(value).map(key => {
-                return `${key}: ${this.stringifyValue(value[key])}`
-            }).join(", ")
-        }
-        if(name == "usesubcorp"){
-            return AppStore.getSubcorpusName(value)
-        }
-        return value + ""
     }
 
     _isActualFeature(){

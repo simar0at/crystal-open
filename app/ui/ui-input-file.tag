@@ -20,6 +20,10 @@
    <script>
     this.mixin('ui-mixin')
 
+    getValue(){
+        return this.refs.input.value
+    }
+
     onChange(evt){
         this.updateFileList()
         if(typeof this.opts.onChange == "function"){

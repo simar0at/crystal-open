@@ -24,11 +24,7 @@ wizard_list["newui"] = [
     },
 	{
 		element: '#menuDropdownButton',
-		intro: "The language of the interface and other settings can be changed here.",
-	},
-	{
-		element: '#menuDropdownButton',
-		intro: "Here are your subscriptions and invoices. Your storage space for your own corpora can also be changed here.",
+		intro: "The language of the interface and other settings can be changed here also storage space for your own corpora. Your subscriptions and invoices can be also found here.",
 	},
     {
         element: '#header-menu-help',

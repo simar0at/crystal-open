@@ -28,9 +28,7 @@
 
         exportSVG(e) {
             e.preventUpdate = true
-            import ('libs/ske-viz/src/index.js').then(skeViz => {
-                skeViz.exportSVG()
-            })
+            window.downloadSVG($("#ske-viz-opposite-0, #ske-viz-radial").first())
         }
     </script>
 </vis-download>

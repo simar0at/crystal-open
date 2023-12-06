@@ -398,7 +398,7 @@
             let lowestScore = 0
             if(this.data.query !== ""){
                 let fuzzySorted = FuzzySort.go(this.data.query, copy(this.corpusList), {
-                    key: "corpname",
+                    threshold: -100000,
                     keys: ["language_name", "name"]
                 })
                 fuzzySorted.forEach(fs => {

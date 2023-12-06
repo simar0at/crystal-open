@@ -93,6 +93,7 @@
     <ui-input ref="frequency"
             label={_("frequency")}
             type="number"
+            min=1
             dynamic-width=1
             riot-value={condition.frequency}
             name="frequency"

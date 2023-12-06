@@ -1,3 +1,5 @@
+const {Router} = require("core/Router.js")
+
 class WorkIndicatorClass {
     constructor(){
         this.handle = null
@@ -9,7 +11,6 @@ class WorkIndicatorClass {
     start(){
         if(!this.handle){
             this.cnt = 0
-            this.title = document.title.startsWith("✓ ") ? document.title.substr(2) : document.title
             this._updateTitle()
             this.handle = setInterval(() => {
                 this.cnt++
@@ -25,7 +26,7 @@ class WorkIndicatorClass {
         if(this.handle){
             clearInterval(this.handle)
             this.handle = null
-            document.title = "✓ " + this.title
+            document.title = "✓ " + Router.getActualPageLabel()
             $(document).one("mousemove keypress", function(){
                 this.clear()
             }.bind(this))
@@ -33,16 +34,16 @@ class WorkIndicatorClass {
     }
 
     clear(){
-        document.title = this.title
+        document.title = Router.getActualPageLabel()
     }
 
     _onPageChange(){
         clearInterval(this.handle)
-        this.handle = null        
+        this.handle = null
     }
 
     _updateTitle(){
-        document.title = this.frames[this.cnt] + " " + this.title
+        document.title = this.frames[this.cnt] + " " + Router.getActualPageLabel()
     }
 }
 

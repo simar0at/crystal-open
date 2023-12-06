@@ -889,7 +889,11 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
 
     getLineCopyText(line){
             let parts = []
-            ;["Left", "Kwic", "Right"].forEach(block => {
+            let sections = ["Left", "Kwic", "Right"]
+            if(this.corpus.righttoleft){
+                sections.reverse()
+            }
+            sections.forEach(block => {
                 line[block].forEach(item => {
                     isDef(item.str) && parts.push(item.str.trim())
                 })
@@ -1347,7 +1351,7 @@ class ConcordanceStoreClass extends FeatureStoreMixin {
             concordance_query: this.getConcordanceQuery(),
             usesubcorp: this.data.usesubcorp,
             fmaxitems: this.data.f_fmaxitems,
-            fpage: block ? block.page : this.data.f_page,
+            fpage: block ? block.page : 1,
             freq_sort: sort,
             blockId: block ? block.id : "",
             group: !!this.data.f_group,

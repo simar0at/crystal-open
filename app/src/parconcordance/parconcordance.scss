@@ -57,6 +57,14 @@
             white-space: nowrap;
         }
     }
+    .viewSen,
+    .viewAlign{
+        .ctd:not(.l-1){
+            .itm{
+                display: inline-flex;
+            }
+        }
+    }
     parconcordance-result-items{
         display: inline;
     }

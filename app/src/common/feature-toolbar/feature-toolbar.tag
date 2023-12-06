@@ -14,7 +14,7 @@
                         riot-value={opts.limit == 0 ? "" : opts.limit}
                         validate=1
                         size=6
-                        max={opts.limit ? opts.limit : null}
+                        max={opts.limit || 10000000}
                         min=0
                         type="number"
                         inline=1></ui-input>
@@ -182,9 +182,7 @@
         }
 
         exportSVG(e) {
-            import ('libs/ske-viz/src/index.js').then(skeViz => {
-                skeViz.exportSVG()
-            })
+            window.downloadSVG($("#ske-viz-opposite-0, #ske-viz-radial").first())
         }
     </script>
 </download>

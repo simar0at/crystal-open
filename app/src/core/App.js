@@ -89,9 +89,9 @@ class AppClass{
                     // user data. In anonymous mode data are not loaded
                     Dispatcher.one("USER_DATA_CORPUS_LOADED", () => {
                         this._updateStatus("userDataLoaded", true)
-                        Url.getQuery().corp_info && SkE.showCorpusInfo(corpname)
                     })
                 }
+                Url.getQuery().corp_info && SkE.showCorpusInfo(corpname)
                 AppStore.changeCorpus(corpname);
             }
         }

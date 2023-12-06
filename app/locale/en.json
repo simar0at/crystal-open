@@ -929,7 +929,6 @@
     "ocd.topnLabel": "Most frequent words",
     "ocd.failed": "Creating dictionary draft failed",
     "ocd.mailToggleFail": "Failed to toggle email notification",
-    "saveLabelExample": "Use example",
     "ocd.destDictionary": "Target dictionary",
     "ocd.createDict": "Create new dictionary",
     "ocd.useDict": "Use existing dictionary",
@@ -1813,5 +1812,14 @@
     "noTermGrammar": "corpus without terms",
     "noWsdef": "corpus without Word Sketches",
     "relValuesNA": "Relative values are not available.",
-    "relValuesNATip": "Relative values cannot be calculated if the concordance does not include hits from the whole corpus. This happens when the random sample is applied or with concordances of very frequent words whose size is limited to 10M lines."
+    "relValuesNATip": "Relative values cannot be calculated if the concordance does not include hits from the whole corpus. This happens when the random sample is applied or with concordances of very frequent words whose size is limited to 10M lines.",
+    "term": "term",
+    "ngram": "N-gram",
+    "random": "random",
+    "operation": "operation",
+    "parameters": "parameters",
+    "hits": "hits",
+    "storageUsed": "Storage: %{0}M words (%{1}% used",
+    "getMoreStorage": "Get %{0}M more storage",
+    "availableAfterLogin": "These functions become available after login."
 }

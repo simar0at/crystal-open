@@ -15,6 +15,9 @@
         <span if={corpus.hasDocuments && corpus.isCompilationFailed} class="badge red lighten-2 white-text t_compilation_failed" style="float: none">
             {_("ca.compilation_failedDesc")}
         </span>
+        <i if={corpus.user_can_manage}
+                class="material-icons material-clickable ml-3"
+                onclick={onCorpusEditClick}>edit</i>
     </div>
 
     <div class="corpusInfo">{corpus.info}</div>
@@ -107,8 +110,8 @@
             })
         }
 
-        onToggleInfoEditClick(){
-            this.showInfoEdit = !this.showInfoEdit
+        onCorpusEditClick(){
+            Dialogs.showCorpusConfigDialog(this.corpus.id)
         }
 
         updateOptions(){
@@ -221,7 +224,6 @@
             this.updateOptions()
         }
         this.updateAttributes()
-        this.showInfoEdit = false
 
         this.on("update", this.updateAttributes)
 

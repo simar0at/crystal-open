@@ -85,6 +85,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
             }],
             f_mode: "multilevel",
             f_itemsPerPage: 10,
+            f_page: 1,
             //collocations
             c_items: [],
             c_tab: "basic",
@@ -122,7 +123,8 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
                 "attr_allpos", "tab", "operations", "f_texttypes", "freqSort",
                 "freqDesc", "showresults", "f_itemsPerPage", "glue","results_screen",
                 "alignedCorpname", "refs_up", "freqml", "f_mode", "f_group", "f_texttypes",
-                "gdex_enabled", "gdexcnt", "show_gdex_scores", "usesubcorp", "sort", "tts"]
+                "f_itemsPerPage", "f_page", "gdex_enabled", "gdexcnt", "show_gdex_scores",
+                "usesubcorp", "sort", "tts"]
 
         this.xhrOptions = ["attrs", "structs", "refs", "attr_allpos",
                 "viewmode", "usesubcorp", "freqml", "glue"]
@@ -207,6 +209,7 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
         this.data.gdex_scores = payload.gdex_scores
         this.data.aligned_rtl = payload.Aligned_rtl
         this.data.aligned_corpora = payload.Aligned
+        this.data.breadcrumbsDesc = null
         let lastFilterOp = copy(this.data.raw.Desc).reverse().find(d => d.op == "Filter by aligned corpus")
         if(lastFilterOp){
             this.data.breadcrumbsDesc = copy(this.data.raw.Desc).filter(d => d.op != "Filter by aligned corpus")
@@ -850,11 +853,6 @@ class ParconcordanceStoreClass extends FeatureStoreMixin {
                 item.Left = this._getContextReducedItems(item.Left)
                 item.Kwic = this._getContextReducedItems(item.Kwic)
                 item.Right = this._getContextReducedItems(item.Right)
-                item.Align.forEach(aligned => {
-                    aligned.Left = this._getContextReducedItems(aligned.Left)
-                    aligned.Kwic = this._getContextReducedItems(aligned.Kwic)
-                    aligned.Right = this._getContextReducedItems(aligned.Right)
-                })
             }, this)
         }
     }

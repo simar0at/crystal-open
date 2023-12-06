@@ -24,7 +24,8 @@
             characters={charactersList}
             field=".cql-textarea-{ta_id} textarea"
             on-insert={onCharacterInsert}></insert-characters>
-    <a href="javascript:void(0);"
+    <a if={wposOptions.length}
+            href="javascript:void(0);"
             class="btn white-text vertical-top"
             onclick={onTagsHelpClick}>{_("tagP")}</a>
     <cql-builder ref="builder"
@@ -49,7 +50,7 @@
             ["|", "cc.pipeTip"],
             "~", "#"
         ]
-        this.wposOptions = this.opts.wposOptions ||  [{labelId: "any", value: "any"}].concat(this.corpus.wposlist)
+        this.wposOptions = this.opts.wposOptions || this.corpus.wposlist
         this.isCbAllowed = !!this.opts.cbValue
         this.value = this.opts.riotValue
 
@@ -106,7 +107,7 @@
             Dispatcher.trigger("openDialog", {
                 tag: "tags-dialog",
                 opts:{
-                    wposlist: this.wposOptions.slice(1),
+                    wposlist: this.wposOptions,
                     tagsetdoc: this.opts.tagsetdoc || this.corpus.tagsetdoc,
                     onTagClick: function(tag){
                         this.refs.characters.insert(tag)

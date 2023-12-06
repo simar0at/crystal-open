@@ -297,6 +297,13 @@ class KeywordsStoreClass extends FeatureStoreMixin {
         return freqs.join(",")
     }
 
+    getValueLabel(value, option){ // overrides default
+        if(["k_attr", "n_attr"].includes(option)){
+            return this.corpus.attributes.find(a => a.name == value).label
+        }
+        return super.getValueLabel(value, option)
+    }
+
     onDataLoaded(payload){
         if(this._isActualFeature()){
             let wasLoaded = this.hasBeenLoaded

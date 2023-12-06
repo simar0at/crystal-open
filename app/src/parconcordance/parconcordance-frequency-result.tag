@@ -27,10 +27,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr each={item, idx in opts.items}
-                        if={(idx >= fromline) && (idx <= toline)}
+                <tr each={item, idx in displayedItems}
                         class="itm_{idx + 1}">
-                    <td class="col-tab-num">{window.Formatter.num(idx + 1)}</td>
+                    <td class="col-tab-num">{window.Formatter.num(idx + 1 + ((page - 1) * itemsPerPage))}</td>
                     <td each={w, w_idx in item.Word} class="word_{w_idx + 1}">{w.n}</td>
                     <td class="tab-num freqColumn">{window.Formatter.num(item.frq)}</td>
                     <td if={item.rel} class="tab-num">
@@ -74,16 +73,17 @@
 
     <script>
         this.mixin("feature-child")
-        this.page = 1
+        this.page = this.data.f_page
         this.itemsPerPage = this.data.f_itemsPerPage
         this.corpsize = this.store.corpus.sizes.tokencount
-        this.fromline = 0
-        this.toline = this.fromline + this.itemsPerPage - 1
+
+        updateAttributes(){
+            this.displayedItems = this.opts.items.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage)
+        }
+        this.updateAttributes()
 
         onPageChange(page) {
             this.page = page
-            this.fromline = (page-1) * this.itemsPerPage
-            this.toline = page * this.itemsPerPage - 1
             this.update()
         }
 
@@ -138,6 +138,17 @@
 
             return params
         }
+
+        updateUrl(){
+            if(this.data.f_items.length == 1){ // only one result block is displayed
+                this.data.f_page = this.page
+                this.data.f_itemsPerPage = this.itemsPerPage
+                this.store.updateUrl()
+            }
+        }
+
+        this.on("update", this.updateAttributes)
+        this.on("updated", this.updateUrl)
     </script>
 </pcfreq-result-block>
 
